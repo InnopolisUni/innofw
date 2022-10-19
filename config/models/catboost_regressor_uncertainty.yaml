@@ -1,0 +1,7 @@
+name: catboost + data uncertainty
+description: CatBoost regression model
+_target_: catboost.CatBoostRegressor
+
+loss_function: RMSEWithUncertainty
+posterior_sampling: true
+verbose: 100

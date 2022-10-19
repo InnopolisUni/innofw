@@ -1,0 +1,27 @@
+defaults:
+  - _self_
+  - datasets:
+  - models:
+  - trainer: auto
+  - metrics: auto
+  - losses: auto
+  - optimizers: auto
+  - schedulers: auto
+  - augmentations: none
+  - loggings: auto
+  - callbacks: auto
+  - initializations:
+  - clear_ml: disabled
+  - experiments: ???
+  - override hydra/job_logging: custom
+
+project: ???
+batch_size:
+weights_path:
+weights_freq:
+ckpt_path:
+stop_param:
+
+accelerator: cpu
+#devices: 1
+#gpus: 1

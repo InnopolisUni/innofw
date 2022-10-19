@@ -1,0 +1,12 @@
+name: Segmentation
+description: Average of Jaccard and BinaryFocal losses
+task:
+  - text-ner
+
+implementations:
+  torch:
+    FocalLoss:
+      weight: 1
+      object:
+        _target_: innofw.core.losses.focal_loss.FocalLoss
+        gamma: 2

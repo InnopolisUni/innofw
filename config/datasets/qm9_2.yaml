@@ -1,0 +1,23 @@
+task:
+  - table-regression
+
+name: qm9_2
+description: "Link: https://paperswithcode.com/dataset/qm9"
+
+markup_info: Информация о разметке
+date_time: 18.06.2019
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/qm9/train.zip
+  target: ./data/qm9_2/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/qm9/test.zip
+  target: ./data/qm9_2/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/qm9/test.zip
+  target: ./data/qm9_2/infer
+smiles_col: smiles
+target_col: gap
+val_size: 0.2

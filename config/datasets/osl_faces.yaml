@@ -1,0 +1,28 @@
+task:
+  - one-shot-learning
+
+name: osl_faces
+description: "Created by AT&T Laboratories Cambridge.
+Link: https://cam-orl.co.uk/facedatabase.html"
+
+markup_info: Набор данных содержит черно белые изображения лиц людей, сгруппированные по папкам
+date_time: 19.07.2022
+
+_target_: innofw.core.datamodules.lightning_datamodules.siamese_dm.SiameseDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/faces/train.zip
+  target: ./data/osl/train
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/faces/test.zip
+  target: ./data/osl/test
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/faces/infer.zip
+  target: ./data/osl/infer
+
+
+num_workers: 8
+
+val_size: 0.2

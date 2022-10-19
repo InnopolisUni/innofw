@@ -1,0 +1,39 @@
+task:
+  - table-regression
+
+name: tmqm
+description: " 
+Citation: tmQM Dataset—Quantum Geometries and Properties of 86k Transition Metal Complexes
+David Balcells and Bastian Bjerkem Skjelstad
+Journal of Chemical Information and Modeling 2020 60 (12), 6135-6146
+DOI: 10.1021/acs.jcim.0c01041
+
+link: https://doi.org/10.1021/acs.jcim.0c01041"
+
+markup_info: Информация о разметке
+date_time: 31.08.2020
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+###### Case: remote data #####
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tmqm/train.zip
+  target: ./data/tmqm/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tmqm/test.zip
+  target: ./data/tmqm/test
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tmqm/test.zip
+  target: ./data/tmqm/test
+##############################
+###### Case: local data ######
+#train:
+#  source: /local/path/train.csv
+#test:
+#  source: /local/path/test.csv
+##############################
+
+smiles_col: smiles
+# Available targets: Electronic_E, Dispersion_E, Dipole_M, Metal_q, HL_Gap, HOMO_Energy, LUMO_Energy, Polarizability
+target_col: HL_Gap
+val_size: 0.2

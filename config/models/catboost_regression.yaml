@@ -1,0 +1,4 @@
+name: catboost
+description: CatBoost regression model
+_target_: catboost.CatBoostRegressor
+verbose: 100

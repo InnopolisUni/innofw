@@ -1,0 +1,14 @@
+task:
+  - tabular-clustering
+
+name: credit_cards
+description: Набор данных содержит
+
+markup_info: Набор данных содержит
+date_time: 28.07.2022
+
+_target_: innofw.core.datamodules.pandas_datamodules.ClusteringPandasDataModule
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/credit_cards/train.zip
+  target: ./data/credit-cards/infer

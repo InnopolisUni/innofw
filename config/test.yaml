@@ -1,0 +1,30 @@
+defaults:
+  - _self_
+  - datasets:
+  - models:
+  - trainer: auto
+  - metrics: auto
+  - losses: auto
+  - optimizers: auto
+  - schedulers: auto
+  - augmentations: none
+  - loggings: auto
+  - callbacks: auto
+  - initializations:
+  - experiments: ???
+  - clear_ml: disabled
+  - override hydra/job_logging: custom
+
+project: ???  # todo: describe this field
+task: ???
+seed:
+epochs:
+batch_size:
+weights_path:
+weights_freq:
+ckpt_path:
+
+accelerator: cpu
+#devices: 1
+#gpus: 1
+

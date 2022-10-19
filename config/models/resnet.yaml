@@ -1,0 +1,5 @@
+_target_: innofw.core.models.torch.architectures.classification.Resnet18
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/mnist_classification.pt.ckpt
+description: resnet classification model trained on mnist dataset
+name: mnist_classification
+num_classes: 10

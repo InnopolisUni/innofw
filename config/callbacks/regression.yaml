@@ -1,0 +1,21 @@
+task:
+  - table-regression
+
+implementations:
+  xgboost:
+    mse:
+      _target_: sklearn.metrics.mean_squared_error
+    mae:
+      _target_: sklearn.metrics.mean_absolute_error
+
+  sklearn:
+    mse:
+      _target_: sklearn.metrics.mean_squared_error
+    mae:
+      _target_: sklearn.metrics.mean_absolute_error
+  
+  catboost:
+    mse:
+      _target_: sklearn.metrics.mean_squared_error
+    mae:
+      _target_: sklearn.metrics.mean_absolute_error

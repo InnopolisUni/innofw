@@ -1,0 +1,21 @@
+name: Regression
+description: Calculates MSE and l1
+task:
+  - image-regression
+  - table-regression
+
+implementations:
+  #  torch:
+  #    #    type: functions  # classes should be instantiated right away, but functions should be instantiated only during call
+  #    function:
+  #      mse:
+  #        _target_: torch.nn.functional.mse_loss
+  #      l1:
+  #        _target_: torch.nn.functional.l1_loss
+  sklearn:
+    mse:
+      function:
+        _target_: sklearn.metrics.mean_squared_error
+    l1:
+      function:
+        _target_: sklearn.metrics.mean_absolute_error

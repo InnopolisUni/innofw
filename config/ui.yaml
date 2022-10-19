@@ -1,0 +1,32 @@
+defaults:
+  - _self_
+  - datasets:
+  - models:
+  - trainer: auto
+  - metrics: auto
+  - losses: auto
+  - optimizers: auto
+  - schedulers: auto
+  - augmentations: none
+  - loggings: auto
+  - callbacks: auto
+  - initializations:
+  - experiments: ???
+  - clear_ml: disabled
+
+#experiment_name: ???
+project: ???  # todo: describe this field
+task: ???
+random_seed:
+epochs:
+batch_size:
+weights_path:
+weights_freq:
+ckpt_path:
+stop_param:
+
+accelerator: gpu
+#devices: 1
+gpus: 1
+
+original_work_dir: ${hydra:runtime.cwd}

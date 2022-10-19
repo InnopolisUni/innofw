@@ -1,0 +1,18 @@
+task:
+  - image-detection
+
+name: wheat dataset
+description: "Global Wheat Detection dataset 
+links: www.kaggle.com/code/dangnam739/faster-rcnn-global-wheat-detection, https://arxiv.org/abs/2005.02162"
+
+markup_info: There is a total of 3422 unique train images
+date_time: 26.07.2022
+_target_: innofw.core.datamodules.lightning_datamodules.detection_coco.CocoLightningDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/global_wheat_detection/train.zip
+  target: ./data/wheat/train/
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/global_wheat_detection/test.zip
+  target: ./data/wheat/test/
+val_size: 0.2

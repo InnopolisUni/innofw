@@ -1,0 +1,2 @@
+class NonUniqueException(Exception):
+    pass

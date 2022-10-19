@@ -1,0 +1,5 @@
+_target_: segmentation_models_pytorch.DeepLabV3Plus
+description: Base DeepLabV3Plus segmentation model with 4 channels input
+name: DeepLabV3Plus
+in_channels: 4
+classes: 1

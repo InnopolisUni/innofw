@@ -1,0 +1,23 @@
+task:
+  - table-regression
+
+name: mcl1
+description: https://en.wikipedia.org/wiki/MCL1
+
+markup_info: Информация о разметке
+date_time: 18.06.2019
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/mcl1/train.zip
+  target: ./data/mcl1/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/mcl1/test.zip
+  target: ./data/mcl1/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/mcl1/test.zip
+  target: ./data/mcl1/test
+smiles_col: Smiles
+target_col: Standard Value
+val_size: 0.2

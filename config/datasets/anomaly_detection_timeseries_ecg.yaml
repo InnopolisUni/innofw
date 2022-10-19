@@ -1,0 +1,38 @@
+task:
+  - anomaly-detection-timeseries
+
+name: ecg
+description: "
+The original dataset for ECG5000 is a 20-hour long ECG downloaded from Physionet. 
+Donated By:  Y. Chen , E. Keogh
+link: http://timeseriesclassification.com/description.php?Dataset=ECG5000
+"
+
+markup_info: "
+Train Size	Test Size	Length	Number of Classes	Number of Dimensions
+  500	      4500	     140	        5	                  1  
+"
+date_time: 03.08.2022
+
+_target_: innofw.core.datamodules.lightning_datamodules.anomaly_detection_timeseries_dm.TimeSeriesLightningDataModule
+###### Case: remote data #####
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/ECG/train.zip
+  target: ./data/ECG/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip
+  target: ./data/ECG/test
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/ECG/infer.zip
+  target: /tmp/data/ECG/infer
+
+##############################
+###### Case: local data ######
+#train:
+#  source: /local/path/train.csv
+#test:
+#  source: /local/path/test.csv
+##############################
+
+#target_col: target

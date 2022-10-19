@@ -1,0 +1,3 @@
+name: linear_regression
+description: linear regression model
+_target_: sklearn.linear_model.LinearRegression

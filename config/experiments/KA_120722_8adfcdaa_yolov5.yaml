@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - override /models: yolov5
+  - override /datasets: detection_lep
+
+
+project: "lep"
+task: "image-detection"
+random_seed: 42
+epochs: 1
+batch_size: 2
+weights_freq: 1

@@ -1,0 +1,4 @@
+name: siamese network
+description: siamese network
+
+_target_: innofw.core.models.torch.architectures.one_shot_learning.siamese.SiameseNetwork

@@ -1,0 +1,16 @@
+name: MSE
+description: Mean squared error measures the average of the squares of the errors
+task:
+  - regression
+
+implementations:
+  sklearn:
+    mse:
+      weight: 1.0
+      function:
+        _target_: sklearn.metrics.mean_squared_error
+  torch:
+    mse:
+      weight: 1.0
+      object:
+        _target_: torch.nn.MSELoss

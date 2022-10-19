@@ -1,0 +1,4 @@
+name: faster_rcnn
+description: faster rcnn
+_target_: innofw.core.models.torch.architectures.detection.faster_rcnn.FasterRcnnModel
+num_classes: 10

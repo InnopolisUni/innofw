@@ -1,0 +1,15 @@
+name: CrossEntropy and MSE
+description: Average of  CrossEntropy and MSE Losses
+task:
+  - image-detection
+
+implementations:
+  torch:
+    CrossEntropy:
+        weight: 0.5
+        object:
+          _target_: torch.nn.functional.cross_entropy
+    MSE:
+        weight: 0.5
+        function:
+          _target_: torch.nn.functional.mse_loss

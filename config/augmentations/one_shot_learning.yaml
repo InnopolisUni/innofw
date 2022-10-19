@@ -1,0 +1,21 @@
+task:
+  - one-shot-learning
+
+implementations:
+  torch:
+    Compose:
+      object:
+        # todo: here should be a division to train, test and val sets
+        _target_: torchvision.transforms.Compose
+        transforms:
+          - _target_: torchvision.transforms.ToPILImage
+          - _target_: torchvision.transforms.Resize
+            size:
+              - 100
+              - 100
+          - _target_: torchvision.transforms.RandomHorizontalFlip
+            p: 0.5
+          - _target_: torchvision.transforms.ToTensor
+          - _target_: torchvision.transforms.Normalize
+            mean: 0.5
+            std: 0.5

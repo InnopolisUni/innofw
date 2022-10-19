@@ -1,0 +1,5 @@
+name: xgboost_regressor
+description: XGboost regression model
+_target_:
+n_estimators: 30
+eval_metric: mae

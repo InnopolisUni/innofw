@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - override /models: linear_regression
+  - override /datasets: regression_house_prices
+
+project: "house_prices"
+ckpt_path:
+task: "table-regression"

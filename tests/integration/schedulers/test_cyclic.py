@@ -1,0 +1,43 @@
+# other
+import pytest
+from omegaconf import DictConfig
+from segmentation_models_pytorch import Unet
+
+# local
+from innofw.constants import Frameworks
+from innofw.utils.framework import get_obj
+
+
+def test_scheduler_creation():
+    cfg = DictConfig(
+        {
+            "optimizers": {
+                "task": ["all"],
+                "implementations": {
+                    "torch": {
+                        "SGD": {"object": {"_target_": "torch.optim.SGD", "lr": 1e-5}},
+                    }
+                },
+            },
+            "schedulers": {
+                "task": ["all"],
+                "implementations": {
+                    "torch": {
+                        "CosineAnnealingWarmRestarts": {
+                            "object": {
+                                "_target_": "torch.optim.lr_scheduler.CosineAnnealingWarmRestarts",
+                                "T_0": 10,
+                                "T_mult": 1,
+                                "eta_min": 3e-6,
+                            }
+                        },
+                    }
+                },
+            },
+        }
+    )
+    task = "image-segmentation"
+    framework = Frameworks.torch
+    model = Unet()
+    optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    scheduler = get_obj(cfg, "schedulers", task, framework, optimizer=optim)

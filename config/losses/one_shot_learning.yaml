@@ -1,0 +1,10 @@
+task:
+  - one-shot-learning
+
+implementations:
+  torch:
+    ContrastiveLoss:
+      weight: 1
+      object: # can be `function`
+        _target_: innofw.core.losses.contrastive_loss.ContrastiveLoss
+        margin: 2.0

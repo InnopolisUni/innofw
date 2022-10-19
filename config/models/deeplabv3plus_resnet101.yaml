@@ -1,0 +1,7 @@
+_target_: segmentation_models_pytorch.DeepLabV3Plus
+description: DeepLabV3Plus segmentation model with Resnet101 encoder
+name: DeepLabV3Plus + Resnet101
+encoder_name: resnet101
+in_channels: 36
+classes: 1
+activation: sigmoid

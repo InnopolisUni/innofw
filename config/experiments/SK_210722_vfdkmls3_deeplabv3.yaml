@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - override /models: deeplabv3plus.yaml
+  - override /datasets: segmentation_arable_inference.yaml
+  - override /optimizers: adam.yaml
+  - override /losses: segmentation_losses
+  - override /augmentations: segmentation_inference
+  - override /initializations: he
+
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+weights_freq: 1
+batch_size: 10

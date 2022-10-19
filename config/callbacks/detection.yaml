@@ -1,0 +1,8 @@
+task:
+  - image-detection
+
+implementations:
+  torch:
+    tensorboard_predictions_saver:
+      _target_: innofw.callbacks.lightning_callbacks.detection.log_predictions.LogPredictionsDetectionCallback
+      logging_batch_interval: 10

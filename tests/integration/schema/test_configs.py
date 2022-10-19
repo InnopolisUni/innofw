@@ -1,0 +1,93 @@
+#
+import pytest
+import logging
+import yaml
+
+#
+import hydra
+from omegaconf import DictConfig
+
+#
+from innofw.constants import Frameworks
+from innofw.utils import get_project_root
+from innofw.schema.model import ModelConfig
+from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
+from innofw.utils.framework import (
+    map_model_to_framework,
+    get_obj,
+    get_losses,
+    get_callbacks,
+    get_model,
+    get_datamodule,
+    get_ckpt_path,
+    get_experiment,
+)
+
+config_path = get_project_root() / "config"
+
+models_config_path = config_path / "models"
+datasets_config_path = config_path / "datasets"
+experiments_config_path = config_path / "experiments"
+
+models_config_files = [[item] for item in models_config_path.iterdir()]
+datasets_config_files = []
+experiment_config_files = [[item] for item in experiments_config_path.iterdir()]
+
+for item in datasets_config_path.iterdir():
+    if not any(
+        [i in str(item) for i in {"_infer", "tmqm", "qm9", "brain", "lung"}]
+    ):  # todo: fix this
+        datasets_config_files.append([item])
+
+
+@pytest.mark.parametrize(["model_config_file"], models_config_files)
+def test_models(model_config_file):
+    with open(model_config_file, "r") as f:
+        model_config = DictConfig(yaml.safe_load(f))
+        get_model(model_config, base_trainer_on_cpu_cfg)
+
+
+@pytest.mark.skip(reason="some problems with dataset downloading")
+@pytest.mark.parametrize(["dataset_config_file"], datasets_config_files)
+def test_datasets(dataset_config_file, tmp_path):
+    with open(dataset_config_file, "r") as f:
+        dataset_config = DictConfig(yaml.safe_load(f))
+
+        for stage in ["train", "test", "infer"]:
+            try:
+                dataset_config[stage]["target"] = tmp_path / stage
+            except:
+                pass
+
+        logging.info(dataset_config)
+
+        dm = None
+
+        for framework in Frameworks:
+            try:
+                dm = get_datamodule(dataset_config, framework)
+                break
+            except Exception as e:
+                logging.exception(e)
+
+        assert dm is not None
+
+        # tmp_path.rmdir()
+
+
+@pytest.mark.skip(reason="some problems with dataset downloading")
+@pytest.mark.parametrize(["experiment_config_file"], experiment_config_files)
+def test_experiments(experiment_config_file):
+    from hydra import compose, initialize
+    from hydra.core.global_hydra import GlobalHydra
+
+    GlobalHydra.instance().clear()
+    initialize(config_path="../../../config", job_name="test_app")
+    cfg = compose(
+        config_name="train",
+        overrides=[f"experiments={experiment_config_file.stem}"],
+        return_hydra_config=True,
+    )
+    get_experiment(cfg)
+    # cfg = OmegaConf.to_yaml(cfg)
+    # logging.info(cfg)

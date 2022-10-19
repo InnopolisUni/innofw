@@ -1,0 +1,23 @@
+# aka cross-entropy loss
+name: Cross-entropy
+description: Measures the performance of a classification model whose output is a probability value between 0 and 1
+requirements:
+  task:
+    - classification
+  framework:
+    - sklearn
+    - torch
+
+
+objects:
+  sklearn:
+    mse:
+      weight: 1.0
+      function:
+        _target_: sklearn.metrics.log_loss  # todo: tackle functions too
+
+  torch:
+    mse:
+      weight: 1.0
+      function:  # should be class
+          _target_: torch.nn.CrossEntropyLoss

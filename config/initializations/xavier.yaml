@@ -1,0 +1,12 @@
+name: Xavier
+description: Xavier initialization works better for layers with sigmoid activation.task
+task:
+  - all
+
+implementations:
+  torch:
+    He:
+      object:
+        _target_: innofw.utils.weights_initializations.WeightInitializer
+        init_func:
+          _target_: torch.nn.init.xavier_uniform_

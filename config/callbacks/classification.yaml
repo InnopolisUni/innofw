@@ -1,0 +1,21 @@
+requirements:
+  task:
+    - table-classification
+  framework:
+    - xgboost
+    - sklearn
+
+objects:
+  xgboost:
+    accuracy:
+      _target_: sklearn.metrics.accuracy_score
+    f_one:
+      _target_: sklearn.metrics.f1_score
+      average: macro
+
+  sklearn:
+    accuracy:
+      _target_: sklearn.metrics.accuracy_score
+    f_one:
+      _target_: sklearn.metrics.f1_score
+      average: macro

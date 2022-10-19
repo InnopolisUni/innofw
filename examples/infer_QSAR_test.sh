@@ -1,0 +1,1 @@
+python infer.py experiments=GR_050822_AGgrv2Dg_catboost_regressor_qm9 ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/catboost_regression_qm9.pickle

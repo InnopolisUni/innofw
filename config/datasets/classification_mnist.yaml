@@ -1,0 +1,22 @@
+task:
+  - image-classification
+
+name: mnist
+description: "Набор данных для классификации цифр mnist
+Citation: Deng, L. (2012). The mnist database of handwritten digit images for machine learning research. 
+IEEE Signal Processing Magazine, 29(6), 141–142."
+
+markup_info: Набор данных содержит 10 классов изображений(цифры 0-9)
+date_time: 01.08.2022
+
+_target_: innofw.core.datamodules.lightning_datamodules.image_folder_dm.ImageLightningDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/mnist/train.zip
+  target: ./data/mnist/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/mnist/test.zip
+  target: ./data/mnist/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/mnist/infer.zip
+  target: ./data/mnist/infer

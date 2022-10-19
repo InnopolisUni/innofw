@@ -1,0 +1,2 @@
+experiment_name=SK_210722_vfdkmls3_deeplabv3
+python train.py experiments=$experiment_name

@@ -1,0 +1,30 @@
+task:
+  - table-regression
+
+name: industry data
+description: Experimental industry data
+
+markup_info: Информация о разметке
+date_time: 21.07.2022
+
+_target_: innofw.core.datamodules.pandas_datamodules.PandasDataModule
+###### Case: remote data #####
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/industry_data/train.zip
+  target: ./data/industry_data/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/industry_data/test.zip
+  target: ./data/industry_data/test
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/industry_data/test.zip
+  target: ./data/industry_data/infer
+##############################
+###### Case: local data ######
+#train:
+#  source: /local/path/train.csv
+#test:
+#  source: /local/path/test.csv
+##############################
+val_size: 0.2
+target_col: Время окисления, ч

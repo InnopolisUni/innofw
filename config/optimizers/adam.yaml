@@ -1,0 +1,11 @@
+name: Adam
+description: Base optimizer suitable for most of the tasks
+task:
+  - all
+
+implementations:
+  torch:
+    Adam:
+      function:
+        _target_: torch.optim.Adam
+        lr: 1e-5

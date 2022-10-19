@@ -1,0 +1,18 @@
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    Compose:
+      object:
+        _target_: albumentations.Compose
+        transforms:
+          - _target_: albumentations.augmentations.transforms.Normalize
+            mean: 0.5
+            std: 0.25
+          - _target_: albumentations.RandomBrightnessContrast
+            brightness_limit:
+              - -0.03
+              - 0.05
+            contrast_limit: 0.5
+          - _target_: albumentations.pytorch.transforms.ToTensorV2

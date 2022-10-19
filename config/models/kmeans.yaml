@@ -1,0 +1,8 @@
+name: kmeans
+description: kmeans model by scikit-learn
+
+_target_: sklearn.cluster.KMeans
+
+n_clusters: 10
+init: random  # todo: should I move it to initializations?
+max_iter: 300

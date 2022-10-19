@@ -1,0 +1,14 @@
+target_col: Index
+train:
+  source: tests/data/tabular/bmi/bmi_prep.csv
+test:
+  source: tests/data/tabular/bmi/bmi_prep.csv
+
+name: test table classification
+description: "Source: https://www.kaggle.com/yersever/500-person-gender-height-weight-bodymassindex"
+markup_info: Информация о разметке
+date_time: 03.09.2030
+
+task:
+  - table-classification
+

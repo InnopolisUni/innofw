@@ -1,0 +1,1 @@
+python train.py experiments=SK_010822_jvslrmvk_resnet.yaml

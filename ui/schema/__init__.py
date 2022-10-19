@@ -1,0 +1,2 @@
+from .kneighbors_classifier import KNeighborsClassifierSchema
+from .linear_regression import LinearRegressionSchema

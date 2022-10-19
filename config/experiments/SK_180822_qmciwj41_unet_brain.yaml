@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - override /models: unet
+  - override /datasets: segmentation_brain.yaml
+  - override /augmentations: segmentation_stroke.yaml
+  - override /losses: segmentation_losses.yaml
+models:
+  in_channels: 1
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+stop_param: 10
+epochs: 300
+weights_freq: 1
+batch_size: 10

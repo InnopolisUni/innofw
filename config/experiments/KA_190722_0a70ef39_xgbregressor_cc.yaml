@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: xgboost_regressor
+  - override /datasets: regression_credit_cards
+  - override /callbacks: regression
+
+
+project: "credit_cards"
+task: "table-regression"
+random_seed: 42

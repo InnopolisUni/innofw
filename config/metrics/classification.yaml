@@ -1,0 +1,20 @@
+name: Classification
+description: Calculate Accuracy, Precision and recall
+requirements:
+  task:
+    - image-classification
+    - table-classification
+  framework:
+    - torch
+    - xgboost
+
+objects:
+  torch:
+    type: functions  # classes should be instantiated right away, but functions should be instantiated only during call
+    functions:
+      accuracy:
+        _target_: segmentation_models_pytorch.metrics.accuracy
+      precision:
+        _target_: segmentation_models_pytorch.metrics.precision
+      recall:
+        _target_: segmentation_models_pytorch.metrics.recall

@@ -1,0 +1,12 @@
+name: he
+description: He initialization works better for layers with ReLu activation.task
+task:
+  - all
+
+implementations:
+  torch:
+    He:
+      object:
+        _target_: innofw.utils.weights_initializations.WeightInitializer
+        init_func:
+          _target_: torch.nn.init.kaiming_uniform_

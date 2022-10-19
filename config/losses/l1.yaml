@@ -1,0 +1,11 @@
+task:
+  - anomaly-detection-timeseries
+
+implementations:
+  torch:
+    L1Loss:
+      weight: 1.0
+      reduction: "sum"
+      object: # can be `function`
+        _target_: torch.nn.L1Loss
+

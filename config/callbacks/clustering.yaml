@@ -1,0 +1,7 @@
+task:
+  - table-clustering
+
+implementations:
+  sklearn:
+    silhouette_score:
+      _target_: sklearn.metrics.silhouette_score

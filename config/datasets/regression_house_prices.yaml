@@ -1,0 +1,31 @@
+task:
+  - table-regression
+
+name: house prices
+description: "Link: https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data"
+
+markup_info: Информация о разметке
+date_time: 21.07.2022
+
+_target_: innofw.core.datamodules.pandas_datamodules.RegressionPandasDataModule
+###### Case: remote data #####
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/house_prices/train.zip
+  target: ./data/house_prices/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/house_prices/test.zip
+  target: ./data/house_prices/test
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/house_prices/infer.zip
+  target: ./data/house_prices/infer
+
+##############################
+###### Case: local data ######
+#train:
+#  source: /local/path/train.csv
+#test:
+#  source: /local/path/test.csv
+##############################
+
+target_col: price

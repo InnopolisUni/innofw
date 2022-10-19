@@ -1,0 +1,21 @@
+name: ELBO
+description: Evidence lower bound
+task:
+  - text-vae
+  - text-vae-forward
+  - text-vae-reverse
+
+implementations:
+  torch:
+    mse:
+      weight: 1.0
+      object:
+        _target_: torch.nn.MSELoss
+    target_loss:
+      weight: 1.0
+      object:
+        _target_: torch.nn.MSELoss
+    kld:
+      weight: 0.1
+      object:
+        _target_: innofw.core.losses.kld.KLD

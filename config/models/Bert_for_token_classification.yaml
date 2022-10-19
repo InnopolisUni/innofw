@@ -1,0 +1,10 @@
+name: biobert-ner
+description: bert for token classification biobert-base-cased-v1.2
+
+_target_: innofw.core.models.torch.architectures.token_classification.biobert_ner.BiobertNer
+model:
+  _target_: transformers.BertForTokenClassification.from_pretrained
+  pretrained_model_name_or_path: dmis-lab/biobert-base-cased-v1.2
+tokenizer:
+  _target_: transformers.BertTokenizerFast.from_pretrained
+  pretrained_model_name_or_path: dmis-lab/biobert-base-cased-v1.2

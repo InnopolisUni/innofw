@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: catboost_regression
+  - override /datasets: mcl1
+  - override /callbacks: regression
+  
+project: "mcl1"
+task: "table-regression"
+random_seed: 42
+original_work_dir: ${hydra:runtime.cwd}

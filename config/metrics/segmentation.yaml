@@ -1,0 +1,19 @@
+name: Segmentation
+description: Calculates f1 score, Jaccard index and precision
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    F1_score:
+      function:
+        _target_: torchmetrics.functional.f1_score
+        num_classes: 2
+    IOU_score:
+      object:
+        _target_: torchmetrics.JaccardIndex
+        num_classes: 2
+    Precision:
+      object:
+        _target_: torchmetrics.Precision
+        num_classes: 2

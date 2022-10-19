@@ -1,0 +1,5 @@
+#name: auto
+#description: trainer will be selected according to the defaults
+accelerator: cpu  # gpu
+
+devices: 0

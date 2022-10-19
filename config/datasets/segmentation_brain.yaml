@@ -1,0 +1,18 @@
+_target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DicomDirSegmentationLightningDataModule
+date_time: 30.09.2022
+description: stroke segmentation dataset
+markup_info: segmentation masks
+name: stroke segmentation
+task:
+  - image-segmentation
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/test.zip
+  target: ./data/stroke/test
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/train.zip
+  target: ./data/stroke/train
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/infer.zip
+  target: ./data/stroke/infer

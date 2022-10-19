@@ -1,0 +1,31 @@
+task:
+  - image-detection
+
+name: detection_rotten_fruits
+description: Набор данных содержит фото гнилых и свежих фруктов
+
+markup_info: Набор данных содержит разметку bounding box, под формат детекции гнилых фруктов.
+date_time: 19.07.2022
+
+#_target_: innofw.core.datamodules.lightning_datamodules.YOLOv5DataModule
+_target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/detection_rotten_fruits/train.zip
+  target: /tmp/rotten_fruits/train
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/detection_rotten_fruits/test.zip
+  target: /tmp/rotten_fruits/test
+
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 800
+num_classes: 4
+names:
+  - apple_fresh
+  - apricot_fresh
+  - apple_rotten
+  - apricot_rotten
