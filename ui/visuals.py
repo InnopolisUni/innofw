@@ -3,8 +3,8 @@ import streamlit as st
 
 import albumentations as A
 
-from control import param2func
-from utils import get_images_list, load_image, upload_image
+from .control import param2func
+from .utils import get_images_list, load_image, upload_image
 
 
 def show_logo():
