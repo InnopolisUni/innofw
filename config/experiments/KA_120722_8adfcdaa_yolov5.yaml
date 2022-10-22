@@ -2,6 +2,7 @@
 defaults:
   - override /models: yolov5
   - override /datasets: detection_lep
+  - override /optimizers: adam
 
 
 project: "lep"
