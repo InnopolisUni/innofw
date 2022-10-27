@@ -1,0 +1,10 @@
+name: Detection
+description: Calculates MAP
+task:
+  - image-detection
+
+implementations:
+  torch:
+    MAP:
+      object:
+        _target_: torchmetrics.detection.mean_ap.MeanAveragePrecision
