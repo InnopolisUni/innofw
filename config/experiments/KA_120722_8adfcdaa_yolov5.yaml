@@ -2,7 +2,8 @@
 defaults:
   - override /models: yolov5
   - override /datasets: detection_lep
-
+  - override /metrics: detection
+  - override /optimizers: sgd
 
 project: "lep"
 task: "image-detection"
