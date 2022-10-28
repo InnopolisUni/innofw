@@ -430,8 +430,19 @@ References:
 
 [//]: # (cfg -> adapted_model .fit # under the hood calls train function of underlying library/framework)
 
+
 [//]: # (.test # under the hood calls train function of underlying library/framework)
 
 [//]: # (.val # under the hood calls train function of underlying library/framework)
 
 [//]: # (.predict # under the hood calls train function of underlying library/framework)
+
+## Section 6. Versioning rules
+1) Framework versions must be specified in X.Y.Z format, where:
+‒ X – older version (updates in case of big changes);
+‒ Y – younger version (updates in case of small changes);
+‒ Z - tiny changes (updates in case of tiny changes).
+2) When one of the numbers is increased, all numbers after it must be set to zero.
+3) Backward compatibility in software must be maintained in all versions with the same older version.
+
+

@@ -13,4 +13,4 @@ original_work_dir: ${hydra:runtime.cwd}
 weights_freq: 1
 batch_size: 8
 stop_param: 1
-epochs: 300
+epochs: 1
