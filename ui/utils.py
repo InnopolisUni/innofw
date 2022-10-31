@@ -60,7 +60,7 @@ def upload_image(bgr2rgb: bool = True):
     return image
 
 
-#@st.cache
+# @st.cache
 def load_augmentations_config(
     placeholder_params: dict, path_to_config: str = "configs/augmentations.json"
 ) -> dict:
