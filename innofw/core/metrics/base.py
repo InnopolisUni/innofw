@@ -24,3 +24,4 @@ class BaseMetricAdapter(ABC, nn.Module):
     @abstractmethod
     def is_suitable_input(metric) -> bool:
         pass
+
