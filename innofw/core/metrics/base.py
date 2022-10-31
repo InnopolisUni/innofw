@@ -4,7 +4,6 @@ date: 12.08.22
 description:
 
 """
-
 #
 from abc import ABC, abstractmethod
 
