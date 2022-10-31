@@ -10,5 +10,5 @@ task: "anomaly-detection-timeseries"
 random_seed: 42
 batch_size: 4
 weights_freq: 1
-
+epochs: 1
 
