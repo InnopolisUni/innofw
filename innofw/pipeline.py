@@ -27,6 +27,7 @@ from innofw.constants import Stages
 # from innofw.utils.clear_ml import setup_clear_ml  # todo(qb): why it is not needed?
 from innofw import InnoModel
 from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
+from innofw.utils.print_config import print_config_tree
 
 
 # log = utils.get_logger(
@@ -35,13 +36,13 @@ from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 
 # todo: add base_dir which will be passed as an argument to run_pipeline. E.g. run_pipeline(cfg, train=True, log_dir=tmp_dir)
 def run_pipeline(
-    cfg: DictConfig,
-    train=True,
-    test=False,
-    predict=False,
-    log_root: Optional[Path] = None,
+        cfg: DictConfig,
+        train=True,
+        test=False,
+        predict=False,
+        log_root: Optional[Path] = None,
 ) -> float:  # todo: should return a dict with metrics, model, path to logs ...
-
+    print_config_tree(cfg)
     try:
         hydra_cfg = HydraConfig.get()
         experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
