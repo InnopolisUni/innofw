@@ -8,7 +8,7 @@ from innofw.core.optimizers import register_optimizers_adapter
 from innofw.core.optimizers.base import BaseOptimizerAdapter
 
 
-@register_optimizers_adapter("torch_adapter")
+@register_optimizers_adapter("custom_adapter")
 class CustomAdapter(BaseOptimizerAdapter):
     def __init__(self, optimizer, *args, **kwargs):
         super().__init__(optimizer.optimizer)

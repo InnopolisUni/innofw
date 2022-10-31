@@ -17,5 +17,4 @@ class CustomAdapter(BaseMetricAdapter):
         return False
 
     def forward(self, *args, **kwargs):
-        self.metric = self.metric()
         return self.metric(*args, **kwargs)
