@@ -7,5 +7,5 @@ implementations:
   torch:
     SGD:
       function:
-        _target_: torch.optim.SGD
+        _target_: innofw.core.optimizers.custom_optimizers.optimizers.SGD
         lr: 1e-5
