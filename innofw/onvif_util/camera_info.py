@@ -3,7 +3,7 @@ from onvif import ONVIFCamera
 from typing import Optional
 
 
-def get_camera_info(ip, port, user: Optional[str], password:  Optional[str]):
+def get_camera_info(ip, port, user: Optional[str], password: Optional[str]):
     # Создаём объект с указанием хоста, порта, пользователя, пароля и пути до wsdl
     user = str(user)
     password = str(password)

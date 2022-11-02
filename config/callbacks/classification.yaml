@@ -8,7 +8,7 @@ requirements:
 objects:
   xgboost:
     accuracy:
-      _target_: sklearn.metrics.accuracy_score
+      _target_: innofw.core.metrics.custom_metrics.metrics.Accuracy
     f_one:
       _target_: sklearn.metrics.f1_score
       average: macro
