@@ -40,7 +40,6 @@ if __name__ == "__main__":
     # instantiate the augmentations
     # show a textarea with config file contents
 
-
     import os
     import sys
     import random
@@ -49,7 +48,9 @@ if __name__ == "__main__":
     import argparse
     import os
 
-    parser = argparse.ArgumentParser(description="This app provides UI for the framework")
+    parser = argparse.ArgumentParser(
+        description="This app provides UI for the framework"
+    )
 
     parser.add_argument("experiments", default="ui.yaml", help="Config name")
     try:
@@ -76,14 +77,11 @@ if __name__ == "__main__":
     if "indices" not in st.session_state:
         st.session_state.indices = None
 
-
     def callback():
         st.session_state.conf_button_clicked = True
 
-
     def callback_new_batch():
         st.session_state.new_batch_btn_clicked = True
-
 
     # if st.sidebar.button("Configure!", on_click=callback) or st.session_state.conf_button_clicked:
 
@@ -99,7 +97,6 @@ if __name__ == "__main__":
     # batch_size = st.sidebar.slider("batch size:", value=3, min_value=1, max_value=16)
     # prep_func_type = st.sidebar.selectbox('preprocessing function:', prep_funcs.keys())
 
-
     # get the list of transformations names
     interface_type = "Simple"  # todo:
     # transform_names = select_transformations(augmentations, interface_type)
@@ -112,11 +109,11 @@ if __name__ == "__main__":
     from hydra import compose, initialize
     import hydra
 
-    #hydra.core.global_hydra.GlobalHydra.instance().clear()
+    # hydra.core.global_hydra.GlobalHydra.instance().clear()
     selected_aug = None
     aug_conf = None
 
-    #from hydra.core.global_hydra import GlobalHydra
+    # from hydra.core.global_hydra import GlobalHydra
 
     # GlobalHydra.instance().clear()
 
@@ -190,7 +187,9 @@ if __name__ == "__main__":
         try:
             # st.info("initializing augmentations")
             selected_aug = Augmentation(get_obj(cfg, "augmentations", task, framework))
-            aug_conf = cfg["augmentations"]["implementations"]["torch"]["Compose"]["object"]
+            aug_conf = cfg["augmentations"]["implementations"]["torch"]["Compose"][
+                "object"
+            ]
             # selected_aug = hydra.utils.instantiate(aug_conf)
         except Exception as e:
             st.warning(f"unable to process the train.yaml file. {e}")

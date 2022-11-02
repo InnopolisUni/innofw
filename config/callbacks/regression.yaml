@@ -7,12 +7,16 @@ implementations:
       _target_: sklearn.metrics.mean_squared_error
     mae:
       _target_: sklearn.metrics.mean_absolute_error
+    r2:
+      _target_: innofw.core.metrics.custom_metrics.metrics.R2
 
   sklearn:
     mse:
       _target_: sklearn.metrics.mean_squared_error
     mae:
       _target_: sklearn.metrics.mean_absolute_error
+    r2:
+      _target_: innofw.core.metrics.custom_metrics.metrics.R2
   
   catboost:
     mse:
