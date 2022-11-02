@@ -1,7 +1,8 @@
-PWD=$(pwd)
-current_dir=${PWD##*/}
-if [ $current_dir="examples" ]; then
-  cd ..
-fi
-experiment_name=IM_190722_vwer3f23_oneshotlearning
-streamlit run ui/pages/Аугментация.py -- $experiment_name
+for %%I in (.) do set current_dir=%%~nxI
+
+if %current_dir%=="examples" (
+ cd ..
+ )
+ 
+
+streamlit run ui\pages\Аугментация.py -- IM_190722_vwer3f23_oneshotlearning
