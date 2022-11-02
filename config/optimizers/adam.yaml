@@ -7,5 +7,5 @@ implementations:
   torch:
     Adam:
       function:
-        _target_: torch.optim.Adam
+        _target_: innofw.core.optimizers.custom_optimizers.optimizers.ADAM
         lr: 1e-5
