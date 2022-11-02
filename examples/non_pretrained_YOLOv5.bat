@@ -1,0 +1,1 @@
+python train.py experiments=KA_120722_8adfcdaa_yolov5_non_pretrained
