@@ -1,0 +1,1 @@
+python innofw\zoo\show_model_metadata.py --ckpt_path tests\weights\catboost_industry_data\model.pickle
