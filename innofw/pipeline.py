@@ -77,6 +77,7 @@ def run_pipeline(
     datamodule = get_datamodule(
         cfg.datasets,
         framework,
+        task=task,
         stage=data_stage,
         augmentations=augmentations,
         batch_size=cfg.get("batch_size"),

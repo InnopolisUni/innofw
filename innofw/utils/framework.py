@@ -167,6 +167,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
 from innofw.schema.model import ModelConfig
 from innofw.schema.dataset import DatasetConfig
 from innofw.schema.experiment import ExperimentConfig
+import logging
 
 
 def get_model(cfg, trainer_cfg):
@@ -176,9 +177,13 @@ def get_model(cfg, trainer_cfg):
     )  # todo: make model_datacls.models call more configurable
 
 
-def get_datamodule(cfg, framework: Frameworks, *args, **kwargs):
+def get_datamodule(cfg, framework: Frameworks, task, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
     datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
+    logging.info(f"__{task} -- {datamodule.task}")
+    if task not in datamodule.task:
+        raise ValueError("Wrong task provided")
+
     if framework not in datamodule.framework:
         raise ValueError("Wrong framework provided")
     return datamodule
