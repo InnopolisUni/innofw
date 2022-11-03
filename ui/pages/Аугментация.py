@@ -114,7 +114,6 @@ if __name__ == "__main__":
     aug_conf = None
 
     # from hydra.core.global_hydra import GlobalHydra
-
     # GlobalHydra.instance().clear()
 
     # load the config
@@ -122,7 +121,10 @@ if __name__ == "__main__":
         None, str(Path("ui/augmentations.json").resolve())  # placeholder_params
     )
 
-    initialize(config_path="../../config/", version_base="1.1")
+    try:
+        initialize(config_path="../../config/", version_base="1.1")
+    except:
+        pass
     cfg = compose(
         config_name="train",
         overrides=[f"experiments={args.experiments}"],
