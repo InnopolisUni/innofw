@@ -176,6 +176,12 @@ class YOLOV5Adapter(BaseModelAdapter):
     def update_checkpoints_path(self):
         try:
             (self.log_dir / "weights").rename(self.log_dir / "checkpoints")
+
+            try:
+                dst_path = list((self.log_dir / "checkpoints").iterdir())[0]
+                logging.info(f"Saved a checkpoint at: {dst_path}")
+            except:
+                pass
         except Exception as e:
             pass
             # print(e)

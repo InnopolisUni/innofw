@@ -14,6 +14,7 @@ from innofw.core.datamodules.base import BaseDataModule
 
 class YOLOV5DataModuleAdapter(BaseDataModule):
     framework = [Frameworks.torch]
+    task = ["image-detection"]
 
     def predict_dataloader(self):
         pass
