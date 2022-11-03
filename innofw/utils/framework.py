@@ -180,7 +180,6 @@ def get_model(cfg, trainer_cfg):
 def get_datamodule(cfg, framework: Frameworks, task, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
     datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
-    logging.info(f"__{task} -- {datamodule.task}")
     if task not in datamodule.task:
         raise ValueError("Wrong task provided")
 
