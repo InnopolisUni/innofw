@@ -177,7 +177,7 @@ def get_model(cfg, trainer_cfg):
     )  # todo: make model_datacls.models call more configurable
 
 
-def get_datamodule(cfg, framework: Frameworks, task, *args, **kwargs):
+def get_datamodule(cfg, framework: Frameworks, task=None, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
     datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
     if task not in datamodule.task:
