@@ -9,6 +9,24 @@ import cv2
 
 
 class SegmentationDataset(Dataset):
+    """
+        A class to represent a custom Segmentation Dataset.
+
+        image_paths: Union[List[Path], List[str]]
+            directory containing images
+        bands_num : int
+            number of bands in one image
+        mask_paths: Optional[Union[List[Path], List[str]]] = None
+            directory containing masks
+        transforms: albu.Compose
+            list of transformations to be applied
+
+        Methods
+        -------
+        __getitem__(self, idx):
+            returns transformed image and mask as dict with "scenes" and "labels" keys
+    """
+
     def __init__(self, image_paths, mask_paths, transforms=None):
         self.imagePaths = list(Path(image_paths).iterdir())
         self.maskPaths = list(Path(mask_paths).iterdir())
