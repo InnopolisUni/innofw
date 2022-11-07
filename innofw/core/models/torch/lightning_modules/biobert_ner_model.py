@@ -8,6 +8,26 @@ from transformers import BertForTokenClassification, PreTrainedTokenizerBase
 
 
 class BiobertNERModel(pl.LightningModule):
+    """
+    A biobert ner model.
+
+    ...
+
+    Attributes
+    ----------
+    model : BertForTokenClassification
+        Instance of BertForTokenClassification
+    tokenizer : PreTrainedTokenizerBase
+        Instance of BertForTokenClassification
+    losses : int
+        ModuleList of losses
+
+    Methods
+    -------
+    configure_optimizers():
+        The configure_optimizers function is used to set up optimizers and schedulers.
+        It returns a list of optimizers and a list of schedulers.
+    """
     def __init__(
         self,
         model: dict,
@@ -96,6 +116,17 @@ class BiobertNERModel(pl.LightningModule):
 
 
 class BiobertNERModelWithBIO(BiobertNERModel):
+    """
+    The BiobertNERModel with BIO labels.
+
+    Methods
+    -------
+    _get_label_ids_by_matched_target(match_target_indexes, entities):
+        The _get_label_ids_by_matched_target function takes in a list of indexes that match the target entity, and returns
+        a list of label ids. The label ids are determined by the prefix (B- or I-) followed by the name of the entity. If no
+        entity is matched, then NA is used as a placeholder for &quot;not applicable&quot;. This function also handles cases where multiple
+        entities are matched to one token.
+    """
     def _get_label_ids_by_matched_target(self, match_target_indexes, entities):
         label_ids = []
         last_ind = None
