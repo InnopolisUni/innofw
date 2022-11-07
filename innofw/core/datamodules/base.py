@@ -30,7 +30,10 @@ class BaseDataModule(ABC):
 
         Methods
         -------
-
+        setup(stage: Stages = None, *args, **kwargs)
+            Sets up datasets for the stage
+        setup_infer():
+            Sets up inference dataset(s)
     """
     task = ["None"]
     framework = ["None"]  # todo: why ["None"]

@@ -29,7 +29,7 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
         train_dataloader()
             Returns torch.utils.data.Dataloader using the training dataset
 
-        predict_dataloader
+        predict_dataloader()
             Returns torch.utils.data.Dataloader using the inference dataset
     """
     framework: List[Union[str, Frameworks]] = [Frameworks.torch]
