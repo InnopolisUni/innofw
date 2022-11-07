@@ -38,7 +38,7 @@ class BaseDataModule(ABC):
     def __init__(
         self,
         train: Optional[Dict[str, str]] = None,
-        test: Optinal[Dict[str, str]] = None,
+        test: Optional[Dict[str, str]] = None,
         infer: Optional[Dict[str, str]] = None,
         stage: Stages = Stages.train,
         *args,

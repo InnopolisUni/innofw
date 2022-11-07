@@ -62,6 +62,7 @@ for file in os.listdir(os.path.dirname(__file__)):
         module = importlib.import_module("innofw.core.augmentations." + module_name)
 
 
+
 class Augmentation(nn.Module):
     def __init__(self, augmentations):
         super().__init__()
