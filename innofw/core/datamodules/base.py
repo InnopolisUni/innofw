@@ -43,28 +43,28 @@ class BaseDataModule(ABC):
         stage: Stages = Stages.train,
         *args,
         **kwargs,
-    ):"""
-    
-        Args:
-            train: Optional[Dict[str, str]] 
-                information about the train data location
-                dictionary should have two fields: `source`, `target`
-                `source` can be either url to zip file or path to the local folder
-                in case `source` is an url then `target` is a path where data should be download
-            test: Optional[Dict[str, str]]
-                information about the test data location
-                dictionary should have two fields: `source`, `target`
-                `source` can be either url to zip file or path to the local folder
-                in case `source` is an url then `target` is a path where data should be download
-            infer: Optional[Dict[str, str]]
-                information about the inference data location
-                dictionary should have two fields: `source`, `target`
-                `source` can be either url to zip file or path to the local folder
-                in case `source` is an url then `target` is a path where data should be download
-            stage: Stages
-                stage when the datamodule is being created
-            *args: 
-            **kwargs: 
+    ):
+        """
+            Args:
+                train: Optional[Dict[str, str]]
+                    information about the train data location
+                    dictionary should have two fields: `source`, `target`
+                    `source` can be either url to zip file or path to the local folder
+                    in case `source` is an url then `target` is a path where data should be download
+                test: Optional[Dict[str, str]]
+                    information about the test data location
+                    dictionary should have two fields: `source`, `target`
+                    `source` can be either url to zip file or path to the local folder
+                    in case `source` is an url then `target` is a path where data should be download
+                infer: Optional[Dict[str, str]]
+                    information about the inference data location
+                    dictionary should have two fields: `source`, `target`
+                    `source` can be either url to zip file or path to the local folder
+                    in case `source` is an url then `target` is a path where data should be download
+                stage: Stages
+                    stage when the datamodule is being created
+                *args:
+                **kwargs:
         """
         if stage != Stages.predict:
             self.train = self._get_data(train)
