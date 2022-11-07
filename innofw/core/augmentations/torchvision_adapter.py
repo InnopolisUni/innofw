@@ -20,7 +20,7 @@ class TorchvisionAdapter(BaseAugmentationAdapter):
     -------
     is_suitable_input(optimizer):
         checks if the augmentation is suitable for the adapter
-    def forward(x, y=None):
+    forward(x, y=None):
         performs transformations
     """
     def __init__(self, transforms, *args, **kwargs):
