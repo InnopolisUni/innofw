@@ -15,6 +15,24 @@ from innofw.core.datasets.rasterio import RasterioDataset
 
 
 class HDF5LightningDataModule(BaseLightningDataModule):
+    """Class defines hdf5 dataset preparation and dataloader creation for semantic segmentation
+
+        Attributes
+        ----------
+        task: List[str]
+            the task the datamodule is intended to be used for
+        framework: List[Union[str, Frameworks]]
+            the model framework the datamodule is designed to work with
+
+        Methods
+        -------
+        setup_train_test_val
+            finds hdf5 files
+            splits train data into train and validation sets
+            creates dataset objects
+        save_preds(preds, stage: Stages, dst_path: pathlib.Path)
+            saves predicted segmentation masks as file in the destination folder
+    """
     task = ["image-segmentation"]
     framework = [Frameworks.torch]
 

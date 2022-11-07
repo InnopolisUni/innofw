@@ -32,7 +32,6 @@ def collate_fn(batch):
 
 class CocoLightningDataModule(BaseLightningDataModule):
     task = ["image-detection"]
-    framework = [Frameworks.torch]
     dataset = CocoDataset
 
     def __init__(

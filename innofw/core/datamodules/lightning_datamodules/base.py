@@ -14,6 +14,24 @@ from innofw.core.datasets.image_infer import ImageFolderInferDataset
 
 
 class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
+    """
+        An abstract class to define interface and methods of datamodules for the torch framework
+
+        Attributes
+        ----------
+        framework: List[Union[str, Frameworks]]
+            the model framework the datamodule is designed to work with
+
+        Methods
+        -------
+        train_dataloader()
+            Returns torch.utils.data.Dataloader using the training dataset
+
+        predict_dataloader
+            Returns torch.utils.data.Dataloader using the inference dataset
+    """
+    framework: List[Union[str, Frameworks]] = [Frameworks.torch]
+
     def __init__(
         self,
         train,

@@ -19,7 +19,6 @@ datasets.disable_caching()
 
 class DrugprotDataModule(BaseLightningDataModule):
     task: List[str] = ["text-ner"]
-    framework: List[str] = [Frameworks.torch]
 
     def __init__(
         self,
