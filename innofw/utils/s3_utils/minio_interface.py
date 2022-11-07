@@ -69,10 +69,16 @@ def get_full_dst_path(
 
 class MinioInterface:
     """
-    creds = S3Credentials(ACCESS_KEY="", SECRET_KEY="")
-    client = MinioInterface("https://api.blackhole.ai.innopolis.university/", creds)
-    client.download_file(src_path="https://api.blackhole.ai.innopolis.university/public-datasets/lep/test.zip", dst_path=Path("./"))
+    Class used for working with data from s3 storage
+    Attributes
+    ----------
+    client:
+        minio client
 
+    Methods
+    -------
+    upload_file(src_path: FilePath, dst_path: AnyUrl, tags: Optional[dict] = None):
+        Method to upload file into minio server
     """
 
     def __init__(self, url, credentials):

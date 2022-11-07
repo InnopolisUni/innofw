@@ -11,6 +11,19 @@ references:
 
 @register_augmentations_adapter(name="albumentations_adapter")
 class AlbumentationsAdapter(BaseAugmentationAdapter):
+    """
+    Class that adapts albumentations transformations
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    is_suitable_input(optimizer):
+       checks if the augmentation is suitable for the adapter
+    def forward(x, y=None):
+        performs transformations
+    """
     def __init__(self, transforms, *args, **kwargs):
         super().__init__(transforms)
 

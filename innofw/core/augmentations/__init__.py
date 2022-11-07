@@ -63,6 +63,18 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 
 class Augmentation(nn.Module):
+    """
+    Class provides same interface for different augmentations libraries
+
+    Attributes
+    ----------
+    augs : adapter
+        selected augmentations adapter
+    Methods
+    -------
+    forward(x, y=None):
+        perform augmentation
+    """
     def __init__(self, augmentations):
         super().__init__()
         self.augs = get_augs_adapter(augmentations)
