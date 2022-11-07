@@ -9,7 +9,7 @@ from tests.fixtures.config.datasets import qm9_datamodule_cfg_w_target
 def test_smoke():
     # create a qsar datamodule
     fw = Frameworks.catboost
-    task = "table-regression"
+    task = "qsar-regression"
     sut: QsarDataModule = get_datamodule(qm9_datamodule_cfg_w_target, fw, task=task)
     assert sut is not None
 
@@ -23,7 +23,7 @@ def test_smoke():
 def test_train_datamodule(stage):
     # create a qsar datamodule
     fw = Frameworks.catboost
-    task = "table-regression"
+    task = "qsar-regression"
     sut: QsarDataModule = get_datamodule(qm9_datamodule_cfg_w_target, fw, task=task, stage=stage)
 
     # initialize train and test datasets

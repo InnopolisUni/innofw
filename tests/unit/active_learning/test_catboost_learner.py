@@ -8,7 +8,7 @@ from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
 
 def test_catboost_active_learner_creation():
     model = get_model(catboost_with_uncertainty_cfg_w_target, base_trainer_on_cpu_cfg)
-    task = "table-regression"
+    task = "qsar-regression"
     datamodule = get_datamodule(qm9_datamodule_cfg_w_target, Frameworks.catboost, task=task)
 
     sut = CatBoostActiveLearner(
