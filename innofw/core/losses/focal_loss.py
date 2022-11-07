@@ -5,7 +5,22 @@ from torch.nn.modules.loss import _Loss
 
 class FocalLoss(_Loss):
     """
-    Focal loss implementation from `https://gitlab.com/chemrar/Pubmed/-/blob/dev/pubmed/loss/focal_loss.py`
+        A class to represent a Focal Loss that uses implementation from
+        `https://gitlab.com/chemrar/Pubmed/-/blob/dev/pubmed/loss/focal_loss.py`
+
+        ...
+
+        Attributes
+        ----------
+
+        gamma: float
+            reduction type to use: mean, sum, none
+        weight: Iterable[float]
+            a manual rescaling weight
+        Methods
+        -------
+         forward(self, input: torch.Tensor, target: torch.Tensor):
+            computes loss function
     """
 
     def __init__(self, gamma=2, weight=None):

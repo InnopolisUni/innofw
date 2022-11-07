@@ -60,6 +60,9 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 
 class Loss(nn.Module):
+    '''
+        Inner loss adapter
+    '''
     def __init__(self, losses):
         super().__init__()
         self.loss = get_loss_adapter(losses)

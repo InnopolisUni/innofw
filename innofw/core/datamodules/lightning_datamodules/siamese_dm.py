@@ -19,6 +19,44 @@ from innofw.core.datamodules.lightning_datamodules.base import (
 
 
 class SiameseDataModule(BaseLightningDataModule):
+    """
+        A class to represent a Siamese DataModule. A DataModule standardizes the training, val, test splits, data preparation and transforms. The main
+    advantage is consistent data splits, data preparation and transforms across models.
+
+        ...
+
+        Attributes
+        ----------
+        train : SiameseDataset
+            train dataset of class SiameseDataset
+        test : SiameseDataset
+            test dataset of class SiameseDataset
+        infer : SiameseDataset
+            infer dataset of class SiameseDataset
+        batch_size : int
+            number of image pairs to be in batch
+        val_size : float
+            portion of train dataset to be left for validation step
+        num_workers : int
+            number of threads
+        augmentations: Iterable[albumentations.augmentations.transforms]
+            list of transformations
+        stage : Stages
+            any of Stages.train, Stages.test or Stages.infer
+
+        Methods
+        -------
+        setup_train_test_val(self, **kwargs):
+            splits train dataset on train and validation parts, assigns train test val fields and augmentations
+
+        setup_infer(self):
+            sets up predict_dataset field for infer stage
+
+        save_preds(self, preds, stage: Stages, dst_path: pathlib.Path)
+            saves prediction results to destination
+        """
+
+
     task = ["one-shot-learning"]
     framework = [Frameworks.torch]
 
