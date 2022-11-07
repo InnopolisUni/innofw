@@ -2,6 +2,13 @@ from ..base_adapter import BaseAdapter
 
 
 class YOLOV5LossesBaseAdapter(BaseAdapter):
+    """Class defines adapter interface to conform to YOLOv5 loss specifications
+
+        Methods
+        -------
+        adapt(loss: DictConfig) -> dict
+            converts the loss configuration into YOLOv5 suitable format
+    """
     def __init__(self):
         self.opt = {}
         self.hyp = {
@@ -13,7 +20,7 @@ class YOLOV5LossesBaseAdapter(BaseAdapter):
             "fl_gamma": 0.0,
         }
 
-    def adapt(self, optimizer) -> dict:
+    def adapt(self, losses) -> dict:
         return {"opt": self.opt, "hyp": self.hyp}
 
     def from_cfg(self, cfg):

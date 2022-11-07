@@ -3,6 +3,13 @@ from ..base_adapter import BaseAdapter
 
 
 class YOLOV5OptimizerBaseAdapter(BaseAdapter):
+    """Class defines adapter interface to conform to YOLOv5 optimizer specifications
+
+        Methods
+        -------
+        adapt(optimizer: DictConfig) -> dict
+            converts the optimizer configuration into YOLOv5 suitable format
+    """
     def __init__(self):
         self.possible_values = {"optimizer": ["Adam", "AdamW", "SGD"]}
         self.opt = {"optimizer": "Adam"}

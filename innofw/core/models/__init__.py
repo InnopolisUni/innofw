@@ -63,12 +63,23 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 
 class InnoModel(nn.Module):  # todo: refactor
+    """
+        Class provides same interface for different models by utilizing adapters
+
+        Methods
+        -------
+        forward(x)
+            processes the input via model and returns a prediction
+        train(datamodule, ckpt_path = None)
+            trains a model on the datamodule
+            if ckpt_path is specified starts training from using the checkpoint
+    """
     def __init__(self, model, *args, **kwargs):
         super().__init__()
         self.model = get_model_adapter(model, *args, **kwargs)
 
     def forward(self, x):
-        return self.model(x)  # todo: check if it works. seemingly not
+        return self.model(x)
 
     def predict(self, datamodule, ckpt_path=None):
         return self.model.predict(datamodule, ckpt_path)
