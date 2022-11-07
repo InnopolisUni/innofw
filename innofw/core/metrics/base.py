@@ -12,6 +12,21 @@ import torch.nn as nn
 
 
 class BaseMetricAdapter(ABC, nn.Module):
+    """
+    Abstract class for working with different metric libraries
+    ...
+
+    Attributes
+    ----------
+    metric : metric
+        metric function
+
+    Methods
+    -------
+    forward(x):
+        abstract function to perform metric
+
+    """
     def __init__(self, metric):
         super().__init__()
         self.metric = metric

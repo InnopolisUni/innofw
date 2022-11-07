@@ -7,6 +7,21 @@ from innofw.core.metrics.base import BaseMetricAdapter
 
 @register_metrics_adapter("sklearn_adapter")
 class SklearnAdapter(BaseMetricAdapter):
+    """
+    Class for working with sklearn metrics
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    forward(x):
+        function to perform metric
+
+    is_suitable_input(metric):
+        function checks metric function
+    """
     def __init__(self, metric, *args, **kwargs):
         super().__init__(metric)
 

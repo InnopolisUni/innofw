@@ -8,7 +8,31 @@ import torch
 class SemanticSegmentationLightningModule(
     LightningModule
 ):  # todo: define parameter types
-    """Class to train and test segmentation models"""
+    """
+    PyTorchLightning module for Semantic Segmentation task
+    ...
+
+    Attributes
+    ----------
+    model : nn.Module
+        model to train
+    losses : losses
+        loss to use while training
+    optimizer_cfg : cfg
+        optimizer configurations
+    scheduler_cfg : cfg
+        scheduler configuration
+    threshold: float
+        threshold to use while training
+
+    Methods
+    -------
+    forward(x):
+        returns result of prediction
+    model_load_checkpoint(path):
+        load checkpoints to the model, used to start with pretrained weights
+
+    """
 
     def __init__(
         self,
@@ -28,8 +52,6 @@ class SemanticSegmentationLightningModule(
         self.scheduler_cfg = scheduler_cfg
 
         self.threshold = threshold
-
-        self.counter = 0  # todo: give a description
 
         assert self.losses is not None
         assert self.optimizer_cfg is not None

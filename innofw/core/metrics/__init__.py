@@ -61,6 +61,18 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 
 class Metric(nn.Module):
+    """
+    Class for working with different metrics
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    forward(x):
+        function to perform metric
+    """
     def __init__(self, metric):
         super().__init__()
         self.metric = get_metric_adapter(metric)

@@ -18,6 +18,27 @@ def collate_fn(batch):
 
 
 class TimeSeriesLightningDataModule(BaseLightningDataModule):
+    """
+        A Class used for working with Time Series
+        ...
+
+        Attributes
+        ----------
+        aug : dict
+            The list of augmentations
+        val_size: float
+            The proportion of the dataset to include in the validation set
+
+        Methods
+        -------
+        save_preds(preds, stage: Stages, dst_path: pathlib.Path):
+            Saves inference predictions to csv file
+
+        setup_infer():
+            The method prepares inference data
+
+    """
+
     task = ["anomaly-detection-timeseries"]
     framework = [Frameworks.torch]
 

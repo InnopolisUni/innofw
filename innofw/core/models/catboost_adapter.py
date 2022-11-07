@@ -18,6 +18,23 @@ from .base import BaseModelAdapter
 
 @register_models_adapter(name="catboost_adapter")
 class CatBoostAdapter(BaseModelAdapter):
+    """
+    Adapter for working with CatBoost models
+    ...
+
+    Attributes
+    ----------
+    metrics : list
+        List of metrics
+
+    Methods
+    -------
+    log_results(results):
+        logs metrics
+    forward(x):
+        returns result of prediction
+
+    """
     model: CatBoost
 
     def __init__(self, model: CatBoost, log_dir, callbacks=None, *args, **kwargs):
