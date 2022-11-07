@@ -59,6 +59,14 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 
 class Scheduler(nn.Module):
+    """
+        Class provides same interface for different schedulers by utilizing adapters
+
+        Methods
+        -------
+        step(x)
+            updates a learning rate
+    """
     def __init__(self, scheduler, optimizer: Optimizer, *args, **kwargs):
         super().__init__()
         self.scheduler = get_sheduler_adapter(scheduler, optimizer, *args, **kwargs)

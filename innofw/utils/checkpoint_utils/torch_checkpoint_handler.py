@@ -49,6 +49,16 @@ def get_state_dict(model):
 
 
 class TorchCheckpointHandler(CheckpointHandler):
+    """
+        A class that defines torch checkpoints handling
+
+        Methods
+        -------
+        save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
+            saves a torch model in the destination path with given metadata
+        load_ckpt(ckpt_path: Union[str, Path])
+            loads a torch checkpoint from a given path
+    """
     @staticmethod
     @validate_arguments
     def save_ckpt(

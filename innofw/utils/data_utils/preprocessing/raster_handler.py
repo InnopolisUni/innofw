@@ -20,7 +20,22 @@ from rasterio.warp import Resampling, calculate_default_transform, reproject
 
 
 class RasterDataset:
-    """Raster dataset class, handles dataset creation, dynamic band addition and sync of nodata value across bands"""
+    """Raster dataset class, handles dataset creation, dynamic band addition and sync of nodata value across bands
+
+        Attributes
+        ----------
+        DN_NODATA: int
+            defines values to be used as a replacement of null values in the raster
+        DRIVER: str
+            sets up the default rasterio driver
+
+        Methods
+        -------
+        get_file_metadata(file_path: FilePath) -> dict
+            Parses file with metadata into a dictionary
+        add_band(self, band_path: FilePath, band_index: int) -> None
+            Adds a new band inplace into raster. Resamples new band if needed
+    """
 
     DN_NODATA = 0
     DRIVER = "GTiff"

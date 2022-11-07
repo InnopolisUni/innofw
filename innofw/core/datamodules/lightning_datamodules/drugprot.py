@@ -40,7 +40,6 @@ class DrugprotDataModule(BaseLightningDataModule):
         Create train test val split.
     """
     task: List[str] = ["text-ner"]
-    framework: List[str] = [Frameworks.torch]
 
     def __init__(
         self,

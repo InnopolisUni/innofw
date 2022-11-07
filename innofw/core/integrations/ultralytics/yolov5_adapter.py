@@ -28,6 +28,13 @@ YOLOV5_VALID_ARCHS = ["yolov5s", "yolov5m", "yolov5l", "yolov5x"]
 
 
 class YOLOv5Model(BaseIntegrationModel):
+    """Class defines adapter interface to conform to YOLOv5 model specifications
+
+        Attributes
+        ----------
+        framework: Frameworks
+            framework through which the model is implemented
+    """
     framework = Frameworks.torch
 
     def __init__(self, arch, *args, **kwargs):

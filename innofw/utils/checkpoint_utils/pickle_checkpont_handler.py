@@ -14,6 +14,16 @@ from innofw.utils.checkpoint_utils.base_checkpoint_handler import (
 
 
 class PickleCheckpointHandler(CheckpointHandler):
+    """
+        A class that defines .pickle checkpoints handling
+
+        Methods
+        -------
+        save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
+            saves a pickle model in the destination path with given metadata
+        load_ckpt(ckpt_path: Union[str, Path])
+            loads a pickle checkpoint from a given path
+    """
     @staticmethod
     def save_ckpt(
         model: sklearn.base.BaseEstimator,

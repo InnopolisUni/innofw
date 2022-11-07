@@ -18,7 +18,7 @@ class Frameworks(Enum):
     sklearn = "sklearn"
     xgboost = "xgboost"
     catboost = "catboost"
-
+    none = "none"  # todo: replace List["none"] -> List[Frameworks.none]
 
 PathLike = TypeVar(
     "PathLike", str, Path
