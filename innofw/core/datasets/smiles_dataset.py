@@ -14,6 +14,29 @@ logging.getLogger("deepchem").propagate = False
 
 
 class SmilesDataset(Dataset):
+    """
+        A class to represent SMILES Dataset.
+        https://www.kaggle.com/c/smiles/data
+
+        smiles: Sequence[str]
+        property_list: Sequence[Number]
+        property_name: str
+
+
+        Methods
+        -------
+        __getitem__(self, idx):
+            returns X - features and Y - targets
+
+       generate_descriptors(self, featurizers: List[dc.feat.MolecularFeaturizer]):
+            creates descriptions out of featurizers
+       init_features(self, features: Optional[List[str]] = None):
+            initialize X-features
+       from_df(cls, df: pd.DataFrame, property_name: str, smiles_col: str = "smiles", property_col: Optional[str] = None):
+            initializes class object using data frame
+
+    """
+
     cf_featurizer = dc.feat.CircularFingerprint(size=1024)
     maccs_descriptor = dc.feat.MACCSKeysFingerprint()
 

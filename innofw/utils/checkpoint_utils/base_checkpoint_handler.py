@@ -12,13 +12,23 @@ from innofw.utils import get_abs_path
 
 
 class CheckpointHandler(ABC):
+    """
+        An abstract class that defines common interface for checkpoint handling
+
+        Methods
+        -------
+        save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
+            saves a model in the destination path with given metadata
+        load_ckpt(ckpt_path: Union[str, Path])
+            loads a checkpoint from a given path
+    """
     @staticmethod
     @abstractmethod
     def save_ckpt(
         model,
         dst_path: Union[str, Path],
         metadata: Optional[dict] = None,
-        wrap=True,
+        wrap: bool = True,
     ) -> Path:
         pass
 

@@ -5,6 +5,18 @@ import numpy as np
 
 
 class ECGDataset(Dataset):
+    """
+        A class to represent a custom ECG Dataset.
+
+        file_name: str
+            path to csv file with ECG train data
+
+        Methods
+        -------
+        __getitem__(self, idx):
+            returns X-features, and Y-targets
+    """
+
     def __init__(self, file_name):
         df = pd.read_csv(file_name)
 

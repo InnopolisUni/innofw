@@ -9,9 +9,15 @@ from pydantic import validate_arguments
 class RibSuppression:
     """
     Class used for suppressing bone shadows in the Chest X-ray images.
+    Attributes
+    ----------
+    equalize_out: bool
+        a flag signalizing that the Histograms Equalization should be performed
+    model_suppression: model
+        rib suppression model
 
-    targets: image, mask, bbox, key points.
-    image types: uint8.
+    Methods
+    -------
     """
 
     @validate_arguments

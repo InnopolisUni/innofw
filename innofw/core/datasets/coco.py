@@ -9,6 +9,29 @@ from torch.utils.data import Dataset
 
 
 class CocoDataset(Dataset):
+    """
+        A class to represent a Coco format Dataset.
+        https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/md-coco-overview.html
+        ...
+
+        Attributes
+        ----------
+        dataframe : pandas.DataFrame
+            df with train data info
+        image_dir : str
+            directory containing images
+        transforms : Iterable[albumentations.augmentations.transforms]
+
+
+        Methods
+        -------
+        __getitem__(self, index: int):
+            returns image and target tensors and image_id
+
+        read_image(self, path):
+            reads an image using opencv
+    """
+
     def __init__(self, dataframe, image_dir, transforms=None):
         super().__init__()
         if "image_id" not in dataframe:
@@ -65,11 +88,31 @@ class CocoDataset(Dataset):
 
 
 class DicomCocoDataset(CocoDataset):
+    """
+        A class to represent a Dicom Coco format Dataset.
+
+        Methods
+        -------
+        read_image(self, path):
+            reads an image using dicom handler, and converts dicom file to img array
+    """
     def read_image(self, path):
         return dicom_to_img(path + ".dcm")
 
 
 class DicomCocoDatasetInfer(Dataset):
+    """
+        A class to represent a Dicom Coco format Dataset for inference.
+
+        dicom_dir : str
+            directory containing images
+        transforms : Iterable[albumentations.augmentations.transforms]
+
+        Methods
+        -------
+        __getitem__(self, idx):
+            return image
+    """
     def __init__(self, dicom_dir, transforms=None):
         self.images = []
         self.paths = [os.path.join(dicom_dir, d) for d in os.listdir(dicom_dir)]
@@ -84,12 +127,28 @@ class DicomCocoDatasetInfer(Dataset):
 
 
 class WheatDataset(Dataset):
-    """A dataset example for GWC 2021 competition."""
+    """
+        A dataset example for GWC 2021 competition. A class to represent a Coco format Dataset.
+        https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/md-coco-overview.html
+        ...
+
+        Attributes
+        ----------
+        annotations (string): Data frame with annotations.
+        root_dir (string): Directory with all the images.
+        transform (callable, optional): Optional data augmentation to be applied on a sample.
+
+
+        Methods
+        -------
+        __getitem__(self, index: int):
+            returns image, bboxes, domain
+    """
 
     def __init__(self, annotations, root_dir, transforms=None):
         """
         Args:
-            csv_file (string): Path to the csv file with annotations.
+            annotations (string): Data frame with annotations.
             root_dir (string): Directory with all the images.
             transform (callable, optional): Optional data augmentation to be applied
                 on a sample.

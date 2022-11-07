@@ -7,6 +7,27 @@ from ..datamodule import get_active_datamodule
 
 
 class BaseActiveLearner(ABC):
+    """
+    An abstract class of ActiveLearner.
+
+    Attributes
+    ----------
+    model : InnoModel
+        instance of InnoModel
+    active_datamodule : ActiveDataModule
+        A datamodule with active learning support
+    epochs_num : int
+        Number of training epochs
+    query_size : int
+        Queue size for labeling request
+    logger : Logger
+        Logger instance
+
+    Methods
+    -------
+    run(ckpt_path):
+        Starts an active learning cycle.
+    """
     def __init__(
         self,
         model: InnoModel,

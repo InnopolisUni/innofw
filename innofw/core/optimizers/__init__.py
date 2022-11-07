@@ -59,6 +59,16 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 
 class Optimizer(nn.Module):
+    """
+        Class provides same interface for different optimizers by utilizing adapters
+
+        Methods
+        -------
+        step(x)
+            updates a model parameters
+        param_groups()
+            returns model's parameters
+    """
     def __init__(self, optimizer):
         super().__init__()
         self.optim = get_optim_adapter(optimizer)

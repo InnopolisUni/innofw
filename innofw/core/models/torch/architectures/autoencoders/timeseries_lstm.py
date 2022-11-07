@@ -2,6 +2,32 @@ import torch.nn as nn
 
 
 class Encoder(nn.Module):
+    """
+        LSTM Encoder class
+        ...
+
+        Attributes
+        ----------
+        seq_len : int
+            length of the sequence
+        hidden_dim : int
+            size of the hidden layers
+        n_features : int
+            number of features
+        rnn1 : nn.LSTM
+            first rnn layer
+        rnn2 : nn.LSTM
+            second rnn layer
+        embedding_dim: int
+            embedding size
+
+        Methods
+        -------
+        forward(x):
+            returns result of the data forwarding
+
+
+    """
     def __init__(self, seq_len, n_features, embedding_dim=64):
         super(Encoder, self).__init__()
 
@@ -32,6 +58,33 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
+    """
+        LSTM Decoder class
+        ...
+
+        Attributes
+        ----------
+        output_layer : nn.Linear
+            output_layer of decoder
+        seq_len : int
+            length of the sequence
+        input_dim : int
+            number of dimensions in the input
+        hidden_dim : int
+            size of the hidden layers
+        n_features : int
+            number of features
+        rnn1 : nn.LSTM
+            first rnn layer
+        rnn2 : nn.LSTM
+            second rnn layer
+
+        Methods
+        -------
+        forward(x):
+            returns result of the data forwarding
+
+    """
     def __init__(self, seq_len, input_dim=64, n_features=1):
         super(Decoder, self).__init__()
 
@@ -63,6 +116,23 @@ class Decoder(nn.Module):
 
 
 class RecurrentAutoencoder(nn.Module):
+    """
+        Recurrent Autoencoder model
+        ...
+
+        Attributes
+        ----------
+        encoder : Encoder
+            encoder part of autoencoder
+        decoder : Decoder
+            decoder part of autoencoder
+
+        Methods
+        -------
+        forward(x):
+            returns result of the data forwarding
+
+    """
     def __init__(self, seq_len, n_features, embedding_dim=64):
         super(RecurrentAutoencoder, self).__init__()
 

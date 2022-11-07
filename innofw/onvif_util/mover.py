@@ -5,6 +5,42 @@ from typing import Optional
 
 
 class CameraControl:
+    """
+            A class to represent a Camera unit with ONVIF support, with corresponding methods for control of movements
+
+            ...
+
+            Attributes
+            ----------
+            ip : str
+            user : str
+            password: str
+
+
+            Methods
+            -------
+            absolute_move(self, pan: float, tilt: float, zoom: float):
+                Operation to move pan, tilt or zoom to a absolute destination.
+            continuous_move(self, pan: float, tilt: float, zoom: float):
+                Operation for continuous Pan/Tilt and Zoom movements.
+            relative_move(self, pan: float, tilt: float, zoom: float):
+                Operation for Relative Pan/Tilt and Zoom Move.
+            stop_move(self):
+                Operation to stop ongoing pan, tilt and zoom movements of absolute relative and continuous type.
+            set_home_position(self):
+                Operation to save current position as the home position.
+            go_home_position(self):
+                Operation to move the PTZ device to it's "home" position.
+            get_ptz(self):
+                Operation to request PTZ status.
+            set_preset(self, preset_name: str):
+                The command saves the current device position parameters.
+            remove_preset(self, preset_name: str):
+                Operation to remove a PTZ preset.
+            go_to_preset(self, preset_position: str):
+                Operation to go to a saved preset position.
+        """
+
     def __init__(self, ip, user, password):
         self.__cam_ip = ip
         self.__cam_user = str(user)
@@ -12,7 +48,7 @@ class CameraControl:
 
         mycam = ONVIFCamera(
             self.__cam_ip, 80, self.__cam_user, self.__cam_password
-        )  ## Some cameras use port 8080
+        )
         logging.info("Create media service object")
         media = mycam.create_media_service()
         logging.info("Create ptz service object")
@@ -261,6 +297,15 @@ def tilt_down(ptz_cam):
 
 
 def move(ip, user: Optional[str], password: Optional[str], move_type):
+    """
+    Move camera according to move type
+
+    Args:
+        ip (str):
+        user (str):
+        password (str):
+        move_type (str): Supported moves are:  zoom_in, zoom_out, pan_left, pan_right, tilt_up, tilt_down
+    """
     logging.basicConfig(filename="teste-onvif.log", filemode="w", level=logging.DEBUG)
     logging.info("Started")
 

@@ -1,0 +1,1 @@
+python innofw\zoo\downloader.py --file_url https://api.blackhole.ai.innopolis.university/pretrained/testing/lin_reg_house_prices.pickle --dst_path .\pretrained\

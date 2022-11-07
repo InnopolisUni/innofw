@@ -1,0 +1,1 @@
+python innofw\zoo\add_metadata.py --ckpt_path tests\weights\catboost_industry_data\model.pickle --metadata '{"f1_score": 0.6, "accuracy": 0.999}' --check_schema False

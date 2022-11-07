@@ -18,6 +18,23 @@ from innofw.core.datamodules.lightning_datamodules.base import (
 
 
 class ImageLightningDataModule(BaseLightningDataModule):
+    """Class defines dataset preparation and dataloader creation for image classification
+
+        Attributes
+        ----------
+        task: List[str]
+            the task the datamodule is intended to be used for
+        framework: List[Union[str, Frameworks]]
+            the model framework the datamodule is designed to work with
+
+        Methods
+        -------
+        setup_train_test_val
+            splits train data into train and validation sets
+            creates dataset objects
+        save_preds(preds, stage: Stages, dst_path: pathlib.Path)
+            saves predicted class labels for images in a .csv file
+    """
     task = ["image-classification"]
     framework = [Frameworks.torch]
 

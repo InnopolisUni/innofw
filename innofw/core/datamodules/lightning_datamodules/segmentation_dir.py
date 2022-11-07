@@ -22,6 +22,35 @@ from innofw.utils.data_utils.preprocessing.dicom_handler import (
 
 
 class DirSegmentationLightningDataModule(BaseLightningDataModule):
+    """
+    A Class used for working with segmentations datasets in the following format:
+        ├───dataset_name
+                └── image
+                |    | some_image_name1.png
+                |    | ...
+                |    | some_image_nameN.png
+                |
+                └── label
+                    | some_image_name1.png
+                    | ...
+                    | some_image_nameN.png
+    ...
+
+    Attributes
+    ----------
+    channels_num : int
+        number of channels in the image
+    aug : dict
+        The list of augmentations
+    val_size: float
+        The proportion of the dataset to include in the validation set
+
+    Methods
+    -------
+    setup_train_test_val():
+        setups and splits Datasets for train, test and validation
+
+    """
     task = ["image-segmentation"]
     framework = [Frameworks.torch]
 
@@ -85,7 +114,38 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
 
 class DicomDirSegmentationLightningDataModule(DirSegmentationLightningDataModule):
     dataset = ImageFolderInferDataset
+    """
+    A Class used for working with dicom segmentations datasets in the following format:
+        ├───dataset_name
+                └── image
+                |    | some_image_name1.dcm
+                |    | ...
+                |    | some_image_nameN.dcm
+                |
+                └── label
+                    | some_image_name1.png
+                    | ...
+                    | some_image_nameN.png
+    ...
 
+    Attributes
+    ----------
+    channels_num : int 
+        number of channels in the image 
+    aug : dict
+        The list of augmentations
+    val_size: float
+        The proportion of the dataset to include in the validation set
+
+    Methods
+    -------
+    setup_train_test_val():
+        setups and splits Datasets for train, test and validation
+    
+    save_preds(preds, stage: Stages, dst_path: pathlib.Path):
+        Saves inference predictions in Dicom format
+
+    """
     def setup_train_test_val(self, **kwargs):
         dicom_train_path = os.path.join(self.train_dataset, "images")
         png_train_path = os.path.join(self.train_dataset, "png")

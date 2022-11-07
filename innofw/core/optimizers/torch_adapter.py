@@ -8,6 +8,16 @@ from innofw.core.optimizers.base import BaseOptimizerAdapter
 
 @register_optimizers_adapter("torch_adapter")
 class TorchAdapter(BaseOptimizerAdapter):
+    """
+        Class that adapts torch optimizers
+
+        Methods
+        -------
+        is_suitable_input(optimizer)
+            checks if the optimizer is from torch framework
+        step()
+            updates a model parameters
+    """
     def __init__(self, optimizer, *args, **kwargs):
         super().__init__(optimizer)
 

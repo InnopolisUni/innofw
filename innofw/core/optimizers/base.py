@@ -12,6 +12,16 @@ import torch.nn as nn
 
 
 class BaseOptimizerAdapter(ABC, nn.Module):
+    """
+        An abstract class to define interface and methods of optimizer adapter
+
+        Methods
+        -------
+        is_suitable_input(optimizer)
+            checks if the optimizer is suitable for the adapter
+        step()
+            updates a model parameters
+    """
     def __init__(self, optimizer):
         super().__init__()
         self.optimizer = optimizer

@@ -2,6 +2,27 @@ import torch.nn as nn
 
 
 class SiameseNetwork(nn.Module):
+    """
+        A class to represent a Siamese Network.
+        A Siamese neural network (sometimes called a twin neural network) is an artificial neural network that uses
+        the same weights while working in tandem on two different input vectors to compute comparable output
+        vectors.
+
+        ...
+
+        Attributes
+        ----------
+
+        Methods
+        -------
+        forward_once(self, x):
+            computes forward propagation for one input vector
+
+        forward(self, input1, input2):
+            computes forward propagation for two input vectors
+
+    """
+
     def __init__(self):
         super(SiameseNetwork, self).__init__()
         self.cnn1 = nn.Sequential(

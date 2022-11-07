@@ -13,6 +13,31 @@ def _evaluate_iou(target, pred):
 
 
 class DetectionLightningModule(LightningModule):
+    """
+     PyTorchLightning module for Anomaly Detection in Time Series
+     ...
+
+     Attributes
+     ----------
+     model : nn.Module
+         model to train
+     losses : losses
+         loss to use while training
+     optimizer_cfg : cfg
+         optimizer configurations
+     scheduler_cfg : cfg
+         scheduler configuration
+     num_classes : int
+        number of classes to predict
+
+     Methods
+     -------
+     forward(x):
+         returns result of prediction
+     calc_losses(output1, output2, label)
+         calculates losses and returns total loss
+
+     """
     def __init__(
         self,
         model,
@@ -30,8 +55,6 @@ class DetectionLightningModule(LightningModule):
 
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
-        self.counter = 0  # todo: give a description
-
         # self.save_hyperparameters()  # todo:
 
     def model_load_checkpoint(self, path):

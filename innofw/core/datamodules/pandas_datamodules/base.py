@@ -17,6 +17,27 @@ from innofw.utils.dm_utils.utils import find_file_by_ext
 
 
 class BasePandasDataModule(BaseDataModule, ABC):
+    """
+    A Base Class used for working with datasets in table formats
+    ...
+
+    Attributes
+    ----------
+    train_dataset : Path
+        A path to train file
+    test_dataset : Path
+        A path to test file
+    predict_dataset : Path
+        A path to file for inference
+    target_col : str
+        The name of a column for prediction
+
+    Methods
+    -------
+    setup_infer():
+        The method prepares inference data
+
+    """
     def __init__(
         self,
         train,

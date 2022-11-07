@@ -28,6 +28,13 @@ YOLOV5_VALID_ARCHS = ["yolov5s", "yolov5m", "yolov5l", "yolov5x"]
 
 
 class YOLOv5Model(BaseIntegrationModel):
+    """Class defines adapter interface to conform to YOLOv5 model specifications
+
+        Attributes
+        ----------
+        framework: Frameworks
+            framework through which the model is implemented
+    """
     framework = Frameworks.torch
 
     def __init__(self, arch, *args, **kwargs):
@@ -39,6 +46,26 @@ class YOLOv5Model(BaseIntegrationModel):
 
 @register_models_adapter(name="yolov5_adapter")
 class YOLOV5Adapter(BaseModelAdapter):
+    """
+    Adapter for working with Yolov5 models
+    ...
+
+    Attributes
+    ----------
+    device
+        device for model training
+    epochs : int
+        maximum number of epochs
+    log_dir : Path
+        path to save logs
+    Methods
+    -------
+    train(data: YOLOV5DataModuleAdapter, ckpt_path=None):
+        trains the model
+    predict(x):
+        returns result of prediction and saves them
+
+    """
     @staticmethod
     def is_suitable_model(model) -> bool:
         return isinstance(model, YOLOv5Model)
@@ -176,6 +203,12 @@ class YOLOV5Adapter(BaseModelAdapter):
     def update_checkpoints_path(self):
         try:
             (self.log_dir / "weights").rename(self.log_dir / "checkpoints")
+
+            try:
+                dst_path = list((self.log_dir / "checkpoints").iterdir())[0]
+                logging.info(f"Saved a checkpoint at: {dst_path}")
+            except:
+                pass
         except Exception as e:
             pass
             # print(e)

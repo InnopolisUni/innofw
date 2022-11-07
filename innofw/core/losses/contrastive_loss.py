@@ -5,8 +5,21 @@ import torch.nn.functional as F
 
 class ContrastiveLoss(nn.Module):
     """
-    Contrastive loss function.
-    Based on: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
+        Contrastive loss function.
+        Based on: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
+
+        ...
+
+        Attributes
+        ----------
+
+        margin: Optional(float)
+            reduction type to use: mean, sum, none
+
+        Methods
+        -------
+         forward(self, output1, output2, label):
+            computes loss function
     """
 
     def __init__(self, margin=2.0):
