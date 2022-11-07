@@ -24,6 +24,30 @@ class WorkMode(Enum):
 
 
 class QsarSelfiesDataModule(BaseLightningDataModule):
+    """
+    A DataModule class for selfies datasets.
+
+    Attributes
+    ----------
+    smiles_col : str
+        Specify the name of the column containing smiles strings
+    target_col : str
+        Specify the column name of the target variable in your dataset
+    val_size : int
+        Specify the fraction of data to be used as validation set
+    work_mode : WorkMode
+        Specify the type of model we want to use
+
+
+    Methods
+    -------
+    setup_train_test_val(**kwargs):
+        The setup_train_test_val function is used to split the training data into a train and validation set.
+        The function takes in the dataset, smiles_col, target_col and val_size as parameters. The smiles column 
+        is used to extract all of the SMILES strings from each row of the csv file. The target column is used to 
+        extract all of the targets for each SMILES string in that row. Both sets are then converted into selfies using 
+        the self.smiles2selfies function which converts a list of SMILES strings into their corresponding selfies sequences.
+    """
     task = ["text-vae"]
     framework = [Frameworks.torch]
 
@@ -231,6 +255,23 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
 
 
 class SelfiesDataset(Dataset):
+    """
+    Dataset with smiles.
+
+    Attributes
+    ----------
+    selfies : list
+        Store the selfies that are to be encoded
+    targets : str
+        Store the targets for each selfies
+
+    Methods
+    -------
+    __getitem__(index):
+        The __getitem__ function is a special function that allows the class to be indexed.
+        For example, if we have a class called &quot;MyClass&quot;, then MyClass()[0] will return the first item in MyClass.
+        This is why we can call self.selfies[index], because self refers to an instance of our class.
+    """
     def __init__(self, selfies, targets) -> None:
         assert len(selfies) == len(targets)
 
@@ -245,6 +286,21 @@ class SelfiesDataset(Dataset):
 
 
 class SelfiesCollator:
+    """
+    Collator for selfies encoding.
+
+    Attributes
+    ----------
+    vocab_stoi : dict
+        Store the vocabulary
+    pad_to_len : int
+        Pad the length of a sentence to a certain number
+
+    Methods
+    -------
+    __call__(data):
+        Returns the one hot encoding of the input batch and the labels
+    """
     def __init__(self, vocab_stoi, pad_to_len):
         self.vocab_stoi = vocab_stoi
         self.pad_to_len = pad_to_len

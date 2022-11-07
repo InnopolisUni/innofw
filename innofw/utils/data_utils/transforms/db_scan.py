@@ -71,6 +71,16 @@ def make_contrasted(img, contrast=20):
 
 
 class MakeContrasted:
+    """
+    Custom preprocessing pipline to make some parts of the images more contrasted
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    """
     def __call__(
         self,
         image,

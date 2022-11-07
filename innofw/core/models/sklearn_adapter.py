@@ -21,6 +21,23 @@ from innofw.core.models import register_models_adapter
 
 @register_models_adapter(name="sklearn_adapter")
 class SklearnAdapter(BaseModelAdapter):
+    """
+    Adapter for working with Sklearn models
+    ...
+
+    Attributes
+    ----------
+    metrics : list
+        List of metrics
+
+    Methods
+    -------
+    log_results(results):
+        logs metrics
+    forward(x):
+        returns result of prediction
+
+    """
     @staticmethod
     def is_suitable_model(model) -> bool:
         return (

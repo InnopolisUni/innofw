@@ -1,10 +1,67 @@
+from typing import Protocol, TypedDict
+
 import numpy as np
+import pandas as pd
+
+
+class DataContainer(TypedDict):
+    """
+    A DataContainer key set for typing.
+
+    Attributes
+    ----------
+    x : pd.DataFrame
+        DataFrame with data
+    y : np.ndarray
+        numpy array with targets
+    """
+    x: pd.DataFrame
+    y: np.ndarray
+
+
+class DataModuleI(Protocol):
+    """
+    A DataModuleI interface for using in ActiveDataModule.
+
+    Methods
+    -------
+    test_dataloader():
+        returns DataContainer instance.
+    train_dataloader():
+        returns DataContainer instance.
+    setup():
+        returns Nothing.
+    """
+    def test_dataloader(self) -> DataContainer:
+        ...
+
+    def train_dataloader(self) -> DataContainer:
+        ...
+
+    def setup(self) -> None:
+        ...
 
 
 class ActiveDataModule:
+    """
+    A DataModule wrapper class for active learning.
+
+    Attributes
+    ----------
+    datamodule : DataModuleI
+        first name of the person
+    init_size : float
+        size of initial training set
+
+    Methods
+    -------
+    update_indices(indices):
+        update train indexes from pool.
+    """
+
     _preprocessed: bool = False
 
-    def __init__(self, datamodule, init_size: float = 0.1):
+    def __init__(self, datamodule: DataModuleI, init_size: float = 0.1):
         self.datamodule = datamodule
         self.init_size = init_size
         self.setup()

@@ -9,7 +9,8 @@ import datasets
 import pandas as pd
 import torch
 from innofw.constants import Frameworks, ModelType, Stages
-from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
+from innofw.core.datamodules.lightning_datamodules.base import \
+    BaseLightningDataModule
 from innofw.exceptions import NonUniqueException
 from torch.utils.data import DataLoader
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
@@ -18,6 +19,26 @@ datasets.disable_caching()
 
 
 class DrugprotDataModule(BaseLightningDataModule):
+    """
+    DataModule for Drugprot dataset.
+
+    Attributes
+    ----------
+    train : str
+        path to train dir
+    test : str
+        path to test dir
+    tokenizer : PreTrainedTokenizerBase
+        instance of PreTrainedTokenizerBase
+    entity_labelmapper: LabelMapper
+        label2int mapper
+    
+
+    Methods
+    -------
+    setup_train_test_val():
+        Create train test val split.
+    """
     task: List[str] = ["text-ner"]
 
     def __init__(
@@ -301,6 +322,25 @@ def datasets_exclusive_map(
 
 
 class DataCollatorWithPaddingAndTruncation:
+    """
+    The data collator with padding and truncation .
+
+    Attributes
+    ----------
+    max_length : int
+        Define the maximum length of a sequence that will be passed to the model
+    sequence_keys : list
+        Specify which columns in the dataset are sequences
+    float_keys : list
+        Specify which columns should be treated as float values
+    pad_token_id : int
+        Specify the token id that will be used for padding
+
+    Methods
+    -------
+    collate_list_of_dicts(data):
+        Collate list of dicts.
+    """
     def __init__(self, max_length, sequence_keys=[], float_keys=[], pad_token_id=0):
         self.max_length = max_length
         self.sequence_keys = set(sequence_keys)
@@ -373,12 +413,38 @@ class DataCollatorWithPaddingAndTruncation:
 
 @dataclass
 class NamedEntity:
+    """
+    A class to represent a person.
+
+    Attributes
+    ----------
+    name : str
+        name of the entiry
+    span : Tuple[int, int]
+        slice indexes of text
+    """
     name: str
     span: Tuple[int, int]
 
 
 class LabelMapper:
-    def __init__(self, label_dict: Dict[str, int]):
+    """
+    The label mapper class.
+
+    Attributes
+    ----------
+    __name_to_id : Dict[str, int]
+        name to id mapping
+    __id_to_name : Dict[int, id]
+        id to name mapping
+
+    Methods
+    -------
+    keys(additional=""):
+        Returns keys of __name_to_id.
+    """
+
+    def __init__(self, label_dict) -> None:
         self.__name_to_id = label_dict.copy()
         self.__id_to_name = {
             label_id: label_name for label_name, label_id in label_dict.items()

@@ -9,6 +9,30 @@ from torch import nn
 
 
 class ChemistryVAELightningModule(BaseLightningModule):
+    """
+    A class to training Chemistry VAE.
+
+    Attributes
+    ----------
+    encoder : Encoder
+        encoder module
+    decoder : GRUDecoder
+        decoder module
+    fc_mu : nn.Linear
+        linear layer for mu prediction
+    fc_var : nn.Linear
+        linear layer for var prediction
+    MLP : nn.Module
+        multi layer perceptron
+
+
+    Methods
+    -------
+    sample(mu: torch.Tensor, log_var: torch.Tensor):
+        The sample function takes in a mean and log variance tensor, then uses them to
+        sample from a normal distribution. The output is the prior distribution, the
+        posterior distribution (q), and the sampled z values.
+    """
     def __init__(
         self, model: dict, losses, optimizer_cfg, scheduler_cfg, *args, **kwargs
     ):
@@ -130,6 +154,16 @@ class ChemistryVAELightningModule(BaseLightningModule):
 
 
 class ChemistryVAEForwardLightningModule(ChemistryVAELightningModule):
+    """
+    The ChemistryVAE for forward task.
+
+    Methods
+    -------
+    forward(batch: torch.Tensor):
+        The forward function takes in a batch of smiles strings, and returns the predicted log p values for each string.
+        The forward function first encodes all the molecules using an encoder, then passes them through a fully connected layer to get mu and log_var.
+        Then it samples from that distribution to get z (latent vector). Finally, it decodes z into y_hat.
+    """
     def forward(self, batch: torch.Tensor):
         x = self.encoder(batch.flatten(1))
         mu = self.fc_mu(x)
@@ -141,6 +175,15 @@ class ChemistryVAEForwardLightningModule(ChemistryVAELightningModule):
 
 
 class ChemistryVAEReverseLightningModule(ChemistryVAELightningModule):
+    """
+    The ChemistryVAE for reverse task.
+
+    Methods
+    -------
+    forward(batch: Tuple[torch.Tensor, torch.Tensor]):
+        The forward function takes in a batch of smiles strings, and returns the decoded version of the smiles string.
+        The latent dimension is also returned for use in other functions.
+    """
     def predict_step(self, batch, batch_idx, **kwargs):
         x_hat, y_hat = self(batch)
         return x_hat, y_hat

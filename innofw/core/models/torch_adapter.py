@@ -23,6 +23,24 @@ class ModelCheckpointWithLogging(ModelCheckpoint):
 
 @register_models_adapter(name="torch_adapter")
 class TorchAdapter(BaseModelAdapter):
+    """
+    Adapter for working with CatBoost models
+    ...
+
+    Attributes
+    ----------
+    callbacks : list
+        list of callbacks to perform
+    trainer : pl.Trainer
+        PyTorch lighting trainer to perform training
+    Methods
+    -------
+    set_stop_params(stop_param)
+      configure parameters for early stopping
+    predict(x):
+        returns result of prediction and saves them
+
+    """
     def _test(self, data):
         pass
 

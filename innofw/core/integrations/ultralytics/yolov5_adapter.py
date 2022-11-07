@@ -46,6 +46,26 @@ class YOLOv5Model(BaseIntegrationModel):
 
 @register_models_adapter(name="yolov5_adapter")
 class YOLOV5Adapter(BaseModelAdapter):
+    """
+    Adapter for working with Yolov5 models
+    ...
+
+    Attributes
+    ----------
+    device
+        device for model training
+    epochs : int
+        maximum number of epochs
+    log_dir : Path
+        path to save logs
+    Methods
+    -------
+    train(data: YOLOV5DataModuleAdapter, ckpt_path=None):
+        trains the model
+    predict(x):
+        returns result of prediction and saves them
+
+    """
     @staticmethod
     def is_suitable_model(model) -> bool:
         return isinstance(model, YOLOv5Model)

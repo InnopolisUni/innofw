@@ -2,6 +2,17 @@ from abc import ABC, abstractmethod
 
 
 class BaseMetric(ABC):
+    """
+    Base class for custom metric creation
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+    """
     def __init__(self):
         if self.metric is None:
             raise ValueError("self.metric attribute should be specified")

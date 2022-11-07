@@ -4,6 +4,19 @@ from torch.nn.modules.loss import _Loss
 
 
 class KLD(_Loss):
+    """
+            A class to represent a KL Divergence Loss that uses implementation from torch.
+            `https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence`
+            ...
+
+            Attributes
+            ----------
+
+            Methods
+            -------
+             forward(self, q: torch.Tensor, p: torch.Tensor):
+                computes loss function
+        """
     def __init__(self):
         super().__init__()
 

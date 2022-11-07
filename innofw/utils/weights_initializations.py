@@ -7,6 +7,22 @@ import hydra
 
 
 class WeightInitializer:
+    """
+    Class used for working with data from s3 storage
+    Attributes
+    ----------
+    init_func :
+        weight initialization function
+    layers :
+        layers
+    bias : float
+        bias
+
+    Methods
+    -------
+    init_weights(model):
+        initializes model's weights
+    """
     def __init__(
         self,
         init_func,

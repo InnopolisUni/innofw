@@ -13,6 +13,23 @@ from .utils import prep_data
 
 
 class RasterioDataset(Dataset):
+    """
+        A class to represent a custom Rasterio Dataset.
+
+        raster_files: Union[List[Path], List[str]]
+            directory containing images
+        bands_num : int
+            number of bands in one image
+        mask_files: Optional[Union[List[Path], List[str]]] = None
+        transform: albu.Compose
+            list of transformations to be applied
+
+        Methods
+        -------
+        __getitem__(self, idx):
+            returns transformed image and mask
+    """
+
     def __init__(
         self,
         raster_files: Union[List[Path], List[str]],
