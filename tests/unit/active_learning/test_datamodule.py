@@ -5,7 +5,8 @@ from tests.fixtures.config.datasets import qm9_datamodule_cfg_w_target
 
 
 def test_active_datamodule_creation():
-    datamodule = get_datamodule(qm9_datamodule_cfg_w_target, Frameworks.catboost)
+    task = "qsar-regression"
+    datamodule = get_datamodule(qm9_datamodule_cfg_w_target, Frameworks.catboost, task=task)
     sut = ActiveDataModule(datamodule=datamodule)
 
     assert sut is not None
