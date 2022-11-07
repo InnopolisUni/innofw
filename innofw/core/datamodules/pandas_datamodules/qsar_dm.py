@@ -3,11 +3,33 @@ from pathlib import Path
 
 import pandas as pd
 from innofw.constants import Frameworks, Stages
-from innofw.core.datamodules.pandas_datamodules.base import BasePandasDataModule
+from innofw.core.datamodules.pandas_datamodules.base import \
+    BasePandasDataModule
 from innofw.core.datasets.smiles_dataset import SmilesDataset
 
 
 class QsarDataModule(BasePandasDataModule):
+    """
+    DataModule for smiles data.
+
+    Attributes
+    ----------
+    smiles_col : str
+        Specify the column name that contains the target values
+    target_col : str
+        Specify the column name that contains the target values
+    task : list
+        List if supported tasks
+    framework : list
+        List of supported frameworks
+
+    Methods
+    -------
+    setup_train_test_val():
+        The setup_train_test_val function is called by the DataModule class to set up the training and test datasets.
+        It reads in a csv file containing smiles strings and target values, then splits it into train/test sets.
+        The SmilesDataset class is used to create a PyTorch dataset object for each of these sets.
+    """
     task = ["qsar-classification", "qsar-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
     train_smiles_dataset: SmilesDataset = None

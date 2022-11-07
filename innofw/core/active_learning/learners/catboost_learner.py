@@ -13,6 +13,25 @@ class LoggerPrint:
 
 
 class CatBoostActiveLearner(BaseActiveLearner):
+    """
+    A class for using CatBoost model in active learning.
+
+    Attributes
+    ----------
+    model : InnoModel
+        Wrapped CatBoost model
+    datamodule : BaseDatamodule
+        DataModule instance
+    query_size : int
+        Queue size for labeling request
+    use_data_uncertainty: bool
+        Use data uncertainty to select samples for labeling or not
+
+    Methods
+    -------
+    eval_model(X, y):
+        Evaluate trained model and return metrics.
+    """
     def __init__(
         self,
         model: InnoModel,
