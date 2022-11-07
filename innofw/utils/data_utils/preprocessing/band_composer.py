@@ -24,6 +24,24 @@ from innofw.utils.getters import get_log_dir
 
 
 class BaseBandComposer(ABC):
+    """
+        An abstract class that defines methods of band files composition in a single file
+
+        Attributes
+        ----------
+        DRIVER: str
+            sets up the default rasterio driver
+
+        Methods
+        -------
+        map_band_idx2str(idx: int) -> str
+            returns name of the band given position
+        get_band_files(
+            src_path: DirectoryPath,
+            channels: Union[List[str], Tuple[str]] = ("RED", "GRN", "BLU"),
+        ) -> List[FilePath]
+            returns all matching band files from a folder
+    """
     DRIVER = "GTiff"
 
     def __init__(
@@ -122,7 +140,7 @@ class BaseBandComposer(ABC):
 
 class BandComposer(BaseBandComposer):
     """
-
+        A class that has methods of band files composition in a single file
 
     Usage:
         src_path = root_path / 'source/first'
@@ -141,7 +159,7 @@ class BandComposer(BaseBandComposer):
 
 class Landsat8BandComposer(BaseBandComposer):
     """
-
+        A class that has methods of landsat8 band files composition in a single file
 
     Usage:
         l8_src_path = root_path / 'landsat8/cloud_L8_summer_28_perm_Perm2_base'
@@ -174,7 +192,7 @@ class Landsat8BandComposer(BaseBandComposer):
 
 class Sentinel2BandComposer(BaseBandComposer):
     """
-
+        A class that has methods of sentinel2 band files composition in a single file
 
     Usage:
         s2_src_path = root_path / 'sentinel2/cloud_S2_summer_28_perm_Perm2_base'

@@ -12,6 +12,16 @@ import torch.nn as nn
 
 
 class BaseSchedulerAdapter(ABC, nn.Module):
+    """
+        An abstract class to define interface and methods of scheduler adapter
+
+        Methods
+        -------
+        is_suitable_input(scheduler)
+            checks if the scheduler is suitable for the adapter
+        step()
+            updates a learning rate
+    """
     def __init__(self, scheduler, optimizer, *args, **kwargs):
         super().__init__()
         self.scheduler = scheduler(optimizer.optim.optimizer, *args, **kwargs)
