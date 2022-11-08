@@ -23,7 +23,7 @@ def prep_data(
     image = image.float()
     if mask is not None:
         mask = (mask > 0).astype(np.uint8)
-        mask = torch.from_numpy(mask)
+        mask = torch.from_numpy(mask.copy())
         mask = torch.unsqueeze(mask, 0).float()
 
         return {"scenes": image, "labels": mask}

@@ -79,7 +79,7 @@ class SiameseDataset(Dataset):
             image1,
             image2,
             torch.from_numpy(
-                np.array([int(should_get_same_class == 0)], dtype=np.float32)
+                np.array([int(should_get_same_class == 0)], dtype=np.float32).copy()
             ),
         )
 
@@ -89,7 +89,7 @@ class SiameseDataset(Dataset):
     def read_img(self, img_path):
         image = Image.open(img_path)
         image = np.asarray(image)
-        image = torch.from_numpy(image)
+        image = torch.from_numpy(image.copy())
         if self.transform:
             image = self.transform(image)
         return image
@@ -145,7 +145,7 @@ class SiameseDatasetInfer(Dataset):
     def read_img(self, img_path):
         image = Image.open(img_path)
         image = np.asarray(image)
-        image = torch.from_numpy(image)
+        image = torch.from_numpy(image.copy())
         if self.transform:
             image = self.transform(image)
         return image
