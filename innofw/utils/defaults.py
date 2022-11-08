@@ -128,9 +128,9 @@ def get_default(obj_name: str, framework: str, task: str):
     }
     try:
         obj = defaults[framework][task][obj_name]
-        if isinstance(obj, DictConfig):
-            return lambda *args, **kwargs: hydra.utils.instantiate(obj, *args, **kwargs)
-        else:
-            return obj
+        # if isinstance(obj, DictConfig):
+        #     return hydra.utils.instantiate(obj, *args, **kwargs)
+        # else:
+        return obj
     except Exception as e:
         return None

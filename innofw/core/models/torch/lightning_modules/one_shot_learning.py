@@ -3,7 +3,8 @@ import pytorch_lightning as pl
 from typing import Any
 import torch
 import torch.nn.functional as F
-
+from omegaconf import DictConfig
+import hydra
 
 class OneShotLearningLightningModule(pl.LightningModule):
     """
@@ -49,8 +50,10 @@ class OneShotLearningLightningModule(pl.LightningModule):
         # get all trainable model parameters
         params = [x for x in self.model.parameters() if x.requires_grad]
         # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
+        if isinstance(self.optimizer_cfg, DictConfig):
+            optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
+        else:
+            optim = self.optimizer_cfg(params=params)
 
         # instantiate scheduler from configurations
         try:

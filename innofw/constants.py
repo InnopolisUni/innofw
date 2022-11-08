@@ -64,8 +64,8 @@ class TaskType(Enum):
 
 
 class CLI_FLAGS(Enum):
-    ENABLE = "NO_CLI"
-    DISABLE = "WITH_CLI"
+    DISABLE = "NO_CLI"
+    ENABLE = "WITH_CLI"
 
 
 # ==== instances ====

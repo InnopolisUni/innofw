@@ -12,3 +12,6 @@ task: "image-segmentation"
 random_seed: 42
 weights_freq: 1
 batch_size: 10
+
+models:
+  in_channels: 4
