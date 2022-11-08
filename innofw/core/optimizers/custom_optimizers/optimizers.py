@@ -1,5 +1,6 @@
 from torch.optim import SGD as Sgd, Adam
-
+#
+from innofw.core.optimizers import Optimizer
 
 class SGD:
     """
@@ -12,9 +13,6 @@ class SGD:
             optimizer from torch framework
     """
     optimizer = Sgd
-
-
-from innofw.core.optimizers import Optimizer
 
 
 class ADAM(Optimizer):

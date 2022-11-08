@@ -14,7 +14,7 @@ import importlib
 
 #
 import torch.nn as nn
-
+from torch.optim import Optimizer as TorchOptim
 #
 from innofw.core.optimizers.base import BaseOptimizerAdapter
 
@@ -57,7 +57,6 @@ for file in os.listdir(os.path.dirname(__file__)):
         module_name = file[: file.find(".py")]
         module = importlib.import_module("innofw.core.optimizers." + module_name)
 
-from torch.optim import Optimizer as TorchOptim
 
 class Optimizer(TorchOptim):
     """
@@ -70,7 +69,8 @@ class Optimizer(TorchOptim):
         param_groups()
             returns model's parameters
     """
-    def __init__(self, optimizer = None):
+
+    def __init__(self, optimizer=None):
         if optimizer is not None:
             self.optim = get_optim_adapter(optimizer)
 
