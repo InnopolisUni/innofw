@@ -90,8 +90,6 @@ def run_pipeline(
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
 
-    print(trainer_cfg)
-
     # wrap the model
     model_params = {
         "model": model,
