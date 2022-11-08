@@ -78,6 +78,7 @@ def run_pipeline(
     datamodule = get_datamodule(
         cfg.datasets,
         framework,
+        task=task,
         stage=data_stage,
         augmentations=augmentations,
         batch_size=cfg.get("batch_size"),
@@ -88,6 +89,8 @@ def run_pipeline(
     )  # todo: rethink metrics evaluation mechanism # possible way is to use torchmetrics https://torchmetrics.readthedocs.io/en/stable/
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
+
+    print(trainer_cfg)
 
     # wrap the model
     model_params = {
