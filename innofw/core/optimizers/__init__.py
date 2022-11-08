@@ -57,8 +57,9 @@ for file in os.listdir(os.path.dirname(__file__)):
         module_name = file[: file.find(".py")]
         module = importlib.import_module("innofw.core.optimizers." + module_name)
 
+from torch.optim import Optimizer as TorchOptim
 
-class Optimizer(nn.Module):
+class Optimizer(TorchOptim):
     """
         Class provides same interface for different optimizers by utilizing adapters
 
@@ -69,9 +70,9 @@ class Optimizer(nn.Module):
         param_groups()
             returns model's parameters
     """
-    def __init__(self, optimizer):
-        super().__init__()
-        self.optim = get_optim_adapter(optimizer)
+    def __init__(self, optimizer = None):
+        if optimizer is not None:
+            self.optim = get_optim_adapter(optimizer)
 
     def step(self):
         return self.optim.step()
@@ -82,3 +83,7 @@ class Optimizer(nn.Module):
 
     def zero_grad(self):
         self.optim.zero_grad()
+
+    @property
+    def state(self):
+        return self.optim.state
