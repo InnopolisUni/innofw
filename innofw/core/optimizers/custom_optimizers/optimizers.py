@@ -12,7 +12,9 @@ class SGD:
          optimizer
             optimizer from torch framework
     """
-    optimizer = Sgd
+    def __init__(self, *args, **kwargs):
+        super().__init__(optimizer=None)
+        self.optim = Sgd(*args, **kwargs)
 
 
 class ADAM(Optimizer):
