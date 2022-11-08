@@ -10,7 +10,8 @@ from tests.fixtures.config.datasets import house_prices_datamodule_cfg_w_target
 def test_save_preds(tmp_path):
     # create a house price dm
     fw = Frameworks.sklearn
-    dm: PandasDataModule = get_datamodule(house_prices_datamodule_cfg_w_target, fw)
+    task = "table-regression"
+    dm: PandasDataModule = get_datamodule(house_prices_datamodule_cfg_w_target, fw, task=task)
     # for stage train
     stage = Stages.train
     # get target col values

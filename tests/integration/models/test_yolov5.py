@@ -58,7 +58,7 @@ def test_model_instantiation(cfg):
 def test_datamodule_instantiation(cfg):
     task = "image-detection"
     framework = Frameworks.torch
-    datamodule = get_datamodule(cfg, framework)  # todo: batch size and augmentations
+    datamodule = get_datamodule(cfg, framework, task=task)  # todo: batch size and augmentations
 
 
 @pytest.mark.parametrize(
@@ -75,7 +75,7 @@ def test_model_predicting(model_cfg, dm_cfg):
     model = get_model(model_cfg, base_trainer_on_cpu_cfg)
     task = "image-detection"
     framework = Frameworks.torch
-    datamodule = get_datamodule(dm_cfg, framework)
+    datamodule = get_datamodule(dm_cfg, framework, task=task)
 
     wrapped_model = InnoModel(
         model,

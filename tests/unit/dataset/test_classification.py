@@ -41,7 +41,7 @@ def test_classification_dataset_creation():
     )
     task = "image-classification"
     framework = Frameworks.torch
-    dm = get_datamodule(cfg.datasets, framework)
+    dm = get_datamodule(cfg.datasets, framework, task=task)
 
     assert dm
 
@@ -98,7 +98,7 @@ def test_classification_dataset_creation_with_augmentations():
     task = "image-classification"
     framework = Frameworks.torch
     augmentations = get_obj(cfg, "augmentations", task, framework)
-    dm = get_datamodule(cfg.datasets, framework, augmentations=augmentations)  # task,
+    dm = get_datamodule(cfg.datasets, framework, augmentations=augmentations, task=task)
     assert dm
     dm.setup()
 
@@ -138,4 +138,4 @@ def test_classification_dataset_creation_wrong_framework():
     framework = Frameworks.sklearn
 
     with pytest.raises(ValueError):
-        dm = get_datamodule(cfg.datasets, framework)
+        dm = get_datamodule(cfg.datasets, framework, task=task)

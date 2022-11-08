@@ -146,7 +146,7 @@ def test_model_training(model_cfg, dm_cfg, task, aug):
     model = get_model(model_cfg, fixt_trainers.base_trainer_on_cpu_cfg)
     framework = Frameworks.torch
     augmentations = None if not aug else get_obj(aug, "augmentations", task, framework)
-    datamodule = get_datamodule(dm_cfg, framework, augmentations=augmentations)
+    datamodule = get_datamodule(dm_cfg, framework, task=task, augmentations=augmentations)
 
     wrapped_model = InnoModel(
         model,
