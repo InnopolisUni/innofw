@@ -28,7 +28,7 @@ class PandasDataModule(BasePandasDataModule):
     save_preds(self, preds, stage: Stages, dst_path: Path):
         Saves inference predictions in CSV format
     """
-    task = ["table-classification"]
+    task = ["table-classification", "table-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
 
     def __init__(

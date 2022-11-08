@@ -10,7 +10,8 @@ from tests.fixtures.config.datasets import (
 
 def test_coco_detection_dataset():
     framework = Frameworks.torch
-    dm = get_datamodule(wheat_datamodule_cfg_w_target, framework)
+    task = "image-detection"
+    dm = get_datamodule(wheat_datamodule_cfg_w_target, framework, task=task)
     assert dm
     dm.setup()
     assert iter(dm.train_dataloader()).next()
@@ -18,7 +19,8 @@ def test_coco_detection_dataset():
 
 def test_dicom_coco_detection_dataset():
     framework = Frameworks.torch
-    dm = get_datamodule(dicom_datamodule_cfg_w_target, framework)
+    task = "image-detection"
+    dm = get_datamodule(dicom_datamodule_cfg_w_target, framework, task=task)
     assert dm
     dm.setup()
     assert iter(dm.train_dataloader()).next()

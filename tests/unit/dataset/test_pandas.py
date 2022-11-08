@@ -21,7 +21,7 @@ def test_classification_pandas():
     )
     task = "table-classification"
     framework = Frameworks.xgboost
-    dm = get_datamodule(cfg.datasets, framework)
+    dm = get_datamodule(cfg.datasets, framework, task=task)
     assert dm
 
     train_data = dm.train_dataloader()

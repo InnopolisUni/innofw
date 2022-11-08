@@ -1,0 +1,1 @@
+python train.py experiments=KA_031122_invalid_experiment.yaml

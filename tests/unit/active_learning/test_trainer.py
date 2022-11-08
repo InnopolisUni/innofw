@@ -14,7 +14,8 @@ def test_active_learn_trainer_creation():
         get_model(catboost_with_uncertainty_cfg_w_target, base_trainer_on_cpu_cfg),
         log_dir=os.devnull,
     )
-    datamodule = get_datamodule(qm9_datamodule_cfg_w_target, Frameworks.catboost)
+    task = "qsar-regression"
+    datamodule = get_datamodule(qm9_datamodule_cfg_w_target, Frameworks.catboost, task=task)
 
     sut = ActiveLearnTrainer(model=model, datamodule=datamodule)
 

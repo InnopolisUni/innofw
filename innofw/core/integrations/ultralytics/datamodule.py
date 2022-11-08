@@ -13,7 +13,6 @@ from innofw.core.datamodules.base import BaseDataModule
 
 
 class YOLOV5DataModuleAdapter(BaseDataModule):
-    framework = [Frameworks.torch]
     """Class defines adapter interface to conform to YOLOv5 data specifications
 
         Attributes
@@ -35,6 +34,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
             allocates files in folders
     """
     task = ["image-detection"]
+    framework = [Frameworks.torch]
 
     def predict_dataloader(self):
         pass

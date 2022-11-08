@@ -166,7 +166,7 @@ faces_datamodule_cfg_w_target = DictConfig(
 
 qm9_datamodule_cfg_w_target = DictConfig(
     {
-        "task": ["table-regression"],
+        "task": ["qsar-regression"],
         "name": "qm9",
         "description": "https://paperswithcode.com/dataset/qm9",
         "markup_info": "Информация о разметке",
