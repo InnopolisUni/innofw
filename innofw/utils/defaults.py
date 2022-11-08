@@ -1,8 +1,10 @@
 # third party libraries
 import hydra
 import torch.nn
+from omegaconf import DictConfig, OmegaConf
 
 # local modules
+from innofw.utils.find_model import find_suitable_model
 from innofw.core.models.torch.lightning_modules import (
     AnomalyDetectionTimeSeriesLightningModule,
     BiobertNERModel,
@@ -16,7 +18,18 @@ from innofw.core.models.torch.lightning_modules import (
 from innofw.core.models.torch.lightning_modules.detection import (
     DetectionLightningModule,
 )
-from omegaconf import DictConfig, OmegaConf
+
+
+def default_model_for_datamodule(task, datamodule):
+    defaults = {
+        "table-regression": {
+            "innofw.core.datamodules.pandas_datamodules.RegressionPandasDataModule": find_suitable_model(
+                "linear_regression"),
+        }
+    }
+    return DictConfig({
+        "_target_": defaults[task][datamodule],
+    })
 
 
 def get_default(obj_name: str, framework: str, task: str):
