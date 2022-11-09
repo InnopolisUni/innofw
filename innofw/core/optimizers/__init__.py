@@ -74,8 +74,8 @@ class Optimizer(TorchOptim):
         if optimizer is not None:
             self.optim = get_optim_adapter(optimizer)
 
-    def step(self):
-        return self.optim.step()
+    def step(self, *args, **kwargs):
+        return self.optim.step(*args, **kwargs)
 
     @property
     def param_groups(self):

@@ -1,6 +1,8 @@
 # third party libraries
 from typing import Any
 
+import hydra
+from omegaconf import DictConfig
 from pytorch_lightning import LightningModule
 import torch
 
@@ -74,20 +76,22 @@ class SemanticSegmentationLightningModule(
 
     def configure_optimizers(self):
         """Function to set up optimizers and schedulers"""
-
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-        # instantiate scheduler from configurations
-        # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-        # return optimizers and schedulers
-
         # get all trainable model parameters
         params = [x for x in self.model.parameters() if x.requires_grad]
         # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        if self.scheduler_cfg is not None:
+        if isinstance(self.optimizer_cfg, DictConfig):
+            optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
+        else:
+            optim = self.optimizer_cfg(params=params)
+        # instantiate scheduler from configurations
+        try:
             scheduler = self.scheduler_cfg(optim)
+            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
+            # return optimizers and schedulers
             return [optim], [scheduler]
-        return [optim]
+        except:
+            return [optim]
+
 
     def training_step(self, batch, batch_idx):
         """Process a batch in a training loop"""
@@ -116,6 +120,8 @@ class SemanticSegmentationLightningModule(
         return {"preds": preds}
 
     def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> Any:
+        if isinstance(batch, dict):
+            batch = batch['scenes']
         preds = self.forward(batch)
         return preds
 

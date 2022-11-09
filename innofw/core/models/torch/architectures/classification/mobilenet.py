@@ -7,7 +7,7 @@ import torch.nn as nn
 import torchvision.models as models
 
 
-class Resnet18(nn.Module):
+class MobileNetV2(nn.Module):
     """
         MobileNetV2 model for classification task
         ...
