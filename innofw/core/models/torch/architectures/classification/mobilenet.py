@@ -9,7 +9,7 @@ import torchvision.models as models
 
 class Resnet18(nn.Module):
     """
-        Resnet model for classification task
+        MobileNetV2 model for classification task
         ...
 
         Attributes
@@ -17,7 +17,7 @@ class Resnet18(nn.Module):
         num_classes : int
             number of classes to predict
         model : nn.Module
-            Resnet model by torchvision
+            MobileNetV2 model by torchvision
 
         Methods
         -------
@@ -31,10 +31,9 @@ class Resnet18(nn.Module):
         super().__init__()
 
         self.num_classes = num_classes
-        self.model = models.resnet18(pretrained)
+        self.model = models.MobileNetV2(pretrained)
         self.model.fc = nn.Linear(512, num_classes)
 
     def forward(self, x):
-        # x = x.unsqueeze(0)
         out = self.model(x)
         return nn.functional.softmax(out, dim=1)
