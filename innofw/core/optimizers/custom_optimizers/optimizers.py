@@ -2,7 +2,7 @@ from torch.optim import SGD as Sgd, Adam
 #
 from innofw.core.optimizers import Optimizer
 
-class SGD:
+class SGD(Optimizer):
     """
         Class defines a wrapper of the torch optimizer to illustrate
          how to use custom optimizer implementations in the innofw
