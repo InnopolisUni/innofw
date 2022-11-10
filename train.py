@@ -1,9 +1,12 @@
 import sys
-
 import dotenv
 import hydra
 import yaml
 import os
+
+from pckg_util import check_gpu_and_torch_compatibility
+
+check_gpu_and_torch_compatibility()
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # load environment variables from `.env` file if it exists

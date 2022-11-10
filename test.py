@@ -1,11 +1,15 @@
 import os
 import sys
-
 import click
 import dotenv
 import hydra
 import yaml
 from omegaconf import DictConfig
+
+
+from pckg_util import check_gpu_and_torch_compatibility
+
+check_gpu_and_torch_compatibility()
 
 # load environment variables from `.env` file if it exists
 # recursively searches for `.env` in all folders starting from work dir
