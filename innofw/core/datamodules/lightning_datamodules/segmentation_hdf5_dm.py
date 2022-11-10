@@ -2,8 +2,8 @@ import logging
 import os
 import pathlib
 
+import cv2
 import torch
-import rasterio as rio
 
 from innofw.constants import Frameworks, Stages
 
@@ -11,27 +11,44 @@ from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
 from innofw.core.datasets.hdf5 import HDF5Dataset
-from innofw.core.datasets.rasterio import RasterioDataset
 
 
 class HDF5LightningDataModule(BaseLightningDataModule):
+    """Class defines hdf5 dataset preparation and dataloader creation for semantic segmentation
+
+        Attributes
+        ----------
+        task: List[str]
+            the task the datamodule is intended to be used for
+        framework: List[Union[str, Frameworks]]
+            the model framework the datamodule is designed to work with
+
+        Methods
+        -------
+        setup_train_test_val
+            finds hdf5 files
+            splits train data into train and validation sets
+            creates dataset objects
+        save_preds(preds, stage: Stages, dst_path: pathlib.Path)
+            saves predicted segmentation masks as file in the destination folder
+    """
     task = ["image-segmentation"]
     framework = [Frameworks.torch]
 
     def __init__(
-        self,
-        train,
-        test,
-        infer=None,
-        augmentations=None,
-        channels_num: int = 3,
-        val_size: float = 0.2,
-        batch_size: int = 32,
-        num_workers: int = 1,
-        random_seed: int = 42,
-        stage=None,
-        *args,
-        **kwargs,
+            self,
+            train,
+            test,
+            infer=None,
+            augmentations=None,
+            channels_num: int = 3,
+            val_size: float = 0.2,
+            batch_size: int = 32,
+            num_workers: int = 1,
+            random_seed: int = 42,
+            stage=None,
+            *args,
+            **kwargs,
     ):
         super().__init__(
             train=train,
@@ -74,36 +91,19 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         self.val_dataset = val
 
     def setup_infer(self):
-        if self.predict_dataset.is_file():
-            predict_files = [self.predict_dataset]
-        else:
-            predict_files = list(self.predict_dataset.iterdir())
-
-        self.predict_dataset = RasterioDataset(
-            raster_files=predict_files,
-            bands_num=self.channels_num,
-            mask_files=None,
-            transform=self.aug,
-        )
+        if isinstance(self.predict_dataset, HDF5Dataset):
+            return
+        infer_files = self.find_hdf5(self.predict_dataset)
+        self.predict_dataset = HDF5Dataset(infer_files, self.channels_num, self.aug)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        dataloader = self.get_stage_dataloader(stage)
-        for pred, batch in zip(preds, dataloader):
-            for file, output in zip(batch["names"], pred["preds"]):
-                file_path = pathlib.Path(file)
-                out = output.squeeze()
-
-                with rio.open(file_path, "r") as f:
-                    # retrieve metadata from source rasters
-                    meta = f.meta
-                    meta.update(
-                        height=out.shape[0],
-                        width=out.shape[1],
-                    )
-                    out_file_path = dst_path / "results" / file_path.name
-                    out_file_path.parent.mkdir(exist_ok=True, parents=True)
-                    # save the result
-                    with rio.open(out_file_path, "w+", **meta) as f_out:
-                        f_out.write(out, 1)
-
-                    logging.info(f"Saved result to: {out_file_path}")
+        out_file_path = dst_path / "results"
+        os.mkdir(out_file_path)
+        for preds_batch in preds:
+            for i , pred in enumerate(preds_batch):
+                pred = pred.numpy()
+                pred[pred < 0.3] = 0
+                pred[pred > 0] = 255
+                filename = out_file_path / f"out_{i}.png"
+                cv2.imwrite(filename, pred[0])
+        logging.info(f"Saved result to: {out_file_path}")

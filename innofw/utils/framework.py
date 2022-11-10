@@ -54,26 +54,26 @@ TABLE_FRAMEWORKS = ["xgboost", "sklearn", "catboost"]
 
 
 def get_obj(
-    config,
-    name,
-    task,
-    framework: Frameworks,
-    search_func=None,
-    _recursive_=True,
-    *args,
-    **kwargs,
+        config,
+        name,
+        task,
+        framework: Frameworks,
+        search_func=None,
+        _recursive_=True,
+        *args,
+        **kwargs,
 ):
     obj = None
     if (
-        name in config
-        and config[name] is not None
-        # and "implementations" in config[name]
+            name in config
+            and config[name] is not None
+            # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
         if "task" not in config[name]:
             return None
 
         if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-            config[name], framework
+                config[name], framework
         ):
             items = []
             for key, value in config[name].implementations[framework.value].items():
@@ -112,7 +112,7 @@ def get_losses(cfg, task, framework):
         if "task" not in cfg["losses"]:
             return None
         if is_suitable_for_task(cfg.losses, task) and is_suitable_for_framework(
-            cfg.losses, framework
+                cfg.losses, framework
         ):
             losses = []
             for key, value in cfg.losses.implementations[framework.value].items():
@@ -144,7 +144,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
         if "task" not in cfg["callbacks"]:
             return None
         if is_suitable_for_task(cfg.callbacks, task) and is_suitable_for_framework(
-            cfg.callbacks, framework
+                cfg.callbacks, framework
         ):
             for _, cb_conf in cfg.callbacks.implementations[framework.value].items():
                 if "_target_" in cb_conf:
@@ -167,6 +167,8 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
 from innofw.schema.model import ModelConfig
 from innofw.schema.dataset import DatasetConfig
 from innofw.schema.experiment import ExperimentConfig
+import logging
+from innofw.utils.extra import is_intersecting
 
 
 def get_model(cfg, trainer_cfg):
@@ -176,10 +178,13 @@ def get_model(cfg, trainer_cfg):
     )  # todo: make model_datacls.models call more configurable
 
 
-def get_datamodule(cfg, framework: Frameworks, *args, **kwargs):
+def get_datamodule(cfg, framework: Frameworks, task=None, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
     datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
-    if framework not in datamodule.framework:
+    if not is_intersecting(task, datamodule.task):
+        raise ValueError("Wrong task provided")
+
+    if not is_intersecting(framework, datamodule.framework):
         raise ValueError("Wrong framework provided")
     return datamodule
 

@@ -8,6 +8,21 @@ from innofw.core.metrics.base import BaseMetricAdapter
 
 @register_metrics_adapter("torchmetrics_adapter")
 class TorchMetricsAdapter(BaseMetricAdapter):
+    """
+    Class for working with pytorch metrics
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    forward(x):
+        function to perform metric
+
+    is_suitable_input(metric):
+        function checks metric function
+    """
     def __init__(self, metric, *args, **kwargs):
         super().__init__(metric)
 

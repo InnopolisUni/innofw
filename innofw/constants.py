@@ -18,7 +18,7 @@ class Frameworks(Enum):
     sklearn = "sklearn"
     xgboost = "xgboost"
     catboost = "catboost"
-
+    none = "none"  # todo: replace List["none"] -> List[Frameworks.none]
 
 PathLike = TypeVar(
     "PathLike", str, Path
@@ -64,8 +64,8 @@ class TaskType(Enum):
 
 
 class CLI_FLAGS(Enum):
-    ENABLE = "NO_CLI"
-    DISABLE = "WITH_CLI"
+    DISABLE = "NO_CLI"
+    ENABLE = "WITH_CLI"
 
 
 # ==== instances ====

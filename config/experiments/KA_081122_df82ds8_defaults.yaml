@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /datasets: regression_house_prices
+
+project: "check_defaults"
+task: "table-regression"
+random_seed: 42
+epochs: 1
+batch_size: 2
+weights_freq: 1

@@ -10,6 +10,16 @@ from innofw.core.optimizers.base import BaseOptimizerAdapter
 
 @register_optimizers_adapter("custom_adapter")
 class CustomAdapter(BaseOptimizerAdapter):
+    """
+        Class that adapts innofw optimizers
+
+        Methods
+        -------
+        is_suitable_input(optimizer)
+            checks if the optimizer is from innofw framework
+        step()
+            updates a model parameters
+    """
     def __init__(self, optimizer, *args, **kwargs):
         super().__init__(optimizer.optimizer)
 

@@ -31,8 +31,24 @@ def collate_fn(batch):
 
 
 class CocoLightningDataModule(BaseLightningDataModule):
+    """
+    A Class used for working with data in COCO format
+    ...
+
+    Attributes
+    ----------
+    aug : dict
+        The list of augmentations
+    val_size: float
+        The proportion of the dataset to include in the validation set
+
+    Methods
+    -------
+    find_csv_and_data(path):
+        Returns paths to csv file with bounding boxes and folder with images
+
+    """
     task = ["image-detection"]
-    framework = [Frameworks.torch]
     dataset = CocoDataset
 
     def __init__(
@@ -146,7 +162,19 @@ class CocoLightningDataModule(BaseLightningDataModule):
 
 class DicomCocoLightningDataModule(CocoLightningDataModule):
     dataset = DicomCocoDataset
+    """
+    A Class used for working with Dicom data in COCO format
+    ...
 
+    Attributes
+    ----------
+
+    Methods
+    -------
+    save_preds(preds, stage: Stages, dst_path: pathlib.Path):
+        Saves inference predictions in Dicom format
+
+    """
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         images = self.predict_dataset.images
         dicoms = self.predict_dataset.paths

@@ -6,6 +6,19 @@ from .learners import CatBoostActiveLearner
 
 
 class ActiveLearnTrainer:
+    """
+    A class to train with active learn strategy.
+
+    Attributes
+    ----------
+    learner : ActiveLearner 
+        ActiveLearner instance
+
+    Methods
+    -------
+    run(ckpt_path):
+        Run active learning .
+    """
     def __init__(
         self, model: InnoModel, datamodule: pl.LightningDataModule, *args, **kwargs
     ):

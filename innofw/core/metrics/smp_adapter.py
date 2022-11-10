@@ -7,6 +7,21 @@ from innofw.core.metrics.base import BaseMetricAdapter
 
 @register_metrics_adapter("segmentation_models_pytorch_adapter")
 class SMPMetricsAdapter(BaseMetricAdapter):
+    """
+    Class for working with smp metrics
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    forward(x):
+        function to perform metric
+
+    is_suitable_input(metric):
+        function checks metric function
+    """
     def __init__(self, metric, *args, **kwargs):
         super().__init__(metric)
 

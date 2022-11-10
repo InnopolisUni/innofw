@@ -3,14 +3,30 @@ from pathlib import Path
 
 from innofw.constants import Stages
 
-
 # todo: refactor, need to think more on _predict and _train functions
 
-
-# class BaseModel(ABC):
-
-
 class BaseModelAdapter(ABC):
+    """
+    Base Adapter for working with models
+    ...
+
+    Attributes
+    ----------
+    model : nn.Module
+        model to train
+    log_dir : Path
+        a path to logging directory
+    ckpt_handler :
+        loads model from checkpoints
+
+    Methods
+    -------
+    predict(x):
+        returns result of prediction and saves them
+    train(self, datamodule, ckpt_path=None):
+        trains model and saves checkpoints
+
+    """
     @staticmethod
     @abstractmethod
     def is_suitable_model(model) -> bool:

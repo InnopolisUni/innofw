@@ -8,6 +8,23 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
 
 class FasterRcnnModel(nn.Module):
+    """
+        FasterRcnn model for detection task
+        ...
+
+        Attributes
+        ----------
+        num_classes : int
+            number of classes to predict
+        model : nn.Module
+            FasterRcnn model by torchvision
+
+        Methods
+        -------
+        forward(x):
+            returns result of the data forwarding
+
+    """
     def __init__(
         self, num_classes: Optional[int] = 2, pretrained=True, *args, **kwargs
     ):

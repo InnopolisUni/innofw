@@ -3,10 +3,33 @@ import pytorch_lightning as pl
 from typing import Any
 import torch
 import torch.nn.functional as F
-
+from omegaconf import DictConfig
+import hydra
 
 class OneShotLearningLightningModule(pl.LightningModule):
-    """ """
+    """
+    PyTorchLightning module for One Shot Learning
+    ...
+
+    Attributes
+    ----------
+    model : nn.Module
+        model to train
+    losses : losses
+        loss to use while training
+    optimizer_cfg : cfg
+        optimizer configurations
+    scheduler_cfg : cfg
+        scheduler configuration
+
+    Methods
+    -------
+    forward(x):
+        returns result of prediction
+    calc_losses(output1, output2, label)
+        calculates losses and returns total loss
+
+    """
 
     def __init__(
         self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
@@ -16,6 +39,7 @@ class OneShotLearningLightningModule(pl.LightningModule):
         self.losses = losses
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
+        self.automatic_optimization = False
 
     def forward(self, img0, img1, *args, **kwargs) -> Any:
         img0 = img0.view(-1, 1, 100, 100)
@@ -27,9 +51,10 @@ class OneShotLearningLightningModule(pl.LightningModule):
         # get all trainable model parameters
         params = [x for x in self.model.parameters() if x.requires_grad]
         # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-
+        if isinstance(self.optimizer_cfg, DictConfig):
+            optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
+        else:
+            optim = self.optimizer_cfg(params=params)
         # instantiate scheduler from configurations
         try:
             scheduler = self.scheduler_cfg(optim)

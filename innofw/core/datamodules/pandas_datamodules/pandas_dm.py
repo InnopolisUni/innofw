@@ -13,7 +13,22 @@ from innofw.constants import Frameworks, Stages
 
 
 class PandasDataModule(BasePandasDataModule):
-    task = ["table-classification", "table-regression", "table-clustering"]
+    """
+    A Class used for working with datasets in table formats for classification task
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    setup_infer():
+        The method prepares inference data
+
+    save_preds(self, preds, stage: Stages, dst_path: Path):
+        Saves inference predictions in CSV format
+    """
+    task = ["table-classification", "table-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
 
     def __init__(
@@ -79,7 +94,22 @@ class PandasDataModule(BasePandasDataModule):
 
 
 class RegressionPandasDataModule(BasePandasDataModule):
-    task = ["table-classification", "table-regression", "table-clustering"]
+    """
+    A Class used for working with datasets in table formats for regression task
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    setup_infer():
+        The method prepares inference data
+
+    save_preds(self, preds, stage: Stages, dst_path: Path):
+        Saves inference predictions in CSV format
+    """
+    task = ["table-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
 
     def __init__(
@@ -143,7 +173,23 @@ class RegressionPandasDataModule(BasePandasDataModule):
 
 
 class ClusteringPandasDataModule(BasePandasDataModule):
-    task = ["table-classification", "table-regression", "table-clustering"]
+    """
+    A Class used for working with datasets in table formats for clustering task
+    ...
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    setup_infer():
+        The method prepares inference data
+
+    save_preds(self, preds, stage: Stages, dst_path: Path):
+        Saves inference predictions in CSV format
+    """
+
+    task = ["table-clustering"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
 
     def __init__(

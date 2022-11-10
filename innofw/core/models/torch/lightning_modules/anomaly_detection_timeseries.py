@@ -4,7 +4,29 @@ import torch
 
 
 class AnomalyDetectionTimeSeriesLightningModule(pl.LightningModule):
-    """ """
+    """
+    PyTorchLightning module for Anomaly Detection in Time Series
+    ...
+
+    Attributes
+    ----------
+    model : nn.Module
+        model to train
+    losses : losses
+        loss to use while training
+    optimizer_cfg : cfg
+        optimizer configurations
+    scheduler_cfg : cfg
+        scheduler configuration
+
+    Methods
+    -------
+    forward(x):
+        returns result of prediction
+    calc_losses(output1, output2, label)
+        calculates losses and returns total loss
+
+    """
 
     def __init__(
         self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any

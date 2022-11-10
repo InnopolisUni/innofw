@@ -11,6 +11,16 @@ from pydantic import DirectoryPath, FilePath
 
 
 class BaseSatelliteSource(ABC):
+    """
+        An abstract class that defines interface for satellite sources on handling metadata
+
+        Methods
+        -------
+        find_metadata_file()
+            returns path to the metadata file
+        parse_metadata_file()
+            given the metadata file should return a dictionary
+    """
     @property
     def metadata(self):
         file = self.find_metadata_file()
@@ -27,6 +37,16 @@ class BaseSatelliteSource(ABC):
 
 
 class Sentinel2(BaseSatelliteSource):
+    """
+        A class that defines sentinel2 metadata handling methods
+
+        Methods
+        -------
+        find_metadata_file()
+            returns path to the sentinel2 metadata file within self.src_folder
+        parse_metadata_file()
+            given the metadata file returns a dictionary
+    """
     def __init__(self, src_folder: DirectoryPath):
         self.src_folder = src_folder
 
@@ -85,6 +105,16 @@ class Sentinel2(BaseSatelliteSource):
 
 
 class Landsat8(BaseSatelliteSource):
+    """
+        A class that defines landsat8 metadata handling methods
+
+        Methods
+        -------
+        find_metadata_file()
+            returns path to the landsat8 metadata file within self.src_folder
+        parse_metadata_file()
+            given the metadata file returns a dictionary
+    """
     def __init__(self, src_folder: DirectoryPath):
         self.src_folder = src_folder
 

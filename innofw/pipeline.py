@@ -28,7 +28,8 @@ from innofw.constants import Stages
 from innofw import InnoModel
 from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 from innofw.utils.print_config import print_config_tree
-
+from innofw.utils.defaults import default_model_for_datamodule
+import hydra
 
 # log = utils.get_logger(
 #     __name__
@@ -62,9 +63,17 @@ def run_pipeline(
     project = cfg.get("project")
     data_stage = Stages.predict if predict else Stages.train
     trainer_cfg = get_trainer_cfg(cfg)
-    # Model
-    model = get_model(cfg.models, trainer_cfg)
     task = cfg.get("task")
+    # Model
+    if 'models' in cfg:
+        model = get_model(cfg.models, trainer_cfg)
+    else:
+        datamodule = cfg.datasets.get('_target_')
+        if datamodule is None:
+            raise ValueError("wrong configuration: no model and dataset _target_ specified")
+        else:
+            model = hydra.utils.instantiate(default_model_for_datamodule(task, datamodule))
+
     framework = map_model_to_framework(model)
     # weights initialization
     initializations = get_obj(
@@ -78,6 +87,7 @@ def run_pipeline(
     datamodule = get_datamodule(
         cfg.datasets,
         framework,
+        task=task,
         stage=data_stage,
         augmentations=augmentations,
         batch_size=cfg.get("batch_size"),

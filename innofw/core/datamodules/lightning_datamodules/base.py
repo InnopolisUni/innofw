@@ -1,29 +1,49 @@
-import albumentations
+from abc import ABC
+from typing import List, Union
+
 import numpy as np
 import torch
 import pytorch_lightning as pl
-from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
 
-from innofw.core.augmentations import Augmentation
-from innofw.core.datamodules.base import BaseDataModule
-from abc import ABC
 import albumentations as albu
+from albumentations.pytorch import ToTensorV2
 
+from innofw.core.datamodules.base import BaseDataModule
+from innofw.core.augmentations import Augmentation
 from innofw.core.datasets.image_infer import ImageFolderInferDataset
+from innofw.constants import Frameworks
 
 
 class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
+    """
+        An abstract class to define interface and methods of datamodules for the torch framework
+
+        Attributes
+        ----------
+        framework: List[Union[str, Frameworks]]
+            the model framework the datamodule is designed to work with
+
+        Methods
+        -------
+        train_dataloader()
+            Returns torch.utils.data.Dataloader using the training dataset
+
+        predict_dataloader()
+            Returns torch.utils.data.Dataloader using the inference dataset
+    """
+    framework: List[Union[str, Frameworks]] = [Frameworks.torch]
+
     def __init__(
-        self,
-        train,
-        test,
-        infer=None,
-        batch_size=1,
-        num_workers=1,
-        stage=None,
-        *args,
-        **kwargs
+            self,
+            train,
+            test,
+            infer=None,
+            batch_size=1,
+            num_workers=1,
+            stage=None,
+            *args,
+            **kwargs
     ):
         super().__init__(train, test, infer, stage, *args, **kwargs)
         self.train_dataset = self.train  # todo: KA: we have to fix this mess.

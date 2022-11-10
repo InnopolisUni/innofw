@@ -10,6 +10,18 @@ from sklearn.metrics import f1_score, precision_score, r2_score, jaccard_score
     description="something",
 )
 class F1Score(BaseMetric):
+    """
+    Custom f1-score
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+
+    """
     def __init__(self):
         self.metric = f1_score
         super().__init__()
@@ -22,6 +34,19 @@ class F1Score(BaseMetric):
     description="accuracy score",
 )
 class Accuracy(BaseMetric):
+    """
+    Custom Accuracy score
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+    score(pred, labels):
+        custom accuracy implementation
+    """
     def __init__(self):
         self.metric = self.score
         super().__init__()
@@ -39,6 +64,18 @@ class Accuracy(BaseMetric):
     description="Precision",
 )
 class Precision(BaseMetric):
+    """
+    Custom Precision score
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+
+    """
     def __init__(self):
         self.metric = precision_score
         super().__init__()
@@ -51,6 +88,19 @@ class Precision(BaseMetric):
     description="Recall",
 )
 class Recall(BaseMetric):
+    """
+    Custom Recall score
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+    score(pred, labels):
+        custom accuracy implementation
+    """
     def __init__(self):
         self.metric = self.score
         super().__init__()
@@ -74,6 +124,18 @@ class Recall(BaseMetric):
     description="R2_score",
 )
 class R2(BaseMetric):
+    """
+    Custom R2 score
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+
+    """
     def __init__(self):
         self.metric = r2_score
         super().__init__()
@@ -86,6 +148,18 @@ class R2(BaseMetric):
     description="intersection over union",
 )
 class IOU(BaseMetric):
+    """
+    Custom intersection over union score
+    ...
+
+    Attributes
+    ----------
+    self.metric : metric
+        metric function to perform
+    Methods
+    -------
+
+    """
     def __init__(self):
         self.metric = jaccard_score
         super().__init__()

@@ -9,9 +9,15 @@ from pydantic import validate_arguments
 class RibSuppression:
     """
     Class used for suppressing bone shadows in the Chest X-ray images.
+    Attributes
+    ----------
+    equalize_out: bool
+        a flag signalizing that the Histograms Equalization should be performed
+    model_suppression: model
+        rib suppression model
 
-    targets: image, mask, bbox, key points.
-    image types: uint8.
+    Methods
+    -------
     """
 
     @validate_arguments
@@ -88,7 +94,7 @@ def get_suppressed_image(image, model, equalize_out=False):
         img_temp = np.zeros(new_shape, dtype=np.uint8)
         img_temp[: img_shape[0], : img_shape[1]] = img
         img = img_temp
-    img_torch = torch.from_numpy(img).unsqueeze(0).unsqueeze(1).type(torch.float32)
+    img_torch = torch.from_numpy(img.copy()).unsqueeze(0).unsqueeze(1).type(torch.float32)
     # get the result of suppression
     with torch.no_grad() as tn:
         pred = model(img_torch)

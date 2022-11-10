@@ -95,6 +95,6 @@ def test_linear_regression_multiple_training(
     model_cfg, dm_cfg, trainer_cfg, task, ckpt_path, tmp_path
 ):
     model = get_model(model_cfg, trainer_cfg)
-    datamodule = get_datamodule(dm_cfg, framework=map_model_to_framework(model))
+    datamodule = get_datamodule(dm_cfg, framework=map_model_to_framework(model), task=task)
     log_dir = tmp_path / "logs"
     InnoModel(model=model, log_dir=log_dir).train(datamodule, ckpt_path)

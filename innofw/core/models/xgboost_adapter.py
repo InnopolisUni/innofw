@@ -19,6 +19,23 @@ from innofw.core.models import register_models_adapter
 # todo: this should be refactored: merged with sklearn
 @register_models_adapter(name="xgboost_adapter")
 class XGBoostAdapter(BaseModelAdapter):
+    """
+    Adapter for working with XGBoost models
+    ...
+
+    Attributes
+    ----------
+    metrics : list
+        List of metrics
+
+    Methods
+    -------
+    log_results(results):
+        logs metrics
+    forward(x):
+        returns result of prediction
+
+    """
     def _test(self, data):
         pass
 
