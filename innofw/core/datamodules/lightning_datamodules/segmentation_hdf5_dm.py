@@ -2,9 +2,8 @@ import logging
 import os
 import pathlib
 
-import h5py
+import cv2
 import torch
-import rasterio as rio
 
 from innofw.constants import Frameworks, Stages
 
@@ -12,7 +11,6 @@ from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
 from innofw.core.datasets.hdf5 import HDF5Dataset
-from innofw.core.datasets.rasterio import RasterioDataset
 
 
 class HDF5LightningDataModule(BaseLightningDataModule):
@@ -99,17 +97,13 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         self.predict_dataset = HDF5Dataset(infer_files, self.channels_num, self.aug)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        dataloader = self.get_stage_dataloader(stage)
         out_file_path = dst_path / "results"
         os.mkdir(out_file_path)
-        filename = out_file_path / "out.hdf5"
-        with h5py.File(filename, 'w') as f:
-            len_ = len(preds)
-            f.create_dataset('len', data=[len_])
-            for preds_batch in preds:
-                for i , pred in enumerate(preds_batch):
-                    pred = pred.numpy()
-                    pred[pred < 0.3] = 0
-                    f.create_dataset(str(i), data=pred)
-
+        for preds_batch in preds:
+            for i , pred in enumerate(preds_batch):
+                pred = pred.numpy()
+                pred[pred < 0.3] = 0
+                pred[pred > 0] = 255
+                filename = out_file_path / f"out_{i}.png"
+                cv2.imwrite(filename, pred[0])
         logging.info(f"Saved result to: {out_file_path}")
