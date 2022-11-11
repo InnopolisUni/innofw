@@ -1,4 +1,5 @@
 #!/bin/bash
+export NO_CLI=True
 sudo add-apt-repository ppa:flexiondotorg/nvtop -y > /dev/null
 sudo apt install nvtop > /dev/null
 
