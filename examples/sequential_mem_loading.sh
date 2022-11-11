@@ -1,6 +1,5 @@
 #!/bin/bash
 PWD=$(pwd)
-PWD=$(pwd)
 
 current_dir=${PWD##*/}
 
