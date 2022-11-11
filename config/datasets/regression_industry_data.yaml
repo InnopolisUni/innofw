@@ -1,5 +1,5 @@
 task:
-  - table-regression
+  - qsar-regression
 
 name: industry data
 description: Experimental industry data
