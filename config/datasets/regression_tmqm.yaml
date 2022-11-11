@@ -1,5 +1,5 @@
 task:
-  - table-regression
+  - qsar-regression
 
 name: tmqm
 description: " 
