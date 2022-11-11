@@ -149,7 +149,7 @@ if __name__ == "__main__":
         if "train_dataloader" in st.session_state:
             train_dataloader = st.session_state.train_dataloader
         else:
-            dm = get_datamodule(dm_cfg, framework, augmentations=transforms)
+            dm = get_datamodule(dm_cfg, framework, task=task, augmentations=transforms)
 
             dm.setup()
 
