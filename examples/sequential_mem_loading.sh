@@ -1,6 +1,11 @@
 #!/bin/bash
 PWD=$(pwd)
-if [ "${PWD##*/}"="examples" ]; then
+PWD=$(pwd)
+
+current_dir=${PWD##*/}
+
+var2="examples"
+if [ "$current_dir" = "$var2" ]; then
   cd ..
 fi
 nohup python train.py experiments=IM_190722_vwer3f23_oneshotlearning.yaml  &
