@@ -1,5 +1,5 @@
 task:
-  - table-regression
+  - qsar-regression
 
 name: mcl1
 description: https://en.wikipedia.org/wiki/MCL1
