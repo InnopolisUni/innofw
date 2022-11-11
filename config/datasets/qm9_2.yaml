@@ -1,5 +1,5 @@
 task:
-  - table-regression
+  - qsar-regression
 
 name: qm9_2
 description: "Link: https://paperswithcode.com/dataset/qm9"
