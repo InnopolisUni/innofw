@@ -1,7 +1,11 @@
 #!/bin/bash
 sudo apt-get install -y iotop > /dev/null
 PWD=$(pwd)
-if [ "${PWD##*/}"="examples" ]; then
+
+current_dir=${PWD##*/}
+
+var2="examples"
+if [ "$current_dir" = "$var2" ]; then
   cd ..
 fi
 nohup python train.py experiments=KA_130722_9f7134db_linear_regression.yaml &

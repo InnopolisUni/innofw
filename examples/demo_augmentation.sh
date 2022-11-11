@@ -3,7 +3,7 @@ current_dir=${PWD##*/}
 
 var2="examples"
 
-if [[ "$current_dir" == "$var2" ]]; then
+if [ "$current_dir" = "$var2" ]; then
 	cd ..
 fi
 
