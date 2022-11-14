@@ -37,10 +37,9 @@ def execute_bash_command(cmd):
 
 def check_gpu_and_torch_compatibility():
     try:
-        bash_command = "nvidia-smi --query-gpu=index,name,uuid,memory.total,memory.free,memory.used,count,utilization.gpu,utilization.memory --format=csv"
+        bash_command = "nvidia-smi --query-gpu=name --format=csv"
         output = execute_bash_command(bash_command).decode()
         if "NVIDIA A100" in output:
-            print(sys.executable)
             install_and_import("torch", "1.11.0+cu113", "-f", "https://download.pytorch.org/whl/torch_stable.html")
             install_and_import("torchvision", "0.12.0+cu113", "-f",
                                "https://download.pytorch.org/whl/torch_stable.html")
