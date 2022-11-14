@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from omegaconf import DictConfig
 import hydra
 
+
 class OneShotLearningLightningModule(pl.LightningModule):
     """
     PyTorchLightning module for One Shot Learning
@@ -32,7 +33,7 @@ class OneShotLearningLightningModule(pl.LightningModule):
     """
 
     def __init__(
-        self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
+            self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -87,8 +88,12 @@ class OneShotLearningLightningModule(pl.LightningModule):
         img0, img1 = batch
         output1, output2 = self.forward(img0, img1)
         euclidean_distance = F.pairwise_distance(output1, output2)
-        result = euclidean_distance.item()
-        logging.info(f"Image difference: {result}")
+        result = euclidean_distance.tolist()
+        if isinstance(result, list):
+            for i in result:
+                logging.info(f"Image difference: {i}")
+        else:
+            logging.info(f"Image difference: {result}")
         return result
 
     def calc_losses(self, output1, output2, label) -> torch.FloatTensor:
