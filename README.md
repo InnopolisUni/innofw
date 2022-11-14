@@ -43,8 +43,10 @@ Weight is used to specify the weight of the loss function.
 
 **TL;DR**
 
-if code to be instantiated is a function then name this field `function`
-if code to be instantiated is an object then name this field `object`
+- if code to be instantiated is a function then name this field `function`
+- if code to be instantiated is an object then name this field `object`
+
+
 ---
 Here we are choosing the type of the code we want to instantiate.
 
