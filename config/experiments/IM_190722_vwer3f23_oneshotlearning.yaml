@@ -10,4 +10,5 @@ project: "faces"
 task: "one-shot-learning"
 random_seed: 42
 weights_freq: 1
-epochs: 3
+epochs: 20
+batch_size: 128
