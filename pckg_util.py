@@ -2,10 +2,12 @@ import os
 import subprocess
 import sys
 import logging
+import importlib
 
 def install_and_import(package, version="", params="", link=""):
-    import importlib
     try:
+        if importlib.metadata.version(package)!=version:
+            raise ImportError
         importlib.import_module(package)
     except ImportError:
         import pip
