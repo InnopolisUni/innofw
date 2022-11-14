@@ -16,7 +16,7 @@ make
 sudo make install
 
 cd ../..
-rm -r nvtop
+sudo rm -r nvtop
 
 
 nohup python train.py experiments=IM_190722_vwer3f23_oneshotlearning.yaml optimizers=adam accelerator=gpu +devices=1 &
