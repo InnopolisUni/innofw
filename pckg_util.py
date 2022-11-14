@@ -3,6 +3,7 @@ import subprocess
 import sys
 import logging
 import importlib
+import importlib.metadata
 
 def install_and_import(package, version="", params="", link=""):
     try:
