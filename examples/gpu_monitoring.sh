@@ -19,7 +19,7 @@ cd ../..
 sudo rm -r nvtop
 
 
-nohup python train.py experiments=IM_190722_vwer3f23_oneshotlearning.yaml optimizers=adam accelerator=gpu +devices=1 &
+nohup python train.py experiments=IM_190722_vwer3f23_oneshotlearning.yaml optimizers=adam accelerator=gpu +devices=1 +batch_size=128 &
 PID=$!
 sudo nvtop
 kill $PID
