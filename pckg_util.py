@@ -25,7 +25,7 @@ def install_and_import(package, version="", params="", link=""):
         if link:
             installation_cmd_list.append(link)
 
-        pip.main(installation_cmd_list)
+        subprocess.check_call([sys.executable, "-m", "pip", *installation_cmd_list])
     finally:
         globals()[package] = importlib.import_module(package)
 
