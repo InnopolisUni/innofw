@@ -4,4 +4,4 @@ if "%current_dir%"=="examples" (
 cd ..
 )
 
-streamlit run ui\pages\Аугментация.py -- IM_190722_vwer3f23_oneshotlearning
+streamlit run ui\pages\augmentation.py -- IM_190722_vwer3f23_oneshotlearning
