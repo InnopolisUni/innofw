@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import shutil
@@ -185,10 +186,12 @@ class DicomDirSegmentationLightningDataModule(DirSegmentationLightningDataModule
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         dicoms = []
+        sc_names = []
         shutil.rmtree(os.path.join(self.dicoms, "png"), ignore_errors=True)
         for i in os.listdir(self.dicoms):
             if i.endswith(".dcm"):
                 dicoms.append(os.path.join(self.dicoms, i))
+                sc_names.append('SC'+i)
         pred = [p for pp in preds for p in pp]
         for i, m in enumerate(pred):
             mask = m.clone()
@@ -198,7 +201,8 @@ class DicomDirSegmentationLightningDataModule(DirSegmentationLightningDataModule
             img = dicom_to_img(dicoms[i])
             img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
             img[mask != 0] = 255
-            img_to_dicom(img, dicoms[i], dicoms[i][:-4] + "SC" + dicoms[i][-4:])
+            img_to_dicom(img, dicoms[i], os.path.join(dst_path, sc_names[i]))
+        logging.info(f"Saved results to: {dst_path}")
 
     def setup_infer(self):
         if isinstance(self.predict_dataset, self.dataset):
