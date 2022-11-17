@@ -66,9 +66,3 @@ filterwarnings = [
 #    # note the use of single quote below to denote "raw" strings in TOML
 #    'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
-
-
-[[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl/cu116"
-secondary = true
