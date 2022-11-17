@@ -7,11 +7,14 @@ authors = ["Kazybek Askarbek <k.askarbek@innopolis.university>"]
 [tool.poetry.dependencies]
 python = ">=3.8,<3.10"
 python-dotenv = "^0.20.0"
-torch = "~1.12.0"
-#torch = [
-#    { version = "=1.10.2+cu111", source = "torch", platform = "linux"},
-#    { version = "^1.11.0", platform = "windows"},
-#]
+    
+torch = [
+    { version = "1.12.1", platform = "windows", source="torch"},
+    { version = "~1.12.0", platform = "linux"},  # version = "=1.10.2+cu111", source = "torch", 
+]
+
+#torchaudio = { version = "0.12.1", source="torch"}
+#torchvision = { version = "0.13.1", source="torch"}
 
 tqdm = "^4.64.0"
 h5py = "^3.7.0"
@@ -69,3 +72,9 @@ filterwarnings = [
 #    # note the use of single quote below to denote "raw" strings in TOML
 #    'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
+
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu116"
+secondary = true
