@@ -43,8 +43,6 @@ def check_gpu_and_torch_compatibility():
         import platform
         if platform.system() == 'Windows':
             install_and_import("torch", "1.12.1+cu116", "-f", "https://download.pytorch.org/whl/torch_stable.html")
-            # install_and_import("torchvision", "0.12.0+cu113", "-f",
-            #                    "https://download.pytorch.org/whl/torch_stable.html")
         else:
             bash_command = "nvidia-smi --query-gpu=name --format=csv"
             output = execute_bash_command(bash_command).decode()
