@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - override /models: deeplabv3plus.yaml
+  - override /datasets: segmentation_arable_full
+  - override /optimizers: adam.yaml
+  - override /losses: segmentation_losses
+  - override /initializations: he
+
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+weights_freq: 1
+batch_size: 10
+
+models:
+  in_channels: 4
+  encoder_name: resnet101
