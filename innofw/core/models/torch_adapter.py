@@ -41,6 +41,7 @@ class TorchAdapter(BaseModelAdapter):
         returns result of prediction and saves them
 
     """
+
     def _test(self, data):
         pass
 
@@ -52,26 +53,27 @@ class TorchAdapter(BaseModelAdapter):
         pass
 
     def __init__(
-        self,
-        model,
-        task,
-        log_dir,
-        losses=None,
-        optimizers_cfg=None,
-        schedulers_cfg=None,
-        callbacks=None,
-        initializations=None,
-        trainer_cfg=None,
-        weights_path=None,
-        weights_freq=None,
-        stop_param=None,
-        project=None,
-        experiment=None,
-        *args,
-        **kwargs,
+            self,
+            model,
+            task,
+            log_dir,
+            losses=None,
+            optimizers_cfg=None,
+            schedulers_cfg=None,
+            callbacks=None,
+            initializations=None,
+            trainer_cfg=None,
+            weights_path=None,
+            weights_freq=None,
+            stop_param=None,
+            project=None,
+            experiment=None,
+            *args,
+            **kwargs,
     ):
         super().__init__(model, log_dir, TorchCheckpointHandler())
-        self.callbacks = callbacks or []
+        self.metrics = callbacks or []
+        self.callbacks = []
 
         self.set_checkpoint_save(weights_path, weights_freq, project, experiment)
         if stop_param:
@@ -103,8 +105,11 @@ class TorchAdapter(BaseModelAdapter):
             objects["optimizers_cfg"],
             objects["schedulers_cfg"],
         )
-        #
 
+        try:
+            self.pl_module.setup_up_metrics(self.metrics)
+        except:
+            pass
         if callable(objects["trainer_cfg"]):
             self.trainer = objects["trainer_cfg"](
                 callbacks=self.callbacks,
