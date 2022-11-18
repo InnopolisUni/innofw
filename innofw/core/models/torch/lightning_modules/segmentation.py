@@ -3,12 +3,13 @@ from typing import Any
 
 import hydra
 from omegaconf import DictConfig
-from pytorch_lightning import LightningModule
+# from pytorch_lightning import LightningModule
+from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 import torch
 
 
 class SemanticSegmentationLightningModule(
-    LightningModule
+    BaseLightningModule
 ):  # todo: define parameter types
     """
     PyTorchLightning module for Semantic Segmentation task
@@ -37,14 +38,14 @@ class SemanticSegmentationLightningModule(
     """
 
     def __init__(
-        self,
-        model,
-        losses,
-        optimizer_cfg,
-        scheduler_cfg,
-        threshold: float = 0.5,
-        *args,
-        **kwargs,
+            self,
+            model,
+            losses,
+            optimizer_cfg,
+            scheduler_cfg,
+            threshold: float = 0.5,
+            *args,
+            **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -92,14 +93,14 @@ class SemanticSegmentationLightningModule(
         except:
             return [optim]
 
-
     def training_step(self, batch, batch_idx):
         """Process a batch in a training loop"""
         images, masks = batch["scenes"], batch["labels"]
         logits = self.predict_proba(images)
         # compute and log losses
         total_loss = self.log_losses("train", logits.squeeze(), masks.squeeze())
-
+        self.log_metrics("train", torch.sigmoid(logits).view(-1), masks.to(torch.uint8).squeeze().unsqueeze(1).view(-1))
+        # (logits.squeeze() ).to(torch.uint8)
         return {"loss": total_loss, "logits": logits}
 
     def validation_step(self, batch, batch_id):
@@ -126,7 +127,7 @@ class SemanticSegmentationLightningModule(
         return preds
 
     def log_losses(
-        self, name: str, logits: torch.Tensor, masks: torch.Tensor
+            self, name: str, logits: torch.Tensor, masks: torch.Tensor
     ) -> torch.FloatTensor:
         """Function to compute and log losses"""
         total_loss = 0  # todo: redefine it as torch.FloatTensor(0.0)

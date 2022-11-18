@@ -6,6 +6,7 @@ defaults:
   - override /losses: segmentation_losses
   - override /augmentations: segmentation_satellite_imagery  # _inference
   - override /initializations: he
+  - override /callbacks: segmentation
 
 project: "segmentation"
 task: "image-segmentation"
