@@ -21,5 +21,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file DockerfileWindows --tag innofw:$(date +%s)
+    - name: Preparing Env
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        poetry config virtualenvs.create true
+        poetry lock
+        poetry install install --no-interaction --no-ansi
+        poetry run pytest tests/
