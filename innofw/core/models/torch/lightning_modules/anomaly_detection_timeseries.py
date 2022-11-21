@@ -2,8 +2,10 @@ import pytorch_lightning as pl
 from typing import Any
 import torch
 
+from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
-class AnomalyDetectionTimeSeriesLightningModule(pl.LightningModule):
+
+class AnomalyDetectionTimeSeriesLightningModule(BaseLightningModule):
     """
     PyTorchLightning module for Anomaly Detection in Time Series
     ...
@@ -29,7 +31,7 @@ class AnomalyDetectionTimeSeriesLightningModule(pl.LightningModule):
     """
 
     def __init__(
-        self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
+            self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -40,23 +42,6 @@ class AnomalyDetectionTimeSeriesLightningModule(pl.LightningModule):
     def forward(self, seq_true, *args, **kwargs) -> Any:
         return self.model(seq_true)
 
-    def configure_optimizers(self):
-        """Function to set up optimizers and schedulers"""
-        # get all trainable model parameters
-        params = [x for x in self.model.parameters() if x.requires_grad]
-        # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-
-        # instantiate scheduler from configurations
-        try:
-            scheduler = self.scheduler_cfg(optim)
-            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-            # return optimizers and schedulers
-            return [optim], [scheduler]
-        except:
-            return [optim]
-
     def training_step(self, batch, batch_idx):
         """
         Arguments
@@ -64,16 +49,16 @@ class AnomalyDetectionTimeSeriesLightningModule(pl.LightningModule):
         """
 
         x, y = batch
-        pred = self.forward(x[0])
-        loss = self.calc_losses(x[0], pred)
-
+        seq_pred = self.forward(x[0])
+        loss = self.calc_losses(x[0], seq_pred)
+        self.log_metrics('train', x[0], seq_pred)
         return {"loss": loss}
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         seq_pred = self.forward(x[0])
         loss = self.calc_losses(x[0], seq_pred)
-
+        self.log_metrics('val', x[0], seq_pred)
         return {"val_loss": loss}
 
     def predict_step(self, batch, batch_idx, **kwargs):

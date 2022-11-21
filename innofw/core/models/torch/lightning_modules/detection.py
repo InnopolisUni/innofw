@@ -1,7 +1,7 @@
 import torch
-from pytorch_lightning import LightningModule
-from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.ops import box_iou
+
+from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
 
 def _evaluate_iou(target, pred):
@@ -12,7 +12,7 @@ def _evaluate_iou(target, pred):
     return box_iou(target["boxes"], pred["boxes"]).diag().mean()
 
 
-class DetectionLightningModule(LightningModule):
+class DetectionLightningModule(BaseLightningModule):
     """
      PyTorchLightning module for Anomaly Detection in Time Series
      ...
@@ -38,15 +38,16 @@ class DetectionLightningModule(LightningModule):
          calculates losses and returns total loss
 
      """
+
     def __init__(
-        self,
-        model,
-        losses,
-        optimizer_cfg,
-        scheduler_cfg=None,
-        num_classes=2,
-        *args,
-        **kwargs,
+            self,
+            model,
+            losses,
+            optimizer_cfg,
+            scheduler_cfg=None,
+            num_classes=2,
+            *args,
+            **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -68,22 +69,6 @@ class DetectionLightningModule(LightningModule):
         """Predict and output probabilities"""
         out = self.model(batch)
         return out
-
-    def configure_optimizers(self):
-        """Function to set up optimizers and schedulers"""
-
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-        # instantiate scheduler from configurations
-        # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-        # return optimizers and schedulers
-
-        # get all trainable model parameters
-        params = [x for x in self.model.parameters() if x.requires_grad]
-        # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        if self.scheduler_cfg:
-            return [optim], [self.scheduler_cfg(optim)]
-        return [optim]
 
     def training_step(self, batch, batch_idx):
         """Process a batch in a training loop"""

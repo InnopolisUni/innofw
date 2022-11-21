@@ -5,6 +5,6 @@ defaults:
   - override /callbacks: regression
   
 project: "mcl1"
-task: "table-regression"
+task: "qsar-regression"
 random_seed: 42
 original_work_dir: ${hydra:runtime.cwd}

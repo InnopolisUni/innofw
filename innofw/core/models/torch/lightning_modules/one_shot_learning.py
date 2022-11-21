@@ -5,9 +5,10 @@ import torch
 import torch.nn.functional as F
 from omegaconf import DictConfig
 import hydra
+from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
 
-class OneShotLearningLightningModule(pl.LightningModule):
+class OneShotLearningLightningModule(BaseLightningModule):
     """
     PyTorchLightning module for One Shot Learning
     ...
@@ -46,24 +47,6 @@ class OneShotLearningLightningModule(pl.LightningModule):
         img0 = img0.view(-1, 1, 100, 100)
         img1 = img1.view(-1, 1, 100, 100)
         return self.model(img0, img1)
-
-    def configure_optimizers(self):
-        """Function to set up optimizers and schedulers"""
-        # get all trainable model parameters
-        params = [x for x in self.model.parameters() if x.requires_grad]
-        # instantiate models from configurations
-        if isinstance(self.optimizer_cfg, DictConfig):
-            optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-        else:
-            optim = self.optimizer_cfg(params=params)
-        # instantiate scheduler from configurations
-        try:
-            scheduler = self.scheduler_cfg(optim)
-            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-            # return optimizers and schedulers
-            return [optim], [scheduler]
-        except:
-            return [optim]
 
     def training_step(self, batch, batch_idx):
         """

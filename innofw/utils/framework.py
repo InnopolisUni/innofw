@@ -106,6 +106,53 @@ def get_obj(
     return obj
 
 
+def get_optimizer(
+        config,
+        name,
+        task,
+        framework: Frameworks,
+        search_func=None,
+        _recursive_=True,
+        *args,
+        **kwargs,
+):
+    obj = None
+    if (
+            name in config
+            and config[name] is not None
+            # and "implementations" in config[name]
+    ):  # framework not in TABLE_FRAMEWORKS and
+        if "task" not in config[name]:
+            return None
+
+        if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
+                config[name], framework
+        ):
+            items = []
+            for key, value in config[name].implementations[framework.value].items():
+                if key == "meta":
+                    continue
+                if "function" in value:
+                    item = value["function"]
+                elif "object" in value:
+                    item = value["object"]
+                else:
+                    raise ValueError("wrong config structure of optimizer")
+                items.append(item)
+        else:
+            raise ValueError(
+                f"These {name} are not applicable with selected model and/or task"
+            )
+
+        obj = items[0] if len(items) == 1 else items
+    elif search_func is not None:
+        obj = search_func(task, framework, config[name], *args, **kwargs)
+    # else:
+    #     raise ValueError("Unable to instantiate the object")
+
+    return obj
+
+
 def get_losses(cfg, task, framework):
     losses = None
     if "losses" in cfg and cfg.losses is not None:
