@@ -1,7 +1,7 @@
 FROM ipodsekin/astralinux:orel-slim-2.12.45-mg7.1.0
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install curl-y
+RUN apt-get install curl -y
 #ffmpeg libsm6 libxext6 python3-pip iotop
 
 RUN curl -sL \
