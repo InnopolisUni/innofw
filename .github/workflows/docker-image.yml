@@ -7,7 +7,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build-on-ubuntu:
     runs-on: ubuntu-latest
 
@@ -28,3 +27,13 @@ jobs:
         poetry lock
         poetry install
         poetry run pytest tests/
+
+  build-on-astra:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: |
+        docker build . --file DockerfileAstra --tag innofw
+        docker run -t innofw
