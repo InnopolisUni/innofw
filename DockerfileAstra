@@ -12,15 +12,12 @@ RUN /bin/bash miniconda3.sh -b -p /conda \
     && echo export PATH=/conda/bin:$PATH >> .bashrc
 ENV PATH="/conda/bin:${PATH}"
 
-RUN python --version
 RUN conda create -n py38 python=3.8
-RUN python --version
 SHELL ["conda", "run", "-n", "py38", "/bin/bash", "-c"]
-RUN python --version
-RUN conda install -c conda-forge poetry
-RUN poetry shell
-RUN poetry lock
-RUN poetry install
-RUN python --version
-RUN chmod +x /code/entrypoint.sh && chmod +x /code/run_tests.sh
+RUN conda install -c conda-forge poetry \
+    && poetry shell \
+    && poetry lock \
+    && poetry install \
+    && chmod +x /code/entrypoint.sh && chmod +x /code/run_tests.sh
+
 CMD poetry run bash /code/run_tests.sh
