@@ -26,5 +26,5 @@ jobs:
         curl -sSL https://install.python-poetry.org | python3 -
         poetry config virtualenvs.create true
         poetry lock
-        poetry install install --no-interaction --no-ansi
+        poetry install
         poetry run pytest tests/
