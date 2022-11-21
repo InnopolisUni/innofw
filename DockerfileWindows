@@ -1,4 +1,4 @@
-FROM winamd64/python:3.8.3-slim
+FROM winamd64/python:3
 
 #RUN apt-get update && apt-get upgrade -y
 #RUN apt-get install ffmpeg libsm6 libxext6  -y
