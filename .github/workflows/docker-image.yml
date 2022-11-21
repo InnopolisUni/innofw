@@ -13,4 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file DockerfileAstra --tag innofw:$(date +%s)
+      run: |
+        docker build . --file DockerfileAstra --tag innofw:$(date +%s)
+        docker run -t innofw:$(date +%s)
