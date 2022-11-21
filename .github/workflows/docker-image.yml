@@ -8,13 +8,18 @@ on:
 
 jobs:
 
-  build:
-    strategy:
-      matrix:
-        platform: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+  build-on-ubuntu:
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag innofw:$(date +%s)
+
+  build-on-windows:
+    runs-on: ubuntu-latest # windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file DockerfileWindows --tag innofw:$(date +%s)
