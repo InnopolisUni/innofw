@@ -13,7 +13,8 @@ defaults:
   - initializations:
   - experiments: ???
   - clear_ml: disabled
-  - override hydra/job_logging: custom
+  - override hydra/job_logging: disabled
+#  - override hydra/job_logging: custom
 
 project: ???  # todo: describe this field
 task: ???

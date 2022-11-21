@@ -8,4 +8,4 @@ implementations:
     Adam:
       function:
         _target_: innofw.core.optimizers.custom_optimizers.optimizers.ADAM
-        lr: 1e-5
+        lr: 3e-3

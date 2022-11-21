@@ -33,8 +33,9 @@ class ChemistryVAELightningModule(BaseLightningModule):
         sample from a normal distribution. The output is the prior distribution, the
         posterior distribution (q), and the sampled z values.
     """
+
     def __init__(
-        self, model: dict, losses, optimizer_cfg, scheduler_cfg, *args, **kwargs
+            self, model: dict, losses, optimizer_cfg, scheduler_cfg, *args, **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.encoder: Encoder = model["encoder"]
@@ -110,13 +111,13 @@ class ChemistryVAELightningModule(BaseLightningModule):
         return x_hat
 
     def _calc_losses(
-        self,
-        x: torch.Tensor,
-        x_hat: torch.Tensor,
-        p: torch.Tensor,
-        q: torch.Tensor,
-        y: torch.Tensor,
-        y_hat: torch.Tensor,
+            self,
+            x: torch.Tensor,
+            x_hat: torch.Tensor,
+            p: torch.Tensor,
+            q: torch.Tensor,
+            y: torch.Tensor,
+            y_hat: torch.Tensor,
     ) -> torch.FloatTensor:
         """Function to compute losses"""
         total_loss = torch.zeros(1, device=self.device, dtype=x.dtype)
@@ -134,24 +135,6 @@ class ChemistryVAELightningModule(BaseLightningModule):
 
         return total_loss
 
-    def configure_optimizers(self):
-        """Function to set up optimizers and schedulers"""
-        # get all trainable model parameters
-        params = [x for x in self.parameters() if x.requires_grad]
-
-        # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-
-        # instantiate scheduler from configurations
-        try:
-            scheduler = self.scheduler_cfg(optim)
-            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-            # return optimizers and schedulers
-            return [optim], [scheduler]
-        except:
-            return [optim]
-
 
 class ChemistryVAEForwardLightningModule(ChemistryVAELightningModule):
     """
@@ -164,6 +147,7 @@ class ChemistryVAEForwardLightningModule(ChemistryVAELightningModule):
         The forward function first encodes all the molecules using an encoder, then passes them through a fully connected layer to get mu and log_var.
         Then it samples from that distribution to get z (latent vector). Finally, it decodes z into y_hat.
     """
+
     def forward(self, batch: torch.Tensor):
         x = self.encoder(batch.flatten(1))
         mu = self.fc_mu(x)
@@ -184,6 +168,7 @@ class ChemistryVAEReverseLightningModule(ChemistryVAELightningModule):
         The forward function takes in a batch of smiles strings, and returns the decoded version of the smiles string.
         The latent dimension is also returned for use in other functions.
     """
+
     def predict_step(self, batch, batch_idx, **kwargs):
         x_hat, y_hat = self(batch)
         return x_hat, y_hat

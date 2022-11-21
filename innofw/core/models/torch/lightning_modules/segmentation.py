@@ -1,8 +1,6 @@
 # third party libraries
 from typing import Any
 
-import hydra
-from omegaconf import DictConfig
 # from pytorch_lightning import LightningModule
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 import torch
@@ -75,24 +73,6 @@ class SemanticSegmentationLightningModule(
         out = self.model(batch)
         return out
 
-    def configure_optimizers(self):
-        """Function to set up optimizers and schedulers"""
-        # get all trainable model parameters
-        params = [x for x in self.model.parameters() if x.requires_grad]
-        # instantiate models from configurations
-        if isinstance(self.optimizer_cfg, DictConfig):
-            optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-        else:
-            optim = self.optimizer_cfg(params=params)
-        # instantiate scheduler from configurations
-        try:
-            scheduler = self.scheduler_cfg(optim)
-            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-            # return optimizers and schedulers
-            return [optim], [scheduler]
-        except:
-            return [optim]
-
     def training_step(self, batch, batch_idx):
         """Process a batch in a training loop"""
         images, masks = batch["scenes"], batch["labels"]
@@ -100,7 +80,6 @@ class SemanticSegmentationLightningModule(
         # compute and log losses
         total_loss = self.log_losses("train", logits.squeeze(), masks.squeeze())
         self.log_metrics("train", torch.sigmoid(logits).view(-1), masks.to(torch.uint8).squeeze().unsqueeze(1).view(-1))
-        # (logits.squeeze() ).to(torch.uint8)
         return {"loss": total_loss, "logits": logits}
 
     def validation_step(self, batch, batch_id):

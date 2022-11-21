@@ -5,9 +5,10 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 from torch.nn import ModuleList
 import pytorch_lightning as pl
 from transformers import BertForTokenClassification, PreTrainedTokenizerBase
+from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
 
-class BiobertNERModel(pl.LightningModule):
+class BiobertNERModel(BaseLightningModule):
     """
     A biobert ner model.
 
@@ -28,14 +29,15 @@ class BiobertNERModel(pl.LightningModule):
         The configure_optimizers function is used to set up optimizers and schedulers.
         It returns a list of optimizers and a list of schedulers.
     """
+
     def __init__(
-        self,
-        model: dict,
-        losses,
-        optimizer_cfg,
-        scheduler_cfg,
-        *args,
-        **kwargs,
+            self,
+            model: dict,
+            losses,
+            optimizer_cfg,
+            scheduler_cfg,
+            *args,
+            **kwargs,
     ):
         super().__init__(*args, *kwargs)
 
@@ -55,23 +57,6 @@ class BiobertNERModel(pl.LightningModule):
             loss += loss_f(preds, targets)
         return loss
 
-    def configure_optimizers(self):
-        """Function to set up optimizers and schedulers"""
-        # get all trainable model parameters
-        params = [x for x in self.model.parameters() if x.requires_grad]
-        # instantiate models from configurations
-        optim = self.optimizer_cfg(params=params)
-        # optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
-
-        # instantiate scheduler from configurations
-        try:
-            scheduler = self.scheduler_cfg(optim)
-            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-            # return optimizers and schedulers
-            return [optim], [scheduler]
-        except:
-            return [optim]
-
     @property
     def max_length(self):
         return self.model.config.max_position_embeddings
@@ -83,7 +68,7 @@ class BiobertNERModel(pl.LightningModule):
         preds = logits.argmax(-1)
         mask = input_ids != self.tokenizer.pad_token_id
         loss = self.__calc_loss(logits[mask], labels[mask])
-
+        self.log_metrics('train', logits[mask], labels[mask])
         return {"loss": loss, "preds": preds}
 
     def validation_step(self, X, batch_idx):
@@ -93,7 +78,7 @@ class BiobertNERModel(pl.LightningModule):
         preds = logits.argmax(-1)
         mask = input_ids != self.tokenizer.pad_token_id
         loss = self.__calc_loss(logits[mask], labels[mask])
-
+        self.log_metrics('val', logits[mask], labels[mask])
         return {"loss": loss, "preds": preds}
 
     def test_step(self, X, batch_idx):
@@ -103,7 +88,7 @@ class BiobertNERModel(pl.LightningModule):
         preds = logits.argmax(-1)
         mask = input_ids != self.tokenizer.pad_token_id
         loss = self.__calc_loss(logits[mask], labels[mask])
-
+        self.log_metrics('test', logits[mask], labels[mask])
         return {"loss": loss, "preds": preds}
 
     def predict_step(self, X, batch_idx):
@@ -127,6 +112,7 @@ class BiobertNERModelWithBIO(BiobertNERModel):
         entity is matched, then NA is used as a placeholder for &quot;not applicable&quot;. This function also handles cases where multiple
         entities are matched to one token.
     """
+
     def _get_label_ids_by_matched_target(self, match_target_indexes, entities):
         label_ids = []
         last_ind = None

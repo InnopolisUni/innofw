@@ -93,17 +93,6 @@ def test_on_cpu(model_cfg, dm_cfg, trainer_cfg, task):
         }
     )
     run_pipeline(cfg, train=True)
-    # # create a model
-    # model = get_model(model_cfg, trainer_cfg)
-    # # create a dataset
-    # framework = map_model_to_framework(model)
-    # dm = get_datamodule(dm_cfg, framework=framework)
-    # # wrap a model
-    # wrp_model = Wrapper.wrap(
-    #     model, trainer_cfg=trainer_cfg, task=task, log_dir="./logs/test"
-    # )
-    # # start training
-    # wrp_model.train(dm)
 
 
 # run these tests only if gpu is available on the machine
@@ -158,7 +147,7 @@ def test_on_gpu(model_cfg, dm_cfg, trainer_cfg, task):
     model = get_model(model_cfg, trainer_cfg)
     # create a dataset
     framework = map_model_to_framework(model)
-    dm = get_datamodule(dm_cfg, framework=framework)
+    dm = get_datamodule(dm_cfg, task=task, framework=framework)
     # wrap a model
     wrp_model = InnoModel(
         model, trainer_cfg=trainer_cfg, task=task, log_dir="./logs/test"
@@ -167,7 +156,6 @@ def test_on_gpu(model_cfg, dm_cfg, trainer_cfg, task):
     wrp_model.train(dm)
 
     assert True
-
 
 # # [
 # #     yolov5_cfg_w_target,

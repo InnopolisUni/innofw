@@ -12,6 +12,7 @@ from omegaconf import OmegaConf, DictConfig
 # local modules
 from innofw.utils.framework import (
     get_callbacks,
+    get_optimizer,
     get_ckpt_path,
     get_datamodule,
     get_losses,
@@ -30,6 +31,7 @@ from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 from innofw.utils.print_config import print_config_tree
 from innofw.utils.defaults import default_model_for_datamodule
 import hydra
+
 
 # log = utils.get_logger(
 #     __name__
@@ -82,7 +84,7 @@ def run_pipeline(
 
     augmentations = get_obj(cfg, "augmentations", task, framework)
     metrics = get_obj(cfg, "metrics", task, framework)
-    optimizers = get_obj(cfg, "optimizers", task, framework)
+    optimizers = get_optimizer(cfg, "optimizers", task, framework)
     schedulers = get_obj(cfg, "schedulers", task, framework)
     datamodule = get_datamodule(
         cfg.datasets,
@@ -116,6 +118,7 @@ def run_pipeline(
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
     }
+
     inno_model = InnoModel(**model_params)
     result = None
 

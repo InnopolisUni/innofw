@@ -105,11 +105,11 @@ class TorchAdapter(BaseModelAdapter):
             objects["optimizers_cfg"],
             objects["schedulers_cfg"],
         )
-
         try:
-            self.pl_module.setup_up_metrics(self.metrics)
-        except:
+            self.pl_module.setup_metrics(self.metrics)
+        except AttributeError:
             pass
+
         if callable(objects["trainer_cfg"]):
             self.trainer = objects["trainer_cfg"](
                 callbacks=self.callbacks,
