@@ -8,11 +8,23 @@ on:
 
 jobs:
 
-  build:
-
+  build-on-ubuntu:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag innofw:$(date +%s)
+
+  build-on-windows:
+    runs-on: ubuntu-latest # windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Preparing Env
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        poetry config virtualenvs.create true
+        poetry lock
+        poetry install
+        poetry run pytest tests/
