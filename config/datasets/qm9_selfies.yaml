@@ -1,5 +1,8 @@
 task:
   - qsar-regression
+  - text-vae-reverse
+  - text-vae-forward
+  - text-vae
 
 name: qm9_selfies
 description: "Link: https://paperswithcode.com/dataset/qm9"

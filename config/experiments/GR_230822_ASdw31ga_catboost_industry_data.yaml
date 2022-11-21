@@ -6,6 +6,6 @@ defaults:
 
 
 project: "industry_data"
-task: "table-regression"
+task: "qsar-regression"
 random_seed: 42
 #ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/catboost_industry_data.cbm

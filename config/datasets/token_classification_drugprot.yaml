@@ -1,5 +1,5 @@
 task:
-  - biobert-ner
+  - text-ner
 
 name: Drugprot
 description: "Frigprot, 

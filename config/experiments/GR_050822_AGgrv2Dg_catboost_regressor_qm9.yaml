@@ -6,5 +6,5 @@ defaults:
 
 
 project: "qm9"
-task: "table-regression"
+task: "qsar-regression"
 random_seed: 42

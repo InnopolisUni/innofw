@@ -48,7 +48,7 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         extract all of the targets for each SMILES string in that row. Both sets are then converted into selfies using 
         the self.smiles2selfies function which converts a list of SMILES strings into their corresponding selfies sequences.
     """
-    task = ["text-vae"]
+    task = ["text-vae", "qsar-regression", "text-vae-reverse", "text-vae-forward", "text-vae"]
     framework = [Frameworks.torch]
 
     _preprocessed: bool = False
