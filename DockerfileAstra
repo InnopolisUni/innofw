@@ -1,9 +1,7 @@
 FROM python:3.8.3-slim
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install ffmpeg libsm6 libxext6  -y
-RUN apt-get install curl -y
-RUN apt-get install python3-pip -y
+RUN apt-get install ffmpeg libsm6 libxext6 curl python3-pip -y
 
 RUN /bin/bash -c 'curl -sSL https://install.python-poetry.org | python -'
 
@@ -11,7 +9,7 @@ COPY . /code
 WORKDIR code
 
 RUN /bin/bash -c '/root/.local/bin/poetry config virtualenvs.create false \
-    && /root/.local/bin/poetry lock  && /root/.local/bin/poetry install --no-interaction --no-ansi'
+    && /root/.local/bin/poetry install --no-interaction --no-ansi'
 
 
 RUN apt-get -y install iotop
