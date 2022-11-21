@@ -1,5 +1,6 @@
 task:
   - table-regression
+  - qsar-regression
 
 implementations:
   xgboost:
