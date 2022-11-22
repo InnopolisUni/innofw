@@ -37,7 +37,7 @@ class BaseLightningModule(pl.LightningModule):
     def configure_optimizers(self):
         """Function to set up optimizers and schedulers"""
         # get all trainable model parameters
-        params = [x for x in self.model.parameters() if x.requires_grad]
+        params = [x for x in self.parameters() if x.requires_grad]
         # instantiate models from configurations
         if isinstance(self.optimizer_cfg, DictConfig):
             optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
