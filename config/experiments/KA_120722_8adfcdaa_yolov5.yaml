@@ -8,6 +8,6 @@ defaults:
 project: "lep"
 task: "image-detection"
 random_seed: 42
-epochs: 1
+epochs: 2
 batch_size: 2
 weights_freq: 1
