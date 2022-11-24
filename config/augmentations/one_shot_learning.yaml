@@ -5,7 +5,6 @@ implementations:
   torch:
     Compose:
       object:
-        # todo: here should be a division to train, test and val sets
         _target_: torchvision.transforms.Compose
         transforms:
           - _target_: torchvision.transforms.ToPILImage

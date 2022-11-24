@@ -53,7 +53,7 @@ class RasterDataset:
         # ):
         metadata[
             "driver"
-        ] = self.DRIVER  # todo: consider cases when other drivers needed
+        ] = self.DRIVER
 
         self.ds = rio.open(dst_path, "w+", **metadata)
 
@@ -100,7 +100,7 @@ class RasterDataset:
         with rio.open(band_path) as image_band:
             if self.ds.crs == image_band.crs:
                 self.ds.write(image_band.read(1), band_index)
-            else:  # todo(qb): I'm unsure about the following code snippet, test thoroughly,
+            else:
                 transform, width, height = calculate_default_transform(
                     image_band.crs,
                     self.ds.crs,

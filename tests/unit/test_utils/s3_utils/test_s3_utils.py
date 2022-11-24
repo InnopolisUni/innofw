@@ -127,7 +127,6 @@ def test_s3handler_has_hash_value():
     src_path = "https://api.blackhole.ai.innopolis.university/public-datasets/stroke_detection_dicom/test.zip"
     assert not s3handler.has_hash_value(src_path)
 
-    # todo: upload such file
     # src_path = "https://api.blackhole.ai.innopolis.university/public-datasets/tests/file_with_hash.zip"
     # assert s3handler.has_hash_value(src_path)
 
@@ -201,7 +200,6 @@ def test_minio_interface(tmp_path):
 
 import logging
 
-# todo: handle user input in tests
 # @pytest.mark.parametrize(
 #     ["url", "credentials"],
 #     [[DEFAULT_STORAGE_URL, DefaultS3User], [DEFAULT_STORAGE_URL, None]],

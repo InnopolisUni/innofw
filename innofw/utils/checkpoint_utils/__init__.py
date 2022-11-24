@@ -39,7 +39,7 @@ def load_metadata(file_path: FilePath):
         ".pickle",
         ".pkl",
         ".cmb",
-    ]:  # todo: make PickleCheckpointHandler default to any extension
+    ]:
         metadata = PickleCheckpointHandler().load_metadata(file_path)
     else:
         raise NotImplementedError(f"unable to process extension: {file_path.suffix}")

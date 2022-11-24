@@ -14,7 +14,6 @@ from innofw import InnoModel
 
 LOGS_FOLDER = (
     "./logs/trainings/runs/default/"
-    # todo: add test with varying logger folders  # todo: better to log into tmp folders
 )
 
 model_cfg_w_target = DictConfig(

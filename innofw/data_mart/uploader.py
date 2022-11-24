@@ -22,24 +22,21 @@ from innofw.utils.s3_utils.credentials import get_s3_credentials
 from innofw.utils.s3_utils import S3Handler
 
 
-# todo: fix kwargs
-
-
 @validate_arguments
 def upload_dataset(
-    folder_path: DirectoryPath,
-    config_save_path: Path,
-    remote_save_path: AnyUrl,
-    task: Union[str, List[str]],
-    framework: Union[str, List[str]],
-    target: str,
-    name: str,
-    description: str,
-    markup_info: str,
-    date_time: str,
-    access_key: Optional[str] = None,
-    secret_key: Optional[str] = None,
-    **kwargs,
+        folder_path: DirectoryPath,
+        config_save_path: Path,
+        remote_save_path: AnyUrl,
+        task: Union[str, List[str]],
+        framework: Union[str, List[str]],
+        target: str,
+        name: str,
+        description: str,
+        markup_info: str,
+        date_time: str,
+        access_key: Optional[str] = None,
+        secret_key: Optional[str] = None,
+        **kwargs,
 ):
     """Function to upload a dataset into s3(remote storage) and generate config file for the dataset
 
@@ -137,7 +134,7 @@ def upload_dataset(
         markup_info=markup_info,
         date_time=date_time,
         framework=framework,
-    )  # todo:
+    )
     # save the config file
     config_save_path = get_abs_path(config_save_path)
     dataset_cfg.save_as_yaml(config_save_path)

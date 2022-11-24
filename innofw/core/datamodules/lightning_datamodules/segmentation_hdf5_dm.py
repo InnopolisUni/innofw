@@ -61,7 +61,6 @@ class HDF5LightningDataModule(BaseLightningDataModule):
             **kwargs,
         )
 
-        # TODO: should object instantiation be here?
         self.aug = augmentations
         self.channels_num = channels_num
         self.val_size = val_size

@@ -65,7 +65,7 @@ if (
     )
 
     # get the list of transformations names
-    interface_type = "Simple"  # todo:
+    interface_type = "Simple"
     transform_names = select_transformations(augmentations, interface_type)
     # get parameters for each transform
     transforms = [albu.Resize(300, 300, always_apply=True)]
@@ -111,7 +111,7 @@ if (
         elif ncols == 1:
             axs = [axs]
 
-        # apply_aug = True  # todo: retrieve from user input
+        # apply_aug = True
         # data = None
 
         st.title("Original Images")

@@ -14,7 +14,7 @@ objects:
     mse:
       weight: 1.0
       function:
-        _target_: sklearn.metrics.log_loss  # todo: tackle functions too
+        _target_: sklearn.metrics.log_loss
 
   torch:
     mse:

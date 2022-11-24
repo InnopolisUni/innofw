@@ -81,7 +81,6 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
             **kwargs,
         )
 
-        # TODO: should object instantiation be here?
         self.aug = Augmentation(
             augmentations=augmentations
             or albu.Compose([albu_pytorch.transforms.ToTensorV2()])

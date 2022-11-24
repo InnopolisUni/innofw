@@ -86,7 +86,7 @@ class YOLOV5Adapter(BaseModelAdapter):
         model,
         log_dir,
         trainer_cfg,
-        augmentations=None,  # todo(qb): new version of the library supports augmentations. So add this ability here
+        augmentations=None,
         optimizers_cfg=None,
         schedulers_cfg=None,
         losses=None,
@@ -98,8 +98,6 @@ class YOLOV5Adapter(BaseModelAdapter):
         **kwargs,
     ):
         super().__init__(model, log_dir)
-
-        # todo: KA: here should have been a call to super.__init__() # but super requires log_dir field, but cannot be provided
 
         trainer = YOLOV5TrainerBaseAdapter().adapt(trainer_cfg)
         self.device, self.epochs = trainer["device"], trainer["epochs"]
@@ -291,7 +289,6 @@ class YOLOV5Adapter(BaseModelAdapter):
             ckpt_path, inplace=False, dst_path=None
         )
 
-        # todo: consider making more parameters configurable
         yolov5_detect.run(
             weights=ckpt_path,
             source=data.infer_dataset / "images",

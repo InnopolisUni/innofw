@@ -8,7 +8,7 @@ import torch
 
 class SemanticSegmentationLightningModule(
     BaseLightningModule
-):  # todo: define parameter types
+):
     """
     PyTorchLightning module for Semantic Segmentation task
     ...
@@ -57,7 +57,6 @@ class SemanticSegmentationLightningModule(
         assert self.losses is not None
         assert self.optimizer_cfg is not None
 
-        # self.save_hyperparameters()  # todo:
 
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])
@@ -95,7 +94,6 @@ class SemanticSegmentationLightningModule(
         """Process a batch in a testing loop"""
         images = batch["scenes"]
 
-        # todo: somewhere over here should be the optional usage of tta
         preds = self.forward(images)
         return {"preds": preds}
 
@@ -109,7 +107,7 @@ class SemanticSegmentationLightningModule(
             self, name: str, logits: torch.Tensor, masks: torch.Tensor
     ) -> torch.FloatTensor:
         """Function to compute and log losses"""
-        total_loss = 0  # todo: redefine it as torch.FloatTensor(0.0)
+        total_loss = 0
         for loss_name, weight, loss in self.losses:
             # for loss_name in loss_dict:
             ls_mask = loss(logits, masks)

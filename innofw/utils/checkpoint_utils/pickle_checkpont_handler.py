@@ -7,7 +7,7 @@ from pickle import dump, load
 from innofw.constants import CheckpointFieldKeys
 from innofw.utils import get_abs_path
 
-# from innoframework.schema.model_checkpoint import ModelCheckpoint  # todo: replace the checkpoint from dict to model_checkpoint type(+think about it more)
+# from innoframework.schema.model_checkpoint import ModelCheckpoint
 from innofw.utils.checkpoint_utils.base_checkpoint_handler import (
     CheckpointHandler,
 )
@@ -31,7 +31,6 @@ class PickleCheckpointHandler(CheckpointHandler):
         metadata: Optional[dict] = None,
         file_extension: str = ".pickle",
         create_default_folder: bool = False,
-        # todo: fix type of  the model as it can be not only BaseEstimator
     ) -> Path:
         """Saves a serialized model object into destination path with name best.pkl
 

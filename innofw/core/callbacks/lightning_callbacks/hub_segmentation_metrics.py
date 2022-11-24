@@ -26,7 +26,7 @@ class TiledHubSegmentationTestMetricsCalculationCallback(Callback):
 
         self.label_tensor_name = label_tensor_name
         self.pad_map_tensor_name = pad_map_tensor_name
-        self.threshold = threshold  # todo: is it needed?
+        self.threshold = threshold
         self.state_dict = {"fit": {}, "val": {}, "test": {}}
         self.rounding_digits = 3
         self.stages = stages

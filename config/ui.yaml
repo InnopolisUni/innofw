@@ -15,7 +15,7 @@ defaults:
   - clear_ml: disabled
 
 #experiment_name: ???
-project: ???  # todo: describe this field
+project: ???
 task: ???
 random_seed:
 epochs:

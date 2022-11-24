@@ -1,8 +1,7 @@
 def find_suitable_model(name):
-    # todo: search among models module
     # search within the special config file
 
-    config_file_contents = {  # todo: make a yaml file with mappings between names and classes
+    config_file_contents = {
         "knn": "sklearn.neighbors.KNeighborsClassifier",
         "knn-regressor": "sklearn.neighbors.KNeighborsRegressor",
         "linear_regression": "sklearn.linear_model.LinearRegression",

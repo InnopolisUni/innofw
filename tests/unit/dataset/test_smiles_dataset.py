@@ -70,5 +70,3 @@ def test_smiles_dataset_from_df():
     assert isinstance(sample[1], float)
 
 
-# TODO: Test all public methods
-# TODO: Negative tests

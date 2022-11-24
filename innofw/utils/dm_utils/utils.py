@@ -8,7 +8,7 @@ from innofw.constants import CLI_FLAGS
 
 def find_file_by_ext(
     path: Union[str, Path], ext=".csv"
-) -> Optional[Path]:  # todo: write a test
+) -> Optional[Path]:
     path = Path(path)
 
     if path is None:

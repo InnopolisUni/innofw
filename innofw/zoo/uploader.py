@@ -21,8 +21,6 @@ from innofw.utils.s3_utils.credentials import get_s3_credentials
 from innofw.utils.s3_utils.minio_interface import get_full_dst_url
 
 
-# todo: fix kwargs
-
 
 @validate_arguments
 def upload_model(

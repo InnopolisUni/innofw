@@ -33,7 +33,6 @@ def default_model_for_datamodule(task, datamodule):
 
 
 def get_default(obj_name: str, framework: str, task: str):
-    # todo: add default scheduler conf
     defaults = {
         "torch": {
             "image-segmentation": {

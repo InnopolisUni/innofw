@@ -69,7 +69,7 @@ class AnomalyDetectionTimeSeriesLightningModule(BaseLightningModule):
 
     def calc_losses(self, seq_true, seq_pred) -> torch.FloatTensor:
         """Function to compute losses"""
-        total_loss = 0.0  # todo: redefine it as torch.FloatTensor(0.0)
+        total_loss = 0.0
         for loss_name, weight, loss in self.losses:
             # for loss_name in loss_dict:
             ls_mask = loss(seq_true, seq_pred)

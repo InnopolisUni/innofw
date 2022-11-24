@@ -36,4 +36,4 @@ class TorchvisionAdapter(BaseAugmentationAdapter):
         return self.transforms(np.array(x))
 
     def __repr__(self):
-        return f"Torchvision: {self.transforms}"  # todo: serialize
+        return f"Torchvision: {self.transforms}"

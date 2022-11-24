@@ -16,7 +16,6 @@ from innofw.utils.checkpoint_utils.pickle_checkpont_handler import (
 from innofw.core.models import register_models_adapter
 
 
-# todo: this should be refactored: merged with sklearn
 @register_models_adapter(name="xgboost_adapter")
 class XGBoostAdapter(BaseModelAdapter):
     """
@@ -49,7 +48,7 @@ class XGBoostAdapter(BaseModelAdapter):
         if callbacks:
             self.metrics = self.prepare_metrics(callbacks)
 
-    def prepare_metrics(self, metrics):  # todo: should be static
+    def prepare_metrics(self, metrics):
         callable_metrics = []
         for m in metrics:
             mod_name, func_name = m["_target_"].rsplit(".", 1)
@@ -98,4 +97,4 @@ class XGBoostAdapter(BaseModelAdapter):
         train_summary_writer = SummaryWriter(log_dir=self.log_dir)
         for metric, result in results.items():
             train_summary_writer.add_scalar(metric, result, 0)
-            print(f"{metric}: {result}")  # todo: seems redundant
+            print(f"{metric}: {result}")
