@@ -229,7 +229,7 @@ def get_datamodule(cfg, framework: Frameworks, task=None, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
     datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
     if not is_intersecting(task, datamodule.task):
-        raise ValueError("Wrong task provided")
+        raise ValueError("Wrong task provided", task, datamodule.task)
 
     if not is_intersecting(framework, datamodule.framework):
         raise ValueError("Wrong framework provided")
