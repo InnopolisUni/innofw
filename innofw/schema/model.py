@@ -15,7 +15,7 @@ from innofw.utils.find_model import find_suitable_model
 
 
 class ModelConfig(BaseConfig):
-    models: Optional[Dict[str, Any]]  # todo: rename into extra or something
+    models: Optional[Dict[str, Any]]
 
     @root_validator(pre=True)
     def build_extra(cls, values: Dict[str, Any]) -> Dict[str, Any]:
@@ -66,8 +66,6 @@ class ModelConfig(BaseConfig):
                             if type(trainer_cfg["gpus"]) == list
                             else 0
                         )
-
-                    # todo: smh handle the devices parameter
 
         return values
 

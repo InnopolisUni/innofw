@@ -3,7 +3,6 @@ from pathlib import Path
 
 from innofw.constants import Stages
 
-# todo: refactor, need to think more on _predict and _train functions
 
 class BaseModelAdapter(ABC):
     """
@@ -80,5 +79,5 @@ class BaseModelAdapter(ABC):
     def save_ckpt(self, model):
         self.ckpt_handler.save_ckpt(model, self.log_dir, create_default_folder=True)
 
-    def load_ckpt(self, path):  # todo: delete?
+    def load_ckpt(self, path):
         return self.ckpt_handler.load_ckpt(path)

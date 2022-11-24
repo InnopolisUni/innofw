@@ -34,7 +34,3 @@ def test_train_datamodule(stage):
     assert dl is not None
     assert dl.get("x") is not None
     assert dl.get("y") is not None
-
-
-# TODO: Test all public methods
-# TODO: Negative tests

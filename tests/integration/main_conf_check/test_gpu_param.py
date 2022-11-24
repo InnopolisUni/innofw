@@ -189,7 +189,3 @@ def test_on_gpu(model_cfg, dm_cfg, trainer_cfg, task):
 # def test_on_gpu(trainer_cfg):
 #     pass
 #
-# # todo: test model inference
-# # todo: test model testing
-
-# todo: test yolov5 using two gpu devices # for now it freezes

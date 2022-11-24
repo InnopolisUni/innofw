@@ -31,4 +31,4 @@ class TorchAdapter(BaseLossAdapter):
         return loss
 
     def __repr__(self):
-        return f"Torch: {self.loss}"  # todo: serialize
+        return f"Torch: {self.loss}"

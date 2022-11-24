@@ -26,14 +26,6 @@ from tests.fixtures.config import (
 )
 
 
-# todo: write a test where config specifies model inside a model and both should be instantiated
-# todo: test if tensor get processed
-# todo: test output is in valid range when tensor is passed
-
-# todo: test for a full cycle(train, test, val)
-# todo: measure metrics
-
-
 @pytest.mark.parametrize(
     ["target"],
     [
@@ -63,7 +55,6 @@ def test_model_creation(target):
     [["unet"], ["FasterRcnnModel"], ["resnet18"]],
 )
 def test_model_creation_name_given(name):
-
     cfg = DictConfig(
         {
             "models": {

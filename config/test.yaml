@@ -15,7 +15,7 @@ defaults:
   - clear_ml: disabled
   - override hydra/job_logging: custom
 
-project: ???  # todo: describe this field
+project: ???
 task: ???
 seed:
 epochs:

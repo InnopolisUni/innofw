@@ -18,11 +18,6 @@ from innofw.utils.dm_utils.utils import query_yes_no
 # from .credentials import get_s3_credentials
 from innofw.utils import get_abs_path
 
-# todo: add alias usage # should be a separate function
-# todo: create own type DstFolderPath, which will create a folder if it does not exist
-# todo: create own URLPath type for function argument validation and converting str to urlpath.URL
-
-
 KB = 1024
 MB = 1024 * KB
 
@@ -37,7 +32,7 @@ def get_bucket_name(url: AnyUrl) -> str:
 def get_object_path(url: AnyUrl) -> str:
     url = URL(url)
     anchor_n_bucket = url.anchor + get_bucket_name(url)
-    object_path = str(url)[len(anchor_n_bucket) :]
+    object_path = str(url)[len(anchor_n_bucket):]
     return object_path
 
 
@@ -52,7 +47,7 @@ def get_full_dst_url(src_path: FilePath, dst_path: AnyUrl) -> AnyUrl:
 
 @validate_arguments
 def get_full_dst_path(
-    src_path: AnyUrl, dst_path: Path, create_if_needed: bool = True
+        src_path: AnyUrl, dst_path: Path, create_if_needed: bool = True
 ) -> Path:
     # new dst_path
     if dst_path.is_dir():
@@ -106,10 +101,10 @@ class MinioInterface:
     # @execute_with_retries
     @validate_arguments
     def upload_file(
-        self,
-        src_path: FilePath,
-        dst_path: AnyUrl,
-        tags: Optional[dict] = None,
+            self,
+            src_path: FilePath,
+            dst_path: AnyUrl,
+            tags: Optional[dict] = None,
     ):
         """Method to upload file into minio server
 
@@ -145,7 +140,7 @@ class MinioInterface:
         return dst_path
 
     def unsafe_download_file(
-        self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
+            self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
     ) -> Path:
         """Function downloads the file from minio server"""
         bucket = get_bucket_name(src_path)
@@ -156,14 +151,14 @@ class MinioInterface:
         downloaded = 0 * MB
 
         with open(dst_path, "wb") as file_data, tqdm(
-            desc=f"{dst_path.name}",
-            total=file_size,
-            dynamic_ncols=True,
-            leave=False,
-            mininterval=1,
-            unit="B",
-            unit_scale=True,
-            unit_divisor=KB,
+                desc=f"{dst_path.name}",
+                total=file_size,
+                dynamic_ncols=True,
+                leave=False,
+                mininterval=1,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=KB,
         ) as pbar:
             while downloaded < file_size:
                 length = (
@@ -190,7 +185,7 @@ class MinioInterface:
 
     @execute_with_retries
     def download_file(
-        self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
+            self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
     ) -> Path:
         if not dst_path.is_absolute():
             dst_path = get_abs_path(dst_path)

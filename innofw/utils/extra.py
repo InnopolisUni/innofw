@@ -19,7 +19,6 @@ def execute_with_retries(func: Callable):
                     f"could not complete the function execution. Error raised: {e}"
                 )
 
-        # todo: consider replacing with warning # or with optional warning
         if output is None:
             raise ValueError(
                 f"Could not complete the function in {DOWNLOAD_ATTEMPTS} attempts"

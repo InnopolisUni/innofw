@@ -9,7 +9,6 @@ from typing import Dict, Optional
 # third party libraries
 
 # local modules
-# todo: use pathlib instead of os.listdir, os.path.join
 from innofw.constants import Stages
 from innofw.data_mart import upload_dataset
 
@@ -36,7 +35,7 @@ class BaseDataModule(ABC):
             Sets up inference dataset(s)
     """
     task = ["None"]
-    framework = ["None"]  # todo: why ["None"]
+    framework = ["None"]
 
     def __init__(
         self,
@@ -71,7 +70,7 @@ class BaseDataModule(ABC):
         """
         if stage != Stages.predict:
             self.train = self._get_data(train)
-            self.test = self._get_data(test)  # todo: following code could be async
+            self.test = self._get_data(test)
         else:
             self.train = None
             self.test = None

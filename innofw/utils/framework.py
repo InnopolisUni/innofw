@@ -184,7 +184,6 @@ def get_losses(cfg, task, framework):
 
 
 def get_callbacks(cfg, task, framework, *args, **kwargs):
-    # todo: make it compliant for other frameworks other than pytorch lightning
     # =*=*=*=*= Callbacks =*=*=*=*=
     callbacks = []
     if "callbacks" in cfg and cfg.callbacks is not None:
@@ -222,7 +221,7 @@ def get_model(cfg, trainer_cfg):
     model_datacls = ModelConfig(**cfg, trainer_cfg=trainer_cfg)
     return hydra.utils.instantiate(
         model_datacls.models
-    )  # todo: make model_datacls.models call more configurable
+    )
 
 
 def get_datamodule(cfg, framework: Frameworks, task=None, *args, **kwargs):

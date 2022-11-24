@@ -81,7 +81,7 @@ class OneShotLearningLightningModule(BaseLightningModule):
 
     def calc_losses(self, output1, output2, label) -> torch.FloatTensor:
         """Function to compute losses"""
-        total_loss = 0  # todo: redefine it as torch.FloatTensor(0.0)
+        total_loss = 0
         for loss_name, weight, loss in self.losses:
             # for loss_name in loss_dict:
             ls_mask = loss(output1, output2, label)

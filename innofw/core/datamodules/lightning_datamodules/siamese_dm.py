@@ -61,8 +61,6 @@ class SiameseDataModule(BaseLightningDataModule):
     framework = [Frameworks.torch]
 
     def __init__(
-        # todo: add types to train and test parameters
-        # todo: add type to the aug parameter
         self,
         train,
         test,
@@ -123,6 +121,6 @@ class SiameseDataModule(BaseLightningDataModule):
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         images = self.predict_dataset.image_pair_names
         df = pd.DataFrame(list(zip(images, preds)), columns=["Image name", "Class"])
-        dst_filepath = pathlib.Path(dst_path) / "preds.csv"  # todo: should it be fixed?
+        dst_filepath = pathlib.Path(dst_path) / "preds.csv"
         df.to_csv(dst_filepath)
         logging.info(f"Saved results to: {dst_filepath}")

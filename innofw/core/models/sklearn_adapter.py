@@ -13,9 +13,6 @@ from innofw.utils.checkpoint_utils.pickle_checkpont_handler import (
     PickleCheckpointHandler,
 )
 
-
-# todo: write a register decorator to add Wrappers, Models, DataModules, Optimizers, Callbacks etc. for more info look for lightning flash docs
-# todo: write a decorator to convert str into Path when function type is specified  link: https://github.com/google/python-fire/pull/350/files
 from innofw.core.models import register_models_adapter
 
 
@@ -38,11 +35,12 @@ class SklearnAdapter(BaseModelAdapter):
         returns result of prediction
 
     """
+
     @staticmethod
     def is_suitable_model(model) -> bool:
         return (
-            inspect.getmodule(model).__package__.split(".")[0] == "sklearn"
-        )  # todo: should it be written using Frameworks.sklearn.value?
+                inspect.getmodule(model).__package__.split(".")[0] == "sklearn"
+        )
 
     def __init__(self, model, log_dir, callbacks=None, *args, **kwargs):
         super().__init__(model, log_dir, PickleCheckpointHandler())
@@ -61,14 +59,13 @@ class SklearnAdapter(BaseModelAdapter):
         return callable_metrics
 
     def forward(
-        self, data
-    ):  # todo: think about adding forward method and making the class callable
+            self, data
+    ):
         return self.model.predict(data)
 
     def predict_proba(self, x):
         return self.model.predict_proba(x)
 
-    # todo: refactor train, test, predict functions as they have duplicate code
     def _predict(self, datamodule, ckpt_path=None, **kwargs):
         data = datamodule.predict_dataloader()
         x = data["x"]
@@ -83,7 +80,6 @@ class SklearnAdapter(BaseModelAdapter):
     def _test(self, datamodule, **kwargs):
         data = datamodule.test_dataloader()
         x, y = data["x"], data["y"]
-        # todo: calculate metrics and log
         results = {}
         y_pred = self.forward(x)
         for metric in self.metrics:
@@ -101,4 +97,4 @@ class SklearnAdapter(BaseModelAdapter):
         train_summary_writer = SummaryWriter(log_dir=self.log_dir)
         for metric, result in results.items():
             train_summary_writer.add_scalar(metric, result, 0)
-            print(f"{metric}: {result}")  # todo: seems redundant
+            print(f"{metric}: {result}")

@@ -12,10 +12,6 @@ from innofw.constants import TaskType
 import streamlit as st
 
 
-# todo: add default project name
-# todo: add default author
-
-
 def find_model_schema(task: TaskType):
     import inspect
     from ui import schema

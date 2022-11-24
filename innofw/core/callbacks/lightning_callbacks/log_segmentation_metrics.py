@@ -16,7 +16,7 @@ class LoggingSMPMetricsCallback(Callback):
     def on_stage_batch_end(self, outputs, batch, dict_to_store):
         masks = batch["labels"].long().squeeze()
         logits = outputs["logits"].squeeze()
-        threshold = 0.4  # todo: make in configurable
+        threshold = 0.4
         tp, fp, fn, tn = smp.metrics.get_stats(
             logits, masks, mode="binary", threshold=threshold
         )

@@ -56,7 +56,7 @@ class SmilesDataset(Dataset):
             pre_clean = tqdm(
                 zip(
                     pool.map(clean_salts, self.smiles), self.y, self.smiles
-                ),  # TODO: parallel execution
+                ),
                 desc="Cleaning salts...",
                 total=len(self.smiles),
             )

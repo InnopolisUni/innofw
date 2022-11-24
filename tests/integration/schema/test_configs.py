@@ -36,7 +36,7 @@ experiment_config_files = [[item] for item in experiments_config_path.iterdir()]
 for item in datasets_config_path.iterdir():
     if not any(
         [i in str(item) for i in {"_infer", "tmqm", "qm9", "brain", "lung"}]
-    ):  # todo: fix this
+    ):
         datasets_config_files.append([item])
 
 

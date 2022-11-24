@@ -72,7 +72,6 @@ class CatBoostAdapter(BaseModelAdapter):
         x, y = data["x"], data["y"]
         cat_features = x.select_dtypes(include=["object"]).columns.tolist()
         test_pool = Pool(x, y, cat_features=cat_features)
-        # todo: calculate metrics and log
         results = {}
         y_pred = self.model.predict(test_pool)
         if y_pred.ndim == 2:
@@ -102,7 +101,7 @@ class CatBoostAdapter(BaseModelAdapter):
         train_summary_writer = SummaryWriter(log_dir=self.log_dir)
         for metric, result in results.items():
             train_summary_writer.add_scalar(metric, result, 0)
-            logging.info(f"{metric}: {result}")  # todo: seems redundant
+            logging.info(f"{metric}: {result}")
 
     def virtual_ensembles_predict(self, data, prediction_type, virtual_ensembles_count):
         return self.model.virtual_ensembles_predict(

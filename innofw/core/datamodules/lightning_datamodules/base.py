@@ -46,7 +46,7 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
             **kwargs
     ):
         super().__init__(train, test, infer, stage, *args, **kwargs)
-        self.train_dataset = self.train  # todo: KA: we have to fix this mess.
+        self.train_dataset = self.train
         self.test_dataset = self.test
         self.predict_dataset = self.infer
         self.batch_size = batch_size
@@ -79,7 +79,6 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
 
     def train_dataloader(self):
         train_dataloader = DataLoader(
-            # todo: KA: I don't think it is an intuitive concept to use here: self.train_dataset
             self.train_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,

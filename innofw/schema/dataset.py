@@ -12,11 +12,6 @@ from pydantic import BaseModel, root_validator, Field
 from innofw.schema.base_config import BaseConfig
 from innofw.utils.find_datamodule import find_suitable_datamodule
 
-# todo: refactor this
-"""
-    Why?
-        because current implementation does not separate required and optional fields
-"""
 
 
 class DatasetConfig(BaseConfig):
@@ -25,7 +20,7 @@ class DatasetConfig(BaseConfig):
     date_time: str
     # _target_: Optional[str] = Field(alias='_target_')
 
-    datasets: Optional[Dict[str, Any]]  # todo: rename into extra or something
+    datasets: Optional[Dict[str, Any]]
 
     @root_validator(pre=True)
     def build_extra(cls, values: Dict[str, Any]) -> Dict[str, Any]:
@@ -47,7 +42,7 @@ class DatasetConfig(BaseConfig):
                 extra[field_name] = values.pop(field_name)
         values["datasets"] = extra
 
-        if (  # todo: write thorough tests for each case
+        if (
             "_target_" not in extra
             # or extra["_target_"] == "???"
             or extra["_target_"] is None

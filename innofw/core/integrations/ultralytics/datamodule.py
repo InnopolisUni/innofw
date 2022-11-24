@@ -130,7 +130,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         self.val_size = val_size
         self.num_classes = num_classes
         self.names = names
-        self.random_state = 42  # todo: do a serious work on random seeds
+        self.random_state = 42
         self.augmentations = augmentations
 
         # folder_name = self.train_dataset.stem

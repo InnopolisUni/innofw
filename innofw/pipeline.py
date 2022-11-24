@@ -22,10 +22,8 @@ from innofw.utils.framework import (
 )
 from innofw.constants import Stages
 
-# todo: add functionality to nicely print config file
-# todo: add functionality to log hyperparameters
 
-# from innofw.utils.clear_ml import setup_clear_ml  # todo(qb): why it is not needed?
+# from innofw.utils.clear_ml import setup_clear_ml
 from innofw import InnoModel
 from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 from innofw.utils.print_config import print_config_tree
@@ -33,18 +31,13 @@ from innofw.utils.defaults import default_model_for_datamodule
 import hydra
 
 
-# log = utils.get_logger(
-#     __name__
-# )  # todo: check how this works along with lightning logger, hydra logger, xgboost logger etc.
-
-# todo: add base_dir which will be passed as an argument to run_pipeline. E.g. run_pipeline(cfg, train=True, log_dir=tmp_dir)
 def run_pipeline(
         cfg: DictConfig,
         train=True,
         test=False,
         predict=False,
         log_root: Optional[Path] = None,
-) -> float:  # todo: should return a dict with metrics, model, path to logs ...
+) -> float:
     print_config_tree(cfg)
     try:
         hydra_cfg = HydraConfig.get()
@@ -57,11 +50,11 @@ def run_pipeline(
     if cfg.get("random_seed"):
         seed_everything(
             cfg.random_seed, workers=True
-        )  # todo: it is insufficient for the sklearn models
+        )
 
     stage = (
         "train" if train else "test" if test else "infer"
-    )  # todo: should we have only one stage?
+    )
     project = cfg.get("project")
     data_stage = Stages.predict if predict else Stages.train
     trainer_cfg = get_trainer_cfg(cfg)
@@ -80,7 +73,7 @@ def run_pipeline(
     # weights initialization
     initializations = get_obj(
         cfg, "initializations", task, framework, _recursive_=False
-    )  # todo: rethink this
+    )
 
     augmentations = get_obj(cfg, "augmentations", task, framework)
     metrics = get_obj(cfg, "metrics", task, framework)
@@ -97,7 +90,7 @@ def run_pipeline(
     losses = get_losses(cfg, task, framework)
     callbacks = get_callbacks(
         cfg, task, framework, metrics=metrics, losses=losses, datamodule=datamodule
-    )  # todo: rethink metrics evaluation mechanism # possible way is to use torchmetrics https://torchmetrics.readthedocs.io/en/stable/
+    )
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
 

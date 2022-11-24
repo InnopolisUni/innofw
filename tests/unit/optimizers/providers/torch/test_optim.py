@@ -15,4 +15,3 @@ def test_torch_optim(optim):
     assert optimizer
 
 
-# todo: add experiments with torch_optimizer package
