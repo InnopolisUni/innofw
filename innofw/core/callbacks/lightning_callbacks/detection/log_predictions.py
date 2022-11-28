@@ -88,7 +88,7 @@ class LogPredictionsDetectionCallback(BaseLogPredictionsCallback):
         tensorboard = pl_module.logger.experiment
         tensorboard.add_scalar("one", batch_idx, batch_idx)
 
-        inputs, targets = batch  # todo: method for items retrieval
+        inputs, targets = batch
         img = inputs[0].detach().cpu().numpy()
         img = np.moveaxis(img, 0, -1)
 
@@ -138,7 +138,7 @@ class LogMetricsSegmentationCallback(BaseLogMetricsCallback):
 #     def on_stage_batch_end(self, outputs, batch, dict_to_store):
 #         masks = batch['labels'].long().squeeze()
 #         logits = outputs['logits'].squeeze()
-#         threshold = 0.4  # todo: make in configurable
+#         threshold = 0.4
 #         tp, fp, fn, tn = smp.metrics.get_stats(logits, masks, mode='binary', threshold=threshold)
 #
 #         def compute_func(func):

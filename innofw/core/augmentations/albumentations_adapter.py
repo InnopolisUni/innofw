@@ -28,7 +28,6 @@ class AlbumentationsAdapter(BaseAugmentationAdapter):
         super().__init__(transforms)
 
     def forward(self, x, y=None):
-        # todo: work with tensors right away????
         if y is not None:
             result = self.transforms(image=np.array(x), mask=y)
             return result["image"], result["mask"]

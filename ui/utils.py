@@ -82,7 +82,6 @@ def fill_placeholders(params: dict, placeholder_params: dict) -> dict:
         params (dict): original params dict with placeholders
         placeholder_params (dict): dict with values of placeholders
     """
-    # TODO: refactor
     if "placeholder" in params:
         placeholder_dict = params["placeholder"]
         for k, v in placeholder_dict.items():

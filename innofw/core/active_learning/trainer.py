@@ -34,7 +34,7 @@ class ActiveLearnTrainer:
 
 def get_active_learner(
     model, datamodule, *args, **kwargs
-):  # todo: it will be refactored nicely using function overloading  # or through other method
+):
     if isinstance(model.model, CatBoostAdapter):
         return CatBoostActiveLearner(model, datamodule, *args, **kwargs)
     else:

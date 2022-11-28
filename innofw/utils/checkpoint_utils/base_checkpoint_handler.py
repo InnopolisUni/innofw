@@ -51,7 +51,7 @@ class CheckpointHandler(ABC):
             new_file_path = Path(tmpdirname, file_path.name)
             self.save_ckpt(model, new_file_path, metadata)
 
-            # delete original file  # todo: is it needed?
+            # delete original file
             file_path.unlink()
             # move file from temp directory to original file path
             shutil.move(new_file_path, file_path)
@@ -65,7 +65,7 @@ class CheckpointHandler(ABC):
     @validate_arguments
     def load_model(
         self, model, ckpt_path: Path  # make model parameter optional
-    ):  # todo: add more sophisticated Path validator by converting paths to absolute and then checking for existence
+    ):
         ckpt_path = get_abs_path(ckpt_path)
         try:
             ckpt = self.load_ckpt(ckpt_path)[CheckpointFieldKeys.model]
@@ -87,7 +87,6 @@ class CheckpointHandler(ABC):
             shutil.move(tmp_path, ckpt_path)
             return ckpt_path
         elif dst_path is not None:
-            # todo: following preprocessing is common, move it to a pydantic type validation
             if not dst_path.is_absolute():
                 dst_path = get_abs_path(dst_path)
 

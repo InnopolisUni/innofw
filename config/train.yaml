@@ -16,7 +16,7 @@ defaults:
   - override hydra/job_logging: disabled
 #  - override hydra/job_logging: custom
 
-project: ???  # todo: describe this field
+project: ???
 task: ???
 random_seed:
 epochs:

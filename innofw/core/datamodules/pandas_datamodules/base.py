@@ -8,14 +8,6 @@ from innofw.core.datamodules.base import BaseDataModule
 from innofw.utils.dm_utils.utils import find_file_by_ext
 
 
-# todo: what's the point of having base pandas datamodule???
-# KA: I believe there should be a base class for all tabular datasets
-# then we could derive from it such classes as PandasDataModule(which is capable of reading
-# many different extensions not only csv), ...
-# SK: agree with you, actually pandas can read not only csv,  maybe we can just rename
-# it to TabularDataModule and add function to read any type of tables
-
-
 class BasePandasDataModule(BaseDataModule, ABC):
     """
     A Base Class used for working with datasets in table formats
@@ -38,20 +30,21 @@ class BasePandasDataModule(BaseDataModule, ABC):
         The method prepares inference data
 
     """
+
     def __init__(
-        self,
-        train,
-        test,
-        target_col,
-        infer=None,
-        stage=None,
-        *args,
-        **kwargs,
+            self,
+            train,
+            test,
+            target_col,
+            infer=None,
+            stage=None,
+            *args,
+            **kwargs,
     ):
 
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
 
-        ext = ".csv"  # todo: make it more general
+        ext = ".csv"
         self.train_dataset = (
             self.train if self.train is None else find_file_by_ext(self.train, ext)
         )

@@ -52,8 +52,6 @@ class CocoLightningDataModule(BaseLightningDataModule):
     dataset = CocoDataset
 
     def __init__(
-        # todo: add types to train and test parameters
-        # todo: add type to the aug parameter
         self,
         train,
         test,

@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # prep_func_type = st.sidebar.selectbox('preprocessing function:', prep_funcs.keys())
 
     # get the list of transformations names
-    interface_type = "Simple"  # todo:
+    interface_type = "Simple"
     # transform_names = select_transformations(augmentations, interface_type)
     # get parameters for each transform
     transforms = [albu.Resize(300, 300, always_apply=True)]
@@ -229,7 +229,7 @@ if __name__ == "__main__":
             elif ncols == 1:
                 axs = [axs]
 
-            # apply_aug = True  # todo: retrieve from user input
+            # apply_aug = True
             # data = None
 
             st.warning("Исходные изображения")

@@ -3,7 +3,6 @@ from omegaconf import DictConfig
 from ..base_adapter import BaseAdapter
 
 
-# todo: test this function
 def get_device(trainer_cfg):
     if "accelerator" in trainer_cfg and trainer_cfg.accelerator == "cpu":
         result = "cpu"
@@ -44,7 +43,6 @@ class YOLOV5TrainerBaseAdapter(BaseAdapter):
     def __init__(self):
         pass
 
-    # todo: test its correctness
     def adapt(self, trainer) -> dict:
         if isinstance(trainer, DictConfig):
             device: str = get_device(trainer)

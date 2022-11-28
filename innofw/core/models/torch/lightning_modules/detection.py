@@ -56,7 +56,7 @@ class DetectionLightningModule(BaseLightningModule):
 
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
-        # self.save_hyperparameters()  # todo:
+        # self.save_hyperparameters()
 
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])

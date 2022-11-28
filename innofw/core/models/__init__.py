@@ -62,7 +62,7 @@ for file in os.listdir(os.path.dirname(__file__)):
         module = importlib.import_module("innofw.core.models." + module_name)
 
 
-class InnoModel(nn.Module):  # todo: refactor
+class InnoModel(nn.Module):
     """
         Class provides same interface for different models by utilizing adapters
 
@@ -98,7 +98,7 @@ class InnoModel(nn.Module):  # todo: refactor
             weights_path, weights_freq, project, experiment
         )
 
-    def save_ckpt(self, model):  # todo: refactor, should not receive an argument
+    def save_ckpt(self, model):
         return self.model.save_ckpt(model)
 
     def load_ckpt(self, path):

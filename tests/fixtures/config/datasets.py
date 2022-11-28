@@ -125,13 +125,13 @@ arable_segmentation_cfg_w_target = DictConfig(
         "train": {
             "source": str(
                 get_test_folder_path()
-                / "data/images/segmentation/arable/train"  # todo: this folder should include several hdf5 file
+                / "data/images/segmentation/arable/train"
             )
         },
         "test": {
             "source": str(
                 get_test_folder_path()
-                / "data/images/segmentation/arable/test"  # todo: this folder should include one or many hdf5 files
+                / "data/images/segmentation/arable/test"
             )
         },
         "channels_num": 4,

@@ -22,7 +22,7 @@ class MetricValues(str, Enum):
     MINKOWSKI = "minkowski"
 
 
-class KNeighborsClassifierSchema(SklearnSchema):  # todo: write an automatic parser
+class KNeighborsClassifierSchema(SklearnSchema):
     task: ClassVar[str] = TaskType.CLASSIFICATION
     name: ClassVar[str] = "knn_classifier"
     target: ClassVar[str] = "sklearn.neighbors.KNeighborsClassifier"

@@ -78,7 +78,7 @@ def download_archive(
     inner_files = list(
         filter(lambda x: x.name not in ["__MACOSX"] and x.suffix != ".zip", inner_files)
     )[0]
-    return inner_files  # todo: describe this behaviour  # replace it with actual checking in the contents of the zip file
+    return inner_files
 
 
 if __name__ == "__main__":

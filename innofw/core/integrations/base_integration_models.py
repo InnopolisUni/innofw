@@ -1,4 +1,4 @@
-class BaseIntegrationModel:  # todo: make an abstract field
+class BaseIntegrationModel:
     """
         Class defines an abstract integration model
 

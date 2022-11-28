@@ -34,7 +34,6 @@ def test_upload_dataset(test_dataset_folder, tmp_path):
             "date_time": "something",
         }
     )
-    # todo: think about creating test server or something for testing this function
     # url = upload_dataset(
     #     test_dataset_folder,
     #     config_save_path,

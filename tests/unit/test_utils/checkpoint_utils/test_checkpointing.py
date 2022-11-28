@@ -26,7 +26,6 @@ from innofw.utils.checkpoint_utils.torch_checkpoint_handler import (
 from innofw.utils import is_path_empty
 
 
-# todo: refactor the interface of the saving mechanism so that checkpoint handler will not be used explicitly
 def run_checkpoint_handler_tests(file_path):
     assert file_path.exists(), "file should be existing"
 

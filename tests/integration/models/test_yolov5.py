@@ -30,9 +30,6 @@ model_cfg_w_missing_target = yolov5_cfg_w_target.copy()
 model_cfg_w_missing_target["_target_"] = None
 
 
-# todo: consider case when _target_ is "???"
-
-
 @pytest.mark.parametrize(
     ["cfg"],
     [
@@ -58,7 +55,7 @@ def test_model_instantiation(cfg):
 def test_datamodule_instantiation(cfg):
     task = "image-detection"
     framework = Frameworks.torch
-    datamodule = get_datamodule(cfg, framework, task=task)  # todo: batch size and augmentations
+    datamodule = get_datamodule(cfg, framework, task=task)
 
 
 @pytest.mark.parametrize(
@@ -84,7 +81,6 @@ def test_model_predicting(model_cfg, dm_cfg):
         log_dir="./logs/test/logs",
     )
     wrapped_model.predict(datamodule, ckpt_path=ckpt_path)
-
 
 # def test_model_training + with metrics
 # def test_model_logging

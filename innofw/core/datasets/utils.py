@@ -6,7 +6,7 @@ import torch
 
 def prep_data(
     image, mask: Optional = None, transform: Optional = None
-):  # todo: refactor this
+):
     if transform is not None:
         if mask is not None:
             sample = transform(image=image.astype("uint8"), mask=mask.astype("uint8"))
@@ -17,7 +17,7 @@ def prep_data(
 
     image = np.moveaxis(image, 2, 0)
     # ============== preprocessing ==============
-    image = image / 255.0  # todo: move out
+    image = image / 255.0
     # ===========================================
     image = torch.from_numpy(image)
     image = image.float()
