@@ -11,7 +11,7 @@ COPY . /code
 WORKDIR code
 
 RUN /bin/bash -c '/root/.local/bin/poetry config virtualenvs.create false \
-    && /root/.local/bin/poetry lock  && /root/.local/bin/poetry install --no-interaction --no-ansi'
+    && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi'
 
 
 RUN apt-get -y install iotop
