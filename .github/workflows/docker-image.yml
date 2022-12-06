@@ -23,6 +23,7 @@ jobs:
     - name: Preparing Env
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
+        set PATH=%PATH%;C:\Users\runneradmin\AppData\Roaming\Python\Scripts
         poetry config virtualenvs.create true
         poetry install
         poetry run pytest tests/
