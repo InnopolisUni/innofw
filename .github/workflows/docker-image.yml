@@ -16,7 +16,7 @@ jobs:
       run: docker build . --file Dockerfile --tag innofw:$(date +%s)
 
   build-on-windows:
-    runs-on: ubuntu-latest # windows-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -24,7 +24,6 @@ jobs:
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         poetry config virtualenvs.create true
-        poetry lock
         poetry install
         poetry run pytest tests/
 
