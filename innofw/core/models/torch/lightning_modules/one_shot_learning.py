@@ -41,7 +41,6 @@ class OneShotLearningLightningModule(BaseLightningModule):
         self.losses = losses
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
-        self.automatic_optimization = False
 
     def forward(self, img0, img1, *args, **kwargs) -> Any:
         img0 = img0.view(-1, 1, 100, 100)
