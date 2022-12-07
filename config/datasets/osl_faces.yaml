@@ -23,6 +23,6 @@ infer:
   target: ./data/osl/infer
 
 
-num_workers: 8
+num_workers: 2
 
 val_size: 0.2
