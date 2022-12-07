@@ -40,7 +40,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         pass
 
     def setup_infer(self):
-        if type(self.infer_dataset) == str and self.infer_dataset.startwith("rts"):
+        if type(self.infer_dataset) == str and self.infer_dataset.startswith("rts"):
             return
         # root_dir
         root_path = self.infer_dataset.parent.parent
