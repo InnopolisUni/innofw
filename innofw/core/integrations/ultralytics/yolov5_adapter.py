@@ -289,10 +289,8 @@ class YOLOV5Adapter(BaseModelAdapter):
             ckpt_path, inplace=False, dst_path=None
         )
 
-        yolov5_detect.run(
+        params = dict(
             weights=ckpt_path,
-            source=data.infer_dataset / "images",
-            data=data.data,
             imgsz=data.imgsz,
             conf_thres=0.25,
             iou_thres=0.45,
@@ -300,6 +298,20 @@ class YOLOV5Adapter(BaseModelAdapter):
             augment=False,
             project=self.opt["project"],
             name=self.opt["name"],
+        )
+
+        if str(data.infer_dataset).startswith("rts"):
+            params.update(
+                source=data.infer_dataset
+            )
+        else:
+            params.update(
+                source=data.infer_dataset / "images",
+                data=data.data
+            )
+
+        yolov5_detect.run(
+            **params            
         )
 
         self.update_checkpoints_path()
