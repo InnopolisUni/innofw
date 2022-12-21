@@ -18,6 +18,7 @@
     -	infer_osl.sh
 
     Набор данных: osl_faces
+    
     Путь к набору данных (train): https://api.blackhole.ai.innopolis.university/public-datasets/testing/faces/train.zip
 
     Путь к набору данных (test): https://api.blackhole.ai.innopolis.university/public-datasets/testing/faces/test.zip
@@ -36,6 +37,7 @@
     -	infer_lstm.sh
 
     Набор данных: ecg
+    
     Путь к набору данных (train): https://api.blackhole.ai.innopolis.university/public-datasets/ECG/train.zip
 
     Путь к набору данных (test): https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip
