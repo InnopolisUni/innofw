@@ -1,7 +1,7 @@
 Для использования Фреймворка для поддержки принятия врачебных решений в необходимо выполнить следующие шаги:
 1.	Склонировать фреймворк;
     
-    ```git clone ```
+    ```git clone https://github.com/InnopolisUni/innofw.git```
 
 2.	Установить пакеты poetry;
 
@@ -16,13 +16,20 @@
     1.	Метод предобработки рентгенологических снимков и данных КТ(метод повышения контраста пораженных тканей)
 
         Пример использования (sh/bat скрипты):
-        -	infer_brain_segmentation.sh
-        -	infer_brain_segmentation.bat
+        -	run_kernel_trick.sh
+        -	run_ribs_supression.sh
+
+        -	run_kernel_trick.bat
+        -	run_ribs_supression.bat
+
+
+        
 
     2.	Метода синхронизации с медицинским отраслевым стандартом DICOM
 
         Пример использования (sh/bat скрипты):
-        -	run_kernel_trick.sh
+        -	infer_brain_segmentation.sh
+        -	infer_brain_segmentation.bat
 
     3.	Локализации патологий на медицинских изображениях (рентгенологических и КТ снимках)
 
@@ -77,5 +84,3 @@
         Пример использования (sh/bat скрипты):
         -	run_dicom_to_image.sh
         -	run_dicom_to_image.sh
-            
-
