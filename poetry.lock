@@ -731,7 +731,7 @@ numpy = ">=1.14.5"
 
 [[package]]
 name = "huggingface-hub"
-version = "0.10.1"
+version = "0.11.1"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 category = "main"
 optional = false
@@ -746,14 +746,15 @@ tqdm = "*"
 typing-extensions = ">=3.7.4.3"
 
 [package.extras]
-all = ["InquirerPy (==0.3.4)", "Jinja2", "black (==22.3)", "flake8 (>=3.8.3)", "flake8-bugbear", "isort (>=5.5.4)", "jedi", "mypy", "pytest", "pytest-cov", "soundfile"]
+all = ["InquirerPy (==0.3.4)", "Jinja2", "black (==22.3)", "flake8 (>=3.8.3)", "flake8-bugbear", "isort (>=5.5.4)", "jedi", "mypy (==0.982)", "pytest", "pytest-cov", "pytest-env", "soundfile", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3"]
 cli = ["InquirerPy (==0.3.4)"]
-dev = ["InquirerPy (==0.3.4)", "Jinja2", "black (==22.3)", "flake8 (>=3.8.3)", "flake8-bugbear", "isort (>=5.5.4)", "jedi", "mypy", "pytest", "pytest-cov", "soundfile"]
+dev = ["InquirerPy (==0.3.4)", "Jinja2", "black (==22.3)", "flake8 (>=3.8.3)", "flake8-bugbear", "isort (>=5.5.4)", "jedi", "mypy (==0.982)", "pytest", "pytest-cov", "pytest-env", "soundfile", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3"]
 fastai = ["fastai (>=2.4)", "fastcore (>=1.3.27)", "toml"]
-quality = ["black (==22.3)", "flake8 (>=3.8.3)", "flake8-bugbear", "isort (>=5.5.4)", "mypy"]
+quality = ["black (==22.3)", "flake8 (>=3.8.3)", "flake8-bugbear", "isort (>=5.5.4)", "mypy (==0.982)"]
 tensorflow = ["graphviz", "pydot", "tensorflow"]
-testing = ["InquirerPy (==0.3.4)", "Jinja2", "isort (>=5.5.4)", "jedi", "pytest", "pytest-cov", "soundfile"]
+testing = ["InquirerPy (==0.3.4)", "Jinja2", "isort (>=5.5.4)", "jedi", "pytest", "pytest-cov", "pytest-env", "soundfile"]
 torch = ["torch"]
+typing = ["types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3"]
 
 [[package]]
 name = "hydra-core"
@@ -1515,17 +1516,17 @@ pyasn1 = ">=0.4.6,<0.5.0"
 
 [[package]]
 name = "pybboxes"
-version = "0.1.5"
+version = "0.1.6"
 description = "Light Weight Toolkit for Bounding Boxes"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 numpy = "*"
 
 [package.extras]
-dev = ["click (==8.0.4)", "deepdiff (==5.5.0)", "flake8 (==3.9.2)", "isort (==5.9.2)", "pytest (>=7.0.1)", "pytest-cov (>=3.0.0)", "pytest-timeout (>=2.1.0)"]
+dev = ["black (==22.3.0)", "click (==8.0.4)", "deepdiff (==5.5.0)", "flake8 (==3.9.2)", "importlib-metadata (>=1.1.0,<4.3)", "isort (==5.9.2)", "pytest (>=7.0.1)", "pytest-cov (>=3.0.0)", "pytest-timeout (>=2.1.0)"]
 
 [[package]]
 name = "pydantic"
@@ -1950,7 +1951,7 @@ crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
 name = "sahi"
-version = "0.11.0"
+version = "0.11.10"
 description = "A vision library for performing sliced inference on large images/small objects"
 category = "main"
 optional = false
@@ -1961,7 +1962,7 @@ click = "8.0.4"
 fire = "*"
 opencv-python = ">=4.2.0.32"
 pillow = ">=8.2.0"
-pybboxes = {version = "0.1.5", markers = "python_version >= \"3.8\""}
+pybboxes = "0.1.6"
 pyyaml = "*"
 requests = "*"
 shapely = ">=1.8.0"
@@ -1970,7 +1971,7 @@ tqdm = ">=4.48.2"
 
 [package.extras]
 dev = ["black (==21.7b0)", "flake8 (==3.9.2)", "importlib-metadata (>=1.1.0,<4.3)", "isort (==5.9.2)", "jupyterlab (==3.0.14)"]
-tests = ["mmdet (==2.25.1)", "norfair (==2.0.0)", "pycocotools (==2.0.5)"]
+tests = ["mmdet (==2.25.1)", "pycocotools (==2.0.5)"]
 
 [[package]]
 name = "scikit-image"
@@ -2765,15 +2766,17 @@ multidict = ">=4.0"
 
 [[package]]
 name = "yolov5"
-version = "6.2.2"
+version = "7.0.7"
 description = "Packaged version of the Yolov5 object detector"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 boto3 = ">=1.19.1"
 fire = "*"
+gitpython = "*"
+huggingface-hub = ">=0.11.1"
 ipython = "*"
 matplotlib = ">=3.2.2"
 numpy = ">=1.18.5"
@@ -2783,7 +2786,7 @@ Pillow = ">=7.1.2"
 psutil = "*"
 PyYAML = ">=5.3.1"
 requests = ">=2.23.0"
-sahi = ">=0.10.5"
+sahi = ">=0.11.10"
 scipy = ">=1.4.1"
 seaborn = ">=0.11.0"
 tensorboard = ">=2.4.1"
@@ -2791,9 +2794,6 @@ thop = ">=0.1.1"
 torch = ">=1.7.0"
 torchvision = ">=0.8.1"
 tqdm = ">=4.64.0"
-
-[package.extras]
-tests = ["pytest"]
 
 [[package]]
 name = "zeep"
@@ -2838,7 +2838,7 @@ clearml = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.10"
-content-hash = "fb9b65ca2706ec21ce0f1895a97ea8e14be21b73f8be2f76d60136bb302300fd"
+content-hash = "5558b161553292f1603d145d42629f8d873d5ac62250ca83854d5441910114c3"
 
 [metadata.files]
 absl-py = [
@@ -3428,8 +3428,8 @@ h5py = [
     {file = "h5py-3.7.0.tar.gz", hash = "sha256:3fcf37884383c5da64846ab510190720027dca0768def34dd8dcb659dbe5cbf3"},
 ]
 huggingface-hub = [
-    {file = "huggingface_hub-0.10.1-py3-none-any.whl", hash = "sha256:dc3b0e9a663fe6cad6a8522055c02a9d8673dbd527223288e2442bc028c253db"},
-    {file = "huggingface_hub-0.10.1.tar.gz", hash = "sha256:5c188d5b16bec4b78449f8681f9975ff9d321c16046cc29bcf0d7e464ff29276"},
+    {file = "huggingface_hub-0.11.1-py3-none-any.whl", hash = "sha256:11eed7aab4fa4d1fb532f2aea3379ef4998d9f6bc24a330834dfedd3dac7f441"},
+    {file = "huggingface_hub-0.11.1.tar.gz", hash = "sha256:8b9ebf9bbb1782f6f0419ec490973a6487c6c4ed84293a8a325d34c4f898f53f"},
 ]
 hydra-core = [
     {file = "hydra-core-1.2.0.tar.gz", hash = "sha256:4990721ce4ac69abafaffee566d6b63a54faa6501ecce65b338d3251446ff634"},
@@ -4186,8 +4186,8 @@ pyasn1-modules = [
     {file = "pyasn1_modules-0.2.8-py2.py3-none-any.whl", hash = "sha256:a50b808ffeb97cb3601dd25981f6b016cbb3d31fbf57a8b8a87428e6158d0c74"},
 ]
 pybboxes = [
-    {file = "pybboxes-0.1.5-py3-none-any.whl", hash = "sha256:0dafa063c85b4c1bbaa96c0067177fce11bb1d4ef57785b1e597d412c86c42f0"},
-    {file = "pybboxes-0.1.5.tar.gz", hash = "sha256:466554e9bf99b53945f82c8118df53aa3ca9071948c47a71dc3a8cc295996af2"},
+    {file = "pybboxes-0.1.6-py3-none-any.whl", hash = "sha256:e6f7ca43a38bfe2c6ec5b67c6f6e95790e5d9c8c41d84ef11ba896fe181816d5"},
+    {file = "pybboxes-0.1.6.tar.gz", hash = "sha256:558bfd2a7ca37def07ac95108f3b6504d728332b0c5b871df1017de5c7c1f68d"},
 ]
 pydantic = [
     {file = "pydantic-1.10.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:bb6ad4489af1bac6955d38ebcb95079a836af31e4c4f74aba1ca05bb9f6027bd"},
@@ -4543,8 +4543,8 @@ s3transfer = [
     {file = "s3transfer-0.6.0.tar.gz", hash = "sha256:2ed07d3866f523cc561bf4a00fc5535827981b117dd7876f036b0c1aca42c947"},
 ]
 sahi = [
-    {file = "sahi-0.11.0-py3-none-any.whl", hash = "sha256:5d3e656317cea8816fda81cbdd6eb49c40cb84fb47e7823460a0d5d24e2e97aa"},
-    {file = "sahi-0.11.0.tar.gz", hash = "sha256:61d1211e3e5daa00b69fdaf5e31dd3dbb8ac279cb648ea033120addf4da2f4d5"},
+    {file = "sahi-0.11.10-py3-none-any.whl", hash = "sha256:7d3b038edfcbeeb393e07d1717bb0fc9d29767a197b9fe5f14b2a9f67c64a503"},
+    {file = "sahi-0.11.10.tar.gz", hash = "sha256:b9b483e7adf4e7a2d9ad95e787a90ac62e7e391b0dcd4585014031820eadda7d"},
 ]
 scikit-image = [
     {file = "scikit-image-0.19.3.tar.gz", hash = "sha256:24b5367de1762da6ee126dd8f30cc4e7efda474e0d7d70685433f0e3aa2ec450"},
@@ -5186,8 +5186,8 @@ yarl = [
     {file = "yarl-1.8.1.tar.gz", hash = "sha256:af887845b8c2e060eb5605ff72b6f2dd2aab7a761379373fd89d314f4752abbf"},
 ]
 yolov5 = [
-    {file = "yolov5-6.2.2-py36.py37.py38-none-any.whl", hash = "sha256:a5c050a293786558f634af8aaff923a7cf661e6335ba550b2ba17ed3267a8948"},
-    {file = "yolov5-6.2.2.tar.gz", hash = "sha256:938c5f3b354561c1d332628985e57fddbc8ae87ae6cd67050e32927797321053"},
+    {file = "yolov5-7.0.7-py37.py38.py39.py310-none-any.whl", hash = "sha256:56b620c417dee87e61154194abb59e4b2632b98455a04e035e4c4c2e55e7ebee"},
+    {file = "yolov5-7.0.7.tar.gz", hash = "sha256:ebb2d12356654d0a9c0479071f16f8af6da2816c3a53cbf76b1ea8ad2764e4d4"},
 ]
 zeep = [
     {file = "zeep-4.1.0-py2.py3-none-any.whl", hash = "sha256:81c491092b71f5b276de8c63dfd452be3f322622c48a54f3a497cf913bdfb2f4"},
