@@ -3,60 +3,59 @@ from multiprocessing import Pool, cpu_count
 from numbers import Number
 from typing import List, Optional, Sequence
 
-import deepchem as dc
 import numpy as np
 import pandas as pd
-from innofw.utils.data_utils.preprocessing import clean_salts
 from torch.utils.data import Dataset
 from tqdm import tqdm
+
+from innofw.utils.data_utils.preprocessing import clean_salts
 
 logging.getLogger("deepchem").propagate = False
 
 
 class SmilesDataset(Dataset):
     """
-        A class to represent SMILES Dataset.
-        https://www.kaggle.com/c/smiles/data
+     A class to represent SMILES Dataset.
+     https://www.kaggle.com/c/smiles/data
 
-        smiles: Sequence[str]
-        property_list: Sequence[Number]
-        property_name: str
+     smiles: Sequence[str]
+     property_list: Sequence[Number]
+     property_name: str
 
 
-        Methods
-        -------
-        __getitem__(self, idx):
-            returns X - features and Y - targets
+     Methods
+     -------
+     __getitem__(self, idx):
+         returns X - features and Y - targets
 
-       generate_descriptors(self, featurizers: List[dc.feat.MolecularFeaturizer]):
-            creates descriptions out of featurizers
-       init_features(self, features: Optional[List[str]] = None):
-            initialize X-features
-       from_df(cls, df: pd.DataFrame, property_name: str, smiles_col: str = "smiles", property_col: Optional[str] = None):
-            initializes class object using data frame
+    generate_descriptors(self, featurizers: List[dc.feat.MolecularFeaturizer]):
+         creates descriptions out of featurizers
+    init_features(self, features: Optional[List[str]] = None):
+         initialize X-features
+    from_df(cls, df: pd.DataFrame, property_name: str, smiles_col: str = "smiles", property_col: Optional[str] = None):
+         initializes class object using data frame
 
     """
-
-    cf_featurizer = dc.feat.CircularFingerprint(size=1024)
-    maccs_descriptor = dc.feat.MACCSKeysFingerprint()
 
     def __init__(
         self, smiles: Sequence[str], property_list: Sequence[Number], property_name: str
     ):
+        import deepchem.feat
+
+        cf_featurizer = deepchem.feat.CircularFingerprint(size=1024)
+        maccs_descriptor = deepchem.feat.MACCSKeysFingerprint()
         self.smiles = smiles
         self.y = np.array(property_list)
         self.property_name = property_name
 
         self._convert_smiles()
 
-        self.generate_descriptors([self.cf_featurizer, self.maccs_descriptor])
+        self.generate_descriptors([cf_featurizer, maccs_descriptor])
 
     def _convert_smiles(self):
         with Pool(cpu_count()) as pool:
             pre_clean = tqdm(
-                zip(
-                    pool.map(clean_salts, self.smiles), self.y, self.smiles
-                ),
+                zip(pool.map(clean_salts, self.smiles), self.y, self.smiles),
                 desc="Cleaning salts...",
                 total=len(self.smiles),
             )
@@ -76,7 +75,7 @@ class SmilesDataset(Dataset):
     def __len__(self):
         return len(self.y)
 
-    def generate_descriptors(self, featurizers: List[dc.feat.MolecularFeaturizer]):
+    def generate_descriptors(self, featurizers):
         self.smiles_features = {}
         self.featurizer_names = []
         with Pool(cpu_count()) as pool:
