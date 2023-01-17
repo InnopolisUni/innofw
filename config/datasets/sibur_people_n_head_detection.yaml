@@ -1,0 +1,32 @@
+task:
+  - image-detection
+
+name: detection_people_n_head
+description: Набор данных содержит 
+
+markup_info: Набор данных содержит разметку bounding box, под формат детекции .
+date_time: 17.01.2022
+
+_target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
+
+
+train:
+  source: data/sibur/processed/train
+test:
+  source: data/sibur/processed/test
+# infer:
+#   source: data/sibur/processed/infer
+
+
+num_workers: 8
+
+# train_files:
+# test_files:
+
+val_size: 0.2
+channels_num: 3
+image_size: 600
+num_classes: 2
+names:
+  - people
+  - head
