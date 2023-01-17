@@ -2,26 +2,28 @@ task:
   - image-detection
 
 name: detection_people_n_head
-description: Набор данных содержит 
+description: Набор данных содержит изображения людей на производстве.
 
-markup_info: Набор данных содержит разметку bounding box, под формат детекции .
+markup_info: Набор данных содержит разметку bounding box, под формат детекции.
 date_time: 17.01.2022
 
 _target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
 
 
 train:
-  source: data/sibur/processed/train
+  # source: data/sibur/processed8020/train
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/sibur_peoples_n_heads_8020/train.zip
+  target: ./data/sibur_peoples_n_heads_8020/train
 test:
-  source: data/sibur/processed/test
-# infer:
-#   source: data/sibur/processed/infer
-
+  # source: data/sibur/processed8020/test
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/sibur_peoples_n_heads_8020/test.zip
+  target: ./data/sibur_peoples_n_heads_8020/test
+infer:
+  # source: data/sibur/processed8020/infer
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/sibur_peoples_n_heads_8020/test.zip
+  target: ./data/sibur_peoples_n_heads_8020/infer
 
 num_workers: 8
-
-# train_files:
-# test_files:
 
 val_size: 0.2
 channels_num: 3
