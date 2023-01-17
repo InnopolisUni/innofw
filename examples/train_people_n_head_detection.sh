@@ -1,0 +1,1 @@
+python train.py experiments=KA_170122_43fdja_yolov5_sibur

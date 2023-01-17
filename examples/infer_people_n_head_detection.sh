@@ -1,0 +1,1 @@
+python infer.py experiments=KA_170122_43fdja_yolov5_sibur +ckpt_path=logs/train/people_n_head_detection/KA_170122_43fdja_yolov5_sibur/20230117-065904/weights/best.pt
