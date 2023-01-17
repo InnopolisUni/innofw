@@ -27,7 +27,7 @@ num_workers: 8
 
 val_size: 0.2
 channels_num: 3
-image_size: 600
+image_size: 1440
 num_classes: 2
 names:
   - people

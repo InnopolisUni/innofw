@@ -2,7 +2,7 @@ name: yolov5
 description: yolov5 by ultralytics
 
 _target_: innofw.core.models.torch.architectures.detection.YOLOv5
-arch: yolov5s  # x
+arch: yolov5x  # s x
 num_classes: 4
 
 
