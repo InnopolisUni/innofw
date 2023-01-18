@@ -124,14 +124,12 @@ arable_segmentation_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule",
         "train": {
             "source": str(
-                get_test_folder_path()
-                / "data/images/segmentation/arable/train"
+                get_test_folder_path() / "data/images/segmentation/arable/train"
             )
         },
         "test": {
             "source": str(
-                get_test_folder_path()
-                / "data/images/segmentation/arable/test"
+                get_test_folder_path() / "data/images/segmentation/arable/test"
             )
         },
         "channels_num": 4,
@@ -181,6 +179,91 @@ qm9_datamodule_cfg_w_target = DictConfig(
             "source": str(
                 get_test_folder_path() / "data/tabular/molecular/smiles/qm9/train"
             )
+        },
+        "smiles_col": "smiles",
+        "target_col": "gap",
+    }
+)
+
+
+drugprot_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["text-ner"],
+        "name": "Drugprot",
+        "description": "something",
+        "markup_info": "Информация о разметке",
+        "date_time": "18.06.2019",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.drugprot.DrugprotDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/drugprot/train.zip",
+            "target": "./data/drugprot/train/",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/drugprot/test.zip",
+            "target": "./data/drugprot/test/",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/drugprot/test.zip",
+            "target": "./data/drugprot/infer/",
+        },
+        "val_size": 0.2,
+        "label_dict": {"NA": 0, "PRESENT": 1},
+        "tokenizer": {
+            "_target_": "transformers.BertTokenizerFast.from_pretrained",
+            "pretrained_model_name_or_path": "dmis-lab/biobert-base-cased-v1.2",
+        },
+        "entity_labelmapper": {
+            "_target_": "innofw.core.datamodules.lightning_datamodules.drugprot.LabelMapper",
+            "label_dict": {"NA": 0, "PRESENT": 1},
+        },
+    }
+)
+
+
+faces_siamese_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["one-shot-learning"],
+        "name": "osl_faces",
+        "description": "something",
+        "markup_info": "Информация о разметке",
+        "date_time": "18.06.2019",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.siamese_dm.SiameseDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/testing/faces/train.zip",
+            "target": "./data/osl/train",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/testing/faces/test.zip",
+            "target": "./data/osl/test/",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/faces/infer.zip",
+            "target": "./data/osl/infer",
+        },
+        "val_size": 0.2,
+        "num_workers": 2,
+    }
+)
+
+qsar_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["qsar-regression", "text-vae-reverse", "text-vae-forward", "text-vae"],
+        "name": "qm9_selfies",
+        "description": "something",
+        "markup_info": "Информация о разметке",
+        "date_time": "18.06.2019",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.QsarSelfiesDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/qm9/train.zip",
+            "target": "./data/qm9/train",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/qm9/test.zip",
+            "target": "./data/qm9/test",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/qm9/test.zip",
+            "target": "./data/qm9/infer",
         },
         "smiles_col": "smiles",
         "target_col": "gap",

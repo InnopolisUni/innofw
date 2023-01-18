@@ -31,13 +31,13 @@ class BiobertNERModel(BaseLightningModule):
     """
 
     def __init__(
-            self,
-            model: dict,
-            losses,
-            optimizer_cfg,
-            scheduler_cfg,
-            *args,
-            **kwargs,
+        self,
+        model: dict,
+        losses,
+        optimizer_cfg,
+        scheduler_cfg,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, *kwargs)
 
@@ -68,7 +68,7 @@ class BiobertNERModel(BaseLightningModule):
         preds = logits.argmax(-1)
         mask = input_ids != self.tokenizer.pad_token_id
         loss = self.__calc_loss(logits[mask], labels[mask])
-        self.log_metrics('train', logits[mask], labels[mask])
+        self.log_metrics("train", logits[mask], labels[mask])
         return {"loss": loss, "preds": preds}
 
     def validation_step(self, X, batch_idx):
@@ -78,7 +78,7 @@ class BiobertNERModel(BaseLightningModule):
         preds = logits.argmax(-1)
         mask = input_ids != self.tokenizer.pad_token_id
         loss = self.__calc_loss(logits[mask], labels[mask])
-        self.log_metrics('val', logits[mask], labels[mask])
+        self.log_metrics("val", logits[mask], labels[mask])
         return {"loss": loss, "preds": preds}
 
     def test_step(self, X, batch_idx):
@@ -88,7 +88,7 @@ class BiobertNERModel(BaseLightningModule):
         preds = logits.argmax(-1)
         mask = input_ids != self.tokenizer.pad_token_id
         loss = self.__calc_loss(logits[mask], labels[mask])
-        self.log_metrics('test', logits[mask], labels[mask])
+        self.log_metrics("test", logits[mask], labels[mask])
         return {"loss": loss, "preds": preds}
 
     def predict_step(self, X, batch_idx):
@@ -98,36 +98,3 @@ class BiobertNERModel(BaseLightningModule):
         preds = logits.argmax(-1)
 
         return preds
-
-
-class BiobertNERModelWithBIO(BiobertNERModel):
-    """
-    The BiobertNERModel with BIO labels.
-
-    Methods
-    -------
-    _get_label_ids_by_matched_target(match_target_indexes, entities):
-        The _get_label_ids_by_matched_target function takes in a list of indexes that match the target entity, and returns
-        a list of label ids. The label ids are determined by the prefix (B- or I-) followed by the name of the entity. If no
-        entity is matched, then NA is used as a placeholder for &quot;not applicable&quot;. This function also handles cases where multiple
-        entities are matched to one token.
-    """
-
-    def _get_label_ids_by_matched_target(self, match_target_indexes, entities):
-        label_ids = []
-        last_ind = None
-        for match_target_index in match_target_indexes:
-            if match_target_index is None:
-                label_ids.append(self.entity_labelmapper.get_id("NA"))
-            else:
-                if last_ind == match_target_index:
-                    prefix = "I-"
-                else:
-                    prefix = "B-"
-                if self.model_type == ModelType.BINARY:
-                    entity_name = "PRESENT"
-                else:
-                    entity_name = entities[match_target_index].name
-                label_ids.append(self.entity_labelmapper.get_id(prefix + entity_name))
-            last_ind = match_target_index
-        return label_ids
