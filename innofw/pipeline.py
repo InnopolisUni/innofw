@@ -8,6 +8,9 @@ from typing import Optional
 from pytorch_lightning import seed_everything
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import OmegaConf, DictConfig
+import hydra
+import wandb
+import omegaconf
 
 # local modules
 from innofw.utils.framework import (
@@ -21,14 +24,10 @@ from innofw.utils.framework import (
     map_model_to_framework,
 )
 from innofw.constants import Stages
-
-
-# from innofw.utils.clear_ml import setup_clear_ml
 from innofw import InnoModel
 from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 from innofw.utils.print_config import print_config_tree
 from innofw.utils.defaults import default_model_for_datamodule
-import hydra
 
 
 def run_pipeline(
@@ -39,6 +38,18 @@ def run_pipeline(
         log_root: Optional[Path] = None,
 ) -> float:
     print_config_tree(cfg)
+    
+    cfg_container = omegaconf.OmegaConf.to_container(
+        cfg, resolve=True, throw_on_missing=True
+    )
+    run = wandb.init(
+        entity=cfg.wandb.entity,
+        group=cfg.wandb.group,
+        project=cfg.wandb.project,
+        config=cfg_container,
+    )
+    # os.environ["WANDB_DIR"] = str(run_save_path)
+
     try:
         hydra_cfg = HydraConfig.get()
         experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
@@ -111,7 +122,7 @@ def run_pipeline(
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
     }
-
+    
     inno_model = InnoModel(**model_params)
     result = None
 
@@ -135,6 +146,8 @@ def run_pipeline(
 
     ckpt_path = get_ckpt_path(cfg)
     logging.info(f"Using checkpoint: {ckpt_path}")
+    # print(model)
+    # # exit(0)
     for stage in stages:
         result = stage_to_func[stage](datamodule, ckpt_path=ckpt_path)
 

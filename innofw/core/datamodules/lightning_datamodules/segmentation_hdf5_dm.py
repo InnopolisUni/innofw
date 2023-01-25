@@ -79,15 +79,15 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         test_files = self.find_hdf5(self.test_dataset)
 
         # prepare datasets
-        train_val = HDF5Dataset(train_files, self.channels_num, self.aug)
-        val_size = int(len(train_val) * float(self.val_size))
-        train, val = torch.utils.data.random_split(
-            train_val, [len(train_val) - val_size, val_size]
-        )
+        # train_val = HDF5Dataset(train_files, self.channels_num, self.aug)
+        # val_size = int(len(train_val) * float(self.val_size))
+        # train, val = torch.utils.data.random_split(
+        #     train_val, [len(train_val) - val_size, val_size]
+        # )
 
-        self.train_dataset = train
+        self.train_dataset = HDF5Dataset(train_files, self.channels_num, self.aug)  # train
         self.test_dataset = HDF5Dataset(test_files, self.channels_num, self.aug)
-        self.val_dataset = val
+        self.val_dataset = HDF5Dataset(test_files, self.channels_num, self.aug)  # val
 
     def setup_infer(self):
         if isinstance(self.predict_dataset, HDF5Dataset):
