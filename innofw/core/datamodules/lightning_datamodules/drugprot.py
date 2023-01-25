@@ -9,8 +9,7 @@ import datasets
 import pandas as pd
 import torch
 from innofw.constants import Frameworks, ModelType, Stages
-from innofw.core.datamodules.lightning_datamodules.base import \
-    BaseLightningDataModule
+from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
 from innofw.exceptions import NonUniqueException
 from torch.utils.data import DataLoader
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
@@ -32,13 +31,14 @@ class DrugprotDataModule(BaseLightningDataModule):
         instance of PreTrainedTokenizerBase
     entity_labelmapper: LabelMapper
         label2int mapper
-    
+
 
     Methods
     -------
     setup_train_test_val():
         Create train test val split.
     """
+
     task: List[str] = ["text-ner"]
 
     def __init__(
@@ -155,171 +155,6 @@ class DrugprotDataModule(BaseLightningDataModule):
         df = pd.DataFrame({"prediction": unrolled_preds})
         df.to_json(Path(dst_path) / "preds.json", index=False, orient="table")
 
-    def _prepare(
-        self, input_dataset: Union[datasets.Dataset, datasets.DatasetDict]
-    ) -> Union[datasets.Dataset, datasets.DatasetDict]:
-        def batch_map(rows):
-            text_list = rows["text"]
-            labels_list = rows["labels"]
-            spans_list = rows["spans"]
-
-            entities_list: List[List[NamedEntity]] = [
-                sorted(
-                    [
-                        NamedEntity(name=label, span=span)
-                        for label, span in zip(labels, spans)
-                    ],
-                    key=lambda x: x.span[0],
-                )
-                for (labels, spans) in zip(labels_list, spans_list)
-            ]
-            prepared = self._batch_prepare(
-                text_list=text_list,
-                entities_list=entities_list,
-                ignore_non_unique=True,
-            )
-            return {
-                "input_ids": prepared["input_ids"],
-                "labels": prepared["labels"],
-            }
-
-        prepared_dataset = datasets_exclusive_map(
-            input_dataset,
-            batch_map,
-            batched=True,
-            batch_size=10_000,
-        )
-
-        return prepared_dataset
-
-    def _batch_prepare(
-        self,
-        text_list: List[str],
-        entities_list: Optional[List[List["NamedEntity"]]] = None,
-        flatten=False,
-        ignore_non_unique=False,
-    ) -> Union[Dict[str, List[List[int]]], List[Dict[str, List[int]]]]:
-        encoding = self.tokenizer(
-            text_list,
-            return_token_type_ids=False,
-            return_attention_mask=False,
-            return_offsets_mapping=True,
-        )
-        offset_mapping_list = encoding["offset_mapping"]
-        input_ids_list = encoding["input_ids"]
-
-        label_ids_list = []
-        if entities_list:
-            for spans, entities in zip(offset_mapping_list, entities_list):
-                target_spans = [entity.span for entity in entities]
-                try:
-                    match_target_indexes = self.match_spans(spans, target_spans)
-                    label_ids = self._get_label_ids_by_matched_target(
-                        match_target_indexes, entities
-                    )
-                except NonUniqueException as e:
-                    if ignore_non_unique:
-                        label_ids = None
-                    else:
-                        raise e
-                label_ids_list.append(label_ids)
-
-        if ignore_non_unique and entities_list is not None:
-            input_ids_list = [
-                input_ids
-                for input_ids, label_ids in zip(input_ids_list, label_ids_list)
-                if label_ids is not None
-            ]
-            label_ids_list = [
-                label_ids for label_ids in label_ids_list if label_ids is not None
-            ]
-
-        result = {
-            "input_ids": input_ids_list,
-            "offset_mapping": offset_mapping_list,
-        }
-        if entities_list is not None:
-            result["labels"] = label_ids_list
-
-        if flatten:
-            result = [
-                {key: result[key][index] for key in result}
-                for index in range(len(result["input_ids"]))
-            ]
-
-        return result
-
-    @staticmethod
-    def match_spans(
-        spans: Sequence[Tuple[int, int]], target_spans: Sequence[Tuple[int, int]]
-    ) -> List[Optional[int]]:
-        span_index = 0
-        target_span_index = 0
-        target_indexes: List[Optional[int]] = [None for _ in spans]
-        while span_index < len(spans) and target_span_index < len(target_spans):
-            span = spans[span_index]
-            target_span = target_spans[target_span_index]
-            if span[0] <= target_span[0]:
-                if span[1] > target_span[0]:
-                    if target_indexes[span_index] is None:
-                        target_indexes[span_index] = target_span_index
-                    else:
-                        raise NonUniqueException(
-                            "Target span cannot be assigned uniquely"
-                        )
-            else:
-                if target_span[1] > span[0]:
-                    if target_indexes[span_index] is None:
-                        target_indexes[span_index] = target_span_index
-                    else:
-                        raise NonUniqueException(
-                            "Target span cannot be assigned uniquely"
-                        )
-            if span[1] <= target_span[1]:
-                span_index += 1
-            else:
-                target_span_index += 1
-
-        return target_indexes
-
-    def _get_label_ids_by_matched_target(self, match_target_indexes, entities):
-        if self.model_type == ModelType.MULTICLASS:
-            return [
-                self.entity_labelmapper.get_id("NA")
-                if match_target_index is None
-                else self.entity_labelmapper.get_id(entities[match_target_index].name)
-                for match_target_index in match_target_indexes
-            ]
-        elif self.model_type == ModelType.BINARY:
-            return [
-                self.entity_labelmapper.get_id("NA")
-                if match_target_index is None
-                else self.entity_labelmapper.get_id("PRESENT")
-                for match_target_index in match_target_indexes
-            ]
-        else:
-            raise ValueError(f"ModelType {self.model_type} not supported")
-
-
-def datasets_exclusive_map(
-    dataset: Union[datasets.Dataset, datasets.DatasetDict], function, *args, **kwargs
-):
-    if isinstance(dataset, datasets.Dataset):
-        columns = dataset.column_names
-        mapped_dataset = dataset.map(function, *args, remove_columns=columns, **kwargs)
-    elif isinstance(dataset, datasets.DatasetDict):
-        mapped_dataset = datasets.DatasetDict()
-        for split_name in dataset:
-            dataset_split = dataset[split_name]
-            columns = dataset_split.column_names
-            mapped_dataset[split_name] = dataset_split.map(
-                function, *args, remove_columns=columns, **kwargs
-            )
-    else:
-        raise ValueError(f"Not supported dataset type: {type(dataset)}")
-
-    return mapped_dataset
-
 
 class DataCollatorWithPaddingAndTruncation:
     """
@@ -341,6 +176,7 @@ class DataCollatorWithPaddingAndTruncation:
     collate_list_of_dicts(data):
         Collate list of dicts.
     """
+
     def __init__(self, max_length, sequence_keys=[], float_keys=[], pad_token_id=0):
         self.max_length = max_length
         self.sequence_keys = set(sequence_keys)
@@ -423,6 +259,7 @@ class NamedEntity:
     span : Tuple[int, int]
         slice indexes of text
     """
+
     name: str
     span: Tuple[int, int]
 

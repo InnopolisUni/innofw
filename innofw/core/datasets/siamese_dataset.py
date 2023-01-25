@@ -10,24 +10,24 @@ from innofw.core.augmentations import Augmentation
 
 class SiameseDataset(Dataset):
     """
-            A class to represent a Siamese Dataset.
+     A class to represent a Siamese Dataset.
 
-            ...
+     ...
 
-            Attributes
-            ----------
-            data_path : str
-                path to directory containing folders with images
-            transform : Iterable[albumentations.augmentations.transforms]
+     Attributes
+     ----------
+     data_path : str
+         path to directory containing folders with images
+     transform : Iterable[albumentations.augmentations.transforms]
 
 
-            Methods
-            -------
-            __getitem__(self, index: int):
-                returns image1, image2 and information about their belonging to the same class
+     Methods
+     -------
+     __getitem__(self, index: int):
+         returns image1, image2 and information about their belonging to the same class
 
-           read_img(self, path):
-                reads an image using PIL
+    read_img(self, path):
+         reads an image using PIL
     """
 
     def __init__(self, data_path, transform):
@@ -97,24 +97,24 @@ class SiameseDataset(Dataset):
 
 class SiameseDatasetInfer(Dataset):
     """
-        A class to represent a Siamese Dataset.
+    A class to represent a Siamese Dataset.
 
-        ...
+    ...
 
-        Attributes
-        ----------
-        data_path : str
-            path to directory containing folders with images
-        transform : Iterable[albumentations.augmentations.transforms]
+    Attributes
+    ----------
+    data_path : str
+        path to directory containing folders with images
+    transform : Iterable[albumentations.augmentations.transforms]
 
 
-        Methods
-        -------
-        __getitem__(self, index: int):
-            returns image1, image2
+    Methods
+    -------
+    __getitem__(self, index: int):
+        returns image1, image2
 
-        read_img(self, path):
-            reads an image using PIL
+    read_img(self, path):
+        reads an image using PIL
     """
 
     def __init__(self, data_path, transform):
