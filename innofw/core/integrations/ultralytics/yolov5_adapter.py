@@ -30,11 +30,12 @@ YOLOV5_VALID_ARCHS = ["yolov5s", "yolov5m", "yolov5l", "yolov5x"]
 class YOLOv5Model(BaseIntegrationModel):
     """Class defines adapter interface to conform to YOLOv5 model specifications
 
-        Attributes
-        ----------
-        framework: Frameworks
-            framework through which the model is implemented
+    Attributes
+    ----------
+    framework: Frameworks
+        framework through which the model is implemented
     """
+
     framework = Frameworks.torch
 
     def __init__(self, arch, *args, **kwargs):
@@ -66,6 +67,7 @@ class YOLOV5Adapter(BaseModelAdapter):
         returns result of prediction and saves them
 
     """
+
     @staticmethod
     def is_suitable_model(model) -> bool:
         return isinstance(model, YOLOv5Model)
@@ -227,7 +229,7 @@ class YOLOV5Adapter(BaseModelAdapter):
                 weights=weights,
                 device=self.device,
             )
-            yolov5_train.run(
+            self._yolov5_train.run(
                 hyp="hyp.yaml",
                 **self.opt,
             )
@@ -275,12 +277,24 @@ class YOLOV5Adapter(BaseModelAdapter):
                 self.opt["hyp"] = self.hyp
                 yaml.dump(self.opt, f)
 
-            yolov5_train.run(
+            self._yolov5_train.run(
                 resume=str(ckpt_path),
             )
             opt_file.unlink(missing_ok=True)
 
         self.update_checkpoints_path()
+
+    @property
+    def _yolov5_train(self):
+        return yolov5_train
+
+    @property
+    def _yolov5_val(self):
+        return yolov5_val
+
+    @property
+    def _yolov5_predict(self):
+        return yolov5_detect
 
     def predict(self, data: YOLOV5DataModuleAdapter, ckpt_path=None):
         data.setup()
@@ -301,18 +315,11 @@ class YOLOV5Adapter(BaseModelAdapter):
         )
 
         if str(data.infer_dataset).startswith("rts"):
-            params.update(
-                source=data.infer_dataset
-            )
+            params.update(source=data.infer_dataset)
         else:
-            params.update(
-                source=data.infer_dataset / "images",
-                data=data.data
-            )
+            params.update(source=data.infer_dataset / "images", data=data.data)
 
-        yolov5_detect.run(
-            **params            
-        )
+        self._yolov5_predict.run(**params)
 
         self.update_checkpoints_path()
 
@@ -323,7 +330,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             ckpt_path, inplace=False, dst_path=None
         )
 
-        yolov5_val.run(
+        self._yolov5_val.run(
             imgsz=data.imgsz,
             data=data.data,
             workers=data.workers,
