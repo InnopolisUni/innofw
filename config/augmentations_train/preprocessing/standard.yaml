@@ -1,0 +1,5 @@
+# divide by 1e4
+sentinel2:
+  _target_: segmentation.augmentations.preprocessing.DivideBy255
+  p: 1.0
+  always_apply: True

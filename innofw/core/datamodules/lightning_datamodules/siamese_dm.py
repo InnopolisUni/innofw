@@ -79,8 +79,8 @@ class SiameseDataModule(BaseLightningDataModule):
 
     def setup_train_test_val(self, **kwargs):
         if self.aug:
-            train_dataset = SiameseDataset(str(self.train_dataset), self.aug)
-            self.test_dataset = SiameseDataset(str(self.test_dataset), self.aug)
+            train_dataset = SiameseDataset(str(self.train_dataset), self.aug['train'])
+            self.test_dataset = SiameseDataset(str(self.test_dataset), self.aug['test'])
         else:
             train_dataset = SiameseDataset(
                 str(self.train_dataset),
@@ -101,12 +101,14 @@ class SiameseDataModule(BaseLightningDataModule):
         self.train_dataset, self.val_dataset = random_split(
             train_dataset, [train_size, n - train_size]
         )
+        # Set validatoin augmentations for val
+        setattr(self.val_dataset, 'transform', self.aug['val'])
 
     def setup_infer(self):
         if self.aug:
             self.predict_dataset = SiameseDatasetInfer(
                 str(self.infer),
-                self.aug,
+                self.aug['test'],
             )
         else:
             self.predict_dataset = (

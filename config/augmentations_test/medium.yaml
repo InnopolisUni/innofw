@@ -1,0 +1,5 @@
+defaults:
+  - combined:
+      - none
+  - postprocessing:
+      - to_float

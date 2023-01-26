@@ -1,0 +1,21 @@
+spatial_distortions:
+  _target_: albumentations.OneOf
+  p: 0.3
+  transforms:
+    - _target_: albumentations.GridDistortion
+      always_apply: False
+      p: 0.4
+      num_steps: 5
+      distort_limit:
+        - -0.0025  # todo: !!! make sure this value is aligned correctly
+        - 0.25
+      interpolation: 0
+      border_mode: 0
+      value:
+        - 0
+        - 0
+        - 0
+      mask_value:
+    - _target_: albumentations.ElasticTransform
+      always_apply: False
+      p: 0.3

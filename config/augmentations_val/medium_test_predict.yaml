@@ -1,0 +1,13 @@
+defaults:
+  - preprocessing:
+      - sentinel2
+  - combined:
+      - none
+  - position:
+      - none
+  - color:
+      - none
+  - postprocessing:
+      - none
+#      - normalize_arable  # todo: try simple normalization
+#      - to_tensor

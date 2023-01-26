@@ -18,6 +18,7 @@ from innofw.utils.framework import (
     get_losses,
     get_model,
     get_obj,
+    get_augmentations,
     map_model_to_framework,
 )
 from innofw.constants import Stages
@@ -74,8 +75,11 @@ def run_pipeline(
     initializations = get_obj(
         cfg, "initializations", task, framework, _recursive_=False
     )
+    augmentations_train = get_augmentations(cfg.get('augmentations_train'))
+    augmentations_val = get_augmentations(cfg.get('augmentations_val'))
+    augmentations_test = get_augmentations(cfg.get('augmentations_test'))
+    augmentations = {'train':augmentations_train, 'val': augmentations_val, 'test':augmentations_test}
 
-    augmentations = get_obj(cfg, "augmentations", task, framework)
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
     schedulers = get_obj(cfg, "schedulers", task, framework)

@@ -58,10 +58,10 @@ class ImageLightningDataModule(BaseLightningDataModule):
     def setup_train_test_val(self, **kwargs):
         if self.aug:
             train_dataset = ImageFolder(
-                str(self.train_dataset), transform=Augmentation(self.aug)
+                str(self.train_dataset), transform=Augmentation(self.aug['train'])
             )
             self.test_dataset = ImageFolder(
-                str(self.test_dataset), transform=Augmentation(self.aug)
+                str(self.test_dataset), transform=Augmentation(self.aug['test'])
             )
         else:
             train_dataset = ImageFolder(
@@ -82,6 +82,8 @@ class ImageLightningDataModule(BaseLightningDataModule):
         self.train_dataset, self.val_dataset = random_split(
             train_dataset, [train_size, n - train_size]
         )
+        # Set validatoin augmentations for val
+        setattr(self.val_dataset, 'transform', self.aug['val'])
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         out = []

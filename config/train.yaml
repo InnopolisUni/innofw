@@ -7,7 +7,9 @@ defaults:
   - losses: auto
   - optimizers: auto
   - schedulers: auto
-  - augmentations: none
+  - augmentations_train: none
+  - augmentations_test: none
+  - augmentations_val: none
   - loggings: auto
   - callbacks: auto
   - initializations:

@@ -105,6 +105,37 @@ def get_obj(
 
     return obj
 
+def get_augmentations(cfg):
+
+    from albumentations import Compose
+    from omegaconf import DictConfig
+    empty_cfg = DictConfig({})
+
+    if cfg == {}:
+        return
+    # order of augmentations placement
+    # 1. preprocessing
+    # 2. combined
+    # 3. position
+    # 4. color
+    # 5. postprocessing
+    keys = ["combined", "position", "color", "postprocessing"]  # 'preprocessing',
+    transforms = []
+    for key in keys:
+        try:    
+            a = hydra.utils.instantiate(cfg[key])
+            transforms.append(a)
+        except:
+            pass
+
+    # transforms = [instantiate(cfg[key]) for key in keys]
+    transforms = [
+        Compose(transforms=dict(item).values())
+        for item in transforms
+        if item != empty_cfg
+    ]
+    return Compose(transforms=transforms)
+
 
 def get_optimizer(
         config,
