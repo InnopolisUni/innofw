@@ -4,7 +4,9 @@ defaults:
   - override /datasets: segmentation_arable_inference.yaml
   - override /optimizers: adam.yaml
   - override /losses: segmentation_losses
-  - override /augmentations: segmentation_inference
+  - override /augmentations_train: none #segmentation_inference
+  - override /augmentations_val: none
+  - override /augmentations_test: none
   - override /initializations: he
 
 project: "segmentation"

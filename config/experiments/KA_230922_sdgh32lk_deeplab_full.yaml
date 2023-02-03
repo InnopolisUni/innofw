@@ -5,7 +5,9 @@ defaults:
   - override /optimizers: adam.yaml
   - override /losses: segmentation_losses
   - override /initializations: he
-  - override /augmentations: segmentation_satellite_imagery  # _inference
+  - override /augmentations_train: none #segmentation_satellite_imagery  # _inference
+  - override /augmentations_val: none
+  - override /augmentations_test: none
   - override /callbacks: segmentation
 
 project: "segmentation"

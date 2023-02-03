@@ -2,7 +2,9 @@
 defaults:
   - override /models: unet
   - override /datasets: segmentation_brain.yaml
-  - override /augmentations: segmentation_stroke.yaml
+  - override /augmentations_train: none #segmentation_stroke.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
   - override /losses: segmentation_losses.yaml
 models:
   in_channels: 1

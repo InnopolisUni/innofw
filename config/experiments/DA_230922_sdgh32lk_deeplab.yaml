@@ -4,8 +4,9 @@ defaults:
   - override /datasets: segmentation_landslides
   - override /optimizers: adam.yaml
   - override /losses: segmentation_losses
-  - override /augmentations: none #segmentation_satellite_imagery  # _inference
-  # - override /augmentations_train: segmentation_medium
+  - override /augmentations_train: none
+  - override /augmentations_val: none
+  - override /augmentations_test: none
   - override /initializations: he
   - override /callbacks: segmentation
 
