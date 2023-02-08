@@ -46,10 +46,11 @@ class BaseLightningModule(pl.LightningModule):
             optim = self.optimizer_cfg(params=params)
         # instantiate scheduler from configurations
         # try:
-        print(self.scheduler_cfg)
         # if isinstance(self.optimizer_cfg, DictConfig):
         #     scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
         # else:
+        if self.scheduler_cfg is None:
+            raise NotImplementedError()
         scheduler = self.scheduler_cfg(optim)
         return [optim], [scheduler]
         # except Exception as e:
