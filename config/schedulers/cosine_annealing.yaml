@@ -3,9 +3,10 @@ task:
 
 implementations:
   torch:
-    CosineAnnealingWarmRestarts:
-      object:
+    Custom:
+      function:
         _target_: torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
         T_0: 10
         T_mult: 1
         eta_min: 3e-6
+        verbose: False

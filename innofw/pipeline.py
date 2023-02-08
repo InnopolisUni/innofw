@@ -78,7 +78,7 @@ def run_pipeline(
     augmentations = get_obj(cfg, "augmentations", task, framework)
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
-    schedulers = get_obj(cfg, "schedulers", task, framework)
+    schedulers = get_obj(cfg, "schedulers", task, framework, _recursive_=False)
     datamodule = get_datamodule(
         cfg.datasets,
         framework,

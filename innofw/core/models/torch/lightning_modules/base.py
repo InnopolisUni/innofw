@@ -1,5 +1,6 @@
 # standard libraries
 from typing import Dict, Any
+import logging
 
 # third party libraries
 import hydra
@@ -44,10 +45,13 @@ class BaseLightningModule(pl.LightningModule):
         else:
             optim = self.optimizer_cfg(params=params)
         # instantiate scheduler from configurations
-        try:
-            scheduler = self.scheduler_cfg(optim)
-            # scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-            # return optimizers and schedulers
-            return [optim], [scheduler]
-        except:
-            return [optim]
+        # try:
+        print(self.scheduler_cfg)
+        # if isinstance(self.optimizer_cfg, DictConfig):
+        #     scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
+        # else:
+        scheduler = self.scheduler_cfg(optim)
+        return [optim], [scheduler]
+        # except Exception as e:
+            # logging.warning(f"Unable to instantiate lr scheduler, running without scheduler. Error is: {e}")
+            # return [optim]
