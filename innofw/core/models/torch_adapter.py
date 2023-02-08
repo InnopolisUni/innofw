@@ -7,7 +7,8 @@ import pytorch_lightning as pl
 import torch
 
 # local modules
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
+
 from .base import BaseModelAdapter
 from innofw.constants import Stages
 from innofw.core.models import register_models_adapter
@@ -73,7 +74,7 @@ class TorchAdapter(BaseModelAdapter):
     ):
         super().__init__(model, log_dir, TorchCheckpointHandler())
         self.metrics = callbacks or []
-        self.callbacks = []
+        self.callbacks = [LearningRateMonitor(logging_interval='epoch')]
 
         self.set_checkpoint_save(weights_path, weights_freq, project, experiment)
         if stop_param:
