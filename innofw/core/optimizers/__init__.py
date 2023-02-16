@@ -87,3 +87,11 @@ class Optimizer(TorchOptim):
     @property
     def state(self):
         return self.optim.state
+
+    @property
+    def params(self):  # iterable
+        return self.optim.params
+    
+    @property
+    def defaults(self) -> dict:
+        return self.optim.defaults
