@@ -34,6 +34,9 @@ class SemanticSegmentationLightningModule(
         load checkpoints to the model, used to start with pretrained weights
 
     """
+    @property
+    def metric_to_track(self):
+        return "val_loss"
 
     def __init__(
             self,

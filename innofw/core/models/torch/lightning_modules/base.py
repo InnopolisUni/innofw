@@ -1,4 +1,5 @@
 # standard libraries
+from abc import abstractproperty
 from typing import Dict, Any
 import logging
 
@@ -6,12 +7,18 @@ import logging
 import hydra
 import pytorch_lightning as pl
 from omegaconf import DictConfig
+import torch
 
 
 class BaseLightningModule(pl.LightningModule):
     """
         Class that defines an interface for lightning modules
     """
+    @abstractproperty
+    def metric_to_track(self) -> str:
+        """Literal specifying the metric to track when the reduceonplateau is used
+        """
+        ...
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,15 +51,19 @@ class BaseLightningModule(pl.LightningModule):
             optim = hydra.utils.instantiate(self.optimizer_cfg, params=params)
         else:
             optim = self.optimizer_cfg(params=params)
-        # instantiate scheduler from configurations
-        # try:
-        # if isinstance(self.optimizer_cfg, DictConfig):
-        #     scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
-        # else:
+        
         if self.scheduler_cfg is None:
-            raise NotImplementedError()
-        scheduler = self.scheduler_cfg(optim)
-        return [optim], [scheduler]
-        # except Exception as e:
-            # logging.warning(f"Unable to instantiate lr scheduler, running without scheduler. Error is: {e}")
-            # return [optim]
+            return [optim]
+        else:
+            # instantiate scheduler from configurations
+            try:
+                if isinstance(self.optimizer_cfg, DictConfig):
+                    scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
+                else:
+                    scheduler = self.scheduler_cfg(optim)
+                if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                    return {"optimizer": optim, "lr_scheduler": scheduler, "monitor": self.metric_to_track}
+                return [optim], [scheduler]
+            except Exception as e:
+                logging.warning(f"Unable to instantiate lr scheduler, running without scheduler. Error is: {e}")
+                # raise NotImplementedError()
