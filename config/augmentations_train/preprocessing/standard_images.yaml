@@ -1,0 +1,4 @@
+divide_by_255:
+  _target_: innofw.core.augmentations.preprocessing.DivideBy255
+  p: 1.0
+  always_apply: True
