@@ -56,12 +56,9 @@ class SegmentationDataset(Dataset):
                 self.in_mem_masks = [read_tif(mask) for mask in self.masks]
             except MemoryError:  # todo: catch memory error
                 pass
-        self.dummy_flag = True
 
     def __getitem__(self, index) -> dict:
         if self.with_caching and self.in_mem_images is not None:
-            if self.dummy_flag:
-                self.dummy_flag = False
             image = self.in_mem_images[index]
         else:
             image = read_tif(self.images[index], self.channels)
