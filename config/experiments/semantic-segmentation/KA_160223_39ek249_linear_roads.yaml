@@ -58,4 +58,4 @@ random_seed: 42
 accelerator: gpu
 devices: 1
 batch_size: 2
-num_workers: 16
+num_workers: 32
