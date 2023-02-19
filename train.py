@@ -25,11 +25,12 @@ def main(config):
     # https://github.com/facebookresearch/hydra/issues/934
 
     from innofw.pipeline import run_pipeline
-    hydra_cfg = HydraConfig.get()
-    experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
-        "experiments"
-    ]
-    config.experiment_name = experiment_name
+    if not config.get('experiment_name'):
+        hydra_cfg = HydraConfig.get()
+        experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
+            "experiments"
+        ]
+        config.experiment_name = experiment_name
     setup_clear_ml(config)
 
     # Train model
