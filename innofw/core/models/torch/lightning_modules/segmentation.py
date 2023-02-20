@@ -38,6 +38,28 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         *args: Any,
         **kwargs: Any,
     ):
+        """PyTorchLightning module for Semantic Segmentation task
+
+                Attributes
+        ----------
+        model : nn.Module
+            model to train
+        losses : losses
+            loss to use while training
+        optimizer_cfg : cfg
+            optimizer configurations
+        scheduler_cfg : cfg
+            scheduler configuration
+        threshold: float
+            threshold to use while training
+
+        Methods
+        -------
+        forward(x):
+            returns result of prediction
+        model_load_checkpoint(path):
+            load checkpoints to the model, used to start with pretrained weights
+        """
         super().__init__(*args, **kwargs)
         if isinstance(model, DictConfig):
             self.model = hydra.utils.instantiate(model)
