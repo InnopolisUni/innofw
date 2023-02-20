@@ -10,9 +10,10 @@ from pydantic import validate_arguments, FilePath
 
 #
 from innofw.constants import SegDataKeys
+from innofw.core.augmentations import Augmentation
 
 
-def read_tif(path, channels=None) -> np.array:
+def read_tif(path, channels=None) -> np.ndarray:
     ds = rio.open(path)
     if channels is None:
         ch_num = ds.count
@@ -37,14 +38,25 @@ class SegmentationDataset(Dataset):
         channels: Optional[int] = None,  # todo: add support for Optional[List[int]]
         with_caching: bool = False,
         *args,
-        **kwargs
+        **kwargs,
     ):
+        """Dataset reading tif files
+
+            Arguments:
+                images - list of image paths
+                masks - list of mask path corresponding for each image
+                transform - augmentations can be both torchvision or albumentations
+                channels - number of channels
+                with_caching - allows reading the whole dataset into memory
+        """
         self.images = images
         self.masks = masks
         self.channels = channels
         if self.masks is not None:
-            assert len(self.images) == len(self.masks)
-        self.transform = transform
+            if len(self.images) != len(self.masks):
+                raise ValueError("number of images not equal to number of masks")
+
+        self.transform = None if transform is None else Augmentation(transform)
 
         self.in_mem_images, self.in_mem_masks = None, None
         self.with_caching = with_caching
@@ -52,17 +64,23 @@ class SegmentationDataset(Dataset):
         if self.with_caching:
             logging.warning(f"Reading all the data into memory")
             try:
-                self.in_mem_images = [read_tif(img, self.channels) for img in self.images]
+                self.in_mem_images = [
+                    read_tif(img, self.channels) for img in self.images
+                ]
                 self.in_mem_masks = [read_tif(mask) for mask in self.masks]
             except MemoryError:  # todo: catch memory error
                 pass
 
-    def __getitem__(self, index) -> dict:
+    def read_image(self, index):
         if self.with_caching and self.in_mem_images is not None:
             image = self.in_mem_images[index]
         else:
             image = read_tif(self.images[index], self.channels)
         image = np.nan_to_num(image, nan=0)
+        return image
+
+    def __getitem__(self, index) -> dict:
+        image = self.read_image(index)
 
         output = dict()
 
@@ -78,11 +96,12 @@ class SegmentationDataset(Dataset):
 
         if self.transform is not None:  # todo:
             if self.masks is None:
-                image = self.transform(image=image)['image']
+                # image = self.transform(image=image)["image"]
+                image = self.transform(image)
             else:
-                out = self.transform(image=image, mask=mask)
-                image, mask = out["image"], out["mask"]
-
+                # out = self.transform(image=image, mask=mask)
+                # image, mask = out["image"], out["mask"]
+                image, mask = self.transform(image, mask)
 
         image = np.moveaxis(image, 2, 0)  # todo: refactor
         image = image.astype(np.float32)  # todo: refactor
