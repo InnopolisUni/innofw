@@ -1,10 +1,12 @@
-# root: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048
-
 _target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM
 # ${.root}
-img_path: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/images
-label_path: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/masks
-weights_csv_path: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/weights.csv
+train:
+  source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/
+
+test:
+  source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/masks
+
+# weights_csv_path: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/weights.csv
 
 num_workers: 32
 batch_size: 16
