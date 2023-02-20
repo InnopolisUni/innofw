@@ -22,7 +22,7 @@ def test_read(cfg, w_mask, size, n_channels):
     if not w_mask:
         cfg["masks"] = None
 
-    ds = instantiate(cfg, _convert_="partial")
+    ds: SegmentationDataset = instantiate(cfg, _convert_="partial")
     assert ds is not None
     assert len(ds) > 0
 
@@ -81,4 +81,4 @@ def test_wrong_img_mask_number(cfg):
     cfg['images'] = cfg['images'][:1]
 
     with pytest.raises(InstantiationException):
-        ds = instantiate(cfg, _convert_="partial")
+        ds: SegmentationDataset = instantiate(cfg, _convert_="partial")
