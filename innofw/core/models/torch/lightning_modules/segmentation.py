@@ -86,8 +86,13 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         assert self.losses is not None
         assert self.optimizer_cfg is not None
 
-    def forward(self, raster):
-        return self.model(raster)
+    def forward(self, batch: torch.Tensor):
+        return (self.model(batch) > self.threshold).to(torch.uint8)
+
+    def predict_proba(self, batch: torch.Tensor) -> torch.Tensor:
+        """Predict and output probabilities"""
+        out = self.model(batch)
+        return out
 
     def log_losses(
             self, name: str, logits: torch.Tensor, masks: torch.Tensor
@@ -140,3 +145,6 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
     def test_step(self, batch, *args, **kwargs) -> Optional[STEP_OUTPUT]:
         return self.stage_step("test", batch)
+
+    def model_load_checkpoint(self, path):
+        self.model.load_state_dict(torch.load(path)["state_dict"])
