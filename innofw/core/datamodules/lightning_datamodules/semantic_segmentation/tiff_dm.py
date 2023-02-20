@@ -1,3 +1,5 @@
+__all__ = ['SegmentationDM']
+
 import logging
 from typing import Optional, Union, List, Tuple
 from omegaconf.listconfig import ListConfig
@@ -14,7 +16,10 @@ import torch
 
 #
 from innofw.core.datasets.semantic_segmentation.tiff_dataset import SegmentationDataset
-
+from innofw.constants import Frameworks
+from innofw.core.datamodules.lightning_datamodules.base import (
+    BaseLightningDataModule,
+)
 
 def get_samples(path) -> List[Path]:  # todo: move out
     if isinstance(path, list):
@@ -25,34 +30,43 @@ def get_samples(path) -> List[Path]:  # todo: move out
     samples = sorted(samples, key=lambda x: f"{x.parent.name}{x.name}")
     return samples
 
-from innofw.constants import Frameworks
 
-class SegmentationDM(pl.LightningDataModule):
+class SegmentationDM(BaseLightningDataModule):
     task = ["image-segmentation"]
     framework = [Frameworks.torch]
 
     @validate_arguments
     def __init__(
         self,
-        img_path,
-        label_path,  # : Union[DirectoryPath, ListConfig]
+        train,
+        test,
+        infer=None,
+        augmentations=None,
         weights_csv_path: Optional[FilePath] = None,
         filtered_files_csv_path: Optional[FilePath] = None,
-        train_transform=None,
+        # train_transform=None,
+        # val_transform=None,
         stage=None,
-        augmentations=None,
-        val_transform=None,
         val_size=0.2,
         batch_size=8,
         channels: Optional[int] = None,
+        random_seed: int = 42,
         num_workers: int = 8,
         shuffle=True,
         with_caching: bool = False,
+        *args,
+        **kwargs
     ):
-        super().__init__()
-        self.img_path = [Path(p) for p in img_path] if isinstance(img_path, ListConfig) else Path(img_path)
-        self.label_path = [Path(p) for p in label_path] if isinstance(label_path, ListConfig) else Path(label_path)
-
+        super().__init__(
+            train=train,
+            test=test,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            infer=infer,
+            stage=stage,
+            *args,
+            **kwargs,
+        )
         self.weights = None
 
         if weights_csv_path:
@@ -72,8 +86,9 @@ class SegmentationDM(pl.LightningDataModule):
                 # filter values
                 self.weights = self.weights[i2.isin(self.filtered_files)]
 
-        self.train_transform = train_transform
-        self.val_transform = val_transform
+        self.train_transform = None if augmentations is None else augmentations['train']
+        self.val_transform = None if augmentations is None else augmentations['test']
+        self.test_transform = None if augmentations is None else augmentations['test']
 
         self.channels = channels
 
@@ -83,6 +98,9 @@ class SegmentationDM(pl.LightningDataModule):
         self.shuffle = shuffle
         self.random_seed = 42
         self.with_caching = with_caching
+
+    def save_preds(self):
+        pass
 
     def teardown(self, stage: str):
         # delete files generated at the stage prepare_data
@@ -111,7 +129,12 @@ class SegmentationDM(pl.LightningDataModule):
 
     # todo: add datamodule checkpointing
 
-    def setup(self, stage, **kwargs):
+    def setup_train_test_val(self, **kwargs):
+        self.img_path = self.train_dataset / 'images'
+        self.label_path = self.train_dataset / 'masks'
+        # self.img_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(self.train_dataset)
+        # self.label_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(label_path)
+
         if self.weights is None:
             images = get_samples(self.img_path)
             masks = get_samples(self.label_path)
@@ -127,7 +150,7 @@ class SegmentationDM(pl.LightningDataModule):
                 images = filter_samples(images, self.filtered_files)
                 masks = filter_samples(masks, self.filtered_files)
 
-            self.samplers = {"train": None, "val": None}
+            self.samplers = {"train": None, "val": None, "test": None}
         else:
             images = [
                 self.img_path / img_name for img_name in self.weights["file_names"]
@@ -148,22 +171,37 @@ class SegmentationDM(pl.LightningDataModule):
             )
             self.samplers = {"train": train_sampler, "val": val_sampler}
 
-        print(len(images), len(masks))
+        logging.debug(len(images), len(masks))
         assert len(images) == len(masks), "number of images and masks should be equal"
 
         train_images, val_images, train_masks, val_masks = train_test_split(
             images, masks, test_size=self.val_size, random_state=self.random_seed
         )
 
-        self.train_dataset = SegmentationDataset(
+        self.train_ds = SegmentationDataset(
             train_images,
             train_masks,
             transform=self.train_transform,
             channels=self.channels,
             with_caching=self.with_caching
         )
-        self.val_dataset = SegmentationDataset(
+        self.val_ds = SegmentationDataset(
             val_images, val_masks, transform=self.val_transform, channels=self.channels, with_caching=self.with_caching
+        )
+
+        # get images and masks
+        img_path = self.test_dataset / 'images'
+        label_path = self.test_dataset / 'masks'
+
+        if self.weights is None:
+            images = get_samples(img_path)
+            masks = get_samples(label_path)
+        else:
+            raise NotImplementedError("oops")
+
+        # create datasets
+        self.test_ds = SegmentationDataset(
+            images, masks, transform=self.test_transform, channels=self.channels, with_caching=self.with_caching
         )
 
     def stage_dataloader(self, dataset, stage):
@@ -196,24 +234,24 @@ class SegmentationDM(pl.LightningDataModule):
         )
 
     def train_dataloader(self):
-        return self.stage_dataloader(self.train_dataset, "train")
+        return self.stage_dataloader(self.train_ds, "train")
 
     def val_dataloader(self):
-        return self.stage_dataloader(self.val_dataset, "val")
+        return self.stage_dataloader(self.val_ds, "val")
 
     def test_dataloader(self):
-        return self.stage_dataloader(self.val_dataset, "val")
+        return self.stage_dataloader(self.test_ds, "test")
 
     def predict_dataloader(self):
         return self.stage_dataloader(self.predict_dataset, "predict")
 
 
-if __name__ == "__main__":
-    from innofw.utils.config import read_cfg
+# if __name__ == "__main__":
+#     from innofw.utils.config import read_cfg
 
-    dm = read_cfg(Path(
-        "/home/qazybek/repos/segmentation/config/datamodules/100123_roads_bin_seg.yaml"
-    ))
-    dm.setup("train")
-    dl = dm.train_dataloader()
-    batch = next(iter(dl))
+#     dm = read_cfg(Path(
+#         "config/datamodules/100123_roads_bin_seg.yaml"
+#     ))
+#     dm.setup("train")
+#     dl = dm.train_dataloader()
+#     batch = next(iter(dl))
