@@ -1,1 +1,0 @@
-python infer.py experiments=KA_170122_43fdja_yolov5_sibur +ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/best.pt

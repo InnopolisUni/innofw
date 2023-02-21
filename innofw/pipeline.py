@@ -41,10 +41,7 @@ def run_pipeline(
 ) -> float:
     print_config_tree(cfg)
     try:
-        hydra_cfg = HydraConfig.get()
-        experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
-            "experiments"
-        ]
+        experiment_name = cfg.experiment_name
     except ValueError:  # hydra config not set, happens when run_pipeline is called from tests
         experiment_name = str(uuid4()).split("-")[0]
 
