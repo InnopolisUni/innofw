@@ -1,0 +1,5 @@
+# description
+blur:
+  _target_: albumentations.Blur
+  blur_limit: 3
+  p: 0.5

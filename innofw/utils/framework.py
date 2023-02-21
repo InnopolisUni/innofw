@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import hydra
+from hydra.utils import instantiate
 
 # local modules
 from innofw.constants import Frameworks
@@ -104,6 +105,44 @@ def get_obj(
     #     raise ValueError("Unable to instantiate the object")
 
     return obj
+
+def get_augmentations(cfg):
+
+    from albumentations import Compose
+    from omegaconf import DictConfig
+    empty_cfg = DictConfig({})
+
+    if cfg == {}:
+        return
+    # order of augmentations placement
+    # 1. preprocessing
+    # 2. combined
+    # 3. position
+    # 4. color
+    # 5. postprocessing
+    keys = ['preprocessing', "combined", "position", "color", "postprocessing"]
+    transforms = []
+
+    # if "preprocessing" in cfg:
+    #     preprocessing = cfg.get("preprocessing")["functional"]
+    #     preprocessing = instantiate(preprocessing)
+
+    #     transforms.append(preprocessing)
+
+    for key in keys:
+        try:    
+            a = hydra.utils.instantiate(cfg[key])
+            transforms.append(a)
+        except:
+            pass
+
+    # transforms = [instantiate(cfg[key]) for key in keys]
+    transforms = [
+        Compose(transforms=dict(item).values())
+        for item in transforms
+        if item != empty_cfg
+    ]
+    return Compose(transforms=transforms)
 
 
 def get_optimizer(

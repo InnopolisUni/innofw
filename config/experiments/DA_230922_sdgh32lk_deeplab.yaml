@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - override /models: deeplabv3plus.yaml
+  - override /datasets: segmentation_landslides
+  - override /optimizers: adam.yaml
+  - override /losses: segmentation_losses
+  - override /augmentations_train: none
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /initializations: he
+  - override /callbacks: segmentation
+
+project: "segmentation"
+task: "image-segmentation"
+
+random_seed: 42
+weights_freq: 1
+batch_size: 16
+epochs: 50
+accelerator: gpu
+gpus: [2]
+models:
+  in_channels: 4

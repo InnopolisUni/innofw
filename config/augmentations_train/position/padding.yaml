@@ -1,0 +1,6 @@
+padding:
+  _target_: albumentations.PadIfNeeded
+  min_height: 1400  # 512
+  min_width: 1400  # 512
+  always_apply: True
+  p: 1.0

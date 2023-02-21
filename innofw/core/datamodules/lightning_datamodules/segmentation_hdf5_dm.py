@@ -4,6 +4,7 @@ import pathlib
 
 import cv2
 import torch
+import numpy as np
 
 from innofw.constants import Frameworks, Stages
 
@@ -79,21 +80,24 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         test_files = self.find_hdf5(self.test_dataset)
 
         # prepare datasets
-        train_val = HDF5Dataset(train_files, self.channels_num, self.aug)
+        train_val = HDF5Dataset(train_files, self.channels_num, self.aug['train'])
         val_size = int(len(train_val) * float(self.val_size))
         train, val = torch.utils.data.random_split(
             train_val, [len(train_val) - val_size, val_size]
         )
 
         self.train_dataset = train
-        self.test_dataset = HDF5Dataset(test_files, self.channels_num, self.aug)
         self.val_dataset = val
+        # Set validatoin augmentations for val
+        setattr(self.val_dataset, 'transform', self.aug['val'])
+        # Applly test transform
+        self.test_dataset = HDF5Dataset(test_files, self.channels_num, self.aug['test'])
 
     def setup_infer(self):
         if isinstance(self.predict_dataset, HDF5Dataset):
             return
         infer_files = self.find_hdf5(self.predict_dataset)
-        self.predict_dataset = HDF5Dataset(infer_files, self.channels_num, self.aug)
+        self.predict_dataset = HDF5Dataset(infer_files, self.channels_num, self.aug['test'])
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         out_file_path = dst_path / "results"
