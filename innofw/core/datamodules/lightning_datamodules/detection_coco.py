@@ -84,12 +84,12 @@ class CocoLightningDataModule(BaseLightningDataModule):
             train_dataset = self.dataset(
                 train_csv,
                 str(self.train_dataset),
-                transforms=Augmentation(self.aug),
+                transforms=Augmentation(self.aug['train']),
             )
             self.test_dataset = self.dataset(
                 test_csv,
                 str(self.test_dataset),
-                transforms=Augmentation(self.aug),
+                transforms=Augmentation(self.aug['test']),
             )
         else:
             train_dataset = self.dataset(
@@ -115,6 +115,8 @@ class CocoLightningDataModule(BaseLightningDataModule):
         self.train_dataset, self.val_dataset = random_split(
             train_dataset, [train_size, n - train_size]
         )
+        # Set validatoin augmentations for val
+        setattr(self.val_dataset, 'transform', self.aug['val'])
 
     def find_csv_and_data(self, path):
         csv_path = find_file_by_ext(path, ".csv")
@@ -214,5 +216,5 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
         )
         self.predict_dataset = DicomCocoDatasetInfer(
             str(self.infer),
-            Augmentation(self.aug or transforms),
+            Augmentation(self.aug['test'] or transforms),
         )

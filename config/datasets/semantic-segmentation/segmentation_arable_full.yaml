@@ -1,0 +1,23 @@
+task:
+  - image-segmentation
+
+name: test dataset
+description: dataset for running training in hdf5 format
+markup_info: Информация о разметке
+date_time: 03.09.2030
+
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/arable_full/train.zip
+  target: ./data/arable_full/train/
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/arable_full/test.zip
+  target: ./data/arable_full/test/
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/arable/infer.zip
+  target: ./data/arable/infer/
+
+val_size: 0.2
+channels_num: 4

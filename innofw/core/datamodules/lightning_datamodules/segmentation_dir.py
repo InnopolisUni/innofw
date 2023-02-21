@@ -93,16 +93,18 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
         train_val = SegmentationDataset(
             os.path.join(self.train_dataset, "image"),
             os.path.join(self.train_dataset, "label"),
-            self.aug,
+            self.aug['train'],
         )
         val_size = int(len(train_val) * float(self.val_size))
         self.train_dataset, self.val_dataset = torch.utils.data.random_split(
             train_val, [len(train_val) - val_size, val_size]
         )
+        # Set validatoin augmentations for val
+        setattr(self.val_dataset, 'transform', self.aug['val'])
         self.test_dataset = SegmentationDataset(
             os.path.join(self.test_dataset, "image"),
             os.path.join(self.test_dataset, "label"),
-            self.aug,
+            self.aug['test'],
         )
 
     def setup_infer(self):
@@ -171,16 +173,18 @@ class DicomDirSegmentationLightningDataModule(DirSegmentationLightningDataModule
         train_val = SegmentationDataset(
             png_train_path,
             os.path.join(self.train_dataset, "labels"),
-            self.aug,
+            self.aug['train'],
         )
         val_size = int(len(train_val) * float(self.val_size))
         self.train_dataset, self.val_dataset = torch.utils.data.random_split(
             train_val, [len(train_val) - val_size, val_size]
         )
+        # Set validatoin augmentations for val
+        setattr(self.val_dataset, 'transform', self.aug['val'])
         self.test_dataset = SegmentationDataset(
             png_test_path,
             os.path.join(self.test_dataset, "labels"),
-            self.aug,
+            self.aug['test'],
         )
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
@@ -216,4 +220,4 @@ class DicomDirSegmentationLightningDataModule(DirSegmentationLightningDataModule
                 os.path.join(self.dicoms, dicom),
                 os.path.join(png_path, dicom.replace("dcm", "png")),
             )
-        self.predict_dataset = self.dataset(png_path, self.aug, True)
+        self.predict_dataset = self.dataset(png_path, self.aug['test'], True)

@@ -1,0 +1,13 @@
+normalize_arable:
+  _target_: albumentations.Normalize
+  mean:
+    - 0.05955944
+    - 0.08096218
+    - 0.08822682
+    - 0.26502724
+  std:
+    - 0.02762473
+    - 0.01864855
+    - 0.01559895
+    - 0.07752395
+  max_pixel_value: 1.0

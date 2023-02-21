@@ -1,0 +1,6 @@
+random_crop:
+  _target_: albumentations.RandomCrop
+  height: 1008  # 448  #
+  width: 1008
+  always_apply: True
+  p: 1.0

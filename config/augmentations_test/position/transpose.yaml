@@ -1,0 +1,4 @@
+transpose:
+  _target_: albumentations.Transpose
+  p: 0.5
+  always_apply: False

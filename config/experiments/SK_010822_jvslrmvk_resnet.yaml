@@ -2,7 +2,9 @@
 defaults:
   - override /models: resnet.yaml
   - override /datasets: classification_mnist.yaml
-  - override /augmentations: classification.yaml
+  - override /augmentations_train: none #classification.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
   - override /losses: log_loss.yaml
   - override /optimizers: adam
 

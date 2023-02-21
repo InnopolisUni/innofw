@@ -61,7 +61,7 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
         if self.aug:
             self.predict_dataset = ImageFolderInferDataset(
                 str(self.infer),
-                transforms=Augmentation(self.aug),
+                transforms=Augmentation(self.aug['test']),
             )
         else:
             self.predict_dataset = ImageFolderInferDataset(
