@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import hydra
+from hydra.utils import instantiate
 
 # local modules
 from innofw.constants import Frameworks
@@ -119,8 +120,15 @@ def get_augmentations(cfg):
     # 3. position
     # 4. color
     # 5. postprocessing
-    keys = ["combined", "position", "color", "postprocessing"]  # 'preprocessing',
+    keys = ['preprocessing', "combined", "position", "color", "postprocessing"]
     transforms = []
+
+    # if "preprocessing" in cfg:
+    #     preprocessing = cfg.get("preprocessing")["functional"]
+    #     preprocessing = instantiate(preprocessing)
+
+    #     transforms.append(preprocessing)
+
     for key in keys:
         try:    
             a = hydra.utils.instantiate(cfg[key])

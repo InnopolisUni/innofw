@@ -86,3 +86,19 @@ UserWOKeys = S3Credentials(
 )
 
 DEFAULT_STORAGE_URL: str = "https://api.blackhole.ai.innopolis.university:443"
+
+
+
+# === semantic segmentation ===
+# constants
+class SegDataKeys(Enum):
+    image = 'image'
+    label = 'label'
+    filename = 'name'
+    coords = 'coords'
+    metadata = 'metadata'
+
+
+class SegOutKeys(Enum):  # todo: use it somehow
+    predictions = "predictions"
+    metrics = "metrics"

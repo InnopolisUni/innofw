@@ -1,0 +1,10 @@
+# divide_by_255:
+#   _target_: innofw.core.augmentations.preprocessing.DivideBy255
+#   p: 1.0
+#   always_apply: True
+
+divide_by_255:
+  _target_: albumentations.ToFloat
+  max_value: 255
+  p: 1.0
+  always_apply: True
