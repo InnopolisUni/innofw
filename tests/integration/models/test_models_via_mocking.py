@@ -2,12 +2,14 @@ import os
 import shutil
 
 import pytest
+import torch
 from sklearn.neighbors import KNeighborsClassifier
 
 import numpy as np
 from xgboost import XGBClassifier
 
 from innofw.core.models.sklearn_adapter import SklearnAdapter
+from innofw.core.models.torch.architectures.segmentation.unet import UNet
 from innofw.core.models.xgboost_adapter import XGBoostAdapter
 
 
@@ -49,3 +51,8 @@ def test_models(model, wrapper, logs):
     model.train(MockDatamodule())
     assert len(os.listdir(logs)) >= l + 1
     shutil.rmtree(logs, ignore_errors=True)
+
+def test_unet():
+    x = torch.from_numpy(np.random.random((1, 3, 512, 512)))
+    model = UNet()
+    assert model.forward(x.float()) is not None
