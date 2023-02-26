@@ -6,8 +6,7 @@ from typing import Optional
 
 # third party packages
 from pytorch_lightning import seed_everything
-from hydra.core.hydra_config import HydraConfig
-from omegaconf import OmegaConf, DictConfig
+from omegaconf import DictConfig
 
 # local modules
 from innofw.utils.framework import (

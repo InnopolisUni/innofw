@@ -11,7 +11,9 @@ from rich.prompt import Prompt
 
 import logging
 
-log = logging.getLogger(__name__)
+from innofw.utils import get_logger
+
+logger = get_logger()
 
 
 @rank_zero_only
