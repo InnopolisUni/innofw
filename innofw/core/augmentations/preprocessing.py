@@ -13,8 +13,23 @@ class DivideBy255(ImageOnlyTransform):
         return ()
 
 
-def default_preprocessing(img):
+def default_preprocessing(img, divisor=255):
     img_copy = img.copy()
-    img_copy = img_copy / 255
+    img_copy = img_copy / divisor
     img_copy[img_copy > 1] = 1
     return img_copy
+
+
+class ToFloatWClip(ImageOnlyTransform):
+    """
+    dividing by max_value and clipping in range [0, 1]
+    """
+    def __init__(self, max_value, always_apply=False, p=0.5):
+        super().__init__(always_apply=always_apply, p=p)
+        self.max_value = max_value
+
+    def apply(self, img, **kwargs):
+        return default_preprocessing(img, self.max_value)
+
+    def get_transform_init_args_names(self):
+        return ()
