@@ -14,6 +14,7 @@ defaults:
   - callbacks: auto
   - initializations:
   - wandb: default
+  - loggers: none
   - experiments:  # order matters
   - clear_ml: disabled
   - override hydra/job_logging: disabled
