@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-import multiprocessing
 
 from scipy import ndimage
 from torch.nn.modules.loss import _Loss
