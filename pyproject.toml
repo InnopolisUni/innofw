@@ -51,9 +51,10 @@ pytest = "^7.1.2"
 pre-commit = "^2.19.0"
 black = "^22.6.0"
 mypy = "^0.971"
+clearml = {version = "^1.5.0", optional = true }
 
 [tool.poetry.extras]
-clearml = ["^1.5.0"]
+clearml = ["clearml"]
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.21.2"
