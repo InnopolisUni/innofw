@@ -1,6 +1,7 @@
 import os
 import logging
 from pathlib import Path
+from typing import List
 
 import cv2
 import selfies
@@ -102,7 +103,7 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         self.test_ds = None
         # self.test_ds = HDF5Dataset(test_files, self.channels_num, self.aug['test'])
 
-    def find_hdf5(self, path: Path) -> list[Path]:
+    def find_hdf5(self, path: Path) -> List[Path]:
         paths = []
         if not os.path.isfile(path):
             for p in os.listdir(path):
