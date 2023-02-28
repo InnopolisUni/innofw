@@ -78,18 +78,25 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
                 BinaryRecall(threshold=threshold),
                 BinaryJaccardIndex(threshold=threshold),
             ]
-        )
+        )  # todo: it is slow
+
+
         self.train_metrics = metrics.clone(prefix="train_")
         self.val_metrics = metrics.clone(prefix="val_")
-        self.test_metrics = metrics.clone(prefix="test_")
+        # self.test_metrics = metrics.clone(prefix="test_")
 
         assert self.losses is not None
         assert self.optimizer_cfg is not None
 
-    def forward(self, batch: torch.Tensor):
-        return (self.model(batch) > self.threshold).to(torch.uint8)
+    # def forward(self, batch: torch.Tensor):
+    #     return (self.model(batch) > self.threshold).to(torch.uint8)
 
     def predict_proba(self, batch: torch.Tensor) -> torch.Tensor:
+        """Predict and output probabilities"""
+        out = self.model(batch)
+        return out
+
+    def forward(self, batch: torch.Tensor) -> torch.Tensor:
         """Predict and output probabilities"""
         out = self.model(batch)
         return out
@@ -110,8 +117,8 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
                 on_step=False,
                 on_epoch=True,
             )
-
-        self.log(f"loss/{name}", total_loss, on_step=False, on_epoch=True)
+        # val_loss and train_loss
+        self.log(f"{name}_loss", total_loss, on_step=False, on_epoch=True)
         return total_loss
 
     def stage_step(self, stage, batch, do_logging=False, *args, **kwargs):
@@ -120,10 +127,10 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         raster, label = batch[SegDataKeys.image], batch[SegDataKeys.label]
 
         predictions = self.forward(raster)
-        if (
-            predictions.max() > 1 or predictions.min() < 0
-        ):  # todo: should be configurable via cfg file
-            predictions = torch.sigmoid(predictions)
+        # if (
+        #     predictions.max() > 1 or predictions.min() < 0
+        # ):  # todo: should be configurable via cfg file
+        #     predictions = torch.sigmoid(predictions)
 
         output[SegOutKeys.predictions] = predictions
 
@@ -131,11 +138,24 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
             loss = self.log_losses(stage, predictions, label)
             output["loss"] = loss
 
-        # if stage != "predict":
-        #     metrics = self.compute_metrics(stage, predictions, label)  # todo: uncomment
-        #     self.log_metrics(stage, metrics)
+        if stage != "predict":
+            metrics = self.compute_metrics(stage, predictions, label)  # todo: uncomment
+            self.log_metrics(stage, metrics)
 
         return output
+
+    def compute_metrics(self, stage, predictions, labels):
+        if stage == "train":
+            return self.train_metrics(predictions.view(-1), labels.view(-1))
+        elif stage == "val":
+            out1 = self.val_metrics(predictions.view(-1), labels.view(-1))
+            return out1
+        elif stage == "test":
+            return self.test_metrics(predictions.view(-1), labels.view(-1))
+
+    def log_metrics(self, stage, metrics_res):
+        for key, value in metrics_res.items():
+            self.log(key, value)  # , sync_dist=True
 
     def training_step(self, batch, *args, **kwargs) -> STEP_OUTPUT:
         return self.stage_step("train", batch, do_logging=True)
