@@ -9,7 +9,7 @@ defaults:
   - override /augmentations_train: water-erosion-bin-seg
   - override /augmentations_val: water-erosion-bin-seg
   # - override /metrics: basic
-  # - override /loggers: wandb
+  - override /loggers: wandb
   # - override /callbacks: basic
   # - override /trainers: basic_on_gpu_0
   # - override /checkpoints:
@@ -42,13 +42,13 @@ losses:
       DiceLoss:
         object:
           mode: log
-          alpha: 0.6600361663652804 
+          alpha: 0.9708410584864319
           beta: 1.2
           gamma: 0.3
       FocalLoss:
         object:
           balanced: True
-          alpha: 0.6600361663652804
+          alpha: 0.9708410584864319
           gamma: 2
           smooth: 0.1
       SurfaceLoss:

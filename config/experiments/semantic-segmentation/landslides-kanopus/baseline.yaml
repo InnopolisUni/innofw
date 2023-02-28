@@ -11,7 +11,7 @@ defaults:
   # - override /metrics: basic
   - override /loggers: wandb
   # - override /callbacks: basic
-  - override /trainers: basic_on_gpu_0
+  # - override /trainers: basic_on_gpu_0
   # - override /checkpoints:
   # - override /wandb: default
 
