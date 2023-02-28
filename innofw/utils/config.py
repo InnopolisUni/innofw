@@ -11,6 +11,7 @@ def read_cfg(cfg_path: Optional[FilePath]=None, cfg_name="train.yaml", overrides
     if overrides is None and cfg_path is not None:
         with open(cfg_path, "r") as f:
             cfg = yaml.safe_load(f)
+            # del cfg['name']  # todo:?
             return hydra.utils.instantiate(cfg)  # todo: why this returns an object?
     elif overrides is not None and cfg_path is None:
         initialize(config_path=str('../../config'), job_name="test_app")
