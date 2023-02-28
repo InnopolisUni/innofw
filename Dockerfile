@@ -4,8 +4,8 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 RUN apt-get install curl -y
 RUN pip3 install --upgrade pip
-
-RUN /bin/bash -c 'curl -sSL https://install.python-poetry.org | python -'
+# works with 1.2.2
+RUN /bin/bash -c 'curl -sSL https://install.python-poetry.org | python - --version 1.2.2'
 
 COPY . /code
 WORKDIR code
