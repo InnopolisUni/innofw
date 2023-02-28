@@ -68,6 +68,7 @@ class TorchAdapter(BaseModelAdapter):
             stop_param=None,
             project=None,
             experiment=None,
+            logger=None,
             *args,
             **kwargs,
     ):
@@ -93,6 +94,7 @@ class TorchAdapter(BaseModelAdapter):
             "schedulers_cfg": schedulers_cfg,
             "callbacks": callbacks,
             "trainer_cfg": trainer_cfg,
+            "logger": logger
         }
         framework = "torch"
         for key, value in objects.items():
@@ -110,11 +112,13 @@ class TorchAdapter(BaseModelAdapter):
         except AttributeError:
             pass
 
+
         if callable(objects["trainer_cfg"]):
             self.trainer = objects["trainer_cfg"](
                 callbacks=self.callbacks,
                 default_root_dir=self.log_dir,
                 check_val_every_n_epoch=1,
+                logger=objects['logger'],
             )
         elif "_target_" in objects["trainer_cfg"]:
             self.trainer = hydra.utils.instantiate(
@@ -122,6 +126,7 @@ class TorchAdapter(BaseModelAdapter):
                 callbacks=self.callbacks,
                 default_root_dir=self.log_dir,
                 check_val_every_n_epoch=1,
+                logger=objects['logger'],
             )
         else:
             self.trainer = pl.Trainer(
@@ -129,6 +134,7 @@ class TorchAdapter(BaseModelAdapter):
                 callbacks=self.callbacks,
                 default_root_dir=self.log_dir,
                 check_val_every_n_epoch=1,
+                logger=objects['logger']
             )
 
     # def resume_checkpoint(self, ckpt_path):
@@ -152,7 +158,7 @@ class TorchAdapter(BaseModelAdapter):
         # )
 
     def train(self, data_module, ckpt_path=None):
-        self.trainer.fit(self.pl_module, data_module, ckpt_path=ckpt_path)
+        self.trainer.fit(self.pl_module, data_module)
 
     def test(self, data_module):
         outputs = self.trainer.test(self.pl_module, data_module)
@@ -168,7 +174,10 @@ class TorchAdapter(BaseModelAdapter):
                     dirpath=weights_path,
                     filename=f"{project}_{experiment}" + "_{epoch}",
                     every_n_epochs=weights_freq,
-                    save_top_k=-1,
+                    save_top_k=1,  # -1
+                    # todo: add monitor
+                    mode="max",
+                    monitor="val_loss",
                 )
             )
         else:
@@ -183,6 +192,19 @@ class TorchAdapter(BaseModelAdapter):
                     dirpath=log_dir,
                     filename=f"model",
                     every_n_epochs=weights_freq,
-                    save_top_k=-1,
+                    save_top_k=1,  # -1
+                    # todo: add monitor
+                    mode="max",
+                    monitor="val_loss",
                 )
             )
+    # todo: edit
+    # checkpoint_callback = ModelCheckpoint(
+    #     dirpath=Path(run_save_path, wandb.run.id, "checkpoints"),  # type: ignore
+    #     save_top_k=1,
+    #     verbose=True,
+    #     filename="{epoch}-{val_BinaryF1Score:2f}",
+    #     monitor="val_BinaryF1Score",
+    #     mode="max",
+    #     every_n_epochs=5,
+    # )

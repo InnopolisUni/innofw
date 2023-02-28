@@ -23,7 +23,7 @@ class FocalLoss(_Loss):
 
     def _get_weights(self, target, distances=None):
         if self.balanced:
-            weights = target + 0
+            weights = target + 0  # todo: why?
             w1 = self.alpha if self.alpha is not None else 1 - torch.mean(target)
             weights[target > 0] = w1
             weights[target == 0] = 1 - w1

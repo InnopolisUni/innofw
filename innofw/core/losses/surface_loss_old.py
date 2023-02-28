@@ -1,12 +1,12 @@
 import numpy as np
 import torch
 import multiprocessing
+
 from scipy import ndimage
 from torch.nn.modules.loss import _Loss
 
 class SurfaceLoss(_Loss):
-
-    def __init__(self, activation='sigmoid'):
+    def __init__(self, scheduler=None, activation='sigmoid'):
         super().__init__()
         self.activation = activation
 
@@ -24,11 +24,14 @@ class SurfaceLoss(_Loss):
         )
 
         distances = distances.view(distances.shape[0], -1)
-        if self.activation == 'sigmoid':
-            output = torch.sigmoid(output)
-        else:
-            output = torch.softmax(output)
-        output = torch.sigmoid(output)
         output = output.view(output.shape[0], -1)
+
+#         if self.activation == 'sigmoid':
+#             output = torch.sigmoid(output)
+#         else:
+#             output = torch.softmax(output)
+
         loss = torch.sum(distances * output, dim=1) / output.shape[1]
-        return  0.3 * 0.01 * loss.mean()
+
+#         return 0.3 * 0.01 * loss.mean()
+        return loss.mean()
