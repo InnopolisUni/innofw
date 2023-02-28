@@ -9,7 +9,9 @@ implementations:
       weight: 0.8
       object:
         _target_: innofw.core.losses.dice_loss_old.DiceLoss
-        gamma: 1
+        gamma: 0.3
+        mode: log
+        
     FocalLoss:
       weight: 0.4
       object:
