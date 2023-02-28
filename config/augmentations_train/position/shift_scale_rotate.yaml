@@ -3,7 +3,7 @@ shift_scale_rotate:
   shift_limit: 0
   rotate_limit: 180
   scale_limit:
-    - 0.5
+    - -0.5
     - 1.0
   interpolation: 0 # cv2.INTER_NEAREST
   p: 0.5
