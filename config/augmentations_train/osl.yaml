@@ -1,0 +1,14 @@
+defaults:
+    - preprocessing:
+        - to_pil_image
+        - resize
+    - combined:
+        - none
+    - position:
+      - random_horizontal_flip
+    - color:
+    - postprocessing:
+      - to_tensor
+      - normalize
+# task:
+#   - one-shot-learning

@@ -1,0 +1,3 @@
+random_horizontal_flip:
+  _target_: torchvision.transforms.RandomHorizontalFlip
+  p: 0.5

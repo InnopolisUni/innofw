@@ -1,0 +1,5 @@
+resize:
+  _target_: torchvision.transforms.Resize
+  size:
+    - 100
+    - 100
