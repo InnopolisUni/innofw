@@ -112,29 +112,31 @@ class TorchAdapter(BaseModelAdapter):
         except AttributeError:
             pass
 
+        from argparse import Namespace
 
+        arguments = Namespace(
+            callbacks=self.callbacks,
+            default_root_dir=self.log_dir,
+            check_val_every_n_epoch=1,
+            logger=objects['logger'],
+        )
+
+        # print(arguments)
+        # print(trainer_cfg, objects["trainer_cfg"])
         if callable(objects["trainer_cfg"]):
             self.trainer = objects["trainer_cfg"](
-                callbacks=self.callbacks,
-                default_root_dir=self.log_dir,
-                check_val_every_n_epoch=1,
-                logger=objects['logger'],
+                **vars(arguments),
             )
         elif "_target_" in objects["trainer_cfg"]:
             self.trainer = hydra.utils.instantiate(
                 objects["trainer_cfg"],
-                callbacks=self.callbacks,
-                default_root_dir=self.log_dir,
-                check_val_every_n_epoch=1,
-                logger=objects['logger'],
+                **vars(arguments),
             )
         else:
+            # trainer_cfg['gpus'] = [0, 1, 2]
             self.trainer = pl.Trainer(
                 **trainer_cfg,
-                callbacks=self.callbacks,
-                default_root_dir=self.log_dir,
-                check_val_every_n_epoch=1,
-                logger=objects['logger']
+                **vars(arguments)
             )
 
     # def resume_checkpoint(self, ckpt_path):

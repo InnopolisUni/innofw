@@ -78,9 +78,14 @@ class Augmentation(nn.Module):
     """
     def __init__(self, augmentations):
         super().__init__()
-        self.augs = get_augs_adapter(augmentations)
+        self.augs = None if augmentations is None else get_augs_adapter(augmentations) 
 
     def forward(self, x, y=None):
+        if self.augs is None:
+            if y is not None:
+                return x, y
+            return x
+
         if y is not None:
             return self.augs(x, y)
         return self.augs(x)

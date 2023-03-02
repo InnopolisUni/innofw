@@ -102,10 +102,11 @@ class SiameseDataModule(BaseLightningDataModule):
             train_dataset, [train_size, n - train_size]
         )
         # Set validatoin augmentations for val
-        setattr(self.val_dataset, 'transform', self.aug['val'])
+        if self.aug is not None:
+            setattr(self.val_dataset, 'transform', self.aug['val'])
 
     def setup_infer(self):
-        if self.aug:
+        if self.aug is not None:
             self.predict_dataset = SiameseDatasetInfer(
                 str(self.infer),
                 self.aug['test'],

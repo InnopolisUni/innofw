@@ -13,6 +13,7 @@ from innofw.core.datasets.hdf5 import HDF5Dataset
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
+from innofw.core.datasets.segmentation_hdf5_old_pipe import DatasetUnion, Dataset
 
 
 class HDF5LightningDataModule(BaseLightningDataModule):
@@ -79,8 +80,11 @@ class HDF5LightningDataModule(BaseLightningDataModule):
 
         self.random_split = False
 
+        val_files = [f for f in train_files if 'val' in Path(f).name]
+        train_files = [f for f in train_files if 'train' in Path(f).name]
+
         # prepare datasets
-        if self.random_split:
+        if self.random_split or len(val_files) == 0:
             train_val = HDF5Dataset(train_files, self.channels_num, self.aug['train'])
             val_size = int(len(train_val) * float(self.val_size))
             train, val = torch.utils.data.random_split(
@@ -92,12 +96,16 @@ class HDF5LightningDataModule(BaseLightningDataModule):
             # Set validatoin augmentations for val
             setattr(self.val_ds, 'transform', self.aug['val'])
         else:
-            val_files = [f for f in train_files if 'val' in Path(f).name]
-            train_files = [f for f in train_files if 'train' in Path(f).name]
-
-            from innofw.core.datasets.segmentation_hdf5_old_pipe import DatasetUnion, Dataset
-            self.val_ds = DatasetUnion([Dataset(path_to_hdf5=f, in_channels=self.channels_num, augmentations=self.aug['val']) for f in val_files])  # HDF5Dataset(val_files, self.channels_num, self.aug['val'])
-            self.train_ds = DatasetUnion([Dataset(path_to_hdf5=f, in_channels=self.channels_num, augmentations=self.aug['train']) for f in train_files])  # HDF5Dataset(train_files, self.channels_num, self.aug['train'])
+            try:
+                self.train_ds = DatasetUnion([Dataset(path_to_hdf5=f, in_channels=self.channels_num, augmentations=self.aug['train']) for f in train_files])
+            except:
+                self.train_ds = HDF5Dataset(train_files, self.channels_num, self.aug['train'])
+                self.w_sampler = False
+            try:
+                self.val_ds = DatasetUnion([Dataset(path_to_hdf5=f, in_channels=self.channels_num, augmentations=self.aug['val']) for f in val_files])
+            except:
+                self.val_ds = HDF5Dataset(val_files, self.channels_num, self.aug['val'])
+                self.w_sampler = False
 
         # Applly test transform
         self.test_ds = None
@@ -114,10 +122,14 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         pass
 
     def train_dataloader(self):
-        class_weights = [w if id_ != 1 else w * self.mul for w, id_ in zip(self.train_ds.class_weights, self.train_ds.class_ids)]
+        if self.w_sampler:
+            class_weights = [w if id_ != 1 else w * self.mul for w, id_ in zip(self.train_ds.class_weights, self.train_ds.class_ids)]
+        else:
+            class_weights = None
+            self.w_sampler = False
         return torch.utils.data.DataLoader(
                 self.train_ds,
-                batch_size=self.batch_size,
+                batch_size=self.batch_size if len(self.train_ds) > self.batch_size else len(self.train_ds),
                 sampler=torch.utils.data.WeightedRandomSampler(class_weights, 
                                                             len(self.train_ds)) if self.w_sampler else None,
                 drop_last=True,
@@ -127,10 +139,15 @@ class HDF5LightningDataModule(BaseLightningDataModule):
             )
     
     def val_dataloader(self):
+        try:
+            class_weights = self.val_ds.class_weights
+        except:
+            class_weights = None
+            self.w_sampler = False
         return torch.utils.data.DataLoader(
             self.val_ds,
-            batch_size=self.batch_size,
-            sampler=torch.utils.data.WeightedRandomSampler(self.val_ds.class_weights, len(self.val_ds)),
+            batch_size=self.batch_size if len(self.train_ds) > self.batch_size else len(self.train_ds),
+            sampler=torch.utils.data.WeightedRandomSampler(class_weights, len(self.val_ds)) if self.w_sampler else None,
             num_workers=self.num_workers,
             drop_last=True,
     #         worker_init_fn=lambda _: np.random.seed()
