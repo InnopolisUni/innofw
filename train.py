@@ -1,3 +1,7 @@
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
+
 import sys
 import dotenv
 import hydra
@@ -12,6 +16,10 @@ from pckg_util import check_gpu_and_torch_compatibility
 check_gpu_and_torch_compatibility()
 # os.environ["WANDB_DISABLED"] = "true"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
+logging.getLogger("torch").setLevel(logging.WARNING)
+
+
 # load environment variables from `.env` file if it exists
 # recursively searches for `.env` in all folders starting from work dir
 from innofw.utils.loggers import setup_clear_ml, setup_wandb
