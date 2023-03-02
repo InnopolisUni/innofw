@@ -1,4 +1,5 @@
 # standard libraries
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -13,6 +14,11 @@ from innofw.constants import DefaultS3User, S3Credentials
 from innofw.utils.executors.execute_w_creds import execute_w_credentials
 from innofw.utils.s3_utils import S3Handler
 from innofw.utils.s3_utils.credentials import get_s3_credentials
+
+import logging.config
+from innofw.utils import get_project_root
+logging.config.fileConfig(get_project_root() / 'logging.conf')
+LOGGER = logging.getLogger(__name__)
 
 
 @validate_arguments
@@ -70,7 +76,8 @@ def download_archive(
     url = URL(file_url).anchor
     downloaded_file = S3Handler(url, credentials).download_file(file_url, dst_path)
     # uncompress the file
-    patoolib.extract_archive(str(downloaded_file), outdir=dst_path, interactive=False)
+    LOGGER.warning("might be doing redundant decompression")
+    patoolib.extract_archive(str(downloaded_file), outdir=dst_path, interactive=False, verbosity=-1)
     # downloaded_file.unlink()
 
     # __MACOSX
