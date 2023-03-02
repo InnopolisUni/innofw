@@ -3,6 +3,7 @@ import logging
 from uuid import uuid4
 from pathlib import Path
 from typing import Optional
+import logging.config
 
 # third party packages
 from pytorch_lightning import seed_everything
@@ -28,6 +29,7 @@ from innofw import InnoModel
 from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 from innofw.utils.print_config import print_config_tree
 from innofw.utils.defaults import default_model_for_datamodule
+from innofw.utils import get_project_root
 
 
 def run_pipeline(
@@ -155,11 +157,14 @@ def run_pipeline(
             dm.save_n_samples(path)  # in case of tabular data it saves csv file, in case of images it save grid, in case of audio it saves one audio file with multiple recordings
             dm.validate_sample(max_val=255, min_val=0, shape=(3, 256, 256), mask_unique_vals=2) 
         """
-        print(lo(next(iter(train_dl))[SegDataKeys.image]))
-        print(lo(next(iter(train_dl))[SegDataKeys.label]))
-        print("val sample stats")
-        print(lo(next(iter(val_dl))[SegDataKeys.image]))
-        print(lo(next(iter(val_dl))[SegDataKeys.label]))
+        logging.config.fileConfig(get_project_root() / 'logging.conf')
+        LOGGER = logging.getLogger(__name__)
+
+        LOGGER.info(lo(next(iter(train_dl))[SegDataKeys.image]))
+        LOGGER.info(lo(next(iter(train_dl))[SegDataKeys.label]))
+        LOGGER.info("val sample stats")
+        LOGGER.info(lo(next(iter(val_dl))[SegDataKeys.image]))
+        LOGGER.info(lo(next(iter(val_dl))[SegDataKeys.label]))
     except:
         pass
 

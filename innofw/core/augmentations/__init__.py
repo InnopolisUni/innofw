@@ -37,7 +37,7 @@ def get_augs_adapter(augs):
         if aug_adapter.is_suitable_input(augs)
     ]
     if len(suitable_adapters) == 0:
-        raise NotImplementedError()
+        raise NotImplementedError("augmentation adapters are not found")
     elif len(suitable_adapters):
         return suitable_adapters[0](augs)
 

@@ -1,11 +1,10 @@
-import os
 from pathlib import Path
 
-import numpy as np
-import torch
-import torchvision
-from torch.utils.data import Dataset
 import cv2
+import numpy as np
+from torch.utils.data import Dataset
+
+from innofw.constants import SegDataKeys
 
 
 class SegmentationDataset(Dataset):
@@ -44,4 +43,4 @@ class SegmentationDataset(Dataset):
         mask = cv2.imread(self.maskPaths[idx], 0)
         image, mask = self.transforms(image, mask)
         mask = mask[None, :]
-        return {"scenes": image.float(), "labels": mask.float()}
+        return {SegDataKeys.image: image.float(), SegDataKeys.label: mask.float()}

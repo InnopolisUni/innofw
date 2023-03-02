@@ -75,8 +75,8 @@ class HDF5LightningDataModule(BaseLightningDataModule):
 
     def setup_train_test_val(self, **kwargs):
         # files = list(self.data_path.rglob(''))
-        train_files = self.find_hdf5(self.train_dataset)
-        test_files = self.find_hdf5(self.test_dataset)
+        train_files = self.find_hdf5(self.train_source)
+        test_files = self.find_hdf5(self.test_source)
 
         self.random_split = False
 

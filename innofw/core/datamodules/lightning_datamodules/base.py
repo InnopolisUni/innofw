@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 
 import albumentations as albu
 from albumentations.pytorch import ToTensorV2
+import albumentations.pytorch as albu_pytorch
 
 from innofw.core.datamodules.base import BaseDataModule
 from innofw.core.augmentations import Augmentation
@@ -55,6 +56,13 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
         self.aug = None
 
         # self.train_dataset  # make it abstract property?
+
+    def get_aug(self, all_augmentations, stage):
+        if self.aug is not None and stage in all_augmentations and all_augmentations[stage] is not None:
+            return Augmentation(all_augmentations[stage])
+        return Augmentation(
+                albu.Compose([albu_pytorch.transforms.ToTensorV2()])
+        )
 
     def prepare_data(self):
         pass

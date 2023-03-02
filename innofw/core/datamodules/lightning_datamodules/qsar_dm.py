@@ -77,9 +77,9 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
             **kwargs,
         )
         if self.train is None:
-            self.train_dataset = self._get_data(train)
+            self.train_source = self._get_data(train)
         if self.test is None:
-            self.test_dataset = self._get_data(test)
+            self.test_source = self._get_data(test)
 
         self.smiles_col = smiles_col
         self.target_col = target_col
@@ -87,8 +87,8 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         self.work_mode = WorkMode(work_mode)
 
     def setup_train_test_val(self, **kwargs) -> None:
-        train_csv = pd.read_csv(self.train_dataset)
-        test_csv = pd.read_csv(self.test_dataset)
+        train_csv = pd.read_csv(self.train_source)
+        test_csv = pd.read_csv(self.test_source)
 
         train_smiles = train_csv[self.smiles_col].values
         test_smiles = test_csv[self.smiles_col].values
@@ -129,7 +129,7 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
     def setup_infer(self):
         self.setup_train_test_val()
 
-        predict_csv = pd.read_csv(self.predict_dataset)
+        predict_csv = pd.read_csv(self.predict_source)
         predict_smiles = predict_csv[self.smiles_col].values
         predict_targets = predict_csv[self.target_col].values
         predict_selfies = self.smiles2selfies(predict_smiles)

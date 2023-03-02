@@ -31,7 +31,11 @@ class AlbumentationsAdapter(BaseAugmentationAdapter):
     def forward(self, x, y=None, z=None):
         if y is not None:
             result = self.transforms(image=np.array(x), mask=y)
-            img = np.moveaxis(result["image"], -1, 1)
+            if len(result['image'].shape) == 3 and result['image'].shape[2] == 3:
+                img = np.moveaxis(result["image"], -1, 1)
+            else:
+                img = result['image']
+
             return img, result["mask"]
         img = self.transforms(image=np.array(x))["image"]
         

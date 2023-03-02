@@ -15,6 +15,13 @@ from innofw.utils.defaults import get_default
 from innofw.utils.checkpoint_utils import TorchCheckpointHandler
 
 
+import logging.config
+from innofw.utils import get_project_root
+logging.config.fileConfig(get_project_root() / 'logging.conf')
+LOGGER = logging.getLogger(__name__)
+
+
+
 class ModelCheckpointWithLogging(ModelCheckpoint):
     def _save_checkpoint(self, trainer: "pl.Trainer", filepath: str) -> None:
         super()._save_checkpoint(trainer, filepath)
@@ -84,7 +91,7 @@ class TorchAdapter(BaseModelAdapter):
         # initialize model weights with function
 
         if initializations is not None:
-            logging.info("initializing the model")
+            LOGGER.info("initializing the model with function")
             initializations.init_weights(model)
 
         objects = {
@@ -178,8 +185,8 @@ class TorchAdapter(BaseModelAdapter):
                     every_n_epochs=weights_freq,
                     save_top_k=1,  # -1
                     # todo: add monitor
-                    mode="max",
-                    monitor="val_loss",
+                    # mode="max",
+                    # monitor="val_loss",
                 )
             )
         else:
@@ -196,8 +203,8 @@ class TorchAdapter(BaseModelAdapter):
                     every_n_epochs=weights_freq,
                     save_top_k=1,  # -1
                     # todo: add monitor
-                    mode="max",
-                    monitor="val_loss",
+                    # mode="max",
+                    # monitor="val_loss",
                 )
             )
     # todo: edit

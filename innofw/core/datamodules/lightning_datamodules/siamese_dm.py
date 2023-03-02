@@ -77,23 +77,20 @@ class SiameseDataModule(BaseLightningDataModule):
         self.aug = augmentations
         self.val_size = val_size
 
+    def get_aug(self, all_augmentations, stage):
+        if self.aug is not None and stage in all_augmentations and all_augmentations[stage] is not None:
+            return Augmentation(all_augmentations[stage])
+        return Augmentation(
+                albu.Compose([albu_pytorch.transforms.ToTensorV2()])
+        )
+
     def setup_train_test_val(self, **kwargs):
-        if self.aug:
-            train_dataset = SiameseDataset(str(self.train_dataset), self.aug['train'])
-            self.test_dataset = SiameseDataset(str(self.test_dataset), self.aug['test'])
-        else:
-            train_dataset = SiameseDataset(
-                str(self.train_dataset),
-                transform=Augmentation(
-                    albu.Compose([albu_pytorch.transforms.ToTensorV2()])
-                ),
-            )
-            self.test_dataset = SiameseDataset(
-                str(self.test_dataset),
-                transform=Augmentation(
-                    albu.Compose([albu_pytorch.transforms.ToTensorV2()])
-                ),
-            )
+        train_aug = self.get_aug(self.aug, 'train')
+        test_aug = self.get_aug(self.aug, 'test')
+        val_aug = self.get_aug(self.aug, 'val')
+
+        train_dataset = SiameseDataset(str(self.train_source), train_aug)
+        self.test_dataset = SiameseDataset(str(self.test_source), test_aug)
 
         # divide into train, val, test
         n = len(train_dataset)
@@ -102,8 +99,7 @@ class SiameseDataModule(BaseLightningDataModule):
             train_dataset, [train_size, n - train_size]
         )
         # Set validatoin augmentations for val
-        if self.aug is not None:
-            setattr(self.val_dataset, 'transform', self.aug['val'])
+        setattr(self.val_dataset, 'transform', val_aug)
 
     def setup_infer(self):
         if self.aug is not None:

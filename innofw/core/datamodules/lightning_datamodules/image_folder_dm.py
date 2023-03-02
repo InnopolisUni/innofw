@@ -7,7 +7,7 @@ import pandas as pd
 from torch.utils.data import random_split
 from torchvision.datasets import ImageFolder
 import albumentations as albu
-import albumentations.pytorch as albu_pytorch
+
 
 #
 from innofw.constants import Frameworks, Stages
@@ -54,14 +54,6 @@ class ImageLightningDataModule(BaseLightningDataModule):
         super().__init__(train, test, infer, batch_size, num_workers, stage=stage)
         self.aug = augmentations
         self.val_size = val_size
-
-
-    def get_aug(self, all_augmentations, stage):
-        if self.aug is not None and stage in all_augmentations and all_augmentations[stage] is not None:
-            return Augmentation(all_augmentations[stage])
-        return Augmentation(
-                albu.Compose([albu_pytorch.transforms.ToTensorV2()])
-        )
 
     def setup_train_test_val(self, **kwargs):
         train_aug = self.get_aug(self.aug, 'train')

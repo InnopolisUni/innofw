@@ -33,4 +33,3 @@ experiment_name:
 
 accelerator: gpu
 devices: 1
-gpus: 1

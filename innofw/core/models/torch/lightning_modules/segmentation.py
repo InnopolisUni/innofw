@@ -108,6 +108,8 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         total_loss = 0
         for loss_name, weight, loss in self.losses:
             # for loss_name in loss_dict:
+            if masks.shape[-1] == 1:
+                masks = logits.squeeze(-1)
             ls_mask = loss(logits, masks)
             total_loss += weight * ls_mask
 
