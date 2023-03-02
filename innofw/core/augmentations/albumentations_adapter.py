@@ -35,7 +35,7 @@ class AlbumentationsAdapter(BaseAugmentationAdapter):
             return img, result["mask"]
         img = self.transforms(image=np.array(x))["image"]
         
-        if len(img.shape) == 3:
+        if len(img.shape) == 3 and img.shape[2] == 3:
             if isinstance(img, np.ndarray):
                 img = np.moveaxis(img, -1, 0)  # HWC -> CHW
             elif isinstance(img, torch.Tensor):

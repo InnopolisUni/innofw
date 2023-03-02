@@ -46,13 +46,15 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
             **kwargs
     ):
         super().__init__(train, test, infer, stage, *args, **kwargs)
-        self.train_dataset = self.train
-        self.test_dataset = self.test
-        self.predict_dataset = self.infer
+        self.train_source = self.train
+        self.test_source = self.test
+        self.predict_source = self.infer
         self.batch_size = batch_size
         self.num_workers = num_workers
-        self.val_dataset = None
+        self.val_source = None
         self.aug = None
+
+        # self.train_dataset  # make it abstract property?
 
     def prepare_data(self):
         pass
@@ -60,12 +62,12 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
     def setup_infer(self):
         if self.aug:
             self.predict_dataset = ImageFolderInferDataset(
-                str(self.infer),
+                str(self.predict_source),
                 transforms=Augmentation(self.aug['test']),
             )
         else:
             self.predict_dataset = ImageFolderInferDataset(
-                str(self.infer),
+                str(self.predict_source),
                 transforms=Augmentation(
                     albu.Compose([ToTensorV2(p=1.0)]),
                 ),

@@ -55,27 +55,25 @@ class ImageLightningDataModule(BaseLightningDataModule):
         self.aug = augmentations
         self.val_size = val_size
 
+
+    def get_aug(self, all_augmentations, stage):
+        if self.aug is not None and stage in all_augmentations and all_augmentations[stage] is not None:
+            return Augmentation(all_augmentations[stage])
+        return Augmentation(
+                albu.Compose([albu_pytorch.transforms.ToTensorV2()])
+        )
+
     def setup_train_test_val(self, **kwargs):
-        if self.aug:
-            train_dataset = ImageFolder(
-                str(self.train_dataset), transform=Augmentation(self.aug['train'])
-            )
-            self.test_dataset = ImageFolder(
-                str(self.test_dataset), transform=Augmentation(self.aug['test'])
-            )
-        else:
-            train_dataset = ImageFolder(
-                str(self.train_dataset),
-                transform=Augmentation(
-                    albu.Compose([albu_pytorch.transforms.ToTensorV2()])
-                ),
-            )
-            self.test_dataset = ImageFolder(
-                str(self.test_dataset),
-                transform=Augmentation(
-                    albu.Compose([albu_pytorch.transforms.ToTensorV2()])
-                ),
-            )
+        train_aug = self.get_aug(self.aug, 'train')
+        test_aug = self.get_aug(self.aug, 'test')
+        val_aug = self.get_aug(self.aug, 'val')
+
+        train_dataset = ImageFolder(
+            str(self.train_source), transform=train_aug
+        )
+        self.test_dataset = ImageFolder(
+            str(self.train_source), transform=test_aug
+        )
         # divide into train, val, test
         n = len(train_dataset)
         train_size = int(n * (1 - self.val_size))
@@ -83,13 +81,13 @@ class ImageLightningDataModule(BaseLightningDataModule):
             train_dataset, [train_size, n - train_size]
         )
         # Set validatoin augmentations for val
-        setattr(self.val_dataset, 'transform', self.aug['val'])
+        setattr(self.val_dataset.dataset, 'transform', val_aug)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         out = []
         for sublist in preds:
             out.extend(sublist.tolist())
-        images = self.predict_dataset.image_names
+        images = self.predict_source.image_names
         df = pd.DataFrame(list(zip(images, out)), columns=["Image name", "Class"])
         dst_filepath = os.path.join(dst_path, "classification.csv")
         df.to_csv(dst_filepath)
