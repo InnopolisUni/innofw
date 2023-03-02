@@ -2,9 +2,8 @@
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-import pathlib
 from urllib.parse import urlparse
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 # third party libraries
 
@@ -136,10 +135,10 @@ class BaseDataModule(ABC):
         pass
 
     @abstractmethod
-    def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
+    def save_preds(self, preds, stage: Stages, dst_path: Path):
         pass
 
-    def _get_data(self, path: Dict[str, str]):
+    def _get_data(self, path: Dict[str, str]) -> Optional[Union[str, Path]]:
         """Function to get the path to the data
         """
         if path is None:
@@ -152,6 +151,9 @@ class BaseDataModule(ABC):
                 raise ValueError(f"{name} path is not specified")
 
         source = path["source"]
+
+        if source is None:
+            return None
 
         if source.startswith("$"):
             source = os.getenv(source[1:])

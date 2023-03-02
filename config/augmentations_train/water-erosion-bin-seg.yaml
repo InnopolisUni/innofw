@@ -1,0 +1,10 @@
+defaults:
+    - preprocessing:
+        - kanopus
+    - combined:
+        - none
+    - position:
+        - shift_scale_rotate
+        - flip
+    - color:
+    - postprocessing:

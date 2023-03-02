@@ -10,7 +10,7 @@ import pytest
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_datamodule, get_obj
 
-from tests.fixtures.config.augmentations import resize_augmentation
+from tests.fixtures.config.augmentations import resize_augmentation_torchvision
 from tests.fixtures.config.datasets import arable_segmentation_cfg_w_target
 
 
@@ -33,7 +33,7 @@ def test_segmentation_dataset_creation():
 def test_segmentation_dataset_creation_with_augmentations():
     task = "image-segmentation"
     framework = Frameworks.torch
-    augmentations = get_obj(resize_augmentation, "augmentations", task, framework)
+    augmentations = get_obj(resize_augmentation_torchvision, "augmentations", task, framework)
     dm = get_datamodule(
         arable_segmentation_cfg_w_target, framework, task=task, augmentations=augmentations
     )  # task,

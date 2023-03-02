@@ -3,11 +3,14 @@ import logging
 from uuid import uuid4
 from pathlib import Path
 from typing import Optional
+import logging.config
 
 # third party packages
 from pytorch_lightning import seed_everything
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import OmegaConf, DictConfig
+import hydra
+from lovely_numpy import lo
 
 # local modules
 from innofw.utils.framework import (
@@ -21,15 +24,12 @@ from innofw.utils.framework import (
     get_augmentations,
     map_model_to_framework,
 )
-from innofw.constants import Stages
-
-
-# from innofw.utils.clear_ml import setup_clear_ml
+from innofw.constants import SegDataKeys, Stages, Frameworks
 from innofw import InnoModel
 from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
 from innofw.utils.print_config import print_config_tree
 from innofw.utils.defaults import default_model_for_datamodule
-import hydra
+from innofw.utils import get_project_root
 
 
 def run_pipeline(
@@ -40,6 +40,7 @@ def run_pipeline(
         log_root: Optional[Path] = None,
 ) -> float:
     print_config_tree(cfg)
+
     try:
         experiment_name = cfg.experiment_name
     except ValueError:  # hydra config not set, happens when run_pipeline is called from tests
@@ -67,7 +68,12 @@ def run_pipeline(
         else:
             model = hydra.utils.instantiate(default_model_for_datamodule(task, datamodule))
 
-    framework = map_model_to_framework(model)
+    try:
+        framework = map_model_to_framework(model)  # todo: add type
+    except NotImplementedError as e:
+        logging.info(e)
+        return -1
+
     # weights initialization
     initializations = get_obj(
         cfg, "initializations", task, framework, _recursive_=False
@@ -95,6 +101,11 @@ def run_pipeline(
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
 
+    # todo: water erosion
+    # model
+    # 
+    logger = hydra.utils.instantiate(cfg.get("loggers"))
+
     # wrap the model
     model_params = {
         "model": model,
@@ -111,8 +122,8 @@ def run_pipeline(
         "stop_param": cfg.get("stop_param"),
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
+        "logger": logger,
     }
-
     inno_model = InnoModel(**model_params)
     result = None
 
@@ -133,6 +144,29 @@ def run_pipeline(
     if "extra" in cfg and "active_learning" in cfg.extra:
         a_learner = get_a_learner(cfg, inno_model, datamodule)
         stage_to_func[Stages.train] = a_learner.run
+
+    try:
+        # print sample data
+        datamodule.setup_train_test_val()
+        train_dl = datamodule.train_dataloader()
+        val_dl = datamodule.val_dataloader()
+        print("train sample stats")  # todo: refactor(through logging; make it optional and make it general, I think such method should be in the datamodule's class)
+        # for instance:
+        """
+            dm.log_sample_stats() # this method should be capable of logging results to file
+            dm.save_n_samples(path)  # in case of tabular data it saves csv file, in case of images it save grid, in case of audio it saves one audio file with multiple recordings
+            dm.validate_sample(max_val=255, min_val=0, shape=(3, 256, 256), mask_unique_vals=2) 
+        """
+        logging.config.fileConfig(get_project_root() / 'logging.conf')
+        LOGGER = logging.getLogger(__name__)
+
+        LOGGER.info(lo(next(iter(train_dl))[SegDataKeys.image]))
+        LOGGER.info(lo(next(iter(train_dl))[SegDataKeys.label]))
+        LOGGER.info("val sample stats")
+        LOGGER.info(lo(next(iter(val_dl))[SegDataKeys.image]))
+        LOGGER.info(lo(next(iter(val_dl))[SegDataKeys.label]))
+    except:
+        pass
 
     ckpt_path = get_ckpt_path(cfg)
     logging.info(f"Using checkpoint: {ckpt_path}")

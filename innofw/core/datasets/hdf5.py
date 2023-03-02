@@ -1,6 +1,6 @@
 #
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional
 
 #
 import albumentations as albu
@@ -42,7 +42,7 @@ class HDF5Dataset(Dataset):
         self,
         hdf5_files: Union[List[Path], List[str]],
         bands_num: int,
-        transform: albu.Compose,
+        transform: Optional[albu.Compose] = None,
     ):
         self.indices_dict, self.size_ = get_indices_dict_size(hdf5_files)
         self.bands_num = bands_num
@@ -51,7 +51,7 @@ class HDF5Dataset(Dataset):
     def __len__(self):
         return self.size_
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int):
         count = 0
         for key, value in self.indices_dict.items():
             if idx <= value:

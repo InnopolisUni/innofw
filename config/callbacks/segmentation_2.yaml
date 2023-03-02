@@ -1,0 +1,30 @@
+# display learning rate
+- _target_: pytorch_lightning.callbacks.LearningRateMonitor
+  # ref: https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.callbacks.LearningRateMonitor.html
+  logging_interval: epoch
+
+# rich progress bar
+# ref: https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.callbacks.RichProgressBar.html
+- _target_: pytorch_lightning.callbacks.RichProgressBar
+
+# # stochastic weight averaging
+# # ref: https://pytorch.org/blog/pytorch-1.6-now-includes-stochastic-weight-averaging/
+# - _target_: pytorch_lightning.callbacks.StochasticWeightAveraging
+#   swa_lrs: 1e-5
+
+# # display predictions from validation epoch
+# - _target_: segmentation.callbacks.prediction.log_predictions.SegmentationLogPredictions
+#   logging_interval: 10
+#   num_predictions: 1
+
+# # early stopping
+# # ref: https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.callbacks.EarlyStopping.html
+# - _target_: pytorch_lightning.callbacks.EarlyStopping
+#   monitor: val_loss
+#   mode: min
+#   strict: True
+#   check_finite: True
+#   min_delta: 0.005
+#   patience: 30
+#   verbose: True
+# #  divergence_threshold: 0.6

@@ -130,8 +130,8 @@ class SegmentationDM(BaseLightningDataModule):
     # todo: add datamodule checkpointing
 
     def setup_train_test_val(self, **kwargs):
-        self.img_path = self.train_dataset / 'images'
-        self.label_path = self.train_dataset / 'masks'
+        self.img_path = self.train_source / 'images'
+        self.label_path = self.train_source / 'masks'
         # self.img_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(self.train_dataset)
         # self.label_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(label_path)
 
@@ -190,14 +190,14 @@ class SegmentationDM(BaseLightningDataModule):
         )
 
         # get images and masks
-        img_path = self.test_dataset / 'images'
-        label_path = self.test_dataset / 'masks'
+        img_path = self.test_source / 'images'
+        label_path = self.test_source / 'masks'
 
         if self.weights is None:
             images = get_samples(img_path)
             masks = get_samples(label_path)
         else:
-            raise NotImplementedError("oops")
+            raise NotImplementedError()
 
         # create datasets
         self.test_ds = SegmentationDataset(
@@ -243,7 +243,7 @@ class SegmentationDM(BaseLightningDataModule):
         return self.stage_dataloader(self.test_ds, "test")
 
     def predict_dataloader(self):
-        return self.stage_dataloader(self.predict_dataset, "predict")
+        return self.stage_dataloader(self.predict_source, "predict")
 
 
 # if __name__ == "__main__":

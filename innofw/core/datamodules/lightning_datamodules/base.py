@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 
 import albumentations as albu
 from albumentations.pytorch import ToTensorV2
+import albumentations.pytorch as albu_pytorch
 
 from innofw.core.datamodules.base import BaseDataModule
 from innofw.core.augmentations import Augmentation
@@ -46,13 +47,22 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
             **kwargs
     ):
         super().__init__(train, test, infer, stage, *args, **kwargs)
-        self.train_dataset = self.train
-        self.test_dataset = self.test
-        self.predict_dataset = self.infer
+        self.train_source = self.train
+        self.test_source = self.test
+        self.predict_source = self.infer
         self.batch_size = batch_size
         self.num_workers = num_workers
-        self.val_dataset = None
+        self.val_source = None
         self.aug = None
+
+        # self.train_dataset  # make it abstract property?
+
+    def get_aug(self, all_augmentations, stage):
+        if self.aug is not None and stage in all_augmentations and all_augmentations[stage] is not None:
+            return Augmentation(all_augmentations[stage])
+        return Augmentation(
+                albu.Compose([albu_pytorch.transforms.ToTensorV2()])
+        )
 
     def prepare_data(self):
         pass
@@ -60,12 +70,12 @@ class BaseLightningDataModule(BaseDataModule, pl.LightningDataModule, ABC):
     def setup_infer(self):
         if self.aug:
             self.predict_dataset = ImageFolderInferDataset(
-                str(self.infer),
+                str(self.predict_source),
                 transforms=Augmentation(self.aug['test']),
             )
         else:
             self.predict_dataset = ImageFolderInferDataset(
-                str(self.infer),
+                str(self.predict_source),
                 transforms=Augmentation(
                     albu.Compose([ToTensorV2(p=1.0)]),
                 ),

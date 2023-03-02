@@ -1,0 +1,15 @@
+task:
+  - image-segmentation
+
+name: train dataset
+description: dataset for running training in hdf5 format
+markup_info: no info
+date_time: 10.01.2024
+
+train:
+  source: /mnt/localssd/water_erosion/inf_check/train/
+test:
+  source: /mnt/localssd/water_erosion/inf_check/test/
+
+val_size: 0.2
+channels_num: 4

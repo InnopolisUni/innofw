@@ -103,8 +103,14 @@ class SegmentationDataset(Dataset):
                 # image, mask = out["image"], out["mask"]
                 image, mask = self.transform(image, mask)
 
-        image = np.moveaxis(image, 2, 0)  # todo: refactor
-        image = image.astype(np.float32)  # todo: refactor
+        try:
+            image = np.moveaxis(image, 2, 0)  # todo: refactor
+        except:
+            pass
+        try:
+            image = image.astype(np.float32)  # todo: refactor
+        except:
+            pass
 
         output[SegDataKeys.image] = image
         if self.masks is not None:

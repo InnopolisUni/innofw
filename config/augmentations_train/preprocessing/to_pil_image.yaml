@@ -1,0 +1,2 @@
+to_pil_image:
+  _target_: torchvision.transforms.ToPILImage

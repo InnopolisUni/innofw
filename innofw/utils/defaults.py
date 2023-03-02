@@ -13,11 +13,12 @@ from innofw.core.models.torch.lightning_modules import (
     ChemistryVAEReverseLightningModule,
     ClassificationLightningModule,
     OneShotLearningLightningModule,
-    SemanticSegmentationLightningModule,
+    # SemanticSegmentationLightningModule,
 )
 from innofw.core.models.torch.lightning_modules.detection import (
     DetectionLightningModule,
 )
+from innofw.core.models.torch.lightning_modules.segmentation import SemanticSegmentationLightningModule
 
 
 def default_model_for_datamodule(task, datamodule):
