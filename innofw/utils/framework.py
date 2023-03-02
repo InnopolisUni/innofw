@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 import hydra
 from hydra.utils import instantiate
+import torch
 
 # local modules
 from innofw.constants import Frameworks
@@ -129,6 +130,12 @@ def get_augmentations(cfg):
 
     #     transforms.append(preprocessing)
 
+    import albumentations as A
+    def is_albu(aug):
+        return isinstance(aug, A.Compose) or isinstance(
+            aug, A.core.transforms_interface.BasicTransform
+        )
+
     for key in keys:
         try:    
             a = hydra.utils.instantiate(cfg[key])
@@ -136,14 +143,24 @@ def get_augmentations(cfg):
         except:
             pass
 
-    # transforms = [instantiate(cfg[key]) for key in keys]
-    transforms = [
-        Compose(transforms=dict(item).values())
-        for item in transforms
-        if item != empty_cfg
-    ]
-    return Compose(transforms=transforms)
+    import torchvision
 
+    # transforms = [instantiate(cfg[key]) for key in keys]
+    if is_albu(transforms[0]):
+        transforms = [
+            Compose(transforms=dict(item).values())
+            for item in transforms
+            if item != empty_cfg
+        ]
+        return Compose(transforms=transforms)
+    else:
+        transforms = [
+            torchvision.transforms.Compose(transforms=dict(item).values())
+            for item in transforms
+            if item != empty_cfg
+        ]
+        return torchvision.transforms.Compose(transforms=transforms)
+        
 
 def get_optimizer(
         config,
