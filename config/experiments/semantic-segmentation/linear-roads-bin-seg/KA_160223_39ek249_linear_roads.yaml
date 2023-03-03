@@ -7,7 +7,7 @@ defaults:
   # - override /loggers: wandb
   # - override /callbacks: basic
   # - override /trainers: basic_on_gpu_0
-  - override /losses: segmentation_losses
+  - override /losses: semantic-segmentation/dice
   - override /optimizers: adam
   # - override /schedulers: cosine_annealing_warm_restarts
   # - override /checkpoints:

@@ -74,22 +74,23 @@ class CocoLightningDataModule(BaseLightningDataModule):
             *args,
             **kwargs,
         )
-        self.aug = augmentations
+        self.aug = {'train': None, 'test': None, 'val': None} if augmentations is None else augmentations
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
         self.train_dataset, train_csv = self.find_csv_and_data(self.train_dataset)
         self.test_dataset, test_csv = self.find_csv_and_data(self.test_dataset)
-        if self.aug:
+        self.aug = {'train': None, 'test': None, 'val': None}  # todo: fix
+        if self.aug is not None and self.aug['train'] is not None and self.aug['test'] is not None:
             train_dataset = self.dataset(
                 train_csv,
                 str(self.train_dataset),
-                transforms=Augmentation(self.aug['train']),
+                # transforms=Augmentation(self.aug['train']),
             )
             self.test_dataset = self.dataset(
                 test_csv,
                 str(self.test_dataset),
-                transforms=Augmentation(self.aug['test']),
+                # transforms=Augmentation(self.aug['test']),
             )
         else:
             train_dataset = self.dataset(
@@ -214,7 +215,11 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
                 ]
             ),
         )
+        try:
+            aug = self.aug['test']
+        except:
+            aug = transforms
         self.predict_dataset = DicomCocoDatasetInfer(
             str(self.infer),
-            Augmentation(self.aug['test'] or transforms),
+            Augmentation(aug),
         )

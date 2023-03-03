@@ -62,8 +62,8 @@ class TimeSeriesLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        train_dataset = ECGDataset(find_file_by_ext(self.train_dataset, ".csv"))
-        self.test_dataset = ECGDataset(find_file_by_ext(self.test_dataset, ".csv"))
+        train_dataset = ECGDataset(find_file_by_ext(self.train_source, ".csv"))
+        self.test_dataset = ECGDataset(find_file_by_ext(self.test_source, ".csv"))
 
         # divide into train, val, test
         n = len(train_dataset)

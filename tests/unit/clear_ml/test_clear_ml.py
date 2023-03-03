@@ -3,7 +3,7 @@ import pytest
 clear_ml = pytest.importorskip("clearml")
 from dataclasses import dataclass
 
-from innofw.utils.clear_ml import setup_clear_ml
+from innofw.utils.loggers import setup_clear_ml
 
 
 @dataclass

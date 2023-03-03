@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - override /models: yolov5
-  - override /datasets: detection_lungs
+  - override /datasets: detection/detection_lungs
 
 
 project: "lungs"

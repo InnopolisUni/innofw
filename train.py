@@ -1,3 +1,7 @@
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
+
 import sys
 import dotenv
 import hydra
@@ -9,11 +13,15 @@ from omegaconf import OmegaConf
 from pckg_util import check_gpu_and_torch_compatibility
 
 check_gpu_and_torch_compatibility()
-
+# os.environ["WANDB_DISABLED"] = "true"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
+logging.getLogger("torch").setLevel(logging.WARNING)
+
+
 # load environment variables from `.env` file if it exists
 # recursively searches for `.env` in all folders starting from work dir
-from innofw.utils.clear_ml import setup_clear_ml
+from innofw.utils.loggers import setup_clear_ml, setup_wandb
 
 dotenv.load_dotenv(override=True)
 
@@ -31,6 +39,7 @@ def main(config) -> float:
         ]
         config.experiment_name = experiment_name
     setup_clear_ml(config)
+    setup_wandb(config)
 
     # Train model
     return run_pipeline(config, test=False, train=True, predict=False)

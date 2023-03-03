@@ -1,7 +1,7 @@
 defaults:
   - _self_
-  - datasets:
-  - models:
+  - datasets: 
+  - models: 
   - trainer: auto
   - metrics: auto
   - losses: auto
@@ -13,13 +13,15 @@ defaults:
   - loggings: auto
   - callbacks: auto
   - initializations:
-  - experiments: ???
-  - clear_ml: enabled
+  - wandb: default
+  - loggers: none
+  - experiments:  # order matters
+  - clear_ml: disabled
   - override hydra/job_logging: disabled
 #  - override hydra/job_logging: custom
 
-project: ???
-task: ???
+project: 
+task: 
 random_seed:
 epochs:
 batch_size:
@@ -29,6 +31,5 @@ ckpt_path:
 stop_param:
 experiment_name:
 
-accelerator: cpu
-#devices: 1
-#gpus: 1
+accelerator: gpu
+devices: 1

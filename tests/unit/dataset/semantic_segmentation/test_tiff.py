@@ -3,12 +3,13 @@ import numpy as np
 from numpy import ndarray
 from hydra.utils import instantiate
 from hydra.errors import InstantiationException
+import torch
 
 from innofw.constants import SegDataKeys
 from innofw.core.datasets.semantic_segmentation.tiff_dataset import SegmentationDataset
 
 from tests.fixtures.config.datasets_2 import roads_tiff_dataset_w_masks
-from tests.fixtures.config.augmentations import bare_aug as resize_augmentation
+from tests.fixtures.config.augmentations import bare_aug_torchvision as resize_augmentation
 
 
 @pytest.mark.parametrize(
@@ -30,11 +31,11 @@ def test_read(cfg, w_mask, size, n_channels):
     assert item is not None
 
     for item in ds:
-        assert isinstance(item[SegDataKeys.image], ndarray)
+        assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(item[SegDataKeys.image], torch.Tensor)
         assert item[SegDataKeys.image].shape == (n_channels, size, size)
 
         if w_mask:
-            assert isinstance(item[SegDataKeys.label], ndarray)
+            assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(item[SegDataKeys.image], torch.Tensor)
             assert item[SegDataKeys.label].shape == (1, size, size)
 
             # as it is a binary segmentation data

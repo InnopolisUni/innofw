@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.utilities import rank_zero_only
 from omegaconf import DictConfig
 
-from .clear_ml import TASK
+from .loggers import TASK
 #
 from .find_model import find_suitable_model
 from .find_datamodule import find_suitable_datamodule

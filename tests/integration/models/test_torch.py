@@ -11,7 +11,7 @@ from innofw.utils.framework import (
     get_datamodule,
 )
 from innofw import InnoModel
-from tests.fixtures.config.augmentations import resize_augmentation
+from tests.fixtures.config.augmentations import resize_augmentation_torchvision, resize_augmentation_albu
 from tests.fixtures.config.datasets import (
     faces_datamodule_cfg_w_target,
 )
@@ -126,7 +126,13 @@ def test_torch_wrapper_creation():
             resnet_cfg_w_target,
             faces_datamodule_cfg_w_target,
             "image-classification",
-            resize_augmentation,
+            resize_augmentation_torchvision,
+        ],
+                [
+            resnet_cfg_w_target,
+            faces_datamodule_cfg_w_target,
+            "image-classification",
+            resize_augmentation_albu,
         ]
         # [model_cfg_wo_target, datamodule_cfg_w_target],
         # [model_cfg_w_empty_target, datamodule_cfg_w_target],
@@ -137,7 +143,7 @@ def test_model_training(model_cfg, dm_cfg, task, aug):
     model = get_model(model_cfg, fixt_trainers.base_trainer_on_cpu_cfg)
     framework = Frameworks.torch
     augmentations = None if not aug else get_obj(aug, "augmentations", task, framework)
-    datamodule = get_datamodule(dm_cfg, framework, task=task, augmentations=augmentations)
+    datamodule = get_datamodule(dm_cfg, framework, task=task, augmentations={"train":augmentations, "test": augmentations, "val": augmentations})
 
     wrapped_model = InnoModel(
         model,

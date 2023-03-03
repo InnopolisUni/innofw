@@ -53,6 +53,7 @@ def test_linear_regression_training(
             "experiment": "something",
             "ckpt_path": ckpt_path,
             "weights_path": ckpt_path,
+            "experiment_name": "something"
         }
     )
     assert len(list(tmp_path.iterdir())) == 0, "log root should be empty"

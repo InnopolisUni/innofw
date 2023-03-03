@@ -7,6 +7,6 @@ from .chemistry_vae import (
 )
 from .classification import ClassificationLightningModule
 from .one_shot_learning import OneShotLearningLightningModule
-from .segmentation import SemanticSegmentationLightningModule
-
+# from .segmentation import SemanticSegmentationLightningModule
+from .segmentation_qb import SegmentationLM as SemanticSegmentationLightningModule
 # from .detection import ObjectDetectionLightningModule

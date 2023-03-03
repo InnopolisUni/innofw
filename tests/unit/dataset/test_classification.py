@@ -10,6 +10,8 @@ from innofw.constants import Frameworks
 from innofw.utils.framework import get_datamodule, get_obj
 from tests.utils import get_test_data_folder_path
 
+import os
+os.environ['NO_CLI'] = 'True'
 
 def test_classification_dataset_creation():
     cfg = DictConfig(
@@ -98,7 +100,7 @@ def test_classification_dataset_creation_with_augmentations():
     task = "image-classification"
     framework = Frameworks.torch
     augmentations = get_obj(cfg, "augmentations", task, framework)
-    dm = get_datamodule(cfg.datasets, framework, augmentations=augmentations, task=task)
+    dm = get_datamodule(cfg.datasets, framework, augmentations={'train': augmentations, 'test': augmentations, 'val': augmentations}, task=task)
     assert dm
     dm.setup()
 

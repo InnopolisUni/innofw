@@ -1,0 +1,35 @@
+# scheduler = None
+
+# if config['swa_enabled']:
+#     swa_scheduler = SWALR(optimizer, swa_lr=config['swa_lr'],
+#                           anneal_strategy="linear", anneal_epochs=5)
+# else:
+#     print(config['lr_scheduler'])
+#     if config['lr_scheduler'] == 'ReduceLROnPlateau':
+#         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',
+#                                                                 factor=.7, patience=5, threshold=0.005,
+#                                                                 verbose=True)
+#     elif config['lr_scheduler'] == 'OneCycleLR':
+#         params = config['Cyclics']
+#         scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, epochs=EPOCHS,
+#                                                         steps_per_epoch=len(data_loader['train']),
+#                                                         max_lr=params['max_lr'],
+#                                                         div_factor=2, final_div_factor=100,
+#                                                         pct_start=params['pct_start'])
+#     elif config['lr_scheduler'] == 'CyclicLR':
+#         params = config['Cyclics']
+#         len(data_loader['train']) * EPOCHS
+#         scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=params['base_lr'], max_lr=params['max_lr'],
+#                                                       step_size_up=params['step_size_up']*len(data_loader['train']),
+#                                                       cycle_momentum=False)
+#     elif config['lr_scheduler'] == 'CustomLR':
+#         params = config['CustomLR']
+#         scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
+#                                                       lr_lambda=lr_cyclic(
+#                                                             decay=params['decay'],
+#                                                             decay_step=params['decay_step'],
+#                                                             cyclic_decay=params['cyclic_decay'],
+#                                                             cyclic_len=params['cyclic_len']),
+#                                                       last_epoch=start_epoch-1)
+
+# print('optimizer lr:', optimizer.param_groups[0]['lr'])

@@ -27,7 +27,7 @@ def test_torch_metrics_adapter(metric_func: Callable):
     label = torch.tensor([1, 0, 1])
     # compute score
     metric = Metric(metric_func)
-    score = metric(pred, label)
+    score = metric(pred, label, task='binary')
     # check result
     assert score is not None
     assert isinstance(score, torch.FloatTensor)

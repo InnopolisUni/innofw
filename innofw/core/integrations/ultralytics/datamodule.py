@@ -112,11 +112,11 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         """
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
         if self.train:
-            self.train_dataset = Path(self.train)
+            self.train_source = Path(self.train)
         if self.test:
-            self.test_dataset = Path(self.test)
+            self.test_source = Path(self.test)
 
-        self.infer_dataset = (
+        self.infer_source = (
             Path(self.infer)
             if not (type(self.infer) == str and self.infer.startswith("rts"))
             else self.infer
@@ -139,7 +139,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
 
     def setup_train_test_val(self, **kwargs):
         # root_dir
-        root_path = self.train_dataset.parent.parent
+        root_path = self.train_source.parent.parent
         # new data folder
         new_data_path = root_path / "unarchived"
         new_data_path.mkdir(exist_ok=True, parents=True)
@@ -150,8 +150,8 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        train_img_path = self.train_dataset / "images"
-        train_lbl_path = self.train_dataset / "labels"
+        train_img_path = self.train_source / "images"
+        train_lbl_path = self.train_source / "labels"
 
         # get all files from train folder
         img_files = list(train_img_path.iterdir())
@@ -174,8 +174,8 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         )
 
         # get all files from test folder
-        test_img_path = self.test_dataset / "images"
-        test_lbl_path = self.test_dataset / "labels"
+        test_img_path = self.test_source / "images"
+        test_lbl_path = self.test_source / "labels"
 
         test_img_files = list(test_img_path.iterdir())
         test_label_files = list(test_lbl_path.iterdir())
@@ -212,7 +212,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         self.test_dataset = str(new_img_path / "test")
         # create a yaml file
         with open(self.data, "w+") as file:
-            file.write(f"train: {self.train_dataset}\n")
+            file.write(f"train: {self.train_source}\n")
             file.write(f"val: {self.val_dataset}\n")
             file.write(f"test: {self.test_dataset}\n")
 
