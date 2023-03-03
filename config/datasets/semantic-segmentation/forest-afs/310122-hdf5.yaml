@@ -1,0 +1,17 @@
+_target_: innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule  # todo:
+train:
+  source: /mnt/nvmestorage/qb/data_n_weights/forest-bin-seg-s2/31-01-22/processed/512/train
+
+test:
+  source: /mnt/nvmestorage/qb/data_n_weights/forest-bin-seg-s2/31-01-22/processed/512/test/
+
+num_workers: 32
+batch_size: 16
+channels_num: 3
+w_sampler: True
+
+name: something
+task: image-segmentation
+description: some
+markup_info: some
+date_time: some
