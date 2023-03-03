@@ -19,9 +19,9 @@ def prep_data(
             image = sample["image"]
             # print(max(image), min(image), 'sdfsdf')
 
-    image = np.moveaxis(image, 2, 0)
+    # image = np.moveaxis(image, 2, 0)
     # ============== preprocessing ==============
-    image = image / 10000
+    # image = image / 10000
     # ===========================================
     image = torch.from_numpy(image)
     image = image.float()
