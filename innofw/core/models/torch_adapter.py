@@ -15,6 +15,13 @@ from innofw.utils.defaults import get_default
 from innofw.utils.checkpoint_utils import TorchCheckpointHandler
 
 
+import logging.config
+from innofw.utils import get_project_root
+logging.config.fileConfig(get_project_root() / 'logging.conf')
+LOGGER = logging.getLogger(__name__)
+
+
+
 class ModelCheckpointWithLogging(ModelCheckpoint):
     def _save_checkpoint(self, trainer: "pl.Trainer", filepath: str) -> None:
         super()._save_checkpoint(trainer, filepath)
@@ -68,6 +75,7 @@ class TorchAdapter(BaseModelAdapter):
             stop_param=None,
             project=None,
             experiment=None,
+            logger=None,
             *args,
             **kwargs,
     ):
@@ -83,7 +91,7 @@ class TorchAdapter(BaseModelAdapter):
         # initialize model weights with function
 
         if initializations is not None:
-            logging.info("initializing the model")
+            LOGGER.info("initializing the model with function")
             initializations.init_weights(model)
 
         objects = {
@@ -93,6 +101,7 @@ class TorchAdapter(BaseModelAdapter):
             "schedulers_cfg": schedulers_cfg,
             "callbacks": callbacks,
             "trainer_cfg": trainer_cfg,
+            "logger": logger
         }
         framework = "torch"
         for key, value in objects.items():
@@ -110,25 +119,31 @@ class TorchAdapter(BaseModelAdapter):
         except AttributeError:
             pass
 
+        from argparse import Namespace
+
+        arguments = Namespace(
+            callbacks=self.callbacks,
+            default_root_dir=self.log_dir,
+            check_val_every_n_epoch=1,
+            logger=objects['logger'],
+        )
+
+        # print(arguments)
+        # print(trainer_cfg, objects["trainer_cfg"])
         if callable(objects["trainer_cfg"]):
             self.trainer = objects["trainer_cfg"](
-                callbacks=self.callbacks,
-                default_root_dir=self.log_dir,
-                check_val_every_n_epoch=1,
+                **vars(arguments),
             )
         elif "_target_" in objects["trainer_cfg"]:
             self.trainer = hydra.utils.instantiate(
                 objects["trainer_cfg"],
-                callbacks=self.callbacks,
-                default_root_dir=self.log_dir,
-                check_val_every_n_epoch=1,
+                **vars(arguments),
             )
         else:
+            # trainer_cfg['gpus'] = [0, 1, 2]
             self.trainer = pl.Trainer(
                 **trainer_cfg,
-                callbacks=self.callbacks,
-                default_root_dir=self.log_dir,
-                check_val_every_n_epoch=1,
+                **vars(arguments)
             )
 
     # def resume_checkpoint(self, ckpt_path):
@@ -152,7 +167,7 @@ class TorchAdapter(BaseModelAdapter):
         # )
 
     def train(self, data_module, ckpt_path=None):
-        self.trainer.fit(self.pl_module, data_module, ckpt_path=ckpt_path)
+        self.trainer.fit(self.pl_module, data_module)
 
     def test(self, data_module):
         outputs = self.trainer.test(self.pl_module, data_module)
@@ -168,7 +183,10 @@ class TorchAdapter(BaseModelAdapter):
                     dirpath=weights_path,
                     filename=f"{project}_{experiment}" + "_{epoch}",
                     every_n_epochs=weights_freq,
-                    save_top_k=-1,
+                    save_top_k=1,  # -1
+                    # todo: add monitor
+                    # mode="max",
+                    # monitor="val_loss",
                 )
             )
         else:
@@ -183,6 +201,19 @@ class TorchAdapter(BaseModelAdapter):
                     dirpath=log_dir,
                     filename=f"model",
                     every_n_epochs=weights_freq,
-                    save_top_k=-1,
+                    save_top_k=1,  # -1
+                    # todo: add monitor
+                    # mode="max",
+                    # monitor="val_loss",
                 )
             )
+    # todo: edit
+    # checkpoint_callback = ModelCheckpoint(
+    #     dirpath=Path(run_save_path, wandb.run.id, "checkpoints"),  # type: ignore
+    #     save_top_k=1,
+    #     verbose=True,
+    #     filename="{epoch}-{val_BinaryF1Score:2f}",
+    #     monitor="val_BinaryF1Score",
+    #     mode="max",
+    #     every_n_epochs=5,
+    # )

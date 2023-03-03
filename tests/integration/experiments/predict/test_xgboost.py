@@ -49,6 +49,7 @@ def test_xgboost_prediction(model_cfg, dm_cfg, trainer_cfg, task, ckpt_path):
             "experiment": "something",
             "ckpt_path": ckpt_path,
             "weights_path": ckpt_path,
+            "experiment_name": "something"
         }
     )
     run_pipeline(cfg, train=False, predict=True)

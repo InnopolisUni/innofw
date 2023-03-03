@@ -13,7 +13,7 @@ check_gpu_and_torch_compatibility()
 
 # load environment variables from `.env` file if it exists
 # recursively searches for `.env` in all folders starting from work dir
-from innofw.utils.clear_ml import setup_clear_ml
+from innofw.utils.loggers import setup_clear_ml
 
 dotenv.load_dotenv(override=True)
 

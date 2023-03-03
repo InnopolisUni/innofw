@@ -228,6 +228,8 @@ class YOLOV5Adapter(BaseModelAdapter):
                 cfg=str(self.model.cfg) + ".yaml",
                 weights=weights,
                 device=self.device,
+                hf_model_id=None,
+                project="something",
             )
             self._yolov5_train.run(
                 hyp="hyp.yaml",
@@ -268,6 +270,8 @@ class YOLOV5Adapter(BaseModelAdapter):
                 resume=str(ckpt_path),
                 device=self.device,
                 evolve=False,
+                hf_model_id=None,
+                project="something",
             )
 
             # create opt.yaml

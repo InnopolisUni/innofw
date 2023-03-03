@@ -1,0 +1,85 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /models: unet
+  - override /datasets: semantic-segmentation/landslides-kanopus/270223-hdf5
+  - override /losses: semantic-segmentation/triple_loss_old_pipe
+  - override /optimizers: adam
+  - override /schedulers: custom_old_pipeline
+  - override /augmentations_train: landslides-kanopus
+  - override /augmentations_val: landslides-kanopus
+  # - override /metrics: basic
+  - override /loggers: wandb
+  # - override /callbacks: basic
+  # - override /trainers: basic_on_gpu_0
+  # - override /checkpoints:
+  # - override /wandb: default
+
+# loss = 0.4 * focal_loss + 0.8 * dice_loss + surface_loss
+# metrics computation
+#     IoUBatch(threshold=0.5, reduction='mean'), 
+#     FScoreBatch(threshold=0.5, reduction='mean')
+# 'dice_loss_betta': 1.2,
+
+
+# divide by 4600 for landslides
+# augmentations_train:
+#   0:
+#     0:
+#       divide_by_5000:
+#         max_value: 4600
+
+
+# augmentations_val:
+#   0:
+#     0:
+#       divide_by_5000:
+#         max_value: 4600
+
+optimizers:
+  implementations:
+    torch:
+      Adam:
+        function:
+          lr: 1e-2  # 1e-5  # check
+          weight_decay: 1e-4
+
+losses:
+  implementations:
+    torch:
+      DiceLoss:
+        object:
+          mode: log
+          alpha: 0.6600361663652804 
+          beta: 1.2
+          gamma: 0.3
+      FocalLoss:
+        object:
+          balanced: True
+          alpha: 0.6600361663652804
+          gamma: 2
+          smooth: 0.1
+      SurfaceLoss:
+        weight: 0.01
+        object:
+          scheduler: "lambda m, i: min(0.3, m + i * 0.025)"  # todo: add it to the readme
+datasets:
+  batch_size: 16
+  num_workers: 8
+  # todo: add random seed
+
+models:
+  _target_: segmentation_models_pytorch.Unet
+  in_channels: 4
+  classes: 1
+  encoder_name: dpn98
+  encoder_weights:
+  activation: sigmoid
+
+project: landslides-kanopus
+task: image-segmentation
+random_seed: 42
+accelerator: gpu
+devices: 1
+batch_size: 16
+num_workers: 32

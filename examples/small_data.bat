@@ -1,1 +1,1 @@
-python train.py experiments=KA_230922_sdgh32lk_deeplab
+python train.py experiments=semantic-segmentation/KA_230922_sdgh32lk_deeplab

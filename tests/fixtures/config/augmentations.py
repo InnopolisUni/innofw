@@ -1,21 +1,21 @@
 from omegaconf import DictConfig
 
 
-# bare_aug = DictConfig(
-#     {
-#         "_target_": "torchvision.transforms.Compose",
-#         "transforms": [
-#             {"_target_": "torchvision.transforms.ToPILImage"},
-#             {
-#                 "_target_": "torchvision.transforms.Resize",
-#                 "size": (100, 100),
-#             },
-#             {"_target_": "torchvision.transforms.ToTensor"},
-#         ],
-#     }
-# )
+bare_aug_torchvision = DictConfig(
+    {
+        "_target_": "torchvision.transforms.Compose",
+        "transforms": [
+            {"_target_": "torchvision.transforms.ToPILImage"},
+            {
+                "_target_": "torchvision.transforms.Resize",
+                "size": (244, 244),
+            },
+            {"_target_": "torchvision.transforms.ToTensor"},
+        ],
+    }
+)
 
-bare_aug = DictConfig(
+bare_aug_albu = DictConfig(
     {
         "_target_": "albumentations.Compose",
         "transforms": [
@@ -25,17 +25,28 @@ bare_aug = DictConfig(
 )
 
 
-resize_augmentation = DictConfig(
+resize_augmentation_torchvision = DictConfig(
     {
         "augmentations": {
             "task": ["all"],
             "implementations": {
-                "torch": {"Compose": {"object": bare_aug}},
+                "torch": {"Compose": {"object": bare_aug_torchvision}},
             },
         }
     }
 )
 
+
+resize_augmentation_albu = DictConfig(
+    {
+        "augmentations": {
+            "task": ["all"],
+            "implementations": {
+                "torch": {"Compose": {"object": bare_aug_albu}},
+            },
+        }
+    }
+)
 
 #     data_transforms = {
 #         'train': transforms.Compose([

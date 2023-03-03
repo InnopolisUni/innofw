@@ -9,6 +9,8 @@ implementations:
     F1_score:
       _target_: torchmetrics.F1Score
       num_classes: 1
+      task: binary
     Precision:
       _target_: torchmetrics.Precision
       num_classes: 1
+      task: binary

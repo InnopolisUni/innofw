@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - override /models: catboost_regression
-  - override /datasets: regression_industry_data
+  - override /datasets: regression/regression_industry_data
   - override /callbacks: regression
 
 

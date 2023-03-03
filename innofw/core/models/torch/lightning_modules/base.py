@@ -1,4 +1,5 @@
 # standard libraries
+import logging
 from typing import Dict, Any
 
 # third party libraries
@@ -20,9 +21,13 @@ class BaseLightningModule(pl.LightningModule):
         self._setup_metrics()
 
     def _setup_metrics(self):
-        self.metrics = {
-            i['_target_'].split('.')[-1]: hydra.utils.instantiate(i).to(self.device) for i in
-            self.metrics_cfg}
+        try:
+            self.metrics = {
+                i['_target_'].split('.')[-1]: hydra.utils.instantiate(i).to(self.device) for i in
+                self.metrics_cfg}
+        except AttributeError:
+            logging.warning("no metrics provided")
+            pass
 
     def setup_metrics(self, metrics):
         self.metrics_cfg = metrics
