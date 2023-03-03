@@ -131,10 +131,17 @@ def get_augmentations(cfg):
     #     transforms.append(preprocessing)
 
     import albumentations as A
-    def is_albu(aug):
-        return isinstance(aug, A.Compose) or isinstance(
-            aug, A.core.transforms_interface.BasicTransform
-        )
+    def is_albu(aug):  # todo: write a more sophisticated wrapper
+        # for instance wrapping every augmentation into Augmentation() wrapper
+        for i in aug:
+            if len(i) == 0:
+                continue
+            first_aug = list(i.values())[0]
+            if isinstance(first_aug, A.Compose) or isinstance(
+                first_aug, A.core.transforms_interface.BasicTransform
+            ):
+                return True
+        return False
 
     for key in keys:
         try:    
@@ -146,7 +153,7 @@ def get_augmentations(cfg):
     import torchvision
 
     # transforms = [instantiate(cfg[key]) for key in keys]
-    if is_albu(transforms[0]):
+    if is_albu(transforms):
         transforms = [
             Compose(transforms=dict(item).values())
             for item in transforms
