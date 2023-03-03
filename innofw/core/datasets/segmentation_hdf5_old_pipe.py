@@ -19,6 +19,9 @@ from tqdm import tqdm as tqdm
 
 
 def _to_tensor(x, **kwargs):
+    if x.shape[0] == 3 or x.shape[0] == 4:
+        return x.astype('float32')
+
     return x.transpose(2, 0, 1).astype('float32')
 
 def _get_preprocessing_fn(mean=None, std=None):
@@ -35,9 +38,9 @@ def _get_preprocessing_fn(mean=None, std=None):
 
 def _augment_and_preproc(image, mask, augmentations, preprocessing):
     if augmentations is not None:
-        augmented = augmentations(image=image, mask=mask)
-        image = augmented['image']
-        mask = augmented['mask']
+        image, mask = augmentations(image, mask)  # image=image, mask=mask
+        #  = augmented['image']
+        # mask = augmented['mask']
 
     if preprocessing is not None:
         image = preprocessing(image)
@@ -53,6 +56,8 @@ def _augment_and_preproc(image, mask, augmentations, preprocessing):
     # convert to tensor shape
     image = _to_tensor(image)
     mask = _to_tensor(mask)
+
+    mask[mask == 255] = 1
 
     return image, mask
 
@@ -81,7 +86,8 @@ class Dataset(torch.utils.data.Dataset):
                  preprocessing=None,
                  with_mosaic=False):
         self.path_to_hdf5 = path_to_hdf5
-        self.augmentations = augmentations
+        from innofw.core.augmentations import Augmentation
+        self.augmentations = Augmentation(augmentations)
         self.preprocessing = preprocessing
         self.in_channels = in_channels
         self.mean = None
