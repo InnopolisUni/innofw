@@ -1,5 +1,5 @@
 name: Segmentation
-description: Dice loss
+description: Average of Jaccard and BinaryFocal losses
 task:
   - image-segmentation
 
@@ -8,6 +8,6 @@ implementations:
     JaccardLoss:
       weight: 1.0
       object:
-        _target_: pytorch_toolbelt.losses.DiceLoss
+        _target_: pytorch_toolbelt.losses.JaccardLoss
         mode: binary
-        from_logits: False
+        from_logits: True
