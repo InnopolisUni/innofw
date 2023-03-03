@@ -166,7 +166,7 @@ class TorchAdapter(BaseModelAdapter):
         #     result, stage=Stages.predict, dst_path=self.log_dir
         # )
 
-    def train(self, data_module, ckpt_path=None):
+    def train(self, data_module, ckpt_path=None) -> None:
         self.trainer.fit(self.pl_module, data_module)
 
     def test(self, data_module):
