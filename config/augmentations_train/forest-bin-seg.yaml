@@ -1,0 +1,14 @@
+defaults:
+    - preprocessing:
+        - standard_images
+    - combined:
+        - none
+    - position:
+        - flip
+        - elastic_transform
+        - coarse_dropout
+        - grid_distortion
+    - color:
+        # - random_gamma
+        # - blur
+    - postprocessing:

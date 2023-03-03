@@ -1,0 +1,8 @@
+defaults:
+    - preprocessing:
+        - standard_images
+    - combined:
+        - none
+    - position:
+    - color:
+    - postprocessing:

@@ -1,0 +1,10 @@
+coarse_dropout:
+  _target_: albumentations.CoarseDropout
+  max_holes: 8
+  max_height: 8
+  max_width: 8
+  min_holes: 8
+  min_height: 8
+  min_width: 8
+  p: 0.5
+  always_apply: False

@@ -1,0 +1,4 @@
+elastic_transform:
+  _target_: albumentations.ElasticTransform
+  p: 0.5
+  always_apply: False
