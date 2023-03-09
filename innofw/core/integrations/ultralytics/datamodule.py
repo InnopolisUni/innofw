@@ -40,10 +40,11 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         pass
 
     def setup_infer(self):
-        if type(self.infer_dataset) == str and self.infer_dataset.startswith("rts"):
+        if type(self.infer_source) == str and self.infer_source.startswith("rts"):
             return
         # root_dir
-        root_path = self.infer_dataset.parent.parent
+        self.infer_source = Path(self.infer_source)
+        root_path = self.infer_source.parent.parent
         # new data folder
         new_data_path = root_path / "unarchived"
         new_data_path.mkdir(exist_ok=True, parents=True)
@@ -53,7 +54,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        infer_img_path = self.infer_dataset / "images"
+        infer_img_path = self.infer_source / "images"
 
         # get all files from train folder
         img_files = list(infer_img_path.iterdir())
