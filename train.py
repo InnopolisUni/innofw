@@ -5,7 +5,6 @@ logger.setLevel(logging.WARNING)
 import sys
 import dotenv
 import hydra
-import yaml
 import os
 
 from hydra.core.hydra_config import HydraConfig
