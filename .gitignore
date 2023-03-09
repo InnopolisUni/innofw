@@ -116,8 +116,8 @@ logs
 data/
 !tests/data/
 tests/data/images/detection/unarchived/
-train/
-infer/
+/train/
+/infer/
 *.pt
 hyp.yaml
 deepchem_data_dir
