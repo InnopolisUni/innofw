@@ -1,18 +1,16 @@
 #
 from typing import Callable
 
-#
 import pytest
 import torch
-import numpy as np
-from torchmetrics.functional import (
-    r2_score,
-    mean_absolute_error,
-    mean_squared_error,
-)
+from torchmetrics.functional import mean_absolute_error
+from torchmetrics.functional import mean_squared_error
+from torchmetrics.functional import r2_score
+
+from innofw.core.metrics import Metric
 
 #
-from innofw.core.metrics import Metric
+#
 
 
 @pytest.mark.parametrize(

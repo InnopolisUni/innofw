@@ -1,13 +1,21 @@
+import os
+
 import pytest
 
-# local modules
-from innofw.constants import Frameworks, Stages
+from innofw.constants import Frameworks
+from innofw.constants import Stages
+from innofw.core.datamodules.lightning_datamodules.siamese_dm import (
+    SiameseDataModule,
+)
 from innofw.utils.framework import get_datamodule
-from innofw.core.datamodules.lightning_datamodules.siamese_dm import SiameseDataModule
-from tests.fixtures.config.datasets import faces_siamese_datamodule_cfg_w_target
+from tests.fixtures.config.datasets import (
+    faces_siamese_datamodule_cfg_w_target,
+)
 
-import os
-os.environ['NO_CLI']= 'True'
+# local modules
+
+os.environ["NO_CLI"] = "True"
+
 
 def test_smoke():
     # create a qsar datamodule

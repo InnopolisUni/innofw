@@ -1,16 +1,16 @@
 # standard libraries
 import logging
-from typing import Dict, Any
 
-# third party libraries
 import hydra
 import pytorch_lightning as pl
 from omegaconf import DictConfig
 
+# third party libraries
+
 
 class BaseLightningModule(pl.LightningModule):
     """
-        Class that defines an interface for lightning modules
+    Class that defines an interface for lightning modules
     """
 
     def __init__(self, *args, **kwargs):
@@ -23,11 +23,13 @@ class BaseLightningModule(pl.LightningModule):
     def _setup_metrics(self):
         try:
             self.metrics = {
-                i['_target_'].split('.')[-1]: hydra.utils.instantiate(i).to(self.device) for i in
-                self.metrics_cfg}
+                i["_target_"]
+                .split(".")[-1]: hydra.utils.instantiate(i)
+                .to(self.device)
+                for i in self.metrics_cfg
+            }
         except AttributeError:
             logging.warning("no metrics provided")
-            pass
 
     def setup_metrics(self, metrics):
         self.metrics_cfg = metrics

@@ -73,6 +73,7 @@ class Metric(nn.Module):
     forward(x):
         function to perform metric
     """
+
     def __init__(self, metric):
         super().__init__()
         self.metric = get_metric_adapter(metric)

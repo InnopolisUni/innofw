@@ -7,5 +7,5 @@ libraries and frameworks via common abstract wrapper, currently it has support f
 
 Callbacks are functions that can be called in the process of training as a response to some event.
 """
-
-from .lightning_callbacks import log_segmentation_metrics, log_segmentation_predictions
+from .lightning_callbacks import log_segmentation_metrics
+from .lightning_callbacks import log_segmentation_predictions

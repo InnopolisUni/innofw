@@ -1,36 +1,52 @@
 # third party libraries
 import hydra
 import torch.nn
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
+from omegaconf import OmegaConf
 
-# local modules
-from innofw.utils.find_model import find_suitable_model
 from innofw.core.models.torch.lightning_modules import (
     AnomalyDetectionTimeSeriesLightningModule,
-    BiobertNERModel,
+)
+from innofw.core.models.torch.lightning_modules import BiobertNERModel
+from innofw.core.models.torch.lightning_modules import (
     ChemistryVAEForwardLightningModule,
+)
+from innofw.core.models.torch.lightning_modules import (
     ChemistryVAELightningModule,
+)
+from innofw.core.models.torch.lightning_modules import (
     ChemistryVAEReverseLightningModule,
+)
+from innofw.core.models.torch.lightning_modules import (
     ClassificationLightningModule,
+)
+from innofw.core.models.torch.lightning_modules import (
     OneShotLearningLightningModule,
-    # SemanticSegmentationLightningModule,
 )
 from innofw.core.models.torch.lightning_modules.detection import (
     DetectionLightningModule,
 )
-from innofw.core.models.torch.lightning_modules.segmentation import SemanticSegmentationLightningModule
+from innofw.core.models.torch.lightning_modules.segmentation import (
+    SemanticSegmentationLightningModule,
+)
+from innofw.utils.find_model import find_suitable_model
+
+# local modules
 
 
 def default_model_for_datamodule(task, datamodule):
     defaults = {
         "table-regression": {
             "innofw.core.datamodules.pandas_datamodules.RegressionPandasDataModule": find_suitable_model(
-                "linear_regression"),
+                "linear_regression"
+            ),
         }
     }
-    return DictConfig({
-        "_target_": defaults[task][datamodule],
-    })
+    return DictConfig(
+        {
+            "_target_": defaults[task][datamodule],
+        }
+    )
 
 
 def get_default(obj_name: str, framework: str, task: str):
@@ -44,7 +60,10 @@ def get_default(obj_name: str, framework: str, task: str):
                 ),
                 "callbacks": [],
                 "trainer_cfg": OmegaConf.create(
-                    {"_target_": "pytorch_lightning.Trainer", "max_epochs": 100}
+                    {
+                        "_target_": "pytorch_lightning.Trainer",
+                        "max_epochs": 100,
+                    }
                 ),
             },
             "image-detection": {
@@ -54,7 +73,10 @@ def get_default(obj_name: str, framework: str, task: str):
                 ),
                 "callbacks": [],
                 "trainer_cfg": OmegaConf.create(
-                    {"_target_": "pytorch_lightning.Trainer", "max_epochs": 100}
+                    {
+                        "_target_": "pytorch_lightning.Trainer",
+                        "max_epochs": 100,
+                    }
                 ),
             },
             "one-shot-learning": {
@@ -64,7 +86,10 @@ def get_default(obj_name: str, framework: str, task: str):
                 ),
                 "callbacks": [],
                 "trainer_cfg": OmegaConf.create(
-                    {"_target_": "pytorch_lightning.Trainer", "max_epochs": 100}
+                    {
+                        "_target_": "pytorch_lightning.Trainer",
+                        "max_epochs": 100,
+                    }
                 ),
             },
             # "image-detection": {
@@ -142,7 +167,9 @@ def get_default(obj_name: str, framework: str, task: str):
     try:
         obj = defaults[framework][task][obj_name]
         if isinstance(obj, DictConfig):
-            return lambda *args, **kwargs: hydra.utils.instantiate(obj, *args, **kwargs)
+            return lambda *args, **kwargs: hydra.utils.instantiate(
+                obj, *args, **kwargs
+            )
         else:
             return obj
     except Exception as e:

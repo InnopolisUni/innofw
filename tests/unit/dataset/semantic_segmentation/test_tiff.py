@@ -1,15 +1,18 @@
-import pytest
 import numpy as np
-from numpy import ndarray
-from hydra.utils import instantiate
-from hydra.errors import InstantiationException
+import pytest
 import torch
+from hydra.errors import InstantiationException
+from hydra.utils import instantiate
+from numpy import ndarray
 
 from innofw.constants import SegDataKeys
-from innofw.core.datasets.semantic_segmentation.tiff_dataset import SegmentationDataset
-
+from innofw.core.datasets.semantic_segmentation.tiff_dataset import (
+    SegmentationDataset,
+)
+from tests.fixtures.config.augmentations import (
+    bare_aug_torchvision as resize_augmentation,
+)
 from tests.fixtures.config.datasets_2 import roads_tiff_dataset_w_masks
-from tests.fixtures.config.augmentations import bare_aug_torchvision as resize_augmentation
 
 
 @pytest.mark.parametrize(
@@ -31,11 +34,15 @@ def test_read(cfg, w_mask, size, n_channels):
     assert item is not None
 
     for item in ds:
-        assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(item[SegDataKeys.image], torch.Tensor)
+        assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(
+            item[SegDataKeys.image], torch.Tensor
+        )
         assert item[SegDataKeys.image].shape == (n_channels, size, size)
 
         if w_mask:
-            assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(item[SegDataKeys.image], torch.Tensor)
+            assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(
+                item[SegDataKeys.image], torch.Tensor
+            )
             assert item[SegDataKeys.label].shape == (1, size, size)
 
             # as it is a binary segmentation data
@@ -51,20 +58,19 @@ def test_read(cfg, w_mask, size, n_channels):
 
 
 @pytest.mark.parametrize(
-    ["ds_cfg", "aug_cfg"], [[roads_tiff_dataset_w_masks.copy(), resize_augmentation.copy()]]
+    ["ds_cfg", "aug_cfg"],
+    [[roads_tiff_dataset_w_masks.copy(), resize_augmentation.copy()]],
 )
 def test_ds_w_transform(ds_cfg, aug_cfg):
     ds_cfg["transform"] = aug_cfg
     test_read(ds_cfg, False, 244, 3)  # resize should decrease the size
 
 
-@pytest.mark.parametrize(
-    ["ds_cfg"], [[roads_tiff_dataset_w_masks.copy()]]
-)
+@pytest.mark.parametrize(["ds_cfg"], [[roads_tiff_dataset_w_masks.copy()]])
 def test_channels(ds_cfg):
     # data should contain 4 channels
     # but 3 needed
-    ds_cfg['channels'] = 2
+    ds_cfg["channels"] = 2
     test_read(ds_cfg, False, 2048, 2)
 
 
@@ -79,7 +85,7 @@ def test_ds_w_caching(cfg):
 
 @pytest.mark.parametrize(["cfg"], [[roads_tiff_dataset_w_masks.copy()]])
 def test_wrong_img_mask_number(cfg):
-    cfg['images'] = cfg['images'][:1]
+    cfg["images"] = cfg["images"][:1]
 
     with pytest.raises(InstantiationException):
         ds: SegmentationDataset = instantiate(cfg, _convert_="partial")

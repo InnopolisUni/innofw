@@ -1,5 +1,4 @@
 import torch
-from rdkit import rdBase
 from torch import nn
 
 
@@ -23,6 +22,7 @@ class Encoder(nn.Module):
     forward():
         Returns the output of the encoder.
     """
+
     def __init__(self, in_dim, hidden_dim, enc_out_dim):
         super(Encoder, self).__init__()
         self.enc_out_dim = enc_out_dim
@@ -64,6 +64,7 @@ class GRUDecoder(nn.Module):
         It then returns the output of the fully connected layer, which is a 3D tensor.
         The hidden state is also returned for use in sampling.
     """
+
     def __init__(
         self, latent_dimension, gru_stack_size, gru_neurons_num, out_dimension
     ):
@@ -96,4 +97,3 @@ class VAE(dict, torch.nn.Module):
     """
     A simple VAE class to hack innofw logic.
     """
-    pass

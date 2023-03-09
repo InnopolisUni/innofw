@@ -1,29 +1,32 @@
-__all__ = ['SegmentationDM']
+__all__ = ["SegmentationDM"]
 
 import logging
-from typing import Optional, Union, List, Tuple
-from omegaconf.listconfig import ListConfig
+from typing import List, Optional
 from pathlib import Path
 from functools import reduce
 
 #
 import pandas as pd
-import pytorch_lightning as pl
-from pydantic import validate_arguments, FilePath, DirectoryPath
+from pydantic import FilePath, validate_arguments
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from sklearn.model_selection import train_test_split
 import torch
 
 #
-from innofw.core.datasets.semantic_segmentation.tiff_dataset import SegmentationDataset
+from innofw.core.datasets.semantic_segmentation.tiff_dataset import (
+    SegmentationDataset,
+)
 from innofw.constants import Frameworks
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
 
+
 def get_samples(path) -> List[Path]:  # todo: move out
     if isinstance(path, list):
-        samples = reduce(lambda x, y: x + y, [list(p.rglob("*.tif")) for p in path])
+        samples = reduce(
+            lambda x, y: x + y, [list(p.rglob("*.tif")) for p in path]
+        )
     else:
         samples = list(path.rglob("*.tif"))
 
@@ -55,7 +58,7 @@ class SegmentationDM(BaseLightningDataModule):
         shuffle=True,
         with_caching: bool = False,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(
             train=train,
@@ -75,20 +78,30 @@ class SegmentationDM(BaseLightningDataModule):
 
         self.filtered_files = None
         # convert it to the flag
-        if filtered_files_csv_path is not None:  # tod: convert csv generator to a script from notebook
+        if (
+            filtered_files_csv_path is not None
+        ):  # tod: convert csv generator to a script from notebook
             self.filtered_files = pd.read_csv(filtered_files_csv_path)
-            assert 'filename' in self.filtered_files
-            self.filtered_files = self.filtered_files.set_index('filename').index
+            assert "filename" in self.filtered_files
+            self.filtered_files = self.filtered_files.set_index(
+                "filename"
+            ).index
 
             if self.weights is not None:
                 logging.info("filtering samples and weights using csv file")
-                i2 = self.weights.set_index('file_names').index
+                i2 = self.weights.set_index("file_names").index
                 # filter values
                 self.weights = self.weights[i2.isin(self.filtered_files)]
 
-        self.train_transform = None if augmentations is None else augmentations['train']
-        self.val_transform = None if augmentations is None else augmentations['test']
-        self.test_transform = None if augmentations is None else augmentations['test']
+        self.train_transform = (
+            None if augmentations is None else augmentations["train"]
+        )
+        self.val_transform = (
+            None if augmentations is None else augmentations["test"]
+        )
+        self.test_transform = (
+            None if augmentations is None else augmentations["test"]
+        )
 
         self.channels = channels
 
@@ -112,26 +125,25 @@ class SegmentationDM(BaseLightningDataModule):
 
         # if link provided as a data source then download and process here
         """
-            datamodule_conf:
-                img_path:
-                label_path:
-                batch_size:
+        datamodule_conf:
+            img_path:
+            label_path:
+            batch_size:
 
-                data_prep:
-                    reproject
-                    rasterize
-                    cut_by_aoi
-                    cut_to_tiles
-                    save_to_disk
+            data_prep:
+                reproject
+                rasterize
+                cut_by_aoi
+                cut_to_tiles
+                save_to_disk
         """
         # btw: It is not recommended to assign state here(ref: https://pytorch-lightning.readthedocs.io/en/stable/data/datamodule.html)
-        pass 
 
     # todo: add datamodule checkpointing
 
     def setup_train_test_val(self, **kwargs):
-        self.img_path = self.train_source / 'images'
-        self.label_path = self.train_source / 'masks'
+        self.img_path = self.train_source / "images"
+        self.label_path = self.train_source / "masks"
         # self.img_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(self.train_dataset)
         # self.label_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(label_path)
 
@@ -141,10 +153,15 @@ class SegmentationDM(BaseLightningDataModule):
 
             if self.filtered_files is not None:
                 logging.info("filtering samples using csv file")
+
                 # filter
                 def filter_samples(samples, filtered_names):
-                    f_samples = [s for s in samples if s.name in filtered_names]
-                    assert len(f_samples) == len(filtered_names)  # todo: not always will be true
+                    f_samples = [
+                        s for s in samples if s.name in filtered_names
+                    ]
+                    assert len(f_samples) == len(
+                        filtered_names
+                    )  # todo: not always will be true
                     return f_samples
 
                 images = filter_samples(images, self.filtered_files)
@@ -153,10 +170,12 @@ class SegmentationDM(BaseLightningDataModule):
             self.samplers = {"train": None, "val": None, "test": None}
         else:
             images = [
-                self.img_path / img_name for img_name in self.weights["file_names"]
+                self.img_path / img_name
+                for img_name in self.weights["file_names"]
             ]
             masks = [
-                self.label_path / img_name for img_name in self.weights["file_names"]
+                self.label_path / img_name
+                for img_name in self.weights["file_names"]
             ]
             train_weights, val_weights = train_test_split(
                 self.weights["weights"],
@@ -172,10 +191,15 @@ class SegmentationDM(BaseLightningDataModule):
             self.samplers = {"train": train_sampler, "val": val_sampler}
 
         logging.debug(len(images), len(masks))
-        assert len(images) == len(masks), "number of images and masks should be equal"
+        assert len(images) == len(
+            masks
+        ), "number of images and masks should be equal"
 
         train_images, val_images, train_masks, val_masks = train_test_split(
-            images, masks, test_size=self.val_size, random_state=self.random_seed
+            images,
+            masks,
+            test_size=self.val_size,
+            random_state=self.random_seed,
         )
 
         self.train_ds = SegmentationDataset(
@@ -183,15 +207,19 @@ class SegmentationDM(BaseLightningDataModule):
             train_masks,
             transform=self.train_transform,
             channels=self.channels,
-            with_caching=self.with_caching
+            with_caching=self.with_caching,
         )
         self.val_ds = SegmentationDataset(
-            val_images, val_masks, transform=self.val_transform, channels=self.channels, with_caching=self.with_caching
+            val_images,
+            val_masks,
+            transform=self.val_transform,
+            channels=self.channels,
+            with_caching=self.with_caching,
         )
 
         # get images and masks
-        img_path = self.test_source / 'images'
-        label_path = self.test_source / 'masks'
+        img_path = self.test_source / "images"
+        label_path = self.test_source / "masks"
 
         if self.weights is None:
             images = get_samples(img_path)
@@ -201,7 +229,11 @@ class SegmentationDM(BaseLightningDataModule):
 
         # create datasets
         self.test_ds = SegmentationDataset(
-            images, masks, transform=self.test_transform, channels=self.channels, with_caching=self.with_caching
+            images,
+            masks,
+            transform=self.test_transform,
+            channels=self.channels,
+            with_caching=self.with_caching,
         )
 
     def stage_dataloader(self, dataset, stage):

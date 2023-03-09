@@ -1,11 +1,7 @@
-import pytest
-
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_datamodule
-from tests.fixtures.config.datasets import (
-    wheat_datamodule_cfg_w_target,
-    dicom_datamodule_cfg_w_target,
-)
+from tests.fixtures.config.datasets import dicom_datamodule_cfg_w_target
+from tests.fixtures.config.datasets import wheat_datamodule_cfg_w_target
 
 
 def test_coco_detection_dataset():

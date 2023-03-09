@@ -1,7 +1,10 @@
 import logging
-from multiprocessing import Pool, cpu_count
+from multiprocessing import cpu_count
+from multiprocessing import Pool
 from numbers import Number
-from typing import List, Optional, Sequence
+from typing import List
+from typing import Optional
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -38,7 +41,10 @@ class SmilesDataset(Dataset):
     """
 
     def __init__(
-        self, smiles: Sequence[str], property_list: Sequence[Number], property_name: str
+        self,
+        smiles: Sequence[str],
+        property_list: Sequence[Number],
+        property_name: str,
     ):
         import deepchem.feat
 
@@ -79,7 +85,9 @@ class SmilesDataset(Dataset):
         self.smiles_features = {}
         self.featurizer_names = []
         with Pool(cpu_count()) as pool:
-            for featurizer in tqdm(featurizers, desc="Calculating descriptors..."):
+            for featurizer in tqdm(
+                featurizers, desc="Calculating descriptors..."
+            ):
                 self.smiles_features[type(featurizer).__name__] = np.vstack(
                     pool.map(featurizer.featurize, self.mols)
                 )

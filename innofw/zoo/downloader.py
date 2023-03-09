@@ -2,18 +2,16 @@
 from pathlib import Path
 from typing import Optional
 
-# third-party libraries
 from fire import Fire
+from pydantic import AnyUrl
+from pydantic import validate_arguments
 from urlpath import URL
-from pydantic import validate_arguments, AnyUrl
 
 from innofw.utils.executors.execute_w_creds import execute_w_credentials
 from innofw.utils.s3_utils import S3Handler
 
+# third-party libraries
 # local modules
-from innofw.utils.s3_utils import S3Handler
-from innofw.constants import DefaultS3User, S3Credentials
-from innofw.utils.s3_utils.credentials import get_s3_credentials
 
 
 @execute_w_credentials
@@ -61,7 +59,9 @@ def download_model(
     """
     server_url = URL(file_url).anchor
 
-    return _download_model(file_url=file_url, dst_path=dst_path, server_url=server_url)
+    return _download_model(
+        file_url=file_url, dst_path=dst_path, server_url=server_url
+    )
 
 
 if __name__ == "__main__":

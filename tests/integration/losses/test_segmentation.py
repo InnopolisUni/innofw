@@ -2,9 +2,10 @@
 import pytest
 from omegaconf import DictConfig
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_losses
+
+# local
 
 
 def test_loss_creation():

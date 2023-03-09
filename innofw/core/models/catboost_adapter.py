@@ -2,16 +2,17 @@
 import importlib
 import logging
 
-from catboost import CatBoost, Pool
+from catboost import CatBoost
+from catboost import Pool
+from torch.utils.tensorboard import SummaryWriter
+
+from .base import BaseModelAdapter
 from innofw.constants import CheckpointFieldKeys
 from innofw.core.models import register_models_adapter
 from innofw.utils.checkpoint_utils import PickleCheckpointHandler
 
 # third party libraries/frameworks
-from torch.utils.tensorboard import SummaryWriter
-
 # local modules
-from .base import BaseModelAdapter
 
 # from src.wrappers.utils import get_func_name
 
@@ -35,9 +36,12 @@ class CatBoostAdapter(BaseModelAdapter):
         returns result of prediction
 
     """
+
     model: CatBoost
 
-    def __init__(self, model: CatBoost, log_dir, callbacks=None, *args, **kwargs):
+    def __init__(
+        self, model: CatBoost, log_dir, callbacks=None, *args, **kwargs
+    ):
         super().__init__(model, log_dir, PickleCheckpointHandler())
         self.metrics = []
         if callbacks:
@@ -54,7 +58,9 @@ class CatBoostAdapter(BaseModelAdapter):
             args = dict(m)
             del args["_target_"]
             mod = importlib.import_module(mod_name)
-            callable_metrics.append({"func": getattr(mod, func_name), "args": args})
+            callable_metrics.append(
+                {"func": getattr(mod, func_name), "args": args}
+            )
         return callable_metrics
 
     def _train(self, datamodule):
@@ -103,7 +109,9 @@ class CatBoostAdapter(BaseModelAdapter):
             train_summary_writer.add_scalar(metric, result, 0)
             logging.info(f"{metric}: {result}")
 
-    def virtual_ensembles_predict(self, data, prediction_type, virtual_ensembles_count):
+    def virtual_ensembles_predict(
+        self, data, prediction_type, virtual_ensembles_count
+    ):
         return self.model.virtual_ensembles_predict(
             data=data,
             prediction_type=prediction_type,

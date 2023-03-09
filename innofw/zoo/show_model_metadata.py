@@ -1,22 +1,25 @@
 #
 import logging
-from typing import Union, Optional, Callable
-
-#
-from fire import Fire
-from pydantic import FilePath, AnyUrl, validate_arguments
-from urlpath import URL
 from pprint import pprint
+from typing import Optional
+from typing import Union
 
-from innofw.constants import S3Credentials, UserWOKeys, DefaultS3User
-from innofw.utils.executors.execute_w_creds import execute_w_credentials
+from fire import Fire
+from pydantic import AnyUrl
+from pydantic import FilePath
+from pydantic import validate_arguments
+from urlpath import URL
 
-#
-from innofw.utils.s3_utils import S3Handler
+from innofw.constants import S3Credentials
 from innofw.utils import get_abs_path
 from innofw.utils.checkpoint_utils import load_metadata
-from innofw.utils.s3_utils.credentials import get_s3_credentials
-from innofw.utils.s3_utils.minio_interface import get_bucket_name, get_object_path
+from innofw.utils.executors.execute_w_creds import execute_w_credentials
+from innofw.utils.s3_utils import S3Handler
+from innofw.utils.s3_utils.minio_interface import get_bucket_name
+from innofw.utils.s3_utils.minio_interface import get_object_path
+
+#
+#
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -77,7 +80,9 @@ def show_model_metadata(
     if url.scheme != "" and url.netloc != "":
         metadata = load_metadata_from_remote(
             ckpt_path=ckpt_path,
-            credentials=S3Credentials(ACCESS_KEY=access_key, SECRET_KEY=secret_key),
+            credentials=S3Credentials(
+                ACCESS_KEY=access_key, SECRET_KEY=secret_key
+            ),
         )
     else:
         # process paths

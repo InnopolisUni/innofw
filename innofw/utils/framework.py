@@ -1,21 +1,19 @@
 import inspect
 from pathlib import Path
-
-# third party libraries
 from urllib.parse import urlparse
 
 import hydra
-from hydra.utils import instantiate
-import torch
 
-# local modules
-from innofw.constants import Frameworks
-from innofw.core.integrations.base_integration_models import BaseIntegrationModel
-from innofw.core.models import BaseModelAdapter
-from innofw.utils import get_abs_path
-
-from innofw.zoo.downloader import download_model
 from innofw.constants import DefaultFolders
+from innofw.constants import Frameworks
+from innofw.core.integrations.base_integration_models import (
+    BaseIntegrationModel,
+)
+from innofw.utils import get_abs_path
+from innofw.zoo.downloader import download_model
+
+# third party libraries
+# local modules
 
 
 def map_model_to_framework(model):
@@ -56,29 +54,31 @@ TABLE_FRAMEWORKS = ["xgboost", "sklearn", "catboost"]
 
 
 def get_obj(
-        config,
-        name,
-        task,
-        framework: Frameworks,
-        search_func=None,
-        _recursive_=True,
-        *args,
-        **kwargs,
+    config,
+    name,
+    task,
+    framework: Frameworks,
+    search_func=None,
+    _recursive_=True,
+    *args,
+    **kwargs,
 ):
     obj = None
     if (
-            name in config
-            and config[name] is not None
-            # and "implementations" in config[name]
+        name in config
+        and config[name] is not None
+        # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
         if "task" not in config[name]:
             return None
 
-        if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-                config[name], framework
-        ):
+        if is_suitable_for_task(
+            config[name], task
+        ) and is_suitable_for_framework(config[name], framework):
             items = []
-            for key, value in config[name].implementations[framework.value].items():
+            for key, value in (
+                config[name].implementations[framework.value].items()
+            ):
                 if key == "meta":
                     continue
                 if "function" in value:
@@ -89,7 +89,10 @@ def get_obj(
                 else:
                     try:
                         item = hydra.utils.instantiate(
-                            value["object"], _recursive_=_recursive_, *args, **kwargs
+                            value["object"],
+                            _recursive_=_recursive_,
+                            *args,
+                            **kwargs,
                         )
                     except Exception as e:
                         item = hydra.utils.instantiate(value["object"])
@@ -107,10 +110,11 @@ def get_obj(
 
     return obj
 
-def get_augmentations(cfg):
 
+def get_augmentations(cfg):
     from albumentations import Compose
     from omegaconf import DictConfig
+
     empty_cfg = DictConfig({})
 
     if cfg == {}:
@@ -121,7 +125,7 @@ def get_augmentations(cfg):
     # 3. position
     # 4. color
     # 5. postprocessing
-    keys = ['preprocessing', "combined", "position", "color", "postprocessing"]
+    keys = ["preprocessing", "combined", "position", "color", "postprocessing"]
     transforms = []
 
     # if "preprocessing" in cfg:
@@ -131,13 +135,14 @@ def get_augmentations(cfg):
     #     transforms.append(preprocessing)
 
     import albumentations as A
+
     def is_albu(aug):
         return isinstance(aug, A.Compose) or isinstance(
             aug, A.core.transforms_interface.BasicTransform
         )
 
     for key in keys:
-        try:    
+        try:
             a = hydra.utils.instantiate(cfg[key])
             transforms.append(a)
         except:
@@ -151,7 +156,6 @@ def get_augmentations(cfg):
 
     # _transforms = [list(i.values()) for i in transforms if i!= {}]
 
-
     def is_albu2(_transforms):
         for i in _transforms:
             if i == {}:
@@ -160,7 +164,7 @@ def get_augmentations(cfg):
             for tr in i.values():
                 if not is_albu(tr):
                     return False
-        
+
         return True
 
     if is_albu2(transforms):
@@ -177,32 +181,34 @@ def get_augmentations(cfg):
             if item != empty_cfg
         ]
         return torchvision.transforms.Compose(transforms=transforms)
-        
+
 
 def get_optimizer(
-        config,
-        name,
-        task,
-        framework: Frameworks,
-        search_func=None,
-        _recursive_=True,
-        *args,
-        **kwargs,
+    config,
+    name,
+    task,
+    framework: Frameworks,
+    search_func=None,
+    _recursive_=True,
+    *args,
+    **kwargs,
 ):
     obj = None
     if (
-            name in config
-            and config[name] is not None
-            # and "implementations" in config[name]
+        name in config
+        and config[name] is not None
+        # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
         if "task" not in config[name]:
             return None
 
-        if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-                config[name], framework
-        ):
+        if is_suitable_for_task(
+            config[name], task
+        ) and is_suitable_for_framework(config[name], framework):
             items = []
-            for key, value in config[name].implementations[framework.value].items():
+            for key, value in (
+                config[name].implementations[framework.value].items()
+            ):
                 if key == "meta":
                     continue
                 if "function" in value:
@@ -231,11 +237,13 @@ def get_losses(cfg, task, framework):
     if "losses" in cfg and cfg.losses is not None:
         if "task" not in cfg["losses"]:
             return None
-        if is_suitable_for_task(cfg.losses, task) and is_suitable_for_framework(
-                cfg.losses, framework
-        ):
+        if is_suitable_for_task(
+            cfg.losses, task
+        ) and is_suitable_for_framework(cfg.losses, framework):
             losses = []
-            for key, value in cfg.losses.implementations[framework.value].items():
+            for key, value in cfg.losses.implementations[
+                framework.value
+            ].items():
                 if key == "meta":
                     continue
 
@@ -262,10 +270,12 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
     if "callbacks" in cfg and cfg.callbacks is not None:
         if "task" not in cfg["callbacks"]:
             return None
-        if is_suitable_for_task(cfg.callbacks, task) and is_suitable_for_framework(
-                cfg.callbacks, framework
-        ):
-            for _, cb_conf in cfg.callbacks.implementations[framework.value].items():
+        if is_suitable_for_task(
+            cfg.callbacks, task
+        ) and is_suitable_for_framework(cfg.callbacks, framework):
+            for _, cb_conf in cfg.callbacks.implementations[
+                framework.value
+            ].items():
                 if "_target_" in cb_conf:
                     if inspect.isclass(cb_conf["_target_"]):
                         try:
@@ -276,7 +286,9 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
                             )
                         except:
                             callbacks.append(
-                                hydra.utils.instantiate(cb_conf, _recursive_=False)
+                                hydra.utils.instantiate(
+                                    cb_conf, _recursive_=False
+                                )
                             )
                     else:
                         callbacks.append(cb_conf)
@@ -286,20 +298,19 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
 from innofw.schema.model import ModelConfig
 from innofw.schema.dataset import DatasetConfig
 from innofw.schema.experiment import ExperimentConfig
-import logging
 from innofw.utils.extra import is_intersecting
 
 
 def get_model(cfg, trainer_cfg):
     model_datacls = ModelConfig(**cfg, trainer_cfg=trainer_cfg)
-    return hydra.utils.instantiate(
-        model_datacls.models
-    )
+    return hydra.utils.instantiate(model_datacls.models)
 
 
 def get_datamodule(cfg, framework: Frameworks, task=None, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
-    datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
+    datamodule = hydra.utils.instantiate(
+        dataset_datacls.datasets, *args, **kwargs
+    )
     if not is_intersecting(task, datamodule.task):
         raise ValueError("Wrong task provided", task, datamodule.task)
 

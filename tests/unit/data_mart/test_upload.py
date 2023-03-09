@@ -1,15 +1,14 @@
 # standard libraries
 from pathlib import Path
 
-# third-party libraries
 import pytest
 from omegaconf import DictConfig
 
+from tests.utils import get_test_data_folder_path
+from tests.utils import is_dir_empty
 
+# third-party libraries
 # local modules
-from innofw.data_mart import upload_dataset
-from tests.utils import get_test_data_folder_path, is_dir_empty
-from innofw.constants import DefaultS3User, S3Credentials
 
 
 @pytest.fixture

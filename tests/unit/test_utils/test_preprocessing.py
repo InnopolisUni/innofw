@@ -2,19 +2,27 @@
 import pytest
 import rasterio as rio
 
-# local modules
-from tests.utils import get_test_folder_path
-
+from innofw.utils.data_utils.preprocessing.band_composer import BandComposer
 from innofw.utils.data_utils.preprocessing.band_composer import (
-    BandComposer,
     Landsat8BandComposer,
+)
+from innofw.utils.data_utils.preprocessing.band_composer import (
     Sentinel2BandComposer,
 )
+from tests.utils import get_test_folder_path
+
+# local modules
 
 
 @pytest.fixture
 def root_path():
-    return get_test_folder_path() / "data" / "images" / "other" / "satellite_cropped"
+    return (
+        get_test_folder_path()
+        / "data"
+        / "images"
+        / "other"
+        / "satellite_cropped"
+    )
 
 
 @pytest.fixture

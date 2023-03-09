@@ -1,5 +1,5 @@
-import pytorch_lightning as pl
 from typing import Any
+
 import torch
 
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
@@ -31,7 +31,13 @@ class AnomalyDetectionTimeSeriesLightningModule(BaseLightningModule):
     """
 
     def __init__(
-            self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
+        self,
+        model,
+        losses,
+        optimizer_cfg,
+        scheduler_cfg,
+        *args: Any,
+        **kwargs: Any,
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -51,14 +57,14 @@ class AnomalyDetectionTimeSeriesLightningModule(BaseLightningModule):
         x, y = batch
         seq_pred = self.forward(x[0])
         loss = self.calc_losses(x[0], seq_pred)
-        self.log_metrics('train', x[0], seq_pred)
+        self.log_metrics("train", x[0], seq_pred)
         return {"loss": loss}
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         seq_pred = self.forward(x[0])
         loss = self.calc_losses(x[0], seq_pred)
-        self.log_metrics('val', x[0], seq_pred)
+        self.log_metrics("val", x[0], seq_pred)
         return {"val_loss": loss}
 
     def predict_step(self, batch, batch_idx, **kwargs):

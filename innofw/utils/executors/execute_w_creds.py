@@ -1,7 +1,8 @@
 import logging
 from typing import Callable
 
-from innofw.constants import UserWOKeys, DefaultS3User
+from innofw.constants import DefaultS3User
+from innofw.constants import UserWOKeys
 from innofw.utils.s3_utils.credentials import get_s3_credentials
 
 DEFAULT_SEQUENCE = [DefaultS3User, UserWOKeys, get_s3_credentials]

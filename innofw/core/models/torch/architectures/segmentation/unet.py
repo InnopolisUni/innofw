@@ -1,11 +1,10 @@
 #
-from typing import Optional
 # credits: https://amaarora.github.io/2020/09/13/unet.html
 #
 import torch
 import torch.nn as nn
-import torchvision
 import torch.nn.functional as F
+import torchvision
 
 
 class Block(nn.Module):
@@ -22,7 +21,9 @@ class Block(nn.Module):
 class Encoder(nn.Module):
     def __init__(self, chs=(3, 64, 128, 256, 512, 1024)):
         super().__init__()
-        self.enc_blocks = nn.ModuleList([Block(chs[i], chs[i + 1]) for i in range(len(chs) - 1)])
+        self.enc_blocks = nn.ModuleList(
+            [Block(chs[i], chs[i + 1]) for i in range(len(chs) - 1)]
+        )
         self.pool = nn.MaxPool2d(2)
 
     def forward(self, x):
@@ -38,8 +39,15 @@ class Decoder(nn.Module):
     def __init__(self, chs=(1024, 512, 256, 128, 64)):
         super().__init__()
         self.chs = chs
-        self.upconvs = nn.ModuleList([nn.ConvTranspose2d(chs[i], chs[i + 1], 2, 2) for i in range(len(chs) - 1)])
-        self.dec_blocks = nn.ModuleList([Block(chs[i], chs[i + 1]) for i in range(len(chs) - 1)])
+        self.upconvs = nn.ModuleList(
+            [
+                nn.ConvTranspose2d(chs[i], chs[i + 1], 2, 2)
+                for i in range(len(chs) - 1)
+            ]
+        )
+        self.dec_blocks = nn.ModuleList(
+            [Block(chs[i], chs[i + 1]) for i in range(len(chs) - 1)]
+        )
 
     def forward(self, x, encoder_features):
         for i in range(len(self.chs) - 1):
@@ -57,20 +65,27 @@ class Decoder(nn.Module):
 
 class UNet(nn.Module):
     """
-        Unet model for segmentation task
-        ...
+    Unet model for segmentation task
+    ...
 
-        Attributes
-        ----------
+    Attributes
+    ----------
 
-        Methods
-        -------
-        forward(x):
-            returns result of the data forwarding
+    Methods
+    -------
+    forward(x):
+        returns result of the data forwarding
 
     """
-    def __init__(self, enc_chs=(3, 64, 128, 256, 512, 1024), dec_chs=(1024, 512, 256, 128, 64), num_class=1,
-                 retain_dim=False, out_sz=(572, 572)):
+
+    def __init__(
+        self,
+        enc_chs=(3, 64, 128, 256, 512, 1024),
+        dec_chs=(1024, 512, 256, 128, 64),
+        num_class=1,
+        retain_dim=False,
+        out_sz=(572, 572),
+    ):
         super().__init__()
         self.encoder = Encoder(enc_chs)
         self.decoder = Decoder(dec_chs)

@@ -1,23 +1,20 @@
 #
 from typing import Callable
 
-#
-from torch.optim import SGD
-from torch.optim.lr_scheduler import (
-    LambdaLR,
-    CosineAnnealingLR,
-    CosineAnnealingWarmRestarts,
-    StepLR,
-    CyclicLR,
-    ConstantLR,
-)
 import pytest
-
-#
+from torch.optim import SGD
+from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
+from torch.optim.lr_scheduler import CyclicLR
+from torch.optim.lr_scheduler import LambdaLR
+from torch.optim.lr_scheduler import StepLR
 
 from innofw.core.optimizers import Optimizer
 from innofw.core.schedulers import Scheduler
 from tests.fixtures.models.torch.dummy_model import DummyTorchModel
+
+#
+#
 
 model = DummyTorchModel()
 optimizer = Optimizer(SGD(model.parameters(), lr=100))

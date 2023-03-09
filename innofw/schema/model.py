@@ -1,15 +1,17 @@
 #
-from typing import Optional, Dict, Any
-import logging
+from typing import Any
+from typing import Dict
+from typing import Optional
 
-#
-from pydantic import root_validator, Field
-import yaml
 import torch
+import yaml
+from pydantic import root_validator
 
-#
 from .base_config import BaseConfig
 from innofw.utils.find_model import find_suitable_model
+
+#
+#
 
 # from innofw.utils.framework import map_model_to_framework
 
@@ -30,7 +32,9 @@ class ModelConfig(BaseConfig):
             pass
 
         all_required_field_names = {
-            field.alias for field in cls.__fields__.values() if field.alias != "extra"
+            field.alias
+            for field in cls.__fields__.values()
+            if field.alias != "extra"
         }  # to support alias
 
         extra: Dict[str, Any] = {}
@@ -59,7 +63,7 @@ class ModelConfig(BaseConfig):
                     values["models"]["tree_method"] = "gpu_hist"
 
                     if "gpus" in trainer_cfg:
-                        import logging
+                        pass
 
                         values["models"]["gpu_id"] = (
                             trainer_cfg["gpus"][0]

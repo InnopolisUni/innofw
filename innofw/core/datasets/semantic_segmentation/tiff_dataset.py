@@ -1,16 +1,19 @@
 #
 import logging
-from typing import Optional, List
+from typing import List
+from typing import Optional
 
-#
-from torch.utils.data import Dataset
-import rasterio as rio
 import numpy as np
-from pydantic import validate_arguments, FilePath
+import rasterio as rio
+from pydantic import FilePath
+from pydantic import validate_arguments
+from torch.utils.data import Dataset
 
-#
 from innofw.constants import SegDataKeys
 from innofw.core.augmentations import Augmentation
+
+#
+#
 
 
 def read_tif(path, channels=None) -> np.ndarray:
@@ -35,26 +38,30 @@ class SegmentationDataset(Dataset):
         images: List[FilePath],
         masks: Optional[List[FilePath]] = None,
         transform=None,
-        channels: Optional[int] = None,  # todo: add support for Optional[List[int]]
+        channels: Optional[
+            int
+        ] = None,  # todo: add support for Optional[List[int]]
         with_caching: bool = False,
         *args,
         **kwargs,
     ):
         """Dataset reading tif files
 
-            Arguments:
-                images - list of image paths
-                masks - list of mask path corresponding for each image
-                transform - augmentations can be both torchvision or albumentations
-                channels - number of channels
-                with_caching - allows reading the whole dataset into memory
+        Arguments:
+            images - list of image paths
+            masks - list of mask path corresponding for each image
+            transform - augmentations can be both torchvision or albumentations
+            channels - number of channels
+            with_caching - allows reading the whole dataset into memory
         """
         self.images = images
         self.masks = masks
         self.channels = channels
         if self.masks is not None:
             if len(self.images) != len(self.masks):
-                raise ValueError("number of images not equal to number of masks")
+                raise ValueError(
+                    "number of images not equal to number of masks"
+                )
 
         self.transform = None if transform is None else Augmentation(transform)
 
@@ -114,7 +121,6 @@ class SegmentationDataset(Dataset):
 
         output[SegDataKeys.image] = image
         if self.masks is not None:
-
             if len(mask.shape) == 2:
                 mask = np.expand_dims(mask, 0)
 

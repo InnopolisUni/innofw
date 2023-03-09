@@ -1,11 +1,11 @@
 from typing import Tuple
 
-import pytorch_lightning as pl
-import selfies as sf
 import torch
-from innofw.core.models.torch.architectures.autoencoders.vae import Encoder, GRUDecoder
-from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 from torch import nn
+
+from innofw.core.models.torch.architectures.autoencoders.vae import Encoder
+from innofw.core.models.torch.architectures.autoencoders.vae import GRUDecoder
+from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
 
 class ChemistryVAELightningModule(BaseLightningModule):
@@ -35,7 +35,13 @@ class ChemistryVAELightningModule(BaseLightningModule):
     """
 
     def __init__(
-            self, model: dict, losses, optimizer_cfg, scheduler_cfg, *args, **kwargs
+        self,
+        model: dict,
+        losses,
+        optimizer_cfg,
+        scheduler_cfg,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.encoder: Encoder = model["encoder"]
@@ -45,8 +51,12 @@ class ChemistryVAELightningModule(BaseLightningModule):
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
 
-        self.fc_mu = nn.Linear(self.encoder.enc_out_dim, self.decoder.latent_dimension)
-        self.fc_var = nn.Linear(self.encoder.enc_out_dim, self.decoder.latent_dimension)
+        self.fc_mu = nn.Linear(
+            self.encoder.enc_out_dim, self.decoder.latent_dimension
+        )
+        self.fc_var = nn.Linear(
+            self.encoder.enc_out_dim, self.decoder.latent_dimension
+        )
 
         self.MLP = nn.Sequential(
             nn.Linear(self.decoder.latent_dimension, 8),
@@ -81,7 +91,9 @@ class ChemistryVAELightningModule(BaseLightningModule):
 
     def sample(self, mu: torch.Tensor, log_var: torch.Tensor):
         std = torch.exp(log_var / 2)
-        p = torch.distributions.Normal(torch.zeros_like(mu), torch.ones_like(std))
+        p = torch.distributions.Normal(
+            torch.zeros_like(mu), torch.ones_like(std)
+        )
         q = torch.distributions.Normal(mu, std)
         z = q.rsample()
         return p, q, z
@@ -111,13 +123,13 @@ class ChemistryVAELightningModule(BaseLightningModule):
         return x_hat
 
     def _calc_losses(
-            self,
-            x: torch.Tensor,
-            x_hat: torch.Tensor,
-            p: torch.Tensor,
-            q: torch.Tensor,
-            y: torch.Tensor,
-            y_hat: torch.Tensor,
+        self,
+        x: torch.Tensor,
+        x_hat: torch.Tensor,
+        p: torch.Tensor,
+        q: torch.Tensor,
+        y: torch.Tensor,
+        y_hat: torch.Tensor,
     ) -> torch.FloatTensor:
         """Function to compute losses"""
         total_loss = torch.zeros(1, device=self.device, dtype=x.dtype)

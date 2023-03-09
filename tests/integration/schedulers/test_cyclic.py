@@ -1,11 +1,11 @@
 # other
-import pytest
 from omegaconf import DictConfig
 from segmentation_models_pytorch import Unet
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
+
+# local
 
 
 def test_scheduler_creation():
@@ -15,7 +15,12 @@ def test_scheduler_creation():
                 "task": ["all"],
                 "implementations": {
                     "torch": {
-                        "SGD": {"object": {"_target_": "torch.optim.SGD", "lr": 1e-5}},
+                        "SGD": {
+                            "object": {
+                                "_target_": "torch.optim.SGD",
+                                "lr": 1e-5,
+                            }
+                        },
                     }
                 },
             },
@@ -39,5 +44,7 @@ def test_scheduler_creation():
     task = "image-segmentation"
     framework = Frameworks.torch
     model = Unet()
-    optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    optim = get_obj(
+        cfg, "optimizers", task, framework, params=model.parameters()
+    )
     scheduler = get_obj(cfg, "schedulers", task, framework, optimizer=optim)

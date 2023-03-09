@@ -1,9 +1,9 @@
 import numpy as np
-from innofw import InnoModel
-from innofw.core.models.catboost_adapter import CatBoostAdapter
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
 
 from .base import BaseActiveLearner
+from innofw import InnoModel
 
 
 class LoggerPrint:
@@ -32,6 +32,7 @@ class CatBoostActiveLearner(BaseActiveLearner):
     eval_model(X, y):
         Evaluate trained model and return metrics.
     """
+
     def __init__(
         self,
         model: InnoModel,
@@ -57,7 +58,9 @@ class CatBoostActiveLearner(BaseActiveLearner):
             "median model uncertainty": f"{np.median(preds[1]):2e}",
         }
         if len(preds) == 3 and self.use_data_uncertainty:
-            metrics.update({"median data uncertainty": f"{np.median(preds[2]):2e}"})
+            metrics.update(
+                {"median data uncertainty": f"{np.median(preds[2]):2e}"}
+            )
         return metrics
 
     def predict_model(self, X):
@@ -76,17 +79,21 @@ class CatBoostActiveLearner(BaseActiveLearner):
             )
             data_uncertainty_normed = data_uncertainty / data_uncertainty.max()
 
-            uncertainty = knowledge_uncertainty_normed - data_uncertainty_normed
+            uncertainty = (
+                knowledge_uncertainty_normed - data_uncertainty_normed
+            )
         else:
             uncertainty = knowledge_uncertainty
 
-        kth_idx_most_uncertain = np.argpartition(uncertainty, -self.query_size)[
-            -self.query_size :
-        ]
+        kth_idx_most_uncertain = np.argpartition(
+            uncertainty, -self.query_size
+        )[-self.query_size :]
 
         return kth_idx_most_uncertain
 
-    def _virtual_ensemble_prediction(self, X, virtual_ensembles_count: int = 10):
+    def _virtual_ensemble_prediction(
+        self, X, virtual_ensembles_count: int = 10
+    ):
         preds = self.model.model.virtual_ensembles_predict(
             X,
             prediction_type="TotalUncertainty",

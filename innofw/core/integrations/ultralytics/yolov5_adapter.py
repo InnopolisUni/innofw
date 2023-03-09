@@ -1,28 +1,27 @@
 # standard libraries
 import logging
-
-import yaml
 from pathlib import Path
 from typing import Optional
 
-# third party libraries
 import torch
-from yolov5 import (
-    train as yolov5_train,
-    val as yolov5_val,
-    detect as yolov5_detect,
-)
+import yaml
+from yolov5 import detect as yolov5_detect
+from yolov5 import train as yolov5_train
+from yolov5 import val as yolov5_val
 
-# local modules
-from innofw.constants import Frameworks
-from innofw.utils.checkpoint_utils import TorchCheckpointHandler
-from .trainer import YOLOV5TrainerBaseAdapter
+from ..base_integration_models import BaseIntegrationModel
+from .datamodule import YOLOV5DataModuleAdapter
 from .losses import YOLOV5LossesBaseAdapter
 from .optimizers import YOLOV5OptimizerBaseAdapter
-from .datamodule import YOLOV5DataModuleAdapter
 from .schedulers import YOLOV5SchedulerBaseAdapter
-from ..base_integration_models import BaseIntegrationModel
-from innofw.core.models import BaseModelAdapter, register_models_adapter
+from .trainer import YOLOV5TrainerBaseAdapter
+from innofw.constants import Frameworks
+from innofw.core.models import BaseModelAdapter
+from innofw.core.models import register_models_adapter
+from innofw.utils.checkpoint_utils import TorchCheckpointHandler
+
+# third party libraries
+# local modules
 
 YOLOV5_VALID_ARCHS = ["yolov5s", "yolov5m", "yolov5l", "yolov5x"]
 
@@ -321,7 +320,9 @@ class YOLOV5Adapter(BaseModelAdapter):
         if str(data.infer_source).startswith("rts"):
             params.update(source=data.infer_source)
         else:
-            params.update(source=Path(data.infer_source) / "images", data=data.data)
+            params.update(
+                source=Path(data.infer_source) / "images", data=data.data
+            )
 
         self._yolov5_predict.run(**params)
 

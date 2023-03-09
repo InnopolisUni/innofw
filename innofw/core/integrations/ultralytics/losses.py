@@ -4,11 +4,12 @@ from ..base_adapter import BaseAdapter
 class YOLOV5LossesBaseAdapter(BaseAdapter):
     """Class defines adapter interface to conform to YOLOv5 loss specifications
 
-        Methods
-        -------
-        adapt(loss: DictConfig) -> dict
-            converts the loss configuration into YOLOv5 suitable format
+    Methods
+    -------
+    adapt(loss: DictConfig) -> dict
+        converts the loss configuration into YOLOv5 suitable format
     """
+
     def __init__(self):
         self.opt = {}
         self.hyp = {

@@ -3,9 +3,10 @@ import pytest
 from omegaconf import DictConfig
 from segmentation_models_pytorch import Unet
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
+
+# local
 
 
 def test_optimizer_creation():
@@ -16,7 +17,10 @@ def test_optimizer_creation():
                 "implementations": {
                     "torch": {
                         "Adam": {
-                            "object": {"_target_": "torch.optim.Adam", "lr": 1e-5}
+                            "object": {
+                                "_target_": "torch.optim.Adam",
+                                "lr": 1e-5,
+                            }
                         },
                     }
                 },
@@ -26,7 +30,9 @@ def test_optimizer_creation():
     task = "image-segmentation"
     framework = Frameworks.torch
     model = Unet()
-    optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    optim = get_obj(
+        cfg, "optimizers", task, framework, params=model.parameters()
+    )
 
 
 def test_optimizer_creation_wrong_framework():
@@ -37,7 +43,10 @@ def test_optimizer_creation_wrong_framework():
                 "implementations": {
                     "torch": {
                         "Adam": {
-                            "object": {"_target_": "torch.optim.Adam", "lr": 1e-5}
+                            "object": {
+                                "_target_": "torch.optim.Adam",
+                                "lr": 1e-5,
+                            }
                         },
                     }
                 },
@@ -49,4 +58,6 @@ def test_optimizer_creation_wrong_framework():
     model = Unet()
 
     with pytest.raises(ValueError):
-        optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+        optim = get_obj(
+            cfg, "optimizers", task, framework, params=model.parameters()
+        )
