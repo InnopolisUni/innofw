@@ -4,7 +4,7 @@ from omegaconf import OmegaConf
 
 TASK = None
 
-
+TASK = None
 def setup_wandb(cfg):
     """Function to enable Weights and Biases logger"""
     if "wandb" not in cfg:

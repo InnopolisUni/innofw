@@ -317,10 +317,10 @@ class YOLOV5Adapter(BaseModelAdapter):
             name=self.opt["name"],
         )
 
-        if str(data.infer_dataset).startswith("rts"):
-            params.update(source=data.infer_dataset)
+        if str(data.infer_source).startswith("rts"):
+            params.update(source=data.infer_source)
         else:
-            params.update(source=data.infer_dataset / "images", data=data.data)
+            params.update(source=Path(data.infer_source) / "images", data=data.data)
 
         self._yolov5_predict.run(**params)
 

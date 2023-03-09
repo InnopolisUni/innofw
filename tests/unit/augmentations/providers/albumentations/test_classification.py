@@ -30,12 +30,12 @@ def test_stages():
     )
     aug = get_augmentations(cfg["augmentations_train"])
 
-    img = np.random.randint(0, 255, (3, 448, 448))
+    img = np.random.randint(0, 255, (3, 64, 64))
 
     aug_img = Augmentation(aug)(img)
     assert aug_img.min() >= 0 and aug_img.max() <= 1
 
-    mask = np.random.randint(0, 2, (3, 448, 448))
+    mask = np.random.randint(0, 2, (3, 64, 64))
     aug_img, aug_mask = Augmentation(aug)(img, mask)
     assert aug_img.min() >= 0 and aug_img.max() <= 1
     assert all(

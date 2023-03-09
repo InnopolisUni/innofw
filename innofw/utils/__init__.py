@@ -12,6 +12,7 @@ from .loggers import TASK
 
 #
 
+from .loggers import TASK
 #
 
 

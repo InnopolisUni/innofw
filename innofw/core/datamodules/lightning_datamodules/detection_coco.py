@@ -80,30 +80,24 @@ class CocoLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        self.train_dataset, train_csv = self.find_csv_and_data(
-            self.train_dataset
-        )
-        self.test_dataset, test_csv = self.find_csv_and_data(self.test_dataset)
-        self.aug = {"train": None, "test": None, "val": None}  # todo: fix
-        if (
-            self.aug is not None
-            and self.aug["train"] is not None
-            and self.aug["test"] is not None
-        ):
+        self.train_source, train_csv = self.find_csv_and_data(self.train_source)
+        self.test_source, test_csv = self.find_csv_and_data(self.test_source)
+        self.aug = {'train': None, 'test': None, 'val': None}  # todo: fix
+        if self.aug is not None and self.aug['train'] is not None and self.aug['test'] is not None:
             train_dataset = self.dataset(
                 train_csv,
-                str(self.train_dataset),
+                str(self.train_source),
                 # transforms=Augmentation(self.aug['train']),
             )
             self.test_dataset = self.dataset(
                 test_csv,
-                str(self.test_dataset),
+                str(self.test_source),
                 # transforms=Augmentation(self.aug['test']),
             )
         else:
             train_dataset = self.dataset(
                 train_csv,
-                str(self.train_dataset),
+                str(self.train_source),
                 transforms=albu.Compose(
                     [ToTensorV2(p=1.0)],
                     bbox_params={
@@ -114,7 +108,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
             )
             self.test_dataset = self.dataset(
                 test_csv,
-                str(self.test_dataset),
+                str(self.test_source),
                 transforms=albu.Compose(
                     [ToTensorV2(p=1.0)],
                     bbox_params={
