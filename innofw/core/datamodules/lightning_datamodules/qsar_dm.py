@@ -2,17 +2,24 @@ import logging
 from enum import Enum
 from os import cpu_count
 from pathlib import Path
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 import selfies as sf
 import torch
-from innofw.constants import Frameworks, Stages
-from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
 from rdkit import rdBase
-from torch.utils.data import DataLoader, Dataset, random_split
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset
+from torch.utils.data import random_split
 from tqdm.contrib.concurrent import process_map
+
+from innofw.constants import Frameworks
+from innofw.constants import Stages
+from innofw.core.datamodules.lightning_datamodules.base import (
+    BaseLightningDataModule,
+)
 
 rdBase.DisableLog("rdApp.error")
 
@@ -43,12 +50,19 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
     -------
     setup_train_test_val(**kwargs):
         The setup_train_test_val function is used to split the training data into a train and validation set.
-        The function takes in the dataset, smiles_col, target_col and val_size as parameters. The smiles column 
-        is used to extract all of the SMILES strings from each row of the csv file. The target column is used to 
-        extract all of the targets for each SMILES string in that row. Both sets are then converted into selfies using 
+        The function takes in the dataset, smiles_col, target_col and val_size as parameters. The smiles column
+        is used to extract all of the SMILES strings from each row of the csv file. The target column is used to
+        extract all of the targets for each SMILES string in that row. Both sets are then converted into selfies using
         the self.smiles2selfies function which converts a list of SMILES strings into their corresponding selfies sequences.
     """
-    task = ["text-vae", "qsar-regression", "text-vae-reverse", "text-vae-forward", "text-vae"]
+
+    task = [
+        "text-vae",
+        "qsar-regression",
+        "text-vae-reverse",
+        "text-vae-forward",
+        "text-vae",
+    ]
     framework = [Frameworks.torch]
 
     _preprocessed: bool = False
@@ -100,10 +114,14 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         test_selfies = self.smiles2selfies(test_smiles)
 
         train_selfies, train_targets = zip(
-            *filter(lambda x: x[0] is not None, zip(train_selfies, train_targets))
+            *filter(
+                lambda x: x[0] is not None, zip(train_selfies, train_targets)
+            )
         )
         test_selfies, test_targets = zip(
-            *filter(lambda x: x[0] is not None, zip(test_selfies, test_targets))
+            *filter(
+                lambda x: x[0] is not None, zip(test_selfies, test_targets)
+            )
         )
 
         selfies_dataset = np.concatenate((train_selfies, test_selfies))
@@ -141,7 +159,9 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
             )
         )
 
-        self.predict_selfies_dataset = SelfiesDataset(predict_selfies, predict_targets)
+        self.predict_selfies_dataset = SelfiesDataset(
+            predict_selfies, predict_targets
+        )
 
     def train_dataloader(self):
         return DataLoader(
@@ -179,15 +199,20 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
             collate_fn=self.collator,
         )
 
-    def save_preds(self, preds: List[torch.Tensor], stage: Stages, dst_path: Path):
+    def save_preds(
+        self, preds: List[torch.Tensor], stage: Stages, dst_path: Path
+    ):
         if self.work_mode is WorkMode.VAE:
             unrolled_preds: List[List[int]] = [
-                pred.argmax(dim=1).tolist() for batch in preds for pred in batch
+                pred.argmax(dim=1).tolist()
+                for batch in preds
+                for pred in batch
             ]
             preds_smiles = self.decode(unrolled_preds)
             preds_series = pd.Series(preds_smiles, index=self.predict_indexes)
             df = pd.read_csv(
-                getattr(self, f"{stage.name}_dataset"), usecols=[self.smiles_col]
+                getattr(self, f"{stage.name}_dataset"),
+                usecols=[self.smiles_col],
             )
 
             df["reconstructed_smiles"] = preds_series
@@ -197,9 +222,12 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
 
         elif self.work_mode is WorkMode.FORWARD:
             unrolled_preds = [pred.item() for batch in preds for pred in batch]
-            preds_series = pd.Series(unrolled_preds, index=self.predict_indexes)
+            preds_series = pd.Series(
+                unrolled_preds, index=self.predict_indexes
+            )
             df = pd.read_csv(
-                getattr(self, f"{stage.name}_dataset"), usecols=[self.smiles_col]
+                getattr(self, f"{stage.name}_dataset"),
+                usecols=[self.smiles_col],
             )
             if self.target_col is None:
                 df["y"] = preds_series
@@ -211,7 +239,9 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         elif self.work_mode is WorkMode.REVERSE:
             x_hat_batch, y_hat_batch = zip(*preds)
             x_hats: List[List[int]] = [
-                x_hat.argmax(dim=1).tolist() for batch in x_hat_batch for x_hat in batch
+                x_hat.argmax(dim=1).tolist()
+                for batch in x_hat_batch
+                for x_hat in batch
             ]
             y_hat = [y_hat.item() for batch in y_hat_batch for y_hat in batch]
 
@@ -231,7 +261,9 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
     def decode(self, batch_list: List[List[int]]):
         decoded_smiles = []
         for seq in batch_list:
-            selfies = sf.encoding_to_selfies(seq, self.idx_to_symbol, enc_type="label")
+            selfies = sf.encoding_to_selfies(
+                seq, self.idx_to_symbol, enc_type="label"
+            )
             decoded_smiles.append(sf.decoder(selfies))
         return decoded_smiles
 
@@ -272,6 +304,7 @@ class SelfiesDataset(Dataset):
         For example, if we have a class called &quot;MyClass&quot;, then MyClass()[0] will return the first item in MyClass.
         This is why we can call self.selfies[index], because self refers to an instance of our class.
     """
+
     def __init__(self, selfies, targets) -> None:
         assert len(selfies) == len(targets)
 
@@ -301,6 +334,7 @@ class SelfiesCollator:
     __call__(data):
         Returns the one hot encoding of the input batch and the labels
     """
+
     def __init__(self, vocab_stoi, pad_to_len):
         self.vocab_stoi = vocab_stoi
         self.pad_to_len = pad_to_len
@@ -313,6 +347,6 @@ class SelfiesCollator:
                 selfies, self.vocab_stoi, self.pad_to_len, enc_type="one_hot"
             )
             hot_batch.append(one_hot)
-        return torch.tensor(np.asarray(hot_batch), dtype=torch.float), torch.tensor(
-            labels_batch, dtype=torch.float
-        )
+        return torch.tensor(
+            np.asarray(hot_batch), dtype=torch.float
+        ), torch.tensor(labels_batch, dtype=torch.float)

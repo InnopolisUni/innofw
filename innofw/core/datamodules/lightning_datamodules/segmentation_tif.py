@@ -1,15 +1,18 @@
 from typing import Optional
 
-#
 import pandas as pd
 import pytorch_lightning as pl
-from pydantic import validate_arguments, FilePath, DirectoryPath
-from torch.utils.data import DataLoader, WeightedRandomSampler
-from sklearn.model_selection import train_test_split
 import torch
+from pydantic import DirectoryPath
+from pydantic import FilePath
+from pydantic import validate_arguments
+from segmentation.datamodules.datasets.roads_dataset import SegmentationDataset
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader
+from torch.utils.data import WeightedRandomSampler
 
 #
-from segmentation.datamodules.datasets.roads_dataset import SegmentationDataset
+#
 
 
 class SegmentationDM(pl.LightningDataModule):
@@ -51,10 +54,12 @@ class SegmentationDM(pl.LightningDataModule):
     def setup(self, stage, **kwargs):
         if self.weights is not None:
             images = [
-                self.img_path / img_name for img_name in self.weights["file_names"]
+                self.img_path / img_name
+                for img_name in self.weights["file_names"]
             ]
             masks = [
-                self.label_path / img_name for img_name in self.weights["file_names"]
+                self.label_path / img_name
+                for img_name in self.weights["file_names"]
             ]
             train_weights, val_weights = train_test_split(
                 self.weights["weights"],
@@ -75,10 +80,15 @@ class SegmentationDM(pl.LightningDataModule):
             masks = sorted(masks, key=lambda x: x.name)
             self.samplers = {"train": None, "val": None}
 
-        assert len(images) == len(masks), "number of images and masks should be equal"
+        assert len(images) == len(
+            masks
+        ), "number of images and masks should be equal"
 
         train_images, val_images, train_masks, val_masks = train_test_split(
-            images, masks, test_size=self.val_size, random_state=self.random_seed
+            images,
+            masks,
+            test_size=self.val_size,
+            random_state=self.random_seed,
         )
 
         self.train_dataset = SegmentationDataset(
@@ -88,7 +98,10 @@ class SegmentationDM(pl.LightningDataModule):
             channels=self.channels,
         )
         self.val_dataset = SegmentationDataset(
-            val_images, val_masks, transform=self.val_transform, channels=self.channels
+            val_images,
+            val_masks,
+            transform=self.val_transform,
+            channels=self.channels,
         )
 
     def stage_dataloader(self, dataset, stage):

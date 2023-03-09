@@ -1,4 +1,5 @@
 import logging
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 
@@ -26,13 +27,16 @@ from innofw.utils.loggers import setup_clear_ml, setup_wandb
 dotenv.load_dotenv(override=True)
 
 
-@hydra.main(config_path="config/", config_name="train.yaml", version_base="1.2")
+@hydra.main(
+    config_path="config/", config_name="train.yaml", version_base="1.2"
+)
 def main(config) -> float:
     # Imports can be nested inside @hydra.main to optimize tab completion
     # https://github.com/facebookresearch/hydra/issues/934
 
     from innofw.pipeline import run_pipeline
-    if not config.get('experiment_name'):
+
+    if not config.get("experiment_name"):
         hydra_cfg = HydraConfig.get()
         experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
             "experiments"

@@ -1,9 +1,7 @@
 #
-from functools import partial
-
 #
-import torch.nn as nn
 import hydra
+import torch.nn as nn
 
 
 class WeightInitializer:
@@ -23,6 +21,7 @@ class WeightInitializer:
     init_weights(model):
         initializes model's weights
     """
+
     def __init__(
         self,
         init_func,

@@ -13,5 +13,3 @@ This package represents our framework's CORE, which itself has packages,  such a
 
 These packages are needed for training, testing and infer processes. Each of them contain detailed description as well.
 """
-
-from .models import InnoModel

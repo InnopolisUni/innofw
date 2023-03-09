@@ -1,6 +1,3 @@
-import datetime
-import os
-
 import xgboost as xgb
 from torch.utils.tensorboard import SummaryWriter
 
@@ -12,7 +9,10 @@ class XGBoostTrainingTensorBoardCallback(xgb.callback.TrainingCallback):
         self.test_writer = SummaryWriter(log_dir=self.log_dir)
 
     def after_iteration(
-        self, model, epoch: int, evals_log: xgb.callback.TrainingCallback.EvalsLog
+        self,
+        model,
+        epoch: int,
+        evals_log: xgb.callback.TrainingCallback.EvalsLog,
     ) -> bool:
         if not evals_log:
             return False

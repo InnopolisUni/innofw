@@ -1,5 +1,4 @@
-from pydantic import BaseModel, conint, validator
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 
 # @dataclass

@@ -6,9 +6,7 @@ import torch
 from innofw.constants import SegDataKeys
 
 
-def prep_data(
-    image, mask: Optional = None, transform: Optional = None
-):
+def prep_data(image, mask: Optional = None, transform: Optional = None):
     if transform is not None:
         if mask is not None:
             sample = transform(image=image, mask=mask)

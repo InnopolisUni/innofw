@@ -3,16 +3,18 @@ Author: Kazybek Askarbek
 Date: 01.08.22
 Description: File includes raster dataset handler. Current implementation uses rasterio but it could be easily replaced
 """
-
 # third party libraries
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Optional
+from typing import Tuple
+from typing import Union
 
-import numpy as np
 import rasterio as rio
 from pydantic import FilePath
 from rasterio.crs import CRS
-from rasterio.warp import Resampling, calculate_default_transform, reproject
+from rasterio.warp import calculate_default_transform
+from rasterio.warp import reproject
+from rasterio.warp import Resampling
 
 
 # local modules
@@ -22,19 +24,19 @@ from rasterio.warp import Resampling, calculate_default_transform, reproject
 class RasterDataset:
     """Raster dataset class, handles dataset creation, dynamic band addition and sync of nodata value across bands
 
-        Attributes
-        ----------
-        DN_NODATA: int
-            defines values to be used as a replacement of null values in the raster
-        DRIVER: str
-            sets up the default rasterio driver
+    Attributes
+    ----------
+    DN_NODATA: int
+        defines values to be used as a replacement of null values in the raster
+    DRIVER: str
+        sets up the default rasterio driver
 
-        Methods
-        -------
-        get_file_metadata(file_path: FilePath) -> dict
-            Parses file with metadata into a dictionary
-        add_band(self, band_path: FilePath, band_index: int) -> None
-            Adds a new band inplace into raster. Resamples new band if needed
+    Methods
+    -------
+    get_file_metadata(file_path: FilePath) -> dict
+        Parses file with metadata into a dictionary
+    add_band(self, band_path: FilePath, band_index: int) -> None
+        Adds a new band inplace into raster. Resamples new band if needed
     """
 
     DN_NODATA = 0
@@ -51,9 +53,7 @@ class RasterDataset:
         #         and metadata["driver"] != self.DRIVER
         #     )
         # ):
-        metadata[
-            "driver"
-        ] = self.DRIVER
+        metadata["driver"] = self.DRIVER
 
         self.ds = rio.open(dst_path, "w+", **metadata)
 
@@ -73,7 +73,9 @@ class RasterDataset:
             left, bottom, right, top = f.bounds
 
             target_crs = (
-                f.crs if target_crs_epsg is None else CRS.from_epsg(target_crs_epsg)
+                f.crs
+                if target_crs_epsg is None
+                else CRS.from_epsg(target_crs_epsg)
             )
 
             transform, width, height = calculate_default_transform(
@@ -106,7 +108,7 @@ class RasterDataset:
                     self.ds.crs,
                     image_band.width,
                     image_band.height,
-                    *image_band.bounds
+                    *image_band.bounds,
                 )
 
                 reproject(

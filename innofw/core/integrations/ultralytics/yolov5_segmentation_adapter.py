@@ -1,11 +1,9 @@
-from .yolov5_adapter import YOLOV5Adapter
+from yolov5.segment import predict as yolov5_predict
+from yolov5.segment import train as yolov5_train
+from yolov5.segment import val as yolov5_val
 
-from yolov5.segment import (
-    train as yolov5_train,
-    predict as yolov5_predict,
-    val as yolov5_val,
-)
 from ..base_integration_models import BaseIntegrationModel
+from .yolov5_adapter import YOLOV5Adapter
 from innofw.constants import Frameworks
 from innofw.core.models import register_models_adapter
 

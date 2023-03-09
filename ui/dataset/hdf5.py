@@ -1,24 +1,21 @@
 # import math
+import random
 import sys
+from functools import partial
+from typing import List
+
+import h5py
+import numpy as np
+import torch
+from aeronet.dataset import BandCollection
+from aeronet.dataset import parse_directory
+from tqdm import tqdm as tqdm
 
 # import os
 # import glob
-import random
-from typing import List
-
-from functools import reduce, partial
-
 # import albumentations as albu
-import numpy as np
-
-import torch
-
 # import torch.nn as nn
 # import torchvision
-
-import h5py
-from aeronet.dataset import BandCollection, parse_directory
-from tqdm import tqdm as tqdm
 
 
 def _to_tensor(x, **kwargs):
@@ -142,7 +139,9 @@ class Dataset(torch.utils.data.Dataset):
             image = data[:, :, : self.in_channels]
             mask = data[:, :, self.in_channels :]
             try:
-                raster_name = f[str(index) + "_raster_name"][()].decode("utf-8")
+                raster_name = f[str(index) + "_raster_name"][()].decode(
+                    "utf-8"
+                )
                 geo_bounds = f[str(index) + "_geo_bounds"][:]
                 assert len(geo_bounds) == 4
                 meta = {"raster_name": raster_name, "geo_bounds": geo_bounds}
@@ -164,7 +163,9 @@ class Dataset(torch.utils.data.Dataset):
             # indices = [index] + [np.random.randint(0, self.len) for _ in range(3)]
             indices = [index] + [
                 ind
-                for ind in np.random.choice(self.len, size=3, p=self.norm_class_weights)
+                for ind in np.random.choice(
+                    self.len, size=3, p=self.norm_class_weights
+                )
             ]
             for i, ind in enumerate(indices):
                 if i > 0:
@@ -172,7 +173,8 @@ class Dataset(torch.utils.data.Dataset):
                 img, msk = image, mask
                 if i == 0:  # top left
                     xc, yc = [
-                        int(random.uniform(s[0] * 0.5, s[1] * 1.5)) for _ in range(2)
+                        int(random.uniform(s[0] * 0.5, s[1] * 1.5))
+                        for _ in range(2)
                     ]  # mosaic center x, y
                     img4 = np.full(
                         (s[0] * 2, s[1] * 2, img.shape[2]), 0, dtype=np.float32
@@ -210,12 +212,16 @@ class Dataset(torch.utils.data.Dataset):
                 #           [..., h-3, h-2, h-1, h-2, h-3, ...]
                 bad_ybi = np.where(yb >= h)[0]
                 if bad_ybi.any():
-                    fixed_ybi = [y - 2 * (i + 1) for i, y in enumerate(bad_ybi)]
+                    fixed_ybi = [
+                        y - 2 * (i + 1) for i, y in enumerate(bad_ybi)
+                    ]
                     yb[bad_ybi] = yb[fixed_ybi]
 
                 bad_xbi = np.where(xb >= w)[0]
                 if bad_xbi.any():
-                    fixed_xbi = [x - 2 * (i + 1) for i, x in enumerate(bad_xbi)]
+                    fixed_xbi = [
+                        x - 2 * (i + 1) for i, x in enumerate(bad_xbi)
+                    ]
                     xb[bad_xbi] = xb[fixed_xbi]
 
                 img4[y1a:y2a, x1a:x2a] = img[np.ix_(yb, xb)]
@@ -297,7 +303,9 @@ class WeightedRandomCropDataset(torch.utils.data.Dataset):
         self.band_channels = band_channels
         self.band_labels = band_labels
         self.crop_size = crop_size
-        self.samples_per_image = ((10980 + crop_size[0] - 1) // crop_size[0]) ** 2
+        self.samples_per_image = (
+            (10980 + crop_size[0] - 1) // crop_size[0]
+        ) ** 2
         self.len = self.samples_per_image * len(self.tif_folders)
 
         self.is_train = is_train
@@ -310,14 +318,17 @@ class WeightedRandomCropDataset(torch.utils.data.Dataset):
         self.val_indices = []
         with tqdm(
             self.tif_folders,
-            desc="WeightedRandomCrop dataset: " + ("train" if is_train else "val"),
+            desc="WeightedRandomCrop dataset: "
+            + ("train" if is_train else "val"),
             file=sys.stdout,
         ) as iterator:
             for tif_folder in iterator:
                 image = BandCollection(
                     parse_directory(tif_folder, self.band_channels)
                 ).ordered(*self.band_channels)
-                mask = BandCollection(parse_directory(tif_folder, self.band_labels))
+                mask = BandCollection(
+                    parse_directory(tif_folder, self.band_labels)
+                )
 
                 self.images.append(image)
                 self.masks.append(mask)
@@ -353,7 +364,9 @@ class WeightedRandomCropDataset(torch.utils.data.Dataset):
                 bg_idx = np.random.randint(len(bg_indicies))
                 crop_idx = bg_indicies[bg_idx]
         else:
-            crop_idx = self.val_indices[image_idx][index % self.samples_per_image]
+            crop_idx = self.val_indices[image_idx][
+                index % self.samples_per_image
+            ]
 
         h_crop, w_crop = self.crop_size
         y_crop = crop_idx // width
@@ -371,7 +384,11 @@ class WeightedRandomCropDataset(torch.utils.data.Dataset):
             print("coords:", coords)
 
         x_sample = sample.numpy().astype("float32")
-        y_sample = mask.sample(y_crop, x_crop, h_crop, w_crop).numpy().astype("float32")
+        y_sample = (
+            mask.sample(y_crop, x_crop, h_crop, w_crop)
+            .numpy()
+            .astype("float32")
+        )
 
         image = x_sample.transpose(1, 2, 0)
         image[image < 0] = 0
@@ -440,11 +457,17 @@ class _TiledQuarryImage(torch.utils.data.Dataset):
         self.std = None
         self.preprocessing = _get_preprocessing_fn(self.mean, self.std)
 
-        self.image = BandCollection(parse_directory(tif_folder, self.band_channels))
-        self.mask = BandCollection(parse_directory(tif_folder, self.band_labels))
+        self.image = BandCollection(
+            parse_directory(tif_folder, self.band_channels)
+        )
+        self.mask = BandCollection(
+            parse_directory(tif_folder, self.band_labels)
+        )
 
         if self.image.shape[1:] != self.mask.shape[1:]:
-            raise ValueError("Shape of image does not corresponds to shape of mask")
+            raise ValueError(
+                "Shape of image does not corresponds to shape of mask"
+            )
 
         _, rows, cols = self.mask.shape
 
@@ -459,7 +482,9 @@ class _TiledQuarryImage(torch.utils.data.Dataset):
         n_tiles = x_tiles * y_tiles
 
         skip = False
-        with tqdm(range(n_tiles), desc="TiledQuarryImage", file=sys.stdout) as iterator:
+        with tqdm(
+            range(n_tiles), desc="TiledQuarryImage", file=sys.stdout
+        ) as iterator:
             for n in iterator:
                 y = (n // x_tiles) * self.crop_step[0]
                 x = (n % x_tiles) * self.crop_step[1]

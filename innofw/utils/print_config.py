@@ -1,15 +1,11 @@
 from pathlib import Path
 from typing import Sequence
 
-import rich
 import rich.syntax
 import rich.tree
-from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig, OmegaConf, open_dict
+from omegaconf import DictConfig
+from omegaconf import OmegaConf
 from pytorch_lightning.utilities import rank_zero_only
-from rich.prompt import Prompt
-
-import logging
 
 from innofw.utils import get_logger
 
@@ -18,18 +14,18 @@ logger = get_logger()
 
 @rank_zero_only
 def print_config_tree(
-        cfg: DictConfig,
-        print_order: Sequence[str] = (
-                "datamodule",
-                "model",
-                "callbacks",
-                "logger",
-                "trainer",
-                "paths",
-                "extras",
-        ),
-        resolve: bool = False,
-        save_to_file: bool = False,
+    cfg: DictConfig,
+    print_order: Sequence[str] = (
+        "datamodule",
+        "model",
+        "callbacks",
+        "logger",
+        "trainer",
+        "paths",
+        "extras",
+    ),
+    resolve: bool = False,
+    save_to_file: bool = False,
 ) -> None:
     """Prints content of DictConfig using Rich library and its tree structure.
     Args:

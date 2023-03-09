@@ -1,10 +1,7 @@
-import pickle
-from enum import Enum
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
-
 from torch.nn import ModuleList
-import pytorch_lightning as pl
-from transformers import BertForTokenClassification, PreTrainedTokenizerBase
+from transformers import BertForTokenClassification
+from transformers import PreTrainedTokenizerBase
+
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
 

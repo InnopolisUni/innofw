@@ -1,13 +1,11 @@
 #
 from abc import ABC
-from typing import Optional, Any
+from typing import Any
+
+import numpy as np
+from pytorch_lightning.callbacks import Callback
 
 #
-from pytorch_lightning.callbacks import Callback
-import segmentation_models_pytorch as smp
-import numpy as np
-import torch
-import hydra
 
 
 #
@@ -38,7 +36,8 @@ def plot_one_box(x, image, color=None, label=None, line_thickness=None):
     """
     # Plots one bounding box on image img
     tl = (
-        line_thickness or round(0.001 * (image.shape[0] + image.shape[1]) / 2) + 1
+        line_thickness
+        or round(0.001 * (image.shape[0] + image.shape[1]) / 2) + 1
     )  # line/font thickness
     color = color or [random.randint(0, 255) for _ in range(3)]
     c1, c2 = (int(x[0]), int(x[1])), (int(x[2]), int(x[3]))
@@ -70,7 +69,9 @@ class LogPredictionsDetectionCallback(BaseLogPredictionsCallback):
         self.labels = ["lep1", "lep2", "lep3", "lep4"]
         num_classes = len(self.labels)
         self.colors = [
-            random.randint(0, 255) for _ in range(3) for _ in range(num_classes)
+            random.randint(0, 255)
+            for _ in range(3)
+            for _ in range(num_classes)
         ]
 
     def on_train_batch_end(
@@ -82,7 +83,10 @@ class LogPredictionsDetectionCallback(BaseLogPredictionsCallback):
         batch_idx: int,
         unused: int = 0,
     ) -> None:
-        if batch_idx == 0 or (batch_idx + 1) % self.logging_batch_interval != 0:
+        if (
+            batch_idx == 0
+            or (batch_idx + 1) % self.logging_batch_interval != 0
+        ):
             return
 
         tensorboard = pl_module.logger.experiment

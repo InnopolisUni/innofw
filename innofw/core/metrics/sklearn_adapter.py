@@ -1,8 +1,9 @@
 import inspect
 
-#
 from innofw.core.metrics import register_metrics_adapter
 from innofw.core.metrics.base import BaseMetricAdapter
+
+#
 
 
 @register_metrics_adapter("sklearn_adapter")
@@ -22,6 +23,7 @@ class SklearnAdapter(BaseMetricAdapter):
     is_suitable_input(metric):
         function checks metric function
     """
+
     def __init__(self, metric, *args, **kwargs):
         super().__init__(metric)
 

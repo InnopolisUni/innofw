@@ -1,10 +1,9 @@
 import logging
-import pytorch_lightning as pl
 from typing import Any
+
 import torch
 import torch.nn.functional as F
-from omegaconf import DictConfig
-import hydra
+
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
 
@@ -34,7 +33,13 @@ class OneShotLearningLightningModule(BaseLightningModule):
     """
 
     def __init__(
-            self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
+        self,
+        model,
+        losses,
+        optimizer_cfg,
+        scheduler_cfg,
+        *args: Any,
+        **kwargs: Any,
     ):
         super().__init__(*args, **kwargs)
         self.model = model

@@ -1,12 +1,10 @@
 __all__ = ["SegmentationLM"]
 
 # standard libraries
-import logging
 from typing import Any, Optional
 
 # third-party libraries
 import hydra
-import pytorch_lightning as pl
 from omegaconf import DictConfig
 from pytorch_lightning.utilities.types import STEP_OUTPUT
 from torchmetrics.classification import (
@@ -17,6 +15,7 @@ from torchmetrics.classification import (
 )
 import torch
 from torchmetrics import MetricCollection
+
 # import lovely_tensors as lt
 
 # local modules
@@ -80,7 +79,6 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
             ]
         )  # todo: it is slow
 
-
         self.train_metrics = metrics.clone(prefix="train_")
         self.val_metrics = metrics.clone(prefix="val_")
         # self.test_metrics = metrics.clone(prefix="test_")
@@ -102,7 +100,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         return out
 
     def log_losses(
-            self, name: str, logits: torch.Tensor, masks: torch.Tensor
+        self, name: str, logits: torch.Tensor, masks: torch.Tensor
     ) -> torch.FloatTensor:
         """Function to compute and log losses"""
         total_loss = 0
@@ -141,7 +139,9 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
             output["loss"] = loss
 
         if stage != "predict":
-            metrics = self.compute_metrics(stage, predictions, label)  # todo: uncomment
+            metrics = self.compute_metrics(
+                stage, predictions, label
+            )  # todo: uncomment
             self.log_metrics(stage, metrics)
 
         return output

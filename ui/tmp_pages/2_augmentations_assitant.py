@@ -1,29 +1,21 @@
 import math
 from pathlib import Path
 
-#
+import albumentяations as albu
+import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
-import albumentяations as albu
 from omegaconf import DictConfig
-import matplotlib.pyplot as plt
 
-#
 from innofw.utils import find_suitable_datamodule
-from ui.utils import (
-    load_augmentations_config,
-    get_arguments,
-    get_placeholder_params,
-    select_transformations,
-    show_random_params,
-)
-
+from ui.utils import load_augmentations_config
+from ui.utils import select_transformations
 from ui.visuals import (
-    select_image,
-    show_credentials,
-    show_docstring,
     get_transormations_params,
 )
+
+#
+#
 
 
 # init
@@ -49,11 +41,15 @@ if (
     st.sidebar.button("Configure!", on_click=callback)
     or st.session_state.conf_button_clicked
 ):
-    task = st.sidebar.selectbox("task", ["image-classification", "image-segmentation"])
+    task = st.sidebar.selectbox(
+        "task", ["image-classification", "image-segmentation"]
+    )
     framework = st.sidebar.selectbox("framework", ["torch", "sklearn"])
 
     data_path = st.sidebar.text_input("path to data")
-    in_channels = st.sidebar.number_input("input channels:", min_value=1, max_value=20)
+    in_channels = st.sidebar.number_input(
+        "input channels:", min_value=1, max_value=20
+    )
     batch_size = st.sidebar.slider("batch size:", min_value=1, max_value=16)
     # prep_func_type = st.sidebar.selectbox('preprocessing function:', prep_funcs.keys())
 
@@ -61,7 +57,8 @@ if (
 
     # load the config
     augmentations = load_augmentations_config(
-        None, str(Path("ui/augmentations.json").resolve())  # placeholder_params
+        None,
+        str(Path("ui/augmentations.json").resolve()),  # placeholder_params
     )
 
     # get the list of transformations names
@@ -92,9 +89,13 @@ if (
             images = batch[0].detach().cpu().numpy()
             dataset_len = images.shape[0]
             with_replace = batch_size > dataset_len
-            indices = np.random.choice(range(dataset_len), batch_size, with_replace)
+            indices = np.random.choice(
+                range(dataset_len), batch_size, with_replace
+            )
 
-        selected_aug = get_transormations_params(transform_names, augmentations)
+        selected_aug = get_transormations_params(
+            transform_names, augmentations
+        )
         selected_aug = albu.ReplayCompose(selected_aug)
 
         aug_images = []

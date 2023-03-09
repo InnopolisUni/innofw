@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+
 from innofw.core.datasets.smiles_dataset import SmilesDataset
 from tests.utils import get_test_folder_path
 
@@ -7,7 +8,8 @@ from tests.utils import get_test_folder_path
 def test_smiles_dataset_smoke():
     # initialize config
     test_csv_path = (
-        get_test_folder_path() / "data/tabular/molecular/smiles/qm9/test/test.csv"
+        get_test_folder_path()
+        / "data/tabular/molecular/smiles/qm9/test/test.csv"
     )
     smiles_col = "smiles"
     target_col = "gap"
@@ -42,7 +44,8 @@ def test_smiles_dataset_smoke():
 def test_smiles_dataset_from_df():
     # initialize config
     test_csv_path = (
-        get_test_folder_path() / "data/tabular/molecular/smiles/qm9/test/test.csv"
+        get_test_folder_path()
+        / "data/tabular/molecular/smiles/qm9/test/test.csv"
     )
     smiles_col = "smiles"
     target_col = "gap"
@@ -68,5 +71,3 @@ def test_smiles_dataset_from_df():
     assert len(sample) == 2
     assert isinstance(sample[0], np.ndarray)
     assert isinstance(sample[1], float)
-
-

@@ -1,4 +1,5 @@
 from typing import Optional
+
 from rdkit import Chem
 from rdkit.Chem.SaltRemover import SaltRemover
 

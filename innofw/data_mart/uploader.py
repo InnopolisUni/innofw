@@ -2,24 +2,26 @@
 import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional, List, Union
+from typing import List
+from typing import Optional
+from typing import Union
 
-# third-party libraries
 from fire import Fire
-from urlpath import URL
+from pydantic import AnyUrl
+from pydantic import validate_arguments
 from pydantic.types import DirectoryPath
-from pydantic import AnyUrl, validate_arguments
+from urlpath import URL
 
-# local modules
+from innofw.constants import S3Credentials
+from innofw.constants import S3FileTags
 from innofw.schema.dataset import DatasetConfig
-from innofw.constants import (
-    S3Credentials,
-    S3FileTags,
-)
 from innofw.utils import get_abs_path
 from innofw.utils.file_hash import compute_file_hash
-from innofw.utils.s3_utils.credentials import get_s3_credentials
 from innofw.utils.s3_utils import S3Handler
+from innofw.utils.s3_utils.credentials import get_s3_credentials
+
+# third-party libraries
+# local modules
 
 
 @validate_arguments
@@ -96,7 +98,9 @@ def upload_dataset(
     if access_key is None or secret_key is None:
         credentials = get_s3_credentials()
     else:
-        credentials = S3Credentials(ACCESS_KEY=access_key, SECRET_KEY=secret_key)
+        credentials = S3Credentials(
+            ACCESS_KEY=access_key, SECRET_KEY=secret_key
+        )
 
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
@@ -113,7 +117,9 @@ def upload_dataset(
             tags = {S3FileTags.hash_value.value: compute_file_hash(file_path)}
             # upload file to s3
             url = URL(remote_save_path).anchor
-            upload_url = S3Handler(url=url, credentials=credentials).upload_file(
+            upload_url = S3Handler(
+                url=url, credentials=credentials
+            ).upload_file(
                 src_path=file_path,
                 dst_path=remote_save_path,
                 tags=tags,

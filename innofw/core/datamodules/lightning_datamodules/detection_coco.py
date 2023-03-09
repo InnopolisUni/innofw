@@ -1,29 +1,26 @@
 import os
 import pathlib
 
+import albumentations as albu
+import cv2
 import numpy as np
 import pandas as pd
 import torch
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import random_split
-import albumentations as albu
-import cv2
 
-from innofw.constants import Stages, Frameworks
+from innofw.constants import Stages
 from innofw.core.augmentations import Augmentation
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
-from innofw.utils.dm_utils.utils import find_file_by_ext, find_path
-from innofw.core.datasets.coco import (
-    CocoDataset,
-    DicomCocoDataset,
-    DicomCocoDatasetInfer,
-)
-from innofw.utils.data_utils.preprocessing.dicom_handler import (
-    img_to_dicom,
-    dicom_to_img,
-)
+from innofw.core.datasets.coco import CocoDataset
+from innofw.core.datasets.coco import DicomCocoDataset
+from innofw.core.datasets.coco import DicomCocoDatasetInfer
+from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
+from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
+from innofw.utils.dm_utils.utils import find_file_by_ext
+from innofw.utils.dm_utils.utils import find_path
 
 
 def collate_fn(batch):
@@ -48,6 +45,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
         Returns paths to csv file with bounding boxes and folder with images
 
     """
+
     task = ["image-detection"]
     dataset = CocoDataset
 
@@ -74,14 +72,24 @@ class CocoLightningDataModule(BaseLightningDataModule):
             *args,
             **kwargs,
         )
-        self.aug = {'train': None, 'test': None, 'val': None} if augmentations is None else augmentations
+        self.aug = (
+            {"train": None, "test": None, "val": None}
+            if augmentations is None
+            else augmentations
+        )
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        self.train_dataset, train_csv = self.find_csv_and_data(self.train_dataset)
+        self.train_dataset, train_csv = self.find_csv_and_data(
+            self.train_dataset
+        )
         self.test_dataset, test_csv = self.find_csv_and_data(self.test_dataset)
-        self.aug = {'train': None, 'test': None, 'val': None}  # todo: fix
-        if self.aug is not None and self.aug['train'] is not None and self.aug['test'] is not None:
+        self.aug = {"train": None, "test": None, "val": None}  # todo: fix
+        if (
+            self.aug is not None
+            and self.aug["train"] is not None
+            and self.aug["test"] is not None
+        ):
             train_dataset = self.dataset(
                 train_csv,
                 str(self.train_dataset),
@@ -98,7 +106,10 @@ class CocoLightningDataModule(BaseLightningDataModule):
                 str(self.train_dataset),
                 transforms=albu.Compose(
                     [ToTensorV2(p=1.0)],
-                    bbox_params={"format": "pascal_voc", "label_fields": ["labels"]},
+                    bbox_params={
+                        "format": "pascal_voc",
+                        "label_fields": ["labels"],
+                    },
                 ),
             )
             self.test_dataset = self.dataset(
@@ -106,7 +117,10 @@ class CocoLightningDataModule(BaseLightningDataModule):
                 str(self.test_dataset),
                 transforms=albu.Compose(
                     [ToTensorV2(p=1.0)],
-                    bbox_params={"format": "pascal_voc", "label_fields": ["labels"]},
+                    bbox_params={
+                        "format": "pascal_voc",
+                        "label_fields": ["labels"],
+                    },
                 ),
             )
 
@@ -117,7 +131,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
             train_dataset, [train_size, n - train_size]
         )
         # Set validatoin augmentations for val
-        setattr(self.val_dataset, 'transform', self.aug['val'])
+        setattr(self.val_dataset, "transform", self.aug["val"])
 
     def find_csv_and_data(self, path):
         csv_path = find_file_by_ext(path, ".csv")
@@ -148,7 +162,6 @@ class CocoLightningDataModule(BaseLightningDataModule):
         return val_dataloader
 
     def test_dataloader(self):
-
         test_dataloader = torch.utils.data.DataLoader(
             self.test_dataset,
             batch_size=self.batch_size,
@@ -176,6 +189,7 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
         Saves inference predictions in Dicom format
 
     """
+
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         images = self.predict_dataset.images
         dicoms = self.predict_dataset.paths
@@ -198,7 +212,9 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
                     2,
                 )
             img_to_dicom(
-                im_to_draw, dicom, os.path.join(dst_path, dicom.split("/")[-1] + "SC")
+                im_to_draw,
+                dicom,
+                os.path.join(dst_path, dicom.split("/")[-1] + "SC"),
             )
 
     def setup_infer(self):
@@ -216,7 +232,7 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
             ),
         )
         try:
-            aug = self.aug['test']
+            aug = self.aug["test"]
         except:
             aug = transforms
         self.predict_dataset = DicomCocoDatasetInfer(

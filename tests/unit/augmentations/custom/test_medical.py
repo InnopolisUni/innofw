@@ -1,5 +1,5 @@
-import pytest
 import cv2
+import pytest
 
 from innofw.utils.data_utils.transforms.db_scan import MakeContrasted
 from innofw.utils.data_utils.transforms.rib_suppression import RibSuppression
@@ -7,13 +7,13 @@ from innofw.utils.data_utils.transforms.rib_suppression import RibSuppression
 
 @pytest.fixture
 def rib_path():
-    path = 'tests/data/images/images_for_sh/medicine/00000005_003_jpg.rf.f694233bc76a3c7a12633fafd55e278d.jpg'
+    path = "tests/data/images/images_for_sh/medicine/00000005_003_jpg.rf.f694233bc76a3c7a12633fafd55e278d.jpg"
     return path
 
 
 @pytest.fixture
 def brain_path():
-    path = 'tests/data/images/images_for_sh/medicine/1.jpg'
+    path = "tests/data/images/images_for_sh/medicine/1.jpg"
     return path
 
 

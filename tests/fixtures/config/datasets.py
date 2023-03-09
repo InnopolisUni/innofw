@@ -1,8 +1,9 @@
 # third party libraries
 from omegaconf import DictConfig
 
-# local modules
 from tests.utils import get_test_folder_path
+
+# local modules
 
 lep_datamodule_cfg_w_target = DictConfig(
     {
@@ -13,13 +14,19 @@ lep_datamodule_cfg_w_target = DictConfig(
         "date_time": "01.07.2076",
         "_target_": "innofw.core.integrations.YOLOv5DataModule",
         "train": {
-            "source": str(get_test_folder_path() / "data/images/detection/lep/train")
+            "source": str(
+                get_test_folder_path() / "data/images/detection/lep/train"
+            )
         },
         "test": {
-            "source": str(get_test_folder_path() / "data/images/detection/lep/test")
+            "source": str(
+                get_test_folder_path() / "data/images/detection/lep/test"
+            )
         },
         "infer": {
-            "source": str(get_test_folder_path() / "data/images/detection/lep/infer")
+            "source": str(
+                get_test_folder_path() / "data/images/detection/lep/infer"
+            )
         },
         "num_workers": 8,
         "val_size": 0.2,
@@ -89,9 +96,15 @@ wheat_datamodule_cfg_w_target = DictConfig(
         "date_time": "01.07.2076",
         "_target_": "innofw.core.datamodules.lightning_datamodules.detection_coco.CocoLightningDataModule",
         "train": {
-            "source": str(get_test_folder_path() / "data/images/detection/wheat")
+            "source": str(
+                get_test_folder_path() / "data/images/detection/wheat"
+            )
         },
-        "test": {"source": str(get_test_folder_path() / "data/images/detection/wheat")},
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/detection/wheat"
+            )
+        },
         "num_workers": 8,
     }
 )
@@ -105,10 +118,14 @@ dicom_datamodule_cfg_w_target = DictConfig(
         "date_time": "01.07.2076",
         "_target_": "innofw.core.datamodules.lightning_datamodules.detection_coco.DicomCocoLightningDataModule",
         "train": {
-            "source": str(get_test_folder_path() / "data/images/detection/stroke/test/")
+            "source": str(
+                get_test_folder_path() / "data/images/detection/stroke/test/"
+            )
         },
         "test": {
-            "source": str(get_test_folder_path() / "data/images/detection/stroke/test/")
+            "source": str(
+                get_test_folder_path() / "data/images/detection/stroke/test/"
+            )
         },
         "num_workers": 1,
     }
@@ -124,7 +141,8 @@ arable_segmentation_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule",
         "train": {
             "source": str(
-                get_test_folder_path() / "data/images/segmentation/arable/train"
+                get_test_folder_path()
+                / "data/images/segmentation/arable/train"
             )
         },
         "test": {
@@ -172,12 +190,14 @@ qm9_datamodule_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.pandas_datamodules.QsarDataModule",
         "train": {
             "source": str(
-                get_test_folder_path() / "data/tabular/molecular/smiles/qm9/train"
+                get_test_folder_path()
+                / "data/tabular/molecular/smiles/qm9/train"
             )
         },
         "test": {
             "source": str(
-                get_test_folder_path() / "data/tabular/molecular/smiles/qm9/train"
+                get_test_folder_path()
+                / "data/tabular/molecular/smiles/qm9/train"
             )
         },
         "smiles_col": "smiles",
@@ -186,24 +206,32 @@ qm9_datamodule_cfg_w_target = DictConfig(
 )
 
 
-tiff_datamodule_cfg_w_target = DictConfig({
-    "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM",
-    "train": {
-        "source": str(get_test_folder_path() / "data/images/segmentation/linear-roads-bin-seg-oftp/datamodule_data/train/"),
-    },
-    "test": {
-        "source": str(get_test_folder_path() / "data/images/segmentation/linear-roads-bin-seg-oftp/datamodule_data/train"),
-    },
-    "weights_csv_path": None,
-    "num_workers": 2,
-    "batch_size": 1,
-    "channels": 3,
-    "name": "something",
-    "task": "image-segmentation",
-    "description": "some",
-    "markup_info": "some",
-    "date_time": "some",
-})
+tiff_datamodule_cfg_w_target = DictConfig(
+    {
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM",
+        "train": {
+            "source": str(
+                get_test_folder_path()
+                / "data/images/segmentation/linear-roads-bin-seg-oftp/datamodule_data/train/"
+            ),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path()
+                / "data/images/segmentation/linear-roads-bin-seg-oftp/datamodule_data/train"
+            ),
+        },
+        "weights_csv_path": None,
+        "num_workers": 2,
+        "batch_size": 1,
+        "channels": 3,
+        "name": "something",
+        "task": "image-segmentation",
+        "description": "some",
+        "markup_info": "some",
+        "date_time": "some",
+    }
+)
 
 drugprot_datamodule_cfg_w_target = DictConfig(
     {
@@ -266,7 +294,12 @@ faces_siamese_datamodule_cfg_w_target = DictConfig(
 
 qsar_datamodule_cfg_w_target = DictConfig(
     {
-        "task": ["qsar-regression", "text-vae-reverse", "text-vae-forward", "text-vae"],
+        "task": [
+            "qsar-regression",
+            "text-vae-reverse",
+            "text-vae-forward",
+            "text-vae",
+        ],
         "name": "qm9_selfies",
         "description": "something",
         "markup_info": "Информация о разметке",

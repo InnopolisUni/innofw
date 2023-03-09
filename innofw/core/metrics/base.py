@@ -5,10 +5,12 @@ description:
 
 """
 #
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
+
+import torch.nn as nn
 
 #
-import torch.nn as nn
 
 
 class BaseMetricAdapter(ABC, nn.Module):
@@ -27,6 +29,7 @@ class BaseMetricAdapter(ABC, nn.Module):
         abstract function to perform metric
 
     """
+
     def __init__(self, metric):
         super().__init__()
         self.metric = metric
@@ -39,4 +42,3 @@ class BaseMetricAdapter(ABC, nn.Module):
     @abstractmethod
     def is_suitable_input(metric) -> bool:
         pass
-

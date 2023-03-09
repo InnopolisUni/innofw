@@ -1,4 +1,5 @@
-from typing import Protocol, TypedDict
+from typing import Protocol
+from typing import TypedDict
 
 import numpy as np
 import pandas as pd
@@ -15,6 +16,7 @@ class DataContainer(TypedDict):
     y : np.ndarray
         numpy array with targets
     """
+
     x: pd.DataFrame
     y: np.ndarray
 
@@ -32,6 +34,7 @@ class DataModuleI(Protocol):
     setup():
         returns Nothing.
     """
+
     def test_dataloader(self) -> DataContainer:
         ...
 
@@ -69,7 +72,9 @@ class ActiveDataModule:
     def update_indices(self, indices):
         idx_to_add = self.pool_idxs[indices]
         self.pool_idxs = np.setdiff1d(self.pool_idxs, idx_to_add)
-        self.train_idxs = np.concatenate([self.train_idxs, idx_to_add], axis=None)
+        self.train_idxs = np.concatenate(
+            [self.train_idxs, idx_to_add], axis=None
+        )
 
     def train_dataloader(self):
         return {

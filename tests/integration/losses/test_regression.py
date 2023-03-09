@@ -1,11 +1,12 @@
 # other
-from omegaconf import DictConfig
-import torch
 import numpy as np
+import torch
+from omegaconf import DictConfig
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_losses
+
+# local
 
 
 def test_sklearn_loss_creation():
