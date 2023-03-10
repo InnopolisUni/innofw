@@ -1,12 +1,10 @@
 __all__ = ["SegmentationLM"]
 
 # standard libraries
-import logging
 from typing import Any, Optional
 
 # third-party libraries
 import hydra
-import pytorch_lightning as pl
 from omegaconf import DictConfig
 from pytorch_lightning.utilities.types import STEP_OUTPUT
 from torchmetrics.classification import (
@@ -15,7 +13,6 @@ from torchmetrics.classification import (
     BinaryPrecision,
     BinaryJaccardIndex,
 )
-from torch.cuda.amp import GradScaler, autocast
 import torch
 from torchmetrics import MetricCollection
 import lovely_tensors as lt
@@ -54,6 +51,7 @@ class SegmentationLM(BaseLightningModule):
         load checkpoints to the model, used to start with pretrained weights
 
     """
+
     def __init__(
         self,
         model,
@@ -89,7 +87,9 @@ class SegmentationLM(BaseLightningModule):
         self.test_metrics = metrics.clone(prefix="test_")
 
         # self.scaler = GradScaler(enabled=True)
-        self.save_hyperparameters(ignore=["metrics", "optim_config", "scheduler_cfg"])
+        self.save_hyperparameters(
+            ignore=["metrics", "optim_config", "scheduler_cfg"]
+        )
 
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])
@@ -108,7 +108,9 @@ class SegmentationLM(BaseLightningModule):
 
         if self.scheduler_cfg is not None:
             # instantiate the scheduler
-            scheduler = hydra.utils.instantiate(self.scheduler_cfg, optimizer=optimizer)
+            scheduler = hydra.utils.instantiate(
+                self.scheduler_cfg, optimizer=optimizer
+            )
             output["lr_scheduler"] = scheduler
 
         return output
@@ -174,7 +176,9 @@ class SegmentationLM(BaseLightningModule):
             output["loss"] = loss
 
         if stage != "predict":
-            metrics = self.compute_metrics(stage, predictions, label)  # todo: uncomment
+            metrics = self.compute_metrics(
+                stage, predictions, label
+            )  # todo: uncomment
             self.log_metrics(stage, metrics)
 
         return output

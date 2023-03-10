@@ -1,21 +1,20 @@
 # author: Kazybek Askarbek
 # date: 12.07.22
 # standard libraries
-from innofw.constants import Frameworks
-from omegaconf import DictConfig
 import pytest
 
-# local modules
-from innofw.utils.framework import get_datamodule, get_model
+from innofw import InnoModel
+from innofw.constants import Frameworks
 from innofw.core.integrations import YOLOv5
+from innofw.utils.framework import get_datamodule
+from innofw.utils.framework import get_model
+from tests.fixtures.config.datasets import lep_datamodule_cfg_w_target
+from tests.fixtures.config.models import yolov5_cfg_w_target
+from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
 from tests.utils import get_test_folder_path
 
+# local modules
 # basic config
-from innofw import InnoModel
-
-from tests.fixtures.config.models import yolov5_cfg_w_target
-from tests.fixtures.config.datasets import lep_datamodule_cfg_w_target
-from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
 
 # no _target_ key
 model_cfg_wo_target = yolov5_cfg_w_target.copy()
@@ -81,6 +80,7 @@ def test_model_predicting(model_cfg, dm_cfg):
         log_dir="./logs/test/logs",
     )
     wrapped_model.predict(datamodule, ckpt_path=ckpt_path)
+
 
 # def test_model_training + with metrics
 # def test_model_logging

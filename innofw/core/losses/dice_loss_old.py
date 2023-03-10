@@ -1,6 +1,4 @@
-import numpy as np
 import torch
-import torch.nn.functional as F
 from torch.nn.modules.loss import _Loss
 
 
@@ -10,18 +8,22 @@ def _threshold(x, threshold=None):
     else:
         return x
 
+
 def _reduce(x, reduction):
-    if reduction == 'mean':
+    if reduction == "mean":
         return torch.mean(x)
-    elif reduction == 'sum':
+    elif reduction == "sum":
         return torch.sum(x)
     else:
         return x
 
-class IoUBatch(torch.nn.Module):
-    __name__ = 'iou_score'
 
-    def __init__(self, eps=1e-7, threshold=0.5, per_image=True, reduction:str='none'):
+class IoUBatch(torch.nn.Module):
+    __name__ = "iou_score"
+
+    def __init__(
+        self, eps=1e-7, threshold=0.5, per_image=True, reduction: str = "none"
+    ):
         super().__init__()
         self.eps = eps
         self.threshold = threshold
@@ -40,23 +42,35 @@ class IoUBatch(torch.nn.Module):
 
         # deal with stacked mixup
         if prediction.size() != target.size():
-            target1, target2 = target[:,0], target[:,1]
-            t = target[:,2]
+            target1, target2 = target[:, 0], target[:, 1]
+            t = target[:, 2]
             target = t * target1 + (1 - t) * target2
 
         prediction = prediction.view(batch_size, -1)
         target = target.reshape(batch_size, -1)
 
         intersection = torch.sum(prediction * target, dim=1)
-        union = torch.sum(prediction, dim=1) + torch.sum(target, dim=1) - intersection
+        union = (
+            torch.sum(prediction, dim=1)
+            + torch.sum(target, dim=1)
+            - intersection
+        )
         iou_object = (intersection + self.eps) / (union + self.eps)
 
         return _reduce(iou_object, self.reduction)
 
-class FScoreBatch(torch.nn.Module):
-    __name__ = 'f_score'
 
-    def __init__(self, beta=1.0, eps=1e-7, threshold=0.5, per_image=True, reduction:str='none'):
+class FScoreBatch(torch.nn.Module):
+    __name__ = "f_score"
+
+    def __init__(
+        self,
+        beta=1.0,
+        eps=1e-7,
+        threshold=0.5,
+        per_image=True,
+        reduction: str = "none",
+    ):
         super().__init__()
         self.beta = beta
         self.eps = eps
@@ -76,8 +90,8 @@ class FScoreBatch(torch.nn.Module):
 
         # deal with stacked mixup
         if prediction.size() != target.size():
-            target1, target2 = target[:,0], target[:,1]
-            t = target[:,2]
+            target1, target2 = target[:, 0], target[:, 1]
+            t = target[:, 2]
             target = t * target1 + (1 - t) * target2
 
         prediction = prediction.view(batch_size, -1)
@@ -87,10 +101,12 @@ class FScoreBatch(torch.nn.Module):
         fp = torch.sum(prediction, dim=1) - tp
         fn = torch.sum(target, dim=1) - tp
 
-        fscores = ((1 + self.beta ** 2) * tp + self.eps) / \
-                  ((1 + self.beta ** 2) * tp + self.beta ** 2 * fn + fp + self.eps)
+        fscores = ((1 + self.beta**2) * tp + self.eps) / (
+            (1 + self.beta**2) * tp + self.beta**2 * fn + fp + self.eps
+        )
 
         return _reduce(fscores, self.reduction)
+
 
 def get_metric_scores(prediction, target, funcs, threshold=0.5):
     scores = {}
@@ -100,12 +116,14 @@ def get_metric_scores(prediction, target, funcs, threshold=0.5):
 
 
 class DiceLoss(_Loss):
-    def __init__(self, beta=1.2, gamma: float=1.0, mode='log', alpha=None):
+    def __init__(self, beta=1.2, gamma: float = 1.0, mode="log", alpha=None):
         super().__init__()
         self.gamma = gamma
         self.mode = mode
         self.beta = beta
-        self.fscore = FScoreBatch(beta=beta, threshold=None, per_image=False, reduction='none')
+        self.fscore = FScoreBatch(
+            beta=beta, threshold=None, per_image=False, reduction="none"
+        )
 
         assert alpha is None or (alpha >= 0 and alpha <= 1)
         self.alpha = alpha
@@ -113,25 +131,34 @@ class DiceLoss(_Loss):
     def forward(self, output, target):
         d1 = self.fscore(output, target)
         # default behaviour:
-#         d0 = torch.tensor([1])
-#         w1, w0 = 1, 0
+        #         d0 = torch.tensor([1])
+        #         w1, w0 = 1, 0
         # new behaviour:
         d0 = self.fscore(1 - output, 1 - target)
 
         w1 = self.alpha if self.alpha is not None else 1 - torch.mean(target)
         w0 = 1 - w1
 
-        if self.mode == 'linear':
+        if self.mode == "linear":
             l1 = 1 - d1
             l0 = 1 - d0
-        elif self.mode == 'log':
-            l1 = (-torch.clamp(torch.log(torch.clamp(d1, min=1e-7, max=1)), min=-100)) ** self.gamma
-            l0 = (-torch.clamp(torch.log(torch.clamp(d0, min=1e-7, max=1)), min=-100)) ** self.gamma
+        elif self.mode == "log":
+            l1 = (
+                -torch.clamp(
+                    torch.log(torch.clamp(d1, min=1e-7, max=1)), min=-100
+                )
+            ) ** self.gamma
+            l0 = (
+                -torch.clamp(
+                    torch.log(torch.clamp(d0, min=1e-7, max=1)), min=-100
+                )
+            ) ** self.gamma
         else:
-            raise Exception(f'DiceLoss: unsupported mode "{self.    mode}" - "linear" or "log" allowed')
+            raise Exception(
+                f'DiceLoss: unsupported mode "{self.    mode}" - "linear" or "log" allowed'
+            )
 
         return w1 * l1 + w0 * l0
-
 
 
 # class DiceLoss(_Loss):

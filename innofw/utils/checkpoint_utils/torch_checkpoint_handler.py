@@ -1,16 +1,16 @@
+import logging
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
 import torch
 from pydantic import validate_arguments
 
+from innofw.constants import CheckpointFieldKeys
 from innofw.utils import get_abs_path
 from innofw.utils.checkpoint_utils.base_checkpoint_handler import (
     CheckpointHandler,
 )
-from innofw.constants import CheckpointFieldKeys
-
-import logging
 
 
 def get_state_dict(model):
@@ -50,15 +50,16 @@ def get_state_dict(model):
 
 class TorchCheckpointHandler(CheckpointHandler):
     """
-        A class that defines torch checkpoints handling
+    A class that defines torch checkpoints handling
 
-        Methods
-        -------
-        save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
-            saves a torch model in the destination path with given metadata
-        load_ckpt(ckpt_path: Union[str, Path])
-            loads a torch checkpoint from a given path
+    Methods
+    -------
+    save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
+        saves a torch model in the destination path with given metadata
+    load_ckpt(ckpt_path: Union[str, Path])
+        loads a torch checkpoint from a given path
     """
+
     @staticmethod
     @validate_arguments
     def save_ckpt(
@@ -103,7 +104,9 @@ class TorchCheckpointHandler(CheckpointHandler):
 
     @staticmethod
     @validate_arguments
-    def load_ckpt(ckpt_path: Union[str, Path]) -> dict:  # check the output type
+    def load_ckpt(
+        ckpt_path: Union[str, Path]
+    ) -> dict:  # check the output type
         if not Path(ckpt_path).is_absolute():
             ckpt_path = get_abs_path(ckpt_path)
         try:

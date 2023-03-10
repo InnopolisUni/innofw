@@ -1,11 +1,10 @@
+import argparse
+import json
+import os
 import uuid
 
 import cv2
-import os
 import numpy as np
-import json
-import argparse
-
 import streamlit as st
 
 
@@ -26,7 +25,9 @@ def get_images_list(path_to_folder: str) -> list:
         path_to_folder (str): absolute or relative path to the folder with images
     """
     image_names_list = [
-        x for x in os.listdir(path_to_folder) if x[-3:] in ["jpg", "peg", "png"]
+        x
+        for x in os.listdir(path_to_folder)
+        if x[-3:] in ["jpg", "peg", "png"]
     ]
     return image_names_list
 
@@ -62,7 +63,8 @@ def upload_image(bgr2rgb: bool = True):
 
 # @st.cache
 def load_augmentations_config(
-    placeholder_params: dict, path_to_config: str = "configs/augmentations.json"
+    placeholder_params: dict,
+    path_to_config: str = "configs/augmentations.json",
 ) -> dict:
     """Load the json config with params of all transforms
     Args:

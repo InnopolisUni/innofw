@@ -1,27 +1,20 @@
 # third party libraries
-import pytest
-from tests.utils import get_test_folder_path
+import logging
 
-# local modules
-from innofw.utils.s3_utils import S3Handler
-from innofw.utils.s3_utils.minio_interface import (
-    get_bucket_name,
-    get_object_path,
-    get_full_dst_path,
-    get_full_dst_url,
-    MinioInterface,
-)
-from innofw.utils.s3_utils.credentials import get_s3_credentials
-from innofw.constants import (
-    DefaultS3User,
-    DEFAULT_STORAGE_URL,
-    S3Credentials,
-    Status,
-    BucketNames,
-)
+import pytest
 from urlpath import URL
 
-import logging
+from innofw.constants import BucketNames
+from innofw.constants import DEFAULT_STORAGE_URL
+from innofw.constants import DefaultS3User
+from innofw.constants import S3Credentials
+from innofw.utils.s3_utils import S3Handler
+from innofw.utils.s3_utils.minio_interface import get_bucket_name
+from innofw.utils.s3_utils.minio_interface import get_full_dst_path
+from innofw.utils.s3_utils.minio_interface import get_full_dst_url
+from innofw.utils.s3_utils.minio_interface import get_object_path
+
+# local modules
 
 LOGGER = logging.getLogger(__name__)
 

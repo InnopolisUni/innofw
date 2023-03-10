@@ -2,46 +2,53 @@
 import logging
 from abc import ABC
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Tuple
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
 
-#
-from fire import Fire
 import rasterio as rio
+from fire import Fire
+from pydantic import DirectoryPath
+from pydantic import FilePath
+from pydantic import validate_arguments
 from rasterio.crs import CRS
-from pydantic import DirectoryPath, FilePath, validate_arguments
 
 from innofw.utils import get_abs_path
-
-#
-# from innofw.core.types import PathLike
 from innofw.utils.data_utils.preprocessing.raster_handler import RasterDataset
 from innofw.utils.data_utils.preprocessing.satellite_sources import (
     BaseSatelliteSource,
-    Landsat8,
-    Sentinel2,
 )
+from innofw.utils.data_utils.preprocessing.satellite_sources import Landsat8
+from innofw.utils.data_utils.preprocessing.satellite_sources import Sentinel2
 from innofw.utils.getters import get_log_dir
+
+#
+#
+# from innofw.core.types import PathLike
 
 
 class BaseBandComposer(ABC):
     """
-        An abstract class that defines methods of band files composition in a single file
+    An abstract class that defines methods of band files composition in a single file
 
-        Attributes
-        ----------
-        DRIVER: str
-            sets up the default rasterio driver
+    Attributes
+    ----------
+    DRIVER: str
+        sets up the default rasterio driver
 
-        Methods
-        -------
-        map_band_idx2str(idx: int) -> str
-            returns name of the band given position
-        get_band_files(
-            src_path: DirectoryPath,
-            channels: Union[List[str], Tuple[str]] = ("RED", "GRN", "BLU"),
-        ) -> List[FilePath]
-            returns all matching band files from a folder
+    Methods
+    -------
+    map_band_idx2str(idx: int) -> str
+        returns name of the band given position
+    get_band_files(
+        src_path: DirectoryPath,
+        channels: Union[List[str], Tuple[str]] = ("RED", "GRN", "BLU"),
+    ) -> List[FilePath]
+        returns all matching band files from a folder
     """
+
     DRIVER = "GTiff"
 
     def __init__(
@@ -227,10 +234,16 @@ class Sentinel2BandComposer(BaseBandComposer):
 
 @validate_arguments
 def compose_bands(
-    src_type: str, src_path: Path, channels: List[str], dst_path: Optional[Path] = None
+    src_type: str,
+    src_path: Path,
+    channels: List[str],
+    dst_path: Optional[Path] = None,
 ):
     """Function for"""
-    src2cls = {"sentinel2": Sentinel2BandComposer, "landsat8": Landsat8BandComposer}
+    src2cls = {
+        "sentinel2": Sentinel2BandComposer,
+        "landsat8": Landsat8BandComposer,
+    }
     band_composer = src2cls[src_type]()
 
     src_path = get_abs_path(src_path)

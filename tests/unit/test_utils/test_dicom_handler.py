@@ -2,10 +2,8 @@ import os
 
 import numpy as np
 
-from innofw.utils.data_utils.preprocessing.dicom_handler import (
-    dicom_to_img,
-    img_to_dicom,
-)
+from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
+from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
 from tests.utils import get_test_folder_path
 
 

@@ -1,26 +1,30 @@
 # standard libraries
 import os
-from abc import ABC, abstractmethod
-from typing import Dict
+from abc import ABC
+from abc import abstractmethod
 from math import radians
 from pathlib import Path
+from typing import Dict
 from xml.etree import ElementTree
 
+from pydantic import DirectoryPath
+from pydantic import FilePath
+
 # third party libraries
-from pydantic import DirectoryPath, FilePath
 
 
 class BaseSatelliteSource(ABC):
     """
-        An abstract class that defines interface for satellite sources on handling metadata
+    An abstract class that defines interface for satellite sources on handling metadata
 
-        Methods
-        -------
-        find_metadata_file()
-            returns path to the metadata file
-        parse_metadata_file()
-            given the metadata file should return a dictionary
+    Methods
+    -------
+    find_metadata_file()
+        returns path to the metadata file
+    parse_metadata_file()
+        given the metadata file should return a dictionary
     """
+
     @property
     def metadata(self):
         file = self.find_metadata_file()
@@ -38,15 +42,16 @@ class BaseSatelliteSource(ABC):
 
 class Sentinel2(BaseSatelliteSource):
     """
-        A class that defines sentinel2 metadata handling methods
+    A class that defines sentinel2 metadata handling methods
 
-        Methods
-        -------
-        find_metadata_file()
-            returns path to the sentinel2 metadata file within self.src_folder
-        parse_metadata_file()
-            given the metadata file returns a dictionary
+    Methods
+    -------
+    find_metadata_file()
+        returns path to the sentinel2 metadata file within self.src_folder
+    parse_metadata_file()
+        given the metadata file returns a dictionary
     """
+
     def __init__(self, src_folder: DirectoryPath):
         self.src_folder = src_folder
 
@@ -63,7 +68,10 @@ class Sentinel2(BaseSatelliteSource):
         tree = ElementTree.parse(metadata_file)
         bands = self._get_bands_from_tree(tree)
         assert len(bands) > 0
-        bands = {key: self.src_folder / band_path for key, band_path in bands.items()}
+        bands = {
+            key: self.src_folder / band_path
+            for key, band_path in bands.items()
+        }
         metadata = {
             "bands": bands,
             "mapping": self._construct_band_mapping(bands),
@@ -106,15 +114,16 @@ class Sentinel2(BaseSatelliteSource):
 
 class Landsat8(BaseSatelliteSource):
     """
-        A class that defines landsat8 metadata handling methods
+    A class that defines landsat8 metadata handling methods
 
-        Methods
-        -------
-        find_metadata_file()
-            returns path to the landsat8 metadata file within self.src_folder
-        parse_metadata_file()
-            given the metadata file returns a dictionary
+    Methods
+    -------
+    find_metadata_file()
+        returns path to the landsat8 metadata file within self.src_folder
+    parse_metadata_file()
+        given the metadata file returns a dictionary
     """
+
     def __init__(self, src_folder: DirectoryPath):
         self.src_folder = src_folder
 
@@ -164,7 +173,10 @@ class Landsat8(BaseSatelliteSource):
                     date_acquired = value
 
         assert len(bands) > 0
-        bands = {key: self.src_folder / band_path for key, band_path in bands.items()}
+        bands = {
+            key: self.src_folder / band_path
+            for key, band_path in bands.items()
+        }
         _metadata = {
             "bands": bands,
             "mapping": band_mapping,

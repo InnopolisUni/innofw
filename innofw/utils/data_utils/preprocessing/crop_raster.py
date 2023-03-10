@@ -1,12 +1,14 @@
 #
-from pathlib import Path
 import random
+from pathlib import Path
 
-#
 import fire
 import rasterio
-from innofw.constants import PathLike
 from rasterio.windows import Window
+
+from innofw.constants import PathLike
+
+#
 
 
 def crop_raster(src_path: Path, dst_path: Path, height=512, width=512):
@@ -24,7 +26,9 @@ def crop_raster(src_path: Path, dst_path: Path, height=512, width=512):
 
         # Create a new cropped raster to write to
         profile = src.profile
-        profile.update({"height": height, "width": width, "transform": transform})
+        profile.update(
+            {"height": height, "width": width, "transform": transform}
+        )
 
         with rasterio.open(dst_path, "w+", **profile) as dst:
             # Read the data from the window and write it to the output raster

@@ -1,14 +1,16 @@
 #
-from typing import Optional, List
+from typing import List
+from typing import Optional
 
-#
-from torch.utils.data import Dataset
-import rasterio as rio
 import numpy as np
-from pydantic import validate_arguments, FilePath
+import rasterio as rio
+from pydantic import FilePath
+from pydantic import validate_arguments
+from segmentation.constants import SegDataKeys
+from torch.utils.data import Dataset
 
 #
-from segmentation.constants import SegDataKeys
+#
 
 
 def read_tif(path, channels=None) -> np.array:
@@ -33,9 +35,11 @@ class SegmentationDataset(Dataset):
         images: List[FilePath],
         masks: Optional[List[FilePath]] = None,
         transform=None,
-        channels: Optional[int] = None,  # todo: add support for Optional[List[int]]
+        channels: Optional[
+            int
+        ] = None,  # todo: add support for Optional[List[int]]
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.images = images
         self.masks = masks
@@ -68,7 +72,6 @@ class SegmentationDataset(Dataset):
 
         output[SegDataKeys.image] = image
         if self.masks is not None:
-
             if len(mask.shape) == 2:
                 mask = np.expand_dims(mask, 0)
 

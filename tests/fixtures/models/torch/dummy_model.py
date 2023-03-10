@@ -1,8 +1,8 @@
 from typing import Any
 
 import torch.nn as nn
-from torch.optim import SGD
 from pytorch_lightning import LightningModule
+from torch.optim import SGD
 
 
 class DummyTorchModel(nn.Module):

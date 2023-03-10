@@ -1,12 +1,9 @@
-from pathlib import Path
-
-from omegaconf import DictConfig
-
 from tests.utils import get_test_data_folder_path
 
 
 roads_data_root = (
-    get_test_data_folder_path() / "images/segmentation/linear-roads-bin-seg-oftp"
+    get_test_data_folder_path()
+    / "images/segmentation/linear-roads-bin-seg-oftp"
 )
 
 

@@ -1,20 +1,18 @@
 # author: Kazybek Askarbek
 # date: 15.07.22
 # standard libraries
+import pytest
 import sklearn.base
 from omegaconf import DictConfig
-import pytest
+
+from innofw import InnoModel
+from innofw.utils.framework import get_model
+from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
 
 # local modules
-from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
-from innofw.utils.framework import get_datamodule, get_model
-
 # basic config
-from innofw import InnoModel
 
-LOGS_FOLDER = (
-    "./logs/trainings/runs/default/"
-)
+LOGS_FOLDER = "./logs/trainings/runs/default/"
 
 model_cfg_w_target = DictConfig(
     {
@@ -88,9 +86,12 @@ class MockDatamodule:
     def setup(self):
         out = load_diabetes()
         X, y = out["data"], out["target"]
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        (
+            self.X_train,
+            self.X_test,
+            self.y_train,
+            self.y_test,
+        ) = train_test_split(X, y, test_size=0.2, random_state=42)
 
     def train_dataloader(self):
         return {

@@ -3,16 +3,21 @@ import pathlib
 import pickle
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple, Union
+from typing import Iterable
+from typing import List
+from typing import Tuple
 
 import datasets
 import pandas as pd
 import torch
-from innofw.constants import Frameworks, ModelType, Stages
-from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
-from innofw.exceptions import NonUniqueException
 from torch.utils.data import DataLoader
 from transformers.tokenization_utils_base import PreTrainedTokenizerBase
+
+from innofw.constants import ModelType
+from innofw.constants import Stages
+from innofw.core.datamodules.lightning_datamodules.base import (
+    BaseLightningDataModule,
+)
 
 datasets.disable_caching()
 
@@ -90,7 +95,9 @@ class DrugprotDataModule(BaseLightningDataModule):
         train_dataset = self.train_dataset_raw
         self.test_dataset = self.test_dataset_raw
 
-        splits = train_dataset.train_test_split(test_size=self.val_size, shuffle=True)
+        splits = train_dataset.train_test_split(
+            test_size=self.val_size, shuffle=True
+        )
         self.train_dataset = splits["train"]
         self.val_dataset = splits["test"]
 
@@ -176,7 +183,9 @@ class DataCollatorWithPaddingAndTruncation:
         Collate list of dicts.
     """
 
-    def __init__(self, max_length, sequence_keys=[], float_keys=[], pad_token_id=0):
+    def __init__(
+        self, max_length, sequence_keys=[], float_keys=[], pad_token_id=0
+    ):
         self.max_length = max_length
         self.sequence_keys = set(sequence_keys)
         self.pad_token_id = pad_token_id
@@ -193,13 +202,17 @@ class DataCollatorWithPaddingAndTruncation:
             max_len = max(len(instance[any_key]), max_len)
         max_len = min(max_len, self.max_length)
         result = {
-            key: torch.full((batch_size, max_len), self.pad_token_id, dtype=torch.int64)
+            key: torch.full(
+                (batch_size, max_len), self.pad_token_id, dtype=torch.int64
+            )
             for key in self.sequence_keys
         }
         for key in self.sequence_keys:
             for batch_index, instance in enumerate(data):
                 current_len = min(max_len, len(instance[key]))
-                result[key][batch_index, :current_len] = instance[key][:current_len]
+                result[key][batch_index, :current_len] = instance[key][
+                    :current_len
+                ]
 
         rest_keys = next(iter(data)).keys() - self.sequence_keys
         for key in rest_keys:
@@ -227,7 +240,9 @@ class DataCollatorWithPaddingAndTruncation:
         max_len = min(max_len, self.max_length)
         result = {
             key: torch.full(
-                (batch_size, max_len), self.pad_token_id, dtype=self.__get_key_type(key)
+                (batch_size, max_len),
+                self.pad_token_id,
+                dtype=self.__get_key_type(key),
             )
             for key in self.sequence_keys
         }

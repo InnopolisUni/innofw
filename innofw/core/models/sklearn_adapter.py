@@ -2,18 +2,18 @@
 import importlib
 import inspect
 
-# third party libraries/frameworks
-from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 import sklearn
+from torch.utils.tensorboard import SummaryWriter
 
-# local modules
 from .base import BaseModelAdapter
+from innofw.core.models import register_models_adapter
 from innofw.utils.checkpoint_utils.pickle_checkpont_handler import (
     PickleCheckpointHandler,
 )
 
-from innofw.core.models import register_models_adapter
+# third party libraries/frameworks
+# local modules
 
 
 @register_models_adapter(name="sklearn_adapter")
@@ -38,9 +38,7 @@ class SklearnAdapter(BaseModelAdapter):
 
     @staticmethod
     def is_suitable_model(model) -> bool:
-        return (
-                inspect.getmodule(model).__package__.split(".")[0] == "sklearn"
-        )
+        return inspect.getmodule(model).__package__.split(".")[0] == "sklearn"
 
     def __init__(self, model, log_dir, callbacks=None, *args, **kwargs):
         super().__init__(model, log_dir, PickleCheckpointHandler())
@@ -55,12 +53,12 @@ class SklearnAdapter(BaseModelAdapter):
             args = dict(m)
             del args["_target_"]
             mod = importlib.import_module(mod_name)
-            callable_metrics.append({"func": getattr(mod, func_name), "args": args})
+            callable_metrics.append(
+                {"func": getattr(mod, func_name), "args": args}
+            )
         return callable_metrics
 
-    def forward(
-            self, data
-    ):
+    def forward(self, data):
         return self.model.predict(data)
 
     def predict_proba(self, x):

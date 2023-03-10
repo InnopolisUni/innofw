@@ -6,14 +6,12 @@ if __name__ == "__main__":
     import numpy as np
     import streamlit as st
     import albumentations as albu
-    from omegaconf import DictConfig
     import matplotlib.pyplot as plt
 
-    from innofw.constants import Frameworks, CLI_FLAGS
+    from innofw.constants import CLI_FLAGS
     from innofw.core.augmentations import Augmentation
 
     #
-    from innofw.utils import find_suitable_datamodule
     from innofw.utils.framework import (
         get_datamodule,
         get_obj,
@@ -23,17 +21,6 @@ if __name__ == "__main__":
     from innofw.utils.getters import get_trainer_cfg
     from ui.utils import (
         load_augmentations_config,
-        get_arguments,
-        get_placeholder_params,
-        select_transformations,
-        show_random_params,
-    )
-
-    from ui.visuals import (
-        select_image,
-        show_credentials,
-        show_docstring,
-        get_transormations_params,
     )
 
     # read from configuration file
@@ -41,8 +28,6 @@ if __name__ == "__main__":
     # show a textarea with config file contents
 
     import os
-    import sys
-    import random
     import argparse
     import streamlit as st
     import argparse
@@ -107,7 +92,6 @@ if __name__ == "__main__":
     # apply augmentations
     # augmentations = get_training_augmentation()
     from hydra import compose, initialize
-    import hydra
 
     # hydra.core.global_hydra.GlobalHydra.instance().clear()
     selected_aug = None
@@ -118,7 +102,8 @@ if __name__ == "__main__":
 
     # load the config
     augmentations = load_augmentations_config(
-        None, str(Path("ui/augmentations.json").resolve())  # placeholder_params
+        None,
+        str(Path("ui/augmentations.json").resolve()),  # placeholder_params
     )
 
     try:
@@ -136,7 +121,10 @@ if __name__ == "__main__":
     #     'task': [task],
     #     'data_path': data_path
     # })
-    if dm_cfg["train"]["source"] is not None and dm_cfg["train"]["source"] != "":
+    if (
+        dm_cfg["train"]["source"] is not None
+        and dm_cfg["train"]["source"] != ""
+    ):
         trainer_cfg = get_trainer_cfg(cfg)
         model = get_model(cfg.models, trainer_cfg)
         task = cfg.get("task")
@@ -149,7 +137,9 @@ if __name__ == "__main__":
         if "train_dataloader" in st.session_state:
             train_dataloader = st.session_state.train_dataloader
         else:
-            dm = get_datamodule(dm_cfg, framework, task=task, augmentations=transforms)
+            dm = get_datamodule(
+                dm_cfg, framework, task=task, augmentations=transforms
+            )
 
             dm.setup()
 
@@ -179,7 +169,9 @@ if __name__ == "__main__":
 
             dataset_len = images.shape[0]
             with_replace = batch_size > dataset_len
-            indices = np.random.choice(range(dataset_len), batch_size, with_replace)
+            indices = np.random.choice(
+                range(dataset_len), batch_size, with_replace
+            )
 
         if not isinstance(images, np.ndarray):
             images = images.detach().cpu().numpy()
@@ -188,10 +180,12 @@ if __name__ == "__main__":
 
         try:
             # st.info("initializing augmentations")
-            selected_aug = Augmentation(get_obj(cfg, "augmentations", task, framework))
-            aug_conf = cfg["augmentations"]["implementations"]["torch"]["Compose"][
-                "object"
-            ]
+            selected_aug = Augmentation(
+                get_obj(cfg, "augmentations", task, framework)
+            )
+            aug_conf = cfg["augmentations"]["implementations"]["torch"][
+                "Compose"
+            ]["object"]
             # selected_aug = hydra.utils.instantiate(aug_conf)
         except Exception as e:
             st.warning(f"unable to process the train.yaml file. {e}")

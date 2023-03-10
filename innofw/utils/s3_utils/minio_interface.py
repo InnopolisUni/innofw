@@ -1,22 +1,24 @@
 # standard libraries
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
-# third-party libraries
-from pydantic import FilePath, AnyUrl, validate_arguments
-from urlpath import URL
-from tqdm import tqdm
 from minio import Minio
 from minio.commonconfig import Tags
+from pydantic import AnyUrl
+from pydantic import FilePath
+from pydantic import validate_arguments
+from tqdm import tqdm
+from urlpath import URL
 
-# local modules
 from innofw.constants import S3Credentials
+from innofw.utils import get_abs_path
+from innofw.utils.dm_utils.utils import query_yes_no
 from innofw.utils.extra import execute_with_retries
 from innofw.utils.file_hash import compute_file_hash
-from innofw.utils.dm_utils.utils import query_yes_no
 
+# third-party libraries
+# local modules
 # from .credentials import get_s3_credentials
-from innofw.utils import get_abs_path
 
 KB = 1024
 MB = 1024 * KB
@@ -32,7 +34,7 @@ def get_bucket_name(url: AnyUrl) -> str:
 def get_object_path(url: AnyUrl) -> str:
     url = URL(url)
     anchor_n_bucket = url.anchor + get_bucket_name(url)
-    object_path = str(url)[len(anchor_n_bucket):]
+    object_path = str(url)[len(anchor_n_bucket) :]
     return object_path
 
 
@@ -47,7 +49,7 @@ def get_full_dst_url(src_path: FilePath, dst_path: AnyUrl) -> AnyUrl:
 
 @validate_arguments
 def get_full_dst_path(
-        src_path: AnyUrl, dst_path: Path, create_if_needed: bool = True
+    src_path: AnyUrl, dst_path: Path, create_if_needed: bool = True
 ) -> Path:
     # new dst_path
     if dst_path.is_dir():
@@ -80,7 +82,9 @@ class MinioInterface:
         self.client = self._get_client(url, credentials)
 
     @validate_arguments
-    def _get_client(self, url: AnyUrl, credentials: Optional[S3Credentials] = None):
+    def _get_client(
+        self, url: AnyUrl, credentials: Optional[S3Credentials] = None
+    ):
         url = URL(url).netloc
         # credentials = get_s3_credentials() if credentials is None else credentials
 
@@ -101,10 +105,10 @@ class MinioInterface:
     # @execute_with_retries
     @validate_arguments
     def upload_file(
-            self,
-            src_path: FilePath,
-            dst_path: AnyUrl,
-            tags: Optional[dict] = None,
+        self,
+        src_path: FilePath,
+        dst_path: AnyUrl,
+        tags: Optional[dict] = None,
     ):
         """Method to upload file into minio server
 
@@ -140,7 +144,7 @@ class MinioInterface:
         return dst_path
 
     def unsafe_download_file(
-            self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
+        self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
     ) -> Path:
         """Function downloads the file from minio server"""
         bucket = get_bucket_name(src_path)
@@ -151,14 +155,14 @@ class MinioInterface:
         downloaded = 0 * MB
 
         with open(dst_path, "wb") as file_data, tqdm(
-                desc=f"{dst_path.name}",
-                total=file_size,
-                dynamic_ncols=True,
-                leave=False,
-                mininterval=1,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=KB,
+            desc=f"{dst_path.name}",
+            total=file_size,
+            dynamic_ncols=True,
+            leave=False,
+            mininterval=1,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=KB,
         ) as pbar:
             while downloaded < file_size:
                 length = (
@@ -185,7 +189,7 @@ class MinioInterface:
 
     @execute_with_retries
     def download_file(
-            self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
+        self, src_path: AnyUrl, dst_path: Path, chunk_size=1 * MB
     ) -> Path:
         if not dst_path.is_absolute():
             dst_path = get_abs_path(dst_path)

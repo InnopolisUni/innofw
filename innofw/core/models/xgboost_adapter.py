@@ -2,18 +2,16 @@
 import importlib
 import inspect
 
-# third-party libraries
 from torch.utils.tensorboard import SummaryWriter
 
-# local modules
 from .base import BaseModelAdapter
-from innofw.core.callbacks.xgboost_callbacks.log_trainig_steps import (
-    XGBoostTrainingTensorBoardCallback,
-)
+from innofw.core.models import register_models_adapter
 from innofw.utils.checkpoint_utils.pickle_checkpont_handler import (
     PickleCheckpointHandler,
 )
-from innofw.core.models import register_models_adapter
+
+# third-party libraries
+# local modules
 
 
 @register_models_adapter(name="xgboost_adapter")
@@ -35,6 +33,7 @@ class XGBoostAdapter(BaseModelAdapter):
         returns result of prediction
 
     """
+
     def _test(self, data):
         pass
 
@@ -55,7 +54,9 @@ class XGBoostAdapter(BaseModelAdapter):
             args = dict(m)
             del args["_target_"]
             mod = importlib.import_module(mod_name)
-            callable_metrics.append({"func": getattr(mod, func_name), "args": args})
+            callable_metrics.append(
+                {"func": getattr(mod, func_name), "args": args}
+            )
         return callable_metrics
 
     def _predict(self, datamodule):

@@ -1,24 +1,25 @@
 #
 import torch.nn as nn
-from torch.nn.modules.loss import _Loss
 
-#
 from innofw.core.losses import register_losses_adapter
 from innofw.core.losses.base import BaseLossAdapter
+
+#
 
 
 @register_losses_adapter("torch_adapter")
 class TorchAdapter(BaseLossAdapter):
     """
-        Class that adapts torch losses
+    Class that adapts torch losses
 
-        Methods
-        -------
-        is_suitable_input(loss)
-            checks if the loss is from torch framework
-        forward(*args, **kwargs)
-            computes the loss and outputs in the desired format
+    Methods
+    -------
+    is_suitable_input(loss)
+        checks if the loss is from torch framework
+    forward(*args, **kwargs)
+        computes the loss and outputs in the desired format
     """
+
     def __init__(self, loss, *args, **kwargs):
         super().__init__(loss)
 

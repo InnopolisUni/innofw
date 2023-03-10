@@ -1,14 +1,16 @@
 import logging
 
-#
-import torch
-import wandb
 import numpy as np
-from pytorch_lightning import Callback
 import pytorch_lightning as pl
+import torch
+from pytorch_lightning import Callback
+from segmentation.constants import SegDataKeys
+from segmentation.constants import SegOutKeys
+
+import wandb
 
 #
-from segmentation.constants import SegDataKeys, SegOutKeys
+#
 
 
 class SegmentationLogPredictions(Callback):
@@ -48,7 +50,9 @@ class SegmentationLogPredictions(Callback):
             else train_ds_size
         )
         self.val_num_predictions = (
-            self.num_predictions if val_ds_size > self.num_predictions else val_ds_size
+            self.num_predictions
+            if val_ds_size > self.num_predictions
+            else val_ds_size
         )
 
         self.train_indices = sorted(
@@ -62,7 +66,14 @@ class SegmentationLogPredictions(Callback):
         logging.info(f"val indices {self.val_indices}")
 
     def on_stage_batch_end(
-        self, indices, batch_size, batch, outputs, batch_idx, container, trainer
+        self,
+        indices,
+        batch_size,
+        batch,
+        outputs,
+        batch_idx,
+        container,
+        trainer,
     ):
         if trainer.current_epoch % self.logging_interval != 0:
             return
@@ -82,7 +93,13 @@ class SegmentationLogPredictions(Callback):
                 container[SegOutKeys.predictions].append(prediction)
 
     def on_validation_batch_end(
-        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=None
+        self,
+        trainer,
+        pl_module,
+        outputs,
+        batch,
+        batch_idx,
+        dataloader_idx=None,
     ):
         self.on_stage_batch_end(
             self.val_indices,
@@ -95,9 +112,14 @@ class SegmentationLogPredictions(Callback):
         )
 
     def on_train_batch_end(
-        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=None
+        self,
+        trainer,
+        pl_module,
+        outputs,
+        batch,
+        batch_idx,
+        dataloader_idx=None,
     ):
-
         self.on_stage_batch_end(
             self.train_indices,
             self.train_batch_size,
@@ -149,7 +171,8 @@ class SegmentationLogPredictions(Callback):
                 predictions, labels, images, range(self.num_predictions)
             ):
                 prep_prediction = (
-                    torch.sigmoid(prediction[0, ...]).detach().cpu().numpy() > 0.5
+                    torch.sigmoid(prediction[0, ...]).detach().cpu().numpy()
+                    > 0.5
                 ).astype(np.uint8)
                 prep_mask = label.cpu().numpy().astype(np.uint8)
 
@@ -167,7 +190,9 @@ class SegmentationLogPredictions(Callback):
                     },  # .float()
                 )
                 # logger log an image
-                trainer.logger.experiment.log({f"{stage}_images": img_pred_mask})
+                trainer.logger.experiment.log(
+                    {f"{stage}_images": img_pred_mask}
+                )
 
         except Exception as e:
             logging.info(e)
