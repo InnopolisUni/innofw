@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import hydra
 from hydra.utils import instantiate
 import torch
+from omegaconf import OmegaConf
 
 # local modules
 from innofw.constants import Frameworks
@@ -108,7 +109,6 @@ def get_obj(
     return obj
 
 def get_augmentations(cfg):
-
     from albumentations import Compose
     from omegaconf import DictConfig
     empty_cfg = DictConfig({})
@@ -137,7 +137,7 @@ def get_augmentations(cfg):
         )
 
     for key in keys:
-        try:    
+        try:
             a = hydra.utils.instantiate(cfg[key])
             transforms.append(a)
         except:
@@ -160,7 +160,7 @@ def get_augmentations(cfg):
             if item != empty_cfg
         ]
         return torchvision.transforms.Compose(transforms=transforms)
-        
+
 
 def get_optimizer(
         config,
@@ -181,20 +181,8 @@ def get_optimizer(
         if "task" not in config[name]:
             return None
 
-        if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-                config[name], framework
-        ):
-            items = []
-            for key, value in config[name].implementations[framework.value].items():
-                if key == "meta":
-                    continue
-                if "function" in value:
-                    item = value["function"]
-                elif "object" in value:
-                    item = value["object"]
-                else:
-                    raise ValueError("wrong config structure of optimizer")
-                items.append(item)
+        if is_suitable_for_task(config[name], task):
+            items = [config[name].object]
         else:
             raise ValueError(
                 f"These {name} are not applicable with selected model and/or task"
@@ -205,7 +193,6 @@ def get_optimizer(
         obj = search_func(task, framework, config[name], *args, **kwargs)
     # else:
     #     raise ValueError("Unable to instantiate the object")
-
     return obj
 
 

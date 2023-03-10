@@ -1,11 +1,6 @@
-name: Adam
 description: Base optimizer suitable for most of the tasks
 task:
   - all
-
-implementations:
-  torch:
-    Adam:
-      function:
-        _target_: torch.optim.Adam  # innofw.core.optimizers.custom_optimizers.optimizers.ADAM
-        lr: 3e-4
+object:
+  _target_: innofw.core.optimizers.custom_optimizers.optimizers.ADAM
+  lr: 3e-4
