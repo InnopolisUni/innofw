@@ -1,11 +1,14 @@
 # other
+import hydra
 import pytest
+import torch.optim
 from omegaconf import DictConfig
 from segmentation_models_pytorch import Unet
 
-# local
 from innofw.constants import Frameworks
-from innofw.utils.framework import get_obj
+from innofw.utils.framework import get_optimizer
+
+# local
 
 
 def test_optimizer_creation():
@@ -13,20 +16,16 @@ def test_optimizer_creation():
         {
             "optimizers": {
                 "task": ["all"],
-                "implementations": {
-                    "torch": {
-                        "Adam": {
-                            "object": {"_target_": "torch.optim.Adam", "lr": 1e-5}
-                        },
-                    }
-                },
+                "object": {"_target_": "torch.optim.Adam", "lr": 1e-5},
             }
         }
     )
     task = "image-segmentation"
     framework = Frameworks.torch
     model = Unet()
-    optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+    optim = hydra.utils.instantiate(optim_cfg, params=model.parameters())
+    assert optim is not None and isinstance(optim, torch.optim.Optimizer)
 
 
 def test_optimizer_creation_wrong_framework():
@@ -34,13 +33,7 @@ def test_optimizer_creation_wrong_framework():
         {
             "optimizers": {
                 "task": ["all"],
-                "implementations": {
-                    "torch": {
-                        "Adam": {
-                            "object": {"_target_": "torch.optim.Adam", "lr": 1e-5}
-                        },
-                    }
-                },
+                "object": {"_target_": "torch.optim.Adam", "lr": 1e-5},
             }
         }
     )
@@ -49,4 +42,4 @@ def test_optimizer_creation_wrong_framework():
     model = Unet()
 
     with pytest.raises(ValueError):
-        optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+        optim_cfg = get_optimizer(cfg, "optimizers", task, framework)

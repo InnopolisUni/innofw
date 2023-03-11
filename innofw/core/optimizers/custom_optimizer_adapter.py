@@ -1,27 +1,27 @@
 #
 import inspect
 
-import torch
-
-#
 from innofw.core.optimizers import register_optimizers_adapter
 from innofw.core.optimizers.base import BaseOptimizerAdapter
+
+#
 
 
 @register_optimizers_adapter("custom_adapter")
 class CustomAdapter(BaseOptimizerAdapter):
     """
-        Class that adapts innofw optimizers
+    Class that adapts innofw optimizers
 
-        Methods
-        -------
-        is_suitable_input(optimizer)
-            checks if the optimizer is from innofw framework
-        step()
-            updates a model parameters
+    Methods
+    -------
+    is_suitable_input(optimizer)
+        checks if the optimizer is from innofw framework
+    step()
+        updates a model parameters
     """
+
     def __init__(self, optimizer, *args, **kwargs):
-        super().__init__(optimizer.optimizer)
+        super().__init__(optimizer.optim)
 
     @staticmethod
     def is_suitable_input(optimizer) -> bool:

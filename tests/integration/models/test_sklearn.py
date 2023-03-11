@@ -1,7 +1,11 @@
-from omegaconf import DictConfig
-from innofw.utils.framework import get_obj, get_model
-import sklearn.base
+import hydra.utils
 import pytest
+import sklearn.base
+from omegaconf import DictConfig
+
+from innofw.constants import Frameworks
+from innofw.utils.framework import get_model
+from innofw.utils.framework import get_optimizer
 from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
 
 
@@ -43,20 +47,15 @@ def test_sklearn_model_n_optimizer_creation():
             },
             "optimizers": {
                 "task": ["all"],
-                "implementations": {
-                    "torch": {
-                        "Adam": {
-                            "object": {"_target_": "torch.optim.Adam", "lr": 1e-5}
-                        },
-                    }
-                },
+                "object": {"_target_": "torch.optim.Adam", "lr": 1e-5},
             },
         }
     )
     task = "table-regression"
-    framework = "sklearn"
+    framework = Frameworks.sklearn
     model = get_model(cfg.models, base_trainer_on_cpu_cfg)
     assert isinstance(model, sklearn.base.BaseEstimator)
 
-    with pytest.raises(AttributeError):
-        optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    with pytest.raises(ValueError):
+        optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+        optim = hydra.utils.instantiate(optim_cfg, params=model.parameters())

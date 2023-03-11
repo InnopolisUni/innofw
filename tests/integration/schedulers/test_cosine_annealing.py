@@ -1,11 +1,13 @@
 # other
-import pytest
+import hydra.utils
 from omegaconf import DictConfig
 from segmentation_models_pytorch import Unet
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
+from innofw.utils.framework import get_optimizer
+
+# local
 
 
 def test_scheduler_creation():
@@ -13,11 +15,7 @@ def test_scheduler_creation():
         {
             "optimizers": {
                 "task": ["all"],
-                "implementations": {
-                    "torch": {
-                        "SGD": {"object": {"_target_": "torch.optim.SGD", "lr": 1e-5}},
-                    }
-                },
+                "object": {"_target_": "torch.optim.SGD", "lr": 1e-5},
             },
             "schedulers": {
                 "task": ["all"],
@@ -39,5 +37,6 @@ def test_scheduler_creation():
     task = "image-segmentation"
     framework = Frameworks.torch
     model = Unet()
-    optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+    optim = hydra.utils.instantiate(optim_cfg, params=model.parameters())
     scheduler = get_obj(cfg, "schedulers", task, framework, optimizer=optim)

@@ -6,9 +6,7 @@ from omegaconf import DictConfig
 from segmentation_models_pytorch import Unet
 
 from innofw.constants import Frameworks
-from innofw.utils.framework import (
-    get_optimizer,
-)
+from innofw.utils.framework import get_optimizer
 
 # local
 
@@ -18,17 +16,17 @@ def test_optimizer_creation():
         {
             "optimizers": {
                 "task": ["all"],
-                "object": {"_target_": "torch.optim.SGD", "lr": 1e-5},
+                "object": {
+                    "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.LION",
+                    "lr": 1e-4,
+                },
             }
         }
     )
     task = "image-segmentation"
     framework = Frameworks.torch
     model = Unet()
-
-    optim_cfg = get_optimizer(
-        cfg, "optimizers", task, framework, params=model.parameters()
-    )
+    optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
     optim = hydra.utils.instantiate(optim_cfg, params=model.parameters())
     assert optim is not None and isinstance(optim, torch.optim.Optimizer)
 
@@ -38,7 +36,10 @@ def test_optimizer_creation_wrong_framework():
         {
             "optimizers": {
                 "task": ["all"],
-                "object": {"_target_": "torch.optim.SGD", "lr": 1e-5},
+                "object": {
+                    "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.LION",
+                    "lr": 1e-4,
+                },
             }
         }
     )
@@ -47,4 +48,6 @@ def test_optimizer_creation_wrong_framework():
     model = Unet()
 
     with pytest.raises(ValueError):
-        optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+        optim = get_optimizer(
+            cfg, "optimizers", task, framework, params=model.parameters()
+        )
