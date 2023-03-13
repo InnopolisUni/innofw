@@ -118,16 +118,6 @@ class CocoLightningDataModule(BaseLightningDataModule):
         )
         # Set validatoin augmentations for val
         setattr(self.val_dataset, 'transform', self.aug['val'])
-
-    # def find_csv_and_data(self, path):
-    #     csv_path = find_file_by_ext(path, ".csv")
-    #     train_df = pd.read_csv(csv_path)
-    #     arr = train_df["bbox"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
-    #     bboxes = np.stack(arr)
-    #     for i, col in enumerate(["x", "y", "w", "h"]):
-    #         train_df[col] = bboxes[:, i]
-    #     train_df["box_area"] = train_df["w"] * train_df["h"]
-    #     return find_path(path), train_df
     
     def find_csv_and_data(self, path):
         csv_path = find_file_by_ext(path)
