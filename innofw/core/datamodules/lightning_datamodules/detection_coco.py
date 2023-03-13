@@ -14,7 +14,7 @@ from innofw.core.augmentations import Augmentation
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
-from innofw.utils.dm_utils.utils import find_file_by_ext, find_path
+from innofw.utils.dm_utils.utils import find_file_by_ext, find_folder_with_images
 from innofw.core.datasets.coco import (
     CocoDataset,
     DicomCocoDataset,
@@ -74,22 +74,23 @@ class CocoLightningDataModule(BaseLightningDataModule):
             *args,
             **kwargs,
         )
-        self.aug = augmentations
+        self.aug = {'train': None, 'test': None, 'val': None} if augmentations is None else augmentations
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
         self.train_dataset, train_csv = self.find_csv_and_data(self.train_dataset)
         self.test_dataset, test_csv = self.find_csv_and_data(self.test_dataset)
-        if self.aug:
+        self.aug = {'train': None, 'test': None, 'val': None}  # todo: fix
+        if self.aug is not None and self.aug['train'] is not None and self.aug['test'] is not None:
             train_dataset = self.dataset(
                 train_csv,
                 str(self.train_dataset),
-                transforms=Augmentation(self.aug['train']),
+                # transforms=Augmentation(self.aug['train']),
             )
             self.test_dataset = self.dataset(
                 test_csv,
                 str(self.test_dataset),
-                transforms=Augmentation(self.aug['test']),
+                # transforms=Augmentation(self.aug['test']),
             )
         else:
             train_dataset = self.dataset(
@@ -118,15 +119,25 @@ class CocoLightningDataModule(BaseLightningDataModule):
         # Set validatoin augmentations for val
         setattr(self.val_dataset, 'transform', self.aug['val'])
 
+    # def find_csv_and_data(self, path):
+    #     csv_path = find_file_by_ext(path, ".csv")
+    #     train_df = pd.read_csv(csv_path)
+    #     arr = train_df["bbox"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
+    #     bboxes = np.stack(arr)
+    #     for i, col in enumerate(["x", "y", "w", "h"]):
+    #         train_df[col] = bboxes[:, i]
+    #     train_df["box_area"] = train_df["w"] * train_df["h"]
+    #     return find_path(path), train_df
+    
     def find_csv_and_data(self, path):
-        csv_path = find_file_by_ext(path, ".csv")
+        csv_path = find_file_by_ext(path)
         train_df = pd.read_csv(csv_path)
         arr = train_df["bbox"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
         bboxes = np.stack(arr)
         for i, col in enumerate(["x", "y", "w", "h"]):
             train_df[col] = bboxes[:, i]
         train_df["box_area"] = train_df["w"] * train_df["h"]
-        return find_path(path), train_df
+        return find_folder_with_images(path), train_df
 
     def train_dataloader(self):
         train_dataloader = torch.utils.data.DataLoader(
@@ -214,7 +225,11 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
                 ]
             ),
         )
+        try:
+            aug = self.aug['test']
+        except:
+            aug = transforms
         self.predict_dataset = DicomCocoDatasetInfer(
             str(self.infer),
-            Augmentation(self.aug['test'] or transforms),
+            Augmentation(aug),
         )
