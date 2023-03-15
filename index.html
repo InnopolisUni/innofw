@@ -1,0 +1,893 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="tutorials/">
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>InnoFW</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#requirements" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="InnoFW" class="md-header__button md-logo" aria-label="InnoFW" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            InnoFW
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="InnoFW" class="md-nav__button md-logo" aria-label="InnoFW" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    InnoFW
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-1-configuring-loss-function" class="md-nav__link">
+    Section 1. Configuring Loss Function
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 1. Configuring Loss Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectfunction" class="md-nav__link">
+    Object/Function:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-2-how-to-add-your-dataset" class="md-nav__link">
+    Section 2. How to add your dataset?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-paths" class="md-nav__link">
+    =============== Data Paths =================
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-one-of-the-following" class="md-nav__link">
+    use one of the following:
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    ==================================
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-paths_1" class="md-nav__link">
+    =============== Data Paths =================
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-one-of-the-following_1" class="md-nav__link">
+    use one of the following:
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    ==================================
+  </a>
+  
+    <nav class="md-nav" aria-label="==================================">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#section-22-writing-own-datamodule" class="md-nav__link">
+    Section 2.2. Writing own datamodule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-3-how-to-train-a-new-model" class="md-nav__link">
+    Section 3. How to train a new model?
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 3. How to train a new model?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytorch-model" class="md-nav__link">
+    Pytorch model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-4-start-training-testing-and-inference" class="md-nav__link">
+    Section 4. Start training, testing and inference
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-5-training-on-gpu" class="md-nav__link">
+    Section 5. Training on GPU
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-6-versioning-rules" class="md-nav__link">
+    Section 6. Versioning rules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tutorials/" class="md-nav__link">
+        Tutorials
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="how-to-guides/" class="md-nav__link">
+        Task Solutions
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/" class="md-nav__link">
+        Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="explanation/" class="md-nav__link">
+        Explanation
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-1-configuring-loss-function" class="md-nav__link">
+    Section 1. Configuring Loss Function
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 1. Configuring Loss Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectfunction" class="md-nav__link">
+    Object/Function:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-2-how-to-add-your-dataset" class="md-nav__link">
+    Section 2. How to add your dataset?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-paths" class="md-nav__link">
+    =============== Data Paths =================
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-one-of-the-following" class="md-nav__link">
+    use one of the following:
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    ==================================
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-paths_1" class="md-nav__link">
+    =============== Data Paths =================
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-one-of-the-following_1" class="md-nav__link">
+    use one of the following:
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    ==================================
+  </a>
+  
+    <nav class="md-nav" aria-label="==================================">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#section-22-writing-own-datamodule" class="md-nav__link">
+    Section 2.2. Writing own datamodule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-3-how-to-train-a-new-model" class="md-nav__link">
+    Section 3. How to train a new model?
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 3. How to train a new model?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytorch-model" class="md-nav__link">
+    Pytorch model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-4-start-training-testing-and-inference" class="md-nav__link">
+    Section 4. Start training, testing and inference
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-5-training-on-gpu" class="md-nav__link">
+    Section 5. Training on GPU
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-6-versioning-rules" class="md-nav__link">
+    Section 6. Versioning rules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Linux|Windows operating system</li>
+<li>30 GB+ of storage, 4 GB+ RAM</li>
+<li>Python 3.8+, &lt;3.10</li>
+<li>Poetry 1.1+</li>
+</ul>
+<h2 id="section-1-configuring-loss-function">Section 1. Configuring Loss Function</h2>
+<p>Let's take a look at the following .yaml file</p>
+<pre><code class="language-yaml">
+task:
+  - image-segmentation
+
+implementations:
+  torch: # framework name
+    JaccardLoss: # name of the loss function(can any name)
+      weight: 0.3  # weight of the loss function(can be any float)
+      object: # can be `function`
+        # path to the class/function(can be a local path or a installed library code)
+        _target_: pytorch_toolbelt.losses.JaccardLoss
+        mode: binary  # additional argument for the class
+    BinaryFocalLoss:  # another loss, structure is similar to above described loss 
+      weight: 0.7
+      object:
+        _target_: pytorch_toolbelt.losses.BinaryFocalLoss
+</code></pre>
+<p><code>task</code> denotes the type of the problem these loss functions were designed to be used.</p>
+<p><code>implementations</code> contains information on how to instantiate the loss functions for different frameworks.</p>
+<p>Inner level is for framework names. Here we can use <code>torch</code>, <code>sklearn</code>, <code>xgboost</code> etc.
+Inside of the framework level we have the names of the objects. Names are later used during logging.
+You are free to select any name.</p>
+<p>Latter if we go inside the "name's level" we will have two fields: weight, object/function.
+Weight is used to specify the weight of the loss function.</p>
+<h4 id="objectfunction">Object/Function:</h4>
+<p><strong>TL;DR</strong></p>
+<ul>
+<li>if code to be instantiated is a function then name this field <code>function</code></li>
+<li>if code to be instantiated is an object then name this field <code>object</code></li>
+</ul>
+<hr />
+<p>Here we are choosing the type of the code we want to instantiate.</p>
+<p>It can be an <code>object</code> of a class or a <code>function</code>.
+As functions cannot be instantiated right away without arguments.
+We need to instantiate function later in the code when we receive arguments.</p>
+<p>Under the hood:</p>
+<pre><code>object - gets instantiated
+function - gets wrapped into a lambda function
+</code></pre>
+<p>this allows us to have the same interface for both objects and functions later on.</p>
+<p>Example:</p>
+<p>In the following snippet we initialize the loss object <code>BinaryFocalLoss</code></p>
+<pre><code class="language-python">from pytorch_toolbelt.losses import BinaryFocalLoss
+import torch
+
+criterion = BinaryFocalLoss()
+
+pred = torch.tensor([0.0, 0.0, 0.0])
+target = torch.tensor([1, 1, 1])
+
+pred.unsqueeze_(0)
+target.unsqueeze_(0)
+
+loss1 = criterion(pred, target)
+</code></pre>
+<p>In the following snippet we initialize the function <code>binary_cross_entropy</code> and pass arguments right away.</p>
+<pre><code class="language-python">import torch
+import torch.nn.functional as F
+
+pred = torch.tensor([0.0, 0.0, 0.0])
+target = torch.tensor([1, 1, 1])
+
+pred.unsqueeze_(0)
+target.unsqueeze_(0)
+
+loss1 = F.binary_cross_entropy(pred, target)
+</code></pre>
+<h2 id="section-2-how-to-add-your-dataset">Section 2. How to add your dataset?</h2>
+<p>Now we will consider adding your custom dataset into the framework.</p>
+<ol>
+<li>Split your data into two folders: train and test.</li>
+<li>Make sure that you have the corresponding datamodule to process your data. All the available datamodules stored in
+   <code>innofw/core/datamodules/</code>. Each datamodule has a <code>task</code> and <code>framework</code> attributes*. Pair of <code>task</code> and <code>framework</code> can
+   be duplicated, in this case difference is
+   in the data retrieval logic, select one that is more suitable for your problem.<ol>
+<li>In case you have not found suitable datamodule then write your own. Refer
+   to <a href="#Section-2.2.-Writing-own-datamodule">section 2.2</a>.</li>
+</ol>
+</li>
+<li>
+<p>Create a configuration file in config/datasets/[dataset_name].yaml\
+   Dataset config file should be structured as follows:
+   ```yaml</p>
+<p>task:
+    - [dedicated task]</p>
+<p>name: [name of the dataset]
+  description: [specify dataset description]</p>
+<p>markup_info: [specify markup information]
+  date_time: [specify date]</p>
+<p><em>target</em>: innofw.core.datamodules.[submodule].[submodule].[class_name]</p>
+<h1 id="data-paths">=============== Data Paths =================</h1>
+<h1 id="use-one-of-the-following">use one of the following:</h1>
+<p># ====== 1. local data ====== #
+  train:
+    source: /path/to/file/or/folder
+  test:
+    source: /path/to/file/or/folder <br />
+  # ====== 2. remote data ====== #
+  train:
+    source: https://api.blackhole.ai.innopolis.university/public-datasets/folder/train.zip
+    target: folder/to/extract/train/
+  test:
+    source: https://api.blackhole.ai.innopolis.university/public-datasets/folder/test.zip
+    target: folder/to/extract/test/</p>
+<h1 id="_1">==================================</h1>
+<p># some datamodules require additional arguments
+  # look for them in the documentation of each datamodule
+  # arguments passed in the following way:
+  arg1: value1  # here arg1 - name of the argument, value1 - value for the arg1
+  arg2: value2
+  # ... same for other datamodule arguments</p>
+</li>
+<li>
+<p>To run prediction on new data you should create an inference datamodule configuration file. Configuration file is
+   alike to file created in 3.
+   ```yaml</p>
+<p>task:
+    - [dedicated task]</p>
+<p>name: [name of the dataset]
+  description: [specify dataset description]</p>
+<p>markup_info: [specify markup information]
+  date_time: [specify date]</p>
+<p><em>target</em>: innofw.core.datamodules.[submodule].[submodule].[class_name]</p>
+<h1 id="data-paths_1">=============== Data Paths =================</h1>
+<h1 id="use-one-of-the-following_1">use one of the following:</h1>
+<p># ====== 1. local data ====== #
+  infer:
+    source: /path/to/file/or/folder <br />
+  # ====== 2. remote data ====== #
+  infer:
+    source: https://api.blackhole.ai.innopolis.university/public-datasets/folder/infer.zip
+    target: folder/to/extract/infer/</p>
+<h1 id="_2">==================================</h1>
+<p># some datamodules require additional arguments
+  # look for them in the documentation of each datamodule
+  # arguments passed in the following way:
+  arg1: value1  # here arg1 - name of the argument, value1 - value for the arg1
+  arg2: value2
+  # ... same for other datamodule arguments</p>
+</li>
+<li>
+<p>* <code>task</code> refers to the problem type where this datamodule is used. <code>framework</code> refers to the framework type where
+  this datamodule is used</p>
+</li>
+</ol>
+<h3 id="section-22-writing-own-datamodule">Section 2.2. Writing own datamodule</h3>
+<p>Datamodule is a class which has the following responsibilities:
+1. creation of data loaders for each dataset type: train, test, val and infer.
+2. dataset setting up(e.g. downloading, preprocessing, creating additional files etc.) 
+3. model predictions saving - formatting the predictions provided by a model</p>
+<p>For now all of our data modules inherit from following two classes: <code>PandasDataModule</code>, <code>BaseLightningDataModule</code></p>
+<p>PandasDataModule is suitable for tasks with input provided as table. The class provides the data by first uploading it into RAM.
+BaseLightningDataModule is suitable for tasks where notion of 'batches' is reasonable for the data and the model.</p>
+<pre><code>from innofw.core.datamodules.lightning_datamodules.base import (
+    BaseLightningDataModule,
+)
+
+
+class DataModule(BaseLightningDataModule):
+   def setup(self, *args, **kwargs):
+      pass
+
+   def train_dataloader(self):
+      pass
+
+   def val_dataloader(self):
+      pass
+
+   def test_dataloader(self):
+      pass
+</code></pre>
+<p>Where each dataloader utilizes the dataset(similar term as
+<a href="https://pytorch.org/tutorials/beginner/basics/data_tutorial.html">torch's Dataset</a>)</p>
+<h2 id="section-3-how-to-train-a-new-model">Section 3. How to train a new model?</h2>
+<h3 id="pytorch-model">Pytorch model</h3>
+<p>If you have written your own model, for instance this dummy model:</p>
+<pre><code class="language-python">import torch.nn as nn
+
+
+class MNISTClassifier(nn.Module):
+    def __init__(self, hidden_dim: int = 100):
+        super().__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(28 * 28, hidden_dim),
+            nn.Linear(hidden_dim, 10)
+        )
+
+    def forward(self, x):
+        return self.layers(x)
+</code></pre>
+<p>And you would like to add train it. Then you should do the following:</p>
+<ol>
+<li>add <code>task</code> and <code>framework</code> parameters
+    ```python
+    import torch.nn as nn</li>
+</ol>
+<p>class MNISTClassifier(nn.Module):
+        task = ['image-classification']
+        framework = ['torch']
+        # rest of the code is the same
+    ```</p>
+<p><strong>standard list of tasks:</strong>
+    - image-classification
+    - image-segmentation
+    - image-detection
+    - table-regression
+    - table-classification
+    - table-clustering
+      ...</p>
+<p><strong>standard list of frameworks:</strong>
+    - torch
+    - sklearn
+    - xgboost</p>
+<ol>
+<li>add the file with model to <code>innofw/core/models/torch/architectures/[task]/file_with_nn_module.py</code></li>
+<li>make sure dictionary in <code>get_default</code> in <code>innofw/utils/defaults.py</code> contains a mapping between your
+   task and a lightning module</li>
+</ol>
+<p>if <code>task</code> has no corresponding <code>pytorch_lightning.LightningModule</code> add new implementation in this
+   folder <code>innofw/core/models/torch/lightning_modules/[task].py</code>.</p>
+<blockquote>
+<p>for more information on lightning modules
+   visit <a href="https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html">official documentation</a></p>
+</blockquote>
+<ol>
+<li>
+<p>make sure you have suitable dataset class for your model. Refer to <a href="">chapter 2</a></p>
+</li>
+<li>
+<p>add configuration file to your model.</p>
+</li>
+</ol>
+<p>in <code>config/models/[model_name].yaml</code> define a <code>_target_</code> field and arguments for your model.</p>
+<p>For example:</p>
+<pre><code>```yaml
+_target_: innofw.core.models.torch.architectures.classification.MNISTClassifier
+hidden_dim: 256
+```
+</code></pre>
+<p>Now you are able to train and test your model! 😊</p>
+<h2 id="section-4-start-training-testing-and-inference">Section 4. Start training, testing and inference</h2>
+<ol>
+<li>Make sure you have needed working dataset configuration. See Section 2.</li>
+<li>Make sure you have needed working model configuration file. See Section 3.</li>
+<li>Write an experiment file</li>
+</ol>
+<p>For instance file in folder <code>config/experiments</code> named <code>KA_130722_yolov5.yaml</code> with contents:
+   ```yaml</p>
+<p># @package <em>global</em>
+   defaults:
+     - override /models: [model_config_name]
+     - override /datasets: [dataset_config_name]</p>
+<p>project: [project_name]
+   task: [task_name]
+   seed: 42
+   epochs: 300
+   batch_size: 4
+   weights_path: /path/to/store/weights
+   weights_freq: 1  # weights saving frequency</p>
+<p>ckpt_path: /path/to/saved/model/weights.pt
+   ```
+4. Launch training</p>
+<pre><code class="language-shell">python train.py experiments=KA_130722_yolov5.yaml
+</code></pre>
+<ol>
+<li>Launch testing</li>
+</ol>
+<pre><code class="language-shell">python test.py experiments=KA_130722_yolov5.yaml
+</code></pre>
+<ol>
+<li>Launch inference</li>
+</ol>
+<pre><code class="language-shell">python infer.py experiments=KA_130722_yolov5.yaml
+</code></pre>
+<h2 id="section-5-training-on-gpu">Section 5. Training on GPU</h2>
+<p>References:</p>
+<ol>
+<li>https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html</li>
+</ol>
+<h2 id="section-6-versioning-rules">Section 6. Versioning rules</h2>
+<p>1) Framework versions must be specified in X.Y.Z format, where:
+‒ X – older version (updates in case of big changes);
+‒ Y – younger version (updates in case of small changes);
+‒ Z - tiny changes (updates in case of tiny changes).
+2) When one of the numbers is increased, all numbers after it must be set to zero.
+3) Backward compatibility in software must be maintained in all versions with the same older version.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+    
+  </body>
+</html>
