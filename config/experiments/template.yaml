@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - override /models: faster_rcnn
+  - override /datasets: detection_wheat
+
+
+project: "template"
+task: "none"
+random_seed: 42
+epochs: 1
+batch_size: 2
+weights_freq: 1
