@@ -183,14 +183,13 @@ def get_optimizer(
         and config[name] is not None
         # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
-        if "task" not in config[name]:
-            return None
+        # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = framework is Frameworks.torch
-        if is_suitable_for_task(config[name], task) and framework_consistent:
+        if framework_consistent:
             items = [config[name].object]
         else:
             raise ValueError(
-                f"These {name} are not applicable with selected model and/or task"
+                f"These {name} are not applicable with selected model"
             )
 
         obj = items[0] if len(items) == 1 else items

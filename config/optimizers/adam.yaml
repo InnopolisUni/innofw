@@ -1,6 +1,4 @@
 description: Base optimizer suitable for most of the tasks
-task:
-  - all
 object:
   _target_: innofw.core.optimizers.custom_optimizers.optimizers.ADAM
   lr: 3e-4

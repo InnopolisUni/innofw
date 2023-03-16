@@ -15,7 +15,6 @@ def test_optimizer_creation():
     cfg = DictConfig(
         {
             "optimizers": {
-                "task": ["all"],
                 "object": {
                     "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.LION",
                     "lr": 1e-4,
@@ -35,7 +34,6 @@ def test_optimizer_creation_wrong_framework():
     cfg = DictConfig(
         {
             "optimizers": {
-                "task": ["all"],
                 "object": {
                     "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.LION",
                     "lr": 1e-4,

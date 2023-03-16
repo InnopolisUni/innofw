@@ -1,6 +1,4 @@
 description: Popular optimizer works better then Adam for some tasks
-task:
-  - all
 object:
   _target_: torch.optim.SGD
   lr: 1e-5

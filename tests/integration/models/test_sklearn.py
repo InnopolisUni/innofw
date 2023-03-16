@@ -46,7 +46,6 @@ def test_sklearn_model_n_optimizer_creation():
                 "description": "something",
             },
             "optimizers": {
-                "task": ["all"],
                 "object": {"_target_": "torch.optim.Adam", "lr": 1e-5},
             },
         }
