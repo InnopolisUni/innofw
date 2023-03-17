@@ -63,22 +63,36 @@ def find_folder_with_images(
         print(f"Error: {e}")
         return None
 
+def check_path(path: Union[str, Path], ext: Union[str, list]):
+    if not path.exists():
+        raise ValueError(f"Invalid path: {path}")
+    if not path.is_dir() and not path.suffix in ext:
+        raise ValueError(f"File does not have a valid extension(s): {path}")
+
+def check_files(path: Union[str, Path], ext: Union[str, list], target_files: list):
+    if len(target_files) == 0:
+        raise ValueError(f"No files found with extension(s) {ext} in {path}")
+    elif len(target_files) > 1:
+        raise ValueError(f"Multiple files found with extension(s) {ext} in {path}")
+    else:
+        return target_files[0]
+    
 def find_file_by_ext(
     path: Union[str, Path], ext=[".json", ".csv"]
 ) -> Optional[Path]:
-    try:
-        path = Path(path)
-        if not path.exists():
-            raise ValueError(f"Invalid path: {path}")
-        if not path.is_dir() and not path.suffix in ext:
-            raise ValueError(f"File does not have a valid extension: {path}")
-        target_files = list(filter(lambda f: f.suffix in ext, path.rglob("*")))
-        if len(target_files) == 0:
-            raise ValueError(f"No files found with extensions {ext} in {path}")
-        elif len(target_files) > 1:
-            raise ValueError(f"Multiple files found with extensions {ext} in {path}")
-        else:
-            return target_files[0]
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
+    path = Path(path)
+    check_path(path, ext)
+    if type(ext) == list:
+        try:
+            target_files = list(filter(lambda f: f.suffix in ext, path.rglob("*")))
+            return check_files(path, ext, target_files)
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
+    else:
+        try:
+            target_files = list(filter(lambda f: f.suffix == ext, path.rglob("*")))
+            return check_files(path, ext, target_files)
+        except Exception as e:
+            print(f"Error: {e}")
+            return None

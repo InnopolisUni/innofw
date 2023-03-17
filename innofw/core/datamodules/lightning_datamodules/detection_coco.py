@@ -85,12 +85,12 @@ class CocoLightningDataModule(BaseLightningDataModule):
             train_dataset = self.dataset(
                 train_csv,
                 str(self.train_dataset),
-                # transforms=Augmentation(self.aug['train']),
+                transforms=Augmentation(self.aug['train']),
             )
             self.test_dataset = self.dataset(
                 test_csv,
                 str(self.test_dataset),
-                # transforms=Augmentation(self.aug['test']),
+                transforms=Augmentation(self.aug['test']),
             )
         else:
             train_dataset = self.dataset(
@@ -120,7 +120,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
         setattr(self.val_dataset, 'transform', self.aug['val'])
     
     def find_csv_and_data(self, path):
-        csv_path = find_file_by_ext(path)
+        csv_path = find_file_by_ext(path, '.csv')
         train_df = pd.read_csv(csv_path)
         arr = train_df["bbox"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
         bboxes = np.stack(arr)
