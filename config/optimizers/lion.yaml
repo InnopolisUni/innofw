@@ -1,7 +1,6 @@
 description: New optimizer from Google
-object:
-  _target_: innofw.core.optimizers.custom_optimizers.optimizers.LION
-  lr: 1e-4
-  wd: 0.0
-  b1: 0.9
-  b2: 0.99
+_target_: innofw.core.optimizers.custom_optimizers.optimizers.LION
+lr: 1e-4
+wd: 0.0
+b1: 0.9
+b2: 0.99

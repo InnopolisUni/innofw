@@ -7,6 +7,7 @@ defaults:
   - override /augmentations_test: none
   - override /losses: log_loss.yaml
   - override /optimizers: lion
+#  - override /callbacks: classification.yaml
 
 
 project: "mnist_classification"
@@ -16,4 +17,10 @@ original_work_dir: ${hydra:runtime.cwd}
 weights_freq: 1
 batch_size: 32
 stop_param: 1
-epochs: 1
+epochs: 10
+
+#wandb:
+#  enable: True
+#  project: mnist
+#  group: 160323_just_testing_wandb
+#  job_type: training

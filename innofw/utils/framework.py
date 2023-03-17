@@ -3,6 +3,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import hydra
+from omegaconf import OmegaConf
 
 from innofw.constants import DefaultFolders
 from innofw.constants import Frameworks
@@ -186,7 +187,12 @@ def get_optimizer(
         # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = framework is Frameworks.torch
         if framework_consistent:
-            items = [config[name].object]
+            items = dict()
+            for key, value in config[name].items():
+                if key == "meta" or key == "description":
+                    continue
+                items[key] = value
+            items = [OmegaConf.create(items)]
         else:
             raise ValueError(
                 f"These {name} are not applicable with selected model"

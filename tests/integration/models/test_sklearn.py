@@ -45,9 +45,7 @@ def test_sklearn_model_n_optimizer_creation():
                 "name": "knn-regressor",
                 "description": "something",
             },
-            "optimizers": {
-                "object": {"_target_": "torch.optim.Adam", "lr": 1e-5},
-            },
+            "optimizers": {"_target_": "torch.optim.Adam", "lr": 1e-5},
         }
     )
     task = "table-regression"

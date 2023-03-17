@@ -14,7 +14,8 @@ def test_scheduler_creation():
     cfg = DictConfig(
         {
             "optimizers": {
-                "object": {"_target_": "torch.optim.SGD", "lr": 1e-5},
+                "_target_": "torch.optim.SGD",
+                "lr": 1e-5,
             },
             "schedulers": {
                 "task": ["all"],
