@@ -1,8 +1,9 @@
 # standard libraries
 import hashlib
 
-# third party libraries
 from pydantic import FilePath
+
+# third party libraries
 
 
 def compute_file_hash(file: FilePath, hash_type: str = "md5"):

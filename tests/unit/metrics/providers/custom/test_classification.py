@@ -1,19 +1,20 @@
 from typing import Callable
 
-#
-import pytest
-import torch
 import numpy as np
-from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score
+import pytest
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+
+from innofw.core.metrics import Metric
+from innofw.core.metrics.custom_metrics.metrics import Accuracy
+from innofw.core.metrics.custom_metrics.metrics import F1Score
+from innofw.core.metrics.custom_metrics.metrics import Precision
+from innofw.core.metrics.custom_metrics.metrics import Recall
 
 #
-from innofw.core.metrics import Metric
-from innofw.core.metrics.custom_metrics.metrics import (
-    F1Score,
-    Accuracy,
-    Recall,
-    Precision,
-)
+#
 
 
 @pytest.mark.parametrize(

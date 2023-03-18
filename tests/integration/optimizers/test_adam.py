@@ -10,6 +10,8 @@ from innofw.utils.framework import get_optimizer
 
 # local
 
+# local
+
 
 def test_optimizer_creation():
     cfg = DictConfig(

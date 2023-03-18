@@ -5,10 +5,12 @@ description:
 
 """
 #
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
+
+import torch.nn as nn
 
 #
-import torch.nn as nn
 
 
 class BaseAugmentationAdapter(ABC, nn.Module):
@@ -24,6 +26,7 @@ class BaseAugmentationAdapter(ABC, nn.Module):
     is_suitable_input(optimizer):
        checks if the augmentation is suitable for the adapter
     """
+
     def __init__(self, transforms):
         super().__init__()
         self.transforms = transforms

@@ -1,45 +1,46 @@
-import fire
 import logging
-from onvif import ONVIFCamera
 from typing import Optional
+
+import fire
+from onvif import ONVIFCamera
 
 
 class CameraControl:
     """
-            A class to represent a Camera unit with ONVIF support, with corresponding methods for control of movements
+    A class to represent a Camera unit with ONVIF support, with corresponding methods for control of movements
 
-            ...
+    ...
 
-            Attributes
-            ----------
-            ip : str
-            user : str
-            password: str
+    Attributes
+    ----------
+    ip : str
+    user : str
+    password: str
 
 
-            Methods
-            -------
-            absolute_move(self, pan: float, tilt: float, zoom: float):
-                Operation to move pan, tilt or zoom to a absolute destination.
-            continuous_move(self, pan: float, tilt: float, zoom: float):
-                Operation for continuous Pan/Tilt and Zoom movements.
-            relative_move(self, pan: float, tilt: float, zoom: float):
-                Operation for Relative Pan/Tilt and Zoom Move.
-            stop_move(self):
-                Operation to stop ongoing pan, tilt and zoom movements of absolute relative and continuous type.
-            set_home_position(self):
-                Operation to save current position as the home position.
-            go_home_position(self):
-                Operation to move the PTZ device to it's "home" position.
-            get_ptz(self):
-                Operation to request PTZ status.
-            set_preset(self, preset_name: str):
-                The command saves the current device position parameters.
-            remove_preset(self, preset_name: str):
-                Operation to remove a PTZ preset.
-            go_to_preset(self, preset_position: str):
-                Operation to go to a saved preset position.
-        """
+    Methods
+    -------
+    absolute_move(self, pan: float, tilt: float, zoom: float):
+        Operation to move pan, tilt or zoom to a absolute destination.
+    continuous_move(self, pan: float, tilt: float, zoom: float):
+        Operation for continuous Pan/Tilt and Zoom movements.
+    relative_move(self, pan: float, tilt: float, zoom: float):
+        Operation for Relative Pan/Tilt and Zoom Move.
+    stop_move(self):
+        Operation to stop ongoing pan, tilt and zoom movements of absolute relative and continuous type.
+    set_home_position(self):
+        Operation to save current position as the home position.
+    go_home_position(self):
+        Operation to move the PTZ device to it's "home" position.
+    get_ptz(self):
+        Operation to request PTZ status.
+    set_preset(self, preset_name: str):
+        The command saves the current device position parameters.
+    remove_preset(self, preset_name: str):
+        Operation to remove a PTZ preset.
+    go_to_preset(self, preset_position: str):
+        Operation to go to a saved preset position.
+    """
 
     def __init__(self, ip, user, password):
         self.__cam_ip = ip
@@ -88,7 +89,9 @@ class CameraControl:
         request.ProfileToken = self.camera_media_profile.token
         request.Position = {"PanTilt": {"x": pan, "y": tilt}, "Zoom": zoom}
         resp = self.camera_ptz.AbsoluteMove(request)
-        logging.info("camera_command( aboslute_move(%f, %f, %f) )", pan, tilt, zoom)
+        logging.info(
+            "camera_command( aboslute_move(%f, %f, %f) )", pan, tilt, zoom
+        )
         return resp
 
     def continuous_move(self, pan: float, tilt: float, zoom: float):
@@ -105,7 +108,9 @@ class CameraControl:
         request.ProfileToken = self.camera_media_profile.token
         request.Velocity = {"PanTilt": {"x": pan, "y": tilt}, "Zoom": zoom}
         resp = self.camera_ptz.ContinuousMove(request)
-        logging.info("camera_command( continuous_move(%f, %f, %f) )", pan, tilt, zoom)
+        logging.info(
+            "camera_command( continuous_move(%f, %f, %f) )", pan, tilt, zoom
+        )
         return resp
 
     def relative_move(self, pan: float, tilt: float, zoom: float):
@@ -122,7 +127,9 @@ class CameraControl:
         request.ProfileToken = self.camera_media_profile.token
         request.Translation = {"PanTilt": {"x": pan, "y": tilt}, "Zoom": zoom}
         resp = self.camera_ptz.RelativeMove(request)
-        logging.info("camera_command( relative_move(%f, %f, %f) )", pan, tilt, zoom)
+        logging.info(
+            "camera_command( relative_move(%f, %f, %f) )", pan, tilt, zoom
+        )
         return resp
 
     def stop_move(self):
@@ -195,7 +202,8 @@ class CameraControl:
         for i, _ in enumerate(presets):
             if str(presets[i].Name) == preset_name:
                 logging.warning(
-                    "Preset ('%s') not created. Preset already exists!", preset_name
+                    "Preset ('%s') not created. Preset already exists!",
+                    preset_name,
                 )
                 return None
 
@@ -306,7 +314,9 @@ def move(ip, user: Optional[str], password: Optional[str], move_type):
         password (str):
         move_type (str): Supported moves are:  zoom_in, zoom_out, pan_left, pan_right, tilt_up, tilt_down
     """
-    logging.basicConfig(filename="teste-onvif.log", filemode="w", level=logging.DEBUG)
+    logging.basicConfig(
+        filename="teste-onvif.log", filemode="w", level=logging.DEBUG
+    )
     logging.info("Started")
 
     ptz_cam = CameraControl(ip, user, password)

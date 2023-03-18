@@ -1,10 +1,9 @@
-import torch
-import pytest
 from omegaconf import DictConfig
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
+
+# local
 
 
 def test_augmentation_creation():
@@ -24,7 +23,9 @@ def test_augmentation_creation():
                                         "always_apply": False,
                                     },
                                     {"_target_": "albumentations.Flip"},
-                                    {"_target_": "albumentations.RandomRotate90"},
+                                    {
+                                        "_target_": "albumentations.RandomRotate90"
+                                    },
                                     {
                                         "_target_": "albumentations.ElasticTransform",
                                         "p": 0.3,

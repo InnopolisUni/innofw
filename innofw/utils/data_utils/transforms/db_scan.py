@@ -1,11 +1,10 @@
 from collections import defaultdict
 
 import cv2
-import numpy as np
-from sklearn.cluster import DBSCAN
 from numpy import max as npmax
 from numpy import min as npmin
 from numpy import zeros
+from sklearn.cluster import DBSCAN
 
 
 def norming(img):
@@ -81,6 +80,7 @@ class MakeContrasted:
     Methods
     -------
     """
+
     def __call__(
         self,
         image,
@@ -89,7 +89,7 @@ class MakeContrasted:
         keypoints=None,
         force_apply=False,
         *args,
-        **kwargs
+        **kwargs,
     ):
         kerneled = make_kernel_trick(image)
         model = DBSCAN(eps=5, min_samples=1, n_jobs=4)
@@ -99,17 +99,29 @@ class MakeContrasted:
         contrasted = mask * image
         contrasted = make_contrasted(contrasted)
 
-        return {"image": contrasted, "bbox": bbox, "mask": mask, "keypoints": keypoints}
+        return {
+            "image": contrasted,
+            "bbox": bbox,
+            "mask": mask,
+            "keypoints": keypoints,
+        }
 
 
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Process input/output image paths")
-    parser.add_argument(
-        "-i", "--input_path", required=True, help="path to lung image in png format"
+    parser = argparse.ArgumentParser(
+        description="Process input/output image paths"
     )
-    parser.add_argument("-o", "--output_path", required=True, help="path to save image")
+    parser.add_argument(
+        "-i",
+        "--input_path",
+        required=True,
+        help="path to lung image in png format",
+    )
+    parser.add_argument(
+        "-o", "--output_path", required=True, help="path to save image"
+    )
     argv = parser.parse_args()
     img = cv2.imread(argv.input_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

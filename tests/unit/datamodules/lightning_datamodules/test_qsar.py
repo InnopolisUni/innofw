@@ -1,10 +1,14 @@
 import pytest
 
-# local modules
-from innofw.constants import Frameworks, Stages
+from innofw.constants import Frameworks
+from innofw.constants import Stages
+from innofw.core.datamodules.lightning_datamodules.qsar_dm import (
+    QsarSelfiesDataModule,
+)
 from innofw.utils.framework import get_datamodule
 from tests.fixtures.config.datasets import qsar_datamodule_cfg_w_target
-from innofw.core.datamodules.lightning_datamodules.qsar_dm import QsarSelfiesDataModule
+
+# local modules
 
 
 def test_smoke():

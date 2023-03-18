@@ -1,9 +1,9 @@
-import os
 import datetime
+import os
 from pathlib import Path
-from typing import Optional
 
-from omegaconf import open_dict, DictConfig
+from omegaconf import DictConfig
+from omegaconf import open_dict
 
 from innofw.core.active_learning import ActiveLearnTrainer
 

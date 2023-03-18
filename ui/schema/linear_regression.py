@@ -1,6 +1,7 @@
 from typing import ClassVar
 
 from pydantic import Field
+
 from .base import SklearnSchema
 from innofw.constants import TaskType
 
@@ -19,7 +20,8 @@ class LinearRegressionSchema(SklearnSchema):
         description="This parameter is ignored when fit_intercept is set to False.",
     )
     copy_X: bool = Field(
-        True, description="If True, X will be copied; else, it may be overwritten."
+        True,
+        description="If True, X will be copied; else, it may be overwritten.",
     )
     positive: bool = Field(
         False,

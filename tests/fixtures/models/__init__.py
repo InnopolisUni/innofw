@@ -1,10 +1,12 @@
 #
-from xgboost import XGBRegressor
-from sklearn.linear_model import LinearRegression
 from catboost import CatBoostClassifier
+from sklearn.linear_model import LinearRegression
+from xgboost import XGBRegressor
+
+from tests.fixtures.models.torch.dummy_model import DummyLightningModel
+from tests.fixtures.models.torch.dummy_model import DummyTorchModel
 
 #
-from tests.fixtures.models.torch.dummy_model import DummyTorchModel, DummyLightningModel
 
 
 xgb_reg_model = XGBRegressor()

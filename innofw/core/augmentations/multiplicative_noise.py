@@ -1,6 +1,6 @@
-from albumentations.augmentations import functional as F 
 import albumentations as albu
 import numpy as np
+from albumentations.augmentations import functional as F
 
 
 class MultiplicativeNoiseSelective(albu.MultiplicativeNoise):
@@ -20,9 +20,13 @@ class MultiplicativeNoiseSelective(albu.MultiplicativeNoise):
 
     def apply(self, img, multiplier=np.array([1]), **kwargs):
         c = img.shape[0]
-        if np.random.random()<0.5:
-            img[:int(c/2), ...] = F.multiply(img[:int(c/2), ...], multiplier)
+        if np.random.random() < 0.5:
+            img[: int(c / 2), ...] = F.multiply(
+                img[: int(c / 2), ...], multiplier
+            )
             return img
         else:
-            img[int(c/2):, ...] = F.multiply(img[int(c/2):, ...], multiplier)
+            img[int(c / 2) :, ...] = F.multiply(
+                img[int(c / 2) :, ...], multiplier
+            )
             return img

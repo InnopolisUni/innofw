@@ -1,11 +1,12 @@
 # other
-from omegaconf import DictConfig
-import torch
 import pytest
+import torch
+from omegaconf import DictConfig
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
+
+# local
 
 
 def test_metrics_creation():

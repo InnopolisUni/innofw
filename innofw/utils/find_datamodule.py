@@ -1,4 +1,5 @@
-from typing import List, Union
+from typing import List
+from typing import Union
 
 from innofw.constants import Frameworks
 from innofw.utils.extra import is_intersecting
@@ -10,7 +11,9 @@ from innofw.utils.extra import is_intersecting
 #     return not set(f).isdisjoint(s)
 
 
-def find_suitable_datamodule(task: Union[str, List[str]], framework: Frameworks):
+def find_suitable_datamodule(
+    task: Union[str, List[str]], framework: Frameworks
+):
     import inspect
     from innofw.core import datamodules
 
@@ -26,4 +29,6 @@ def find_suitable_datamodule(task: Union[str, List[str]], framework: Frameworks)
             ):
                 return ".".join([cls.__module__, cls.__name__])
         else:
-            raise ValueError(f"Could not find data module for the {t} and {framework}")
+            raise ValueError(
+                f"Could not find data module for the {t} and {framework}"
+            )

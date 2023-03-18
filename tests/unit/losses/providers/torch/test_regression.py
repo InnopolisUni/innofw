@@ -1,10 +1,11 @@
 # thrid-party libraries
+import pytest
 import torch
 from torch.nn import L1Loss
-import pytest
+
+from innofw.core.losses import Loss
 
 # local modules
-from innofw.core.losses import Loss
 
 """
 try these losses

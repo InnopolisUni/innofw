@@ -24,6 +24,7 @@ class ToFloatWClip(ImageOnlyTransform):
     """
     dividing by max_value and clipping in range [0, 1]
     """
+
     def __init__(self, max_value, always_apply=False, p=0.5):
         super().__init__(always_apply=always_apply, p=p)
         self.max_value = max_value

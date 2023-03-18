@@ -44,7 +44,8 @@ def register_scheduler_adapter(name):
             raise ValueError("Name %s already registered!" % name)
         if not issubclass(cls, BaseSchedulerAdapter):
             raise ValueError(
-                "Class %s is not a subclass of %s" % (cls, BaseSchedulerAdapter)
+                "Class %s is not a subclass of %s"
+                % (cls, BaseSchedulerAdapter)
             )
         __SCHEDULER_ADAP_DICT__[name] = cls
         return cls
@@ -55,21 +56,26 @@ def register_scheduler_adapter(name):
 for file in os.listdir(os.path.dirname(__file__)):
     if file.endswith(".py") and not file.startswith("_"):
         module_name = file[: file.find(".py")]
-        module = importlib.import_module("innofw.core.schedulers." + module_name)
+        module = importlib.import_module(
+            "innofw.core.schedulers." + module_name
+        )
 
 
 class Scheduler(nn.Module):
     """
-        Class provides same interface for different schedulers by utilizing adapters
+    Class provides same interface for different schedulers by utilizing adapters
 
-        Methods
-        -------
-        step(x)
-            updates a learning rate
+    Methods
+    -------
+    step(x)
+        updates a learning rate
     """
+
     def __init__(self, scheduler, optimizer: Optimizer, *args, **kwargs):
         super().__init__()
-        self.scheduler = get_sheduler_adapter(scheduler, optimizer, *args, **kwargs)
+        self.scheduler = get_sheduler_adapter(
+            scheduler, optimizer, *args, **kwargs
+        )
 
     def step(self):
         return self.scheduler.step()

@@ -1,12 +1,13 @@
 # standard libraries
 from pathlib import Path
 
-# third-party libraries
 import pytest
 
-# local modules
 from innofw.constants import DefaultS3User
 from innofw.zoo import download_model
+
+# third-party libraries
+# local modules
 
 
 @pytest.mark.parametrize(

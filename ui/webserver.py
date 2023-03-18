@@ -1,29 +1,23 @@
 # standard libraries
-from enum import Enum
-from datetime import datetime
-
-# third-party libraries
-import hydra
-import streamlit as st
-from omegaconf import DictConfig
-
-from innofw.schema.experiment import ExperimentConfig
-
-# local modules
-from ui.utils import get_uuid
-from innofw.constants import TaskType
-from innofw.pipeline import run_pipeline
-from table_ui import table_input_handler
-
-import os
-import sys
-import random
-import streamlit as st
-
 import argparse
 import os
+from datetime import datetime
+from enum import Enum
 
-parser = argparse.ArgumentParser(description="This app provides UI for the framework")
+import streamlit as st
+from omegaconf import DictConfig
+from table_ui import table_input_handler
+
+from innofw.constants import TaskType
+from innofw.schema.experiment import ExperimentConfig
+from ui.utils import get_uuid
+
+# third-party libraries
+# local modules
+
+parser = argparse.ArgumentParser(
+    description="This app provides UI for the framework"
+)
 
 parser.add_argument("experiments", default="ui.yaml", help="Config name")
 try:
@@ -105,11 +99,19 @@ metrics = project_tab.multiselect(
 )
 
 # 2. Project configuration
-input_type = project_tab.selectbox("What is your input type?", ["table", "image"])
+input_type = project_tab.selectbox(
+    "What is your input type?", ["table", "image"]
+)
 
-user_input = input_type_handler(input_type, task, project_tab, model_tab, data_tab)
+user_input = input_type_handler(
+    input_type, task, project_tab, model_tab, data_tab
+)
 
-if st.button("save") and "model_cfg" in user_input and "dataset_cfg" in user_input:
+if (
+    st.button("save")
+    and "model_cfg" in user_input
+    and "dataset_cfg" in user_input
+):
     cfg = DictConfig(
         {
             "metrics": metrics,

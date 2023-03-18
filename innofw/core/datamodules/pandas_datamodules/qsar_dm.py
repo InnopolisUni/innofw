@@ -2,9 +2,12 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-from innofw.constants import Frameworks, Stages
-from innofw.core.datamodules.pandas_datamodules.base import \
-    BasePandasDataModule
+
+from innofw.constants import Frameworks
+from innofw.constants import Stages
+from innofw.core.datamodules.pandas_datamodules.base import (
+    BasePandasDataModule,
+)
 from innofw.core.datasets.smiles_dataset import SmilesDataset
 
 
@@ -30,6 +33,7 @@ class QsarDataModule(BasePandasDataModule):
         It reads in a csv file containing smiles strings and target values, then splits it into train/test sets.
         The SmilesDataset class is used to create a PyTorch dataset object for each of these sets.
     """
+
     task = ["qsar-classification", "qsar-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
     train_smiles_dataset: SmilesDataset = None
@@ -126,7 +130,9 @@ class QsarDataModule(BasePandasDataModule):
         elif stage is Stages.predict:
             return self.predict_dataloader()
         else:
-            raise ValueError("Wrong stage passed use on of following:", list(Stages))
+            raise ValueError(
+                "Wrong stage passed use on of following:", list(Stages)
+            )
 
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         df = pd.read_csv(

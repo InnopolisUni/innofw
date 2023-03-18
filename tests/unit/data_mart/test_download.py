@@ -1,13 +1,17 @@
 # standard libraries
-
 import pytest
 
-# local modules
+from innofw.constants import BucketNames
+from innofw.constants import DEFAULT_STORAGE_URL
+from innofw.constants import DefaultS3User
 from innofw.data_mart import download_dataset
-from innofw.constants import DefaultS3User, DEFAULT_STORAGE_URL, BucketNames
 from tests.utils import is_dir_empty
 
-test_folder_url = f"{DEFAULT_STORAGE_URL}/{BucketNames.data_mart.value}/credit_cards"
+# local modules
+
+test_folder_url = (
+    f"{DEFAULT_STORAGE_URL}/{BucketNames.data_mart.value}/credit_cards"
+)
 
 
 @pytest.mark.parametrize(
@@ -23,8 +27,12 @@ def test_download_dataset(folder_url, tmp_path, credentials):
         credentials.SECRET_KEY.get_secret_value(),
     )
 
-    inner_folders = [file for file in tmp_path.iterdir() if file.suffix != ".zip"]
+    inner_folders = [
+        file for file in tmp_path.iterdir() if file.suffix != ".zip"
+    ]
     assert len(inner_folders) != 1, "folder was not downloaded"
 
     for folder in inner_folders:
-        assert not is_dir_empty(folder), "folder should contain at least one file"
+        assert not is_dir_empty(
+            folder
+        ), "folder should contain at least one file"

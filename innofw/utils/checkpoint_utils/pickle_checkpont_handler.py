@@ -1,29 +1,33 @@
-from pathlib import Path
-from typing import Union, Optional
 import logging
+from pathlib import Path
+from pickle import dump
+from pickle import load
+from typing import Optional
+from typing import Union
 
 import sklearn
-from pickle import dump, load
+
 from innofw.constants import CheckpointFieldKeys
 from innofw.utils import get_abs_path
-
-# from innoframework.schema.model_checkpoint import ModelCheckpoint
 from innofw.utils.checkpoint_utils.base_checkpoint_handler import (
     CheckpointHandler,
 )
 
+# from innoframework.schema.model_checkpoint import ModelCheckpoint
+
 
 class PickleCheckpointHandler(CheckpointHandler):
     """
-        A class that defines .pickle checkpoints handling
+    A class that defines .pickle checkpoints handling
 
-        Methods
-        -------
-        save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
-            saves a pickle model in the destination path with given metadata
-        load_ckpt(ckpt_path: Union[str, Path])
-            loads a pickle checkpoint from a given path
+    Methods
+    -------
+    save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
+        saves a pickle model in the destination path with given metadata
+    load_ckpt(ckpt_path: Union[str, Path])
+        loads a pickle checkpoint from a given path
     """
+
     @staticmethod
     def save_ckpt(
         model: sklearn.base.BaseEstimator,

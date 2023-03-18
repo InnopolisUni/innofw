@@ -1,14 +1,17 @@
 #
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List
+from typing import Optional
+from typing import Union
 
-#
 import albumentations as albu
 import h5py
 from torch.utils.data import Dataset
 
-#
 from .utils import prep_data
+
+#
+#
 
 
 def get_indices_dict_size(hdf5_files):
@@ -24,20 +27,21 @@ def get_indices_dict_size(hdf5_files):
 
 class HDF5Dataset(Dataset):
     """
-        A class to represent a custom HDF5 Dataset.
+    A class to represent a custom HDF5 Dataset.
 
-        hdf5_files: Union[List[Path], List[str]]
-            directory containing images
-        bands_num : int
-            number of bands in one image
-        transform: albu.Compose
+    hdf5_files: Union[List[Path], List[str]]
+        directory containing images
+    bands_num : int
+        number of bands in one image
+    transform: albu.Compose
 
 
-        Methods
-        -------
-        __getitem__(self, idx):
-            returns transformed image and mask
+    Methods
+    -------
+    __getitem__(self, idx):
+        returns transformed image and mask
     """
+
     def __init__(
         self,
         hdf5_files: Union[List[Path], List[str]],
@@ -64,4 +68,6 @@ class HDF5Dataset(Dataset):
                     return prep_data(image, mask, self.transform)
             else:
                 count += value
-        raise Exception(f"Dataset element {idx} not found; Max is {self.__len__()}")
+        raise Exception(
+            f"Dataset element {idx} not found; Max is {self.__len__()}"
+        )

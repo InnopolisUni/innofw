@@ -1,27 +1,24 @@
-from typing import Any
 from pathlib import Path
+from typing import Any
 from typing import Callable
 
-#
-import torch
 import pytest
+import torch
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 
-#
 from innofw.utils import is_path_empty
-from tests.fixtures.models import (
-    sklearn_reg_model,
-    xgb_reg_model,
-    torch_model,
-    lightning_model,
-    catboot_cls_model,
-)
-from innofw.utils.checkpoint_utils import (
-    CheckpointHandler,
-    PickleCheckpointHandler,
-    TorchCheckpointHandler,
-)
+from innofw.utils.checkpoint_utils import CheckpointHandler
+from innofw.utils.checkpoint_utils import PickleCheckpointHandler
+from innofw.utils.checkpoint_utils import TorchCheckpointHandler
+from tests.fixtures.models import catboot_cls_model
+from tests.fixtures.models import lightning_model
+from tests.fixtures.models import sklearn_reg_model
+from tests.fixtures.models import torch_model
+from tests.fixtures.models import xgb_reg_model
+
+#
+#
 
 
 def sklearn_regression_model_functionality_check(model):

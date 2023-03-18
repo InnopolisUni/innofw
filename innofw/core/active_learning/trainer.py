@@ -1,8 +1,8 @@
 import pytorch_lightning as pl
-from innofw import InnoModel
-from innofw.core.models.catboost_adapter import CatBoostAdapter
 
 from .learners import CatBoostActiveLearner
+from innofw import InnoModel
+from innofw.core.models.catboost_adapter import CatBoostAdapter
 
 
 class ActiveLearnTrainer:
@@ -11,7 +11,7 @@ class ActiveLearnTrainer:
 
     Attributes
     ----------
-    learner : ActiveLearner 
+    learner : ActiveLearner
         ActiveLearner instance
 
     Methods
@@ -19,8 +19,13 @@ class ActiveLearnTrainer:
     run(ckpt_path):
         Run active learning .
     """
+
     def __init__(
-        self, model: InnoModel, datamodule: pl.LightningDataModule, *args, **kwargs
+        self,
+        model: InnoModel,
+        datamodule: pl.LightningDataModule,
+        *args,
+        **kwargs,
     ):
         # get some parameters
         self.learner = get_active_learner(model, datamodule, *args, **kwargs)
@@ -32,9 +37,7 @@ class ActiveLearnTrainer:
         pass
 
 
-def get_active_learner(
-    model, datamodule, *args, **kwargs
-):
+def get_active_learner(model, datamodule, *args, **kwargs):
     if isinstance(model.model, CatBoostAdapter):
         return CatBoostActiveLearner(model, datamodule, *args, **kwargs)
     else:

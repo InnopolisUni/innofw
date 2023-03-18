@@ -1,8 +1,9 @@
 import albumentations as A
 import numpy as np
 import torch
-from innofw.core.augmentations.base import BaseAugmentationAdapter
+
 from innofw.core.augmentations import register_augmentations_adapter
+from innofw.core.augmentations.base import BaseAugmentationAdapter
 
 """
 references:
@@ -25,20 +26,24 @@ class AlbumentationsAdapter(BaseAugmentationAdapter):
     forward(x, y=None):
         performs transformations
     """
+
     def __init__(self, transforms, *args, **kwargs):
         super().__init__(transforms)
 
     def forward(self, x, y=None, z=None):
         if y is not None:
             result = self.transforms(image=np.array(x), mask=y)
-            if len(result['image'].shape) == 3 and result['image'].shape[2] == 3:
+            if (
+                len(result["image"].shape) == 3
+                and result["image"].shape[2] == 3
+            ):
                 img = np.moveaxis(result["image"], -1, 1)
             else:
-                img = result['image']
+                img = result["image"]
 
             return img, result["mask"]
         img = self.transforms(image=np.array(x))["image"]
-        
+
         if len(img.shape) == 3 and img.shape[2] == 3:
             if isinstance(img, np.ndarray):
                 img = np.moveaxis(img, -1, 0)  # HWC -> CHW

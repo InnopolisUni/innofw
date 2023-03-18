@@ -64,16 +64,17 @@ for file in os.listdir(os.path.dirname(__file__)):
 
 class InnoModel(nn.Module):
     """
-        Class provides same interface for different models by utilizing adapters
+    Class provides same interface for different models by utilizing adapters
 
-        Methods
-        -------
-        forward(x)
-            processes the input via model and returns a prediction
-        train(datamodule, ckpt_path = None)
-            trains a model on the datamodule
-            if ckpt_path is specified starts training from using the checkpoint
+    Methods
+    -------
+    forward(x)
+        processes the input via model and returns a prediction
+    train(datamodule, ckpt_path = None)
+        trains a model on the datamodule
+        if ckpt_path is specified starts training from using the checkpoint
     """
+
     def __init__(self, model, *args, **kwargs):
         super().__init__()
         self.model = get_model_adapter(model, *args, **kwargs)
@@ -93,7 +94,9 @@ class InnoModel(nn.Module):
     def set_stop_params(self, stop_param):
         return self.model.set_stop_params(stop_param)
 
-    def set_checkpoint_save(self, weights_path, weights_freq, project, experiment):
+    def set_checkpoint_save(
+        self, weights_path, weights_freq, project, experiment
+    ):
         return self.model.set_checkpoint_save(
             weights_path, weights_freq, project, experiment
         )
