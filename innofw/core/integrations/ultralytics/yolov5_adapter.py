@@ -229,6 +229,7 @@ class YOLOV5Adapter(BaseModelAdapter):
                 device=self.device,
                 hf_model_id=None,
                 project="something",
+                epochs=self.epochs,
             )
             self._yolov5_train.run(
                 hyp="hyp.yaml",
