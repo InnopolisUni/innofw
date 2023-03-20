@@ -20,7 +20,7 @@ from innofw.core.datasets.coco import DicomCocoDatasetInfer
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
 from innofw.utils.dm_utils.utils import find_file_by_ext
-from innofw.utils.dm_utils.utils import find_path
+from innofw.utils.dm_utils.utils import find_folder_with_images
 
 
 def collate_fn(batch):
@@ -134,14 +134,14 @@ class CocoLightningDataModule(BaseLightningDataModule):
         setattr(self.val_dataset, "transform", self.aug["val"])
 
     def find_csv_and_data(self, path):
-        csv_path = find_file_by_ext(path, ".csv")
+        csv_path = find_file_by_ext(path, '.csv')
         train_df = pd.read_csv(csv_path)
         arr = train_df["bbox"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
         bboxes = np.stack(arr)
         for i, col in enumerate(["x", "y", "w", "h"]):
             train_df[col] = bboxes[:, i]
         train_df["box_area"] = train_df["w"] * train_df["h"]
-        return find_path(path), train_df
+        return find_folder_with_images(path), train_df
 
     def train_dataloader(self):
         train_dataloader = torch.utils.data.DataLoader(
