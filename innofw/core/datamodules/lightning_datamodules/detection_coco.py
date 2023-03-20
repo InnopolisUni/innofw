@@ -14,6 +14,7 @@ from innofw.core.augmentations import Augmentation
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
+<<<<<<< Updated upstream
 from innofw.utils.dm_utils.utils import find_file_by_ext, find_folder_with_images
 from innofw.core.datasets.coco import (
     CocoDataset,
@@ -24,6 +25,14 @@ from innofw.utils.data_utils.preprocessing.dicom_handler import (
     img_to_dicom,
     dicom_to_img,
 )
+=======
+from innofw.core.datasets.coco import CocoDataset
+from innofw.core.datasets.coco import DicomCocoDataset
+from innofw.core.datasets.coco import DicomCocoDatasetInfer
+from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
+from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
+from innofw.utils.dm_utils.utils import find_file_by_ext, find_folder_with_images
+>>>>>>> Stashed changes
 
 
 def collate_fn(batch):
