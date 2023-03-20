@@ -10,15 +10,13 @@ from innofw.utils.framework import get_optimizer
 
 # local
 
-# local
-
 
 def test_optimizer_creation():
     cfg = DictConfig(
         {
             "optimizers": {
-                "_target_": "torch.optim.Adam",
-                "lr": 1e-5,
+                "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.LION",
+                "lr": 1e-4,
             }
         }
     )
@@ -32,11 +30,18 @@ def test_optimizer_creation():
 
 def test_optimizer_creation_wrong_framework():
     cfg = DictConfig(
-        {"optimizers": {"_target_": "torch.optim.Adam", "lr": 1e-5}}
+        {
+            "optimizers": {
+                "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.LION",
+                "lr": 1e-4,
+            }
+        }
     )
     task = "image-segmentation"
     framework = Frameworks.sklearn
     model = Unet()
 
     with pytest.raises(ValueError):
-        optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+        optim = get_optimizer(
+            cfg, "optimizers", task, framework, params=model.parameters()
+        )

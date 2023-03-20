@@ -35,11 +35,11 @@ class SegmentationDataset(Dataset):
 
     def __getitem__(self, idx):
         imagePath = self.imagePaths[idx]
-        image = cv2.imread(imagePath)
+        image = cv2.imread(str(imagePath))
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         if self.maskPaths is None:
             return image
-        mask = cv2.imread(self.maskPaths[idx], 0)
+        mask = cv2.imread(str(self.maskPaths[idx]), 0)
         image, mask = self.transforms(image, mask)
         mask = mask[None, :]
         return {

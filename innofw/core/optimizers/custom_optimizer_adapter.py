@@ -21,7 +21,7 @@ class CustomAdapter(BaseOptimizerAdapter):
     """
 
     def __init__(self, optimizer, *args, **kwargs):
-        super().__init__(optimizer.optimizer)
+        super().__init__(optimizer.optim)
 
     @staticmethod
     def is_suitable_input(optimizer) -> bool:

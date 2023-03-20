@@ -1,4 +1,5 @@
 # other
+import hydra.utils
 import pytest
 import torch.nn as nn
 from omegaconf import DictConfig
@@ -8,6 +9,7 @@ from innofw.constants import Frameworks
 from innofw.utils.framework import get_datamodule
 from innofw.utils.framework import get_model
 from innofw.utils.framework import get_obj
+from innofw.utils.framework import get_optimizer
 from tests.fixtures.config import losses as fixt_losses
 from tests.fixtures.config import models as fixt_models
 from tests.fixtures.config import optimizers as fixt_optimizers
@@ -97,9 +99,8 @@ def test_model_n_optimizer_creation():
     task = "image-segmentation"
     framework = Frameworks.torch
     model = get_model(cfg.models, fixt_trainers.base_trainer_on_cpu_cfg)
-    optim = get_obj(
-        cfg, "optimizers", task, framework, params=model.parameters()
-    )
+    optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+    optim = hydra.utils.instantiate(optim_cfg, params=model.parameters())
 
 
 def test_torch_wrapper_creation():
