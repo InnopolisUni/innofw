@@ -1,17 +1,19 @@
 #
-from typing import Optional, Dict, Any, Union
+from pathlib import Path
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Union
 
 import yaml
-from pathlib import Path
-
-#
 from omegaconf.listconfig import ListConfig
-from pydantic import BaseModel, root_validator, Field
+from pydantic import root_validator
 
-#
 from innofw.schema.base_config import BaseConfig
 from innofw.utils.find_datamodule import find_suitable_datamodule
 
+#
+#
 
 
 class DatasetConfig(BaseConfig):

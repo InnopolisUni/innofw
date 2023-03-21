@@ -1,15 +1,17 @@
 # standard libraries
-from typing import Optional, Union, List
+from typing import List
+from typing import Optional
+from typing import Union
 
-# third party libraries
+import yaml
 from pydantic import BaseModel
 
-# local modules
 from innofw.schema.dataset import DatasetConfig
-from innofw.schema.model import ModelConfig
 from innofw.schema.losses import Losses
-from innofw.constants import Frameworks
-import yaml
+from innofw.schema.model import ModelConfig
+
+# third party libraries
+# local modules
 
 
 class ExperimentConfig(BaseModel):

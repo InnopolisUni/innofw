@@ -15,6 +15,7 @@ import importlib
 #
 import torch.nn as nn
 from torch.optim import Optimizer as TorchOptim
+
 #
 from innofw.core.optimizers.base import BaseOptimizerAdapter
 
@@ -44,7 +45,8 @@ def register_optimizers_adapter(name):
             raise ValueError("Name %s already registered!" % name)
         if not issubclass(cls, BaseOptimizerAdapter):
             raise ValueError(
-                "Class %s is not a subclass of %s" % (cls, BaseOptimizerAdapter)
+                "Class %s is not a subclass of %s"
+                % (cls, BaseOptimizerAdapter)
             )
         __OPTIM_ADAP_DICT__[name] = cls
         return cls
@@ -55,19 +57,21 @@ def register_optimizers_adapter(name):
 for file in os.listdir(os.path.dirname(__file__)):
     if file.endswith(".py") and not file.startswith("_"):
         module_name = file[: file.find(".py")]
-        module = importlib.import_module("innofw.core.optimizers." + module_name)
+        module = importlib.import_module(
+            "innofw.core.optimizers." + module_name
+        )
 
 
 class Optimizer(TorchOptim):
     """
-        Class provides same interface for different optimizers by utilizing adapters
+    Class provides same interface for different optimizers by utilizing adapters
 
-        Methods
-        -------
-        step(x)
-            updates a model parameters
-        param_groups()
-            returns model's parameters
+    Methods
+    -------
+    step(x)
+        updates a model parameters
+    param_groups()
+        returns model's parameters
     """
 
     def __init__(self, optimizer=None):

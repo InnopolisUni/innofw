@@ -2,7 +2,7 @@ import streamlit as st
 
 
 def select_num_interval(
-        param_name: str, limits_list: list, defaults, n_for_hash, **kwargs
+    param_name: str, limits_list: list, defaults, n_for_hash, **kwargs
 ):
     st.sidebar.subheader(param_name)
     min_max_interval = st.sidebar.slider(
@@ -16,14 +16,21 @@ def select_num_interval(
 
 
 def select_several_nums(
-        param_name, subparam_names, limits_list, defaults_list, n_for_hash, **kwargs
+    param_name,
+    subparam_names,
+    limits_list,
+    defaults_list,
+    n_for_hash,
+    **kwargs,
 ):
     st.sidebar.subheader(param_name)
     result = []
     assert len(limits_list) == len(defaults_list)
     assert len(subparam_names) == len(defaults_list)
 
-    for name, limits, defaults in zip(subparam_names, limits_list, defaults_list):
+    for name, limits, defaults in zip(
+        subparam_names, limits_list, defaults_list
+    ):
         result.append(
             st.sidebar.slider(
                 name,
@@ -37,7 +44,7 @@ def select_several_nums(
 
 
 def select_min_max(
-        param_name, limits_list, defaults_list, n_for_hash, min_diff=0, **kwargs
+    param_name, limits_list, defaults_list, n_for_hash, min_diff=0, **kwargs
 ):
     assert len(param_name) == 2
     result = list(
@@ -76,7 +83,9 @@ def replace_none(string):
 
 def select_radio(param_name, options_list, n_for_hash, **kwargs):
     st.sidebar.subheader(param_name)
-    result = st.sidebar.radio("", options_list, key=hash(param_name + str(n_for_hash)))
+    result = st.sidebar.radio(
+        "", options_list, key=hash(param_name + str(n_for_hash))
+    )
     return replace_none(result)
 
 

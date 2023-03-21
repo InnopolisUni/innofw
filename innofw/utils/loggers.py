@@ -1,14 +1,12 @@
 import os
 
 from omegaconf import OmegaConf
-from hydra.core.hydra_config import HydraConfig
-import pathlib
-import yaml
+
+TASK = None
 
 
 def setup_wandb(cfg):
-    """Function to enable Weights and Biases logger
-    """
+    """Function to enable Weights and Biases logger"""
     if "wandb" not in cfg:
         return
 
@@ -21,6 +19,7 @@ def setup_wandb(cfg):
             cfg, resolve=True, throw_on_missing=True
         )
         import wandb
+
         run = wandb.init(
             entity=wandb_cfg.entity,
             group=wandb_cfg.group,
@@ -36,11 +35,15 @@ def setup_clear_ml(cfg):
         return
     clear_ml_cfg = cfg.get("clear_ml")
     if clear_ml_cfg and clear_ml_cfg.get("enable"):
-        from clearml.backend_api.session.client import APIClient
         from clearml import Task
 
-        task = Task.init(project_name=cfg["project"], task_name=cfg["experiment_name"])
+        task = Task.init(
+            project_name=cfg["project"], task_name=cfg["experiment_name"]
+        )
         setup_agent(task, clear_ml_cfg)
+        global TASK
+        TASK = task
+        task.connect(OmegaConf.to_container(cfg, resolve=True))
         return task
 
 

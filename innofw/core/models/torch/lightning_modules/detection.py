@@ -14,40 +14,40 @@ def _evaluate_iou(target, pred):
 
 class DetectionLightningModule(BaseLightningModule):
     """
-     PyTorchLightning module for Anomaly Detection in Time Series
-     ...
+    PyTorchLightning module for Anomaly Detection in Time Series
+    ...
 
-     Attributes
-     ----------
-     model : nn.Module
-         model to train
-     losses : losses
-         loss to use while training
-     optimizer_cfg : cfg
-         optimizer configurations
-     scheduler_cfg : cfg
-         scheduler configuration
-     num_classes : int
-        number of classes to predict
+    Attributes
+    ----------
+    model : nn.Module
+        model to train
+    losses : losses
+        loss to use while training
+    optimizer_cfg : cfg
+        optimizer configurations
+    scheduler_cfg : cfg
+        scheduler configuration
+    num_classes : int
+       number of classes to predict
 
-     Methods
-     -------
-     forward(x):
-         returns result of prediction
-     calc_losses(output1, output2, label)
-         calculates losses and returns total loss
+    Methods
+    -------
+    forward(x):
+        returns result of prediction
+    calc_losses(output1, output2, label)
+        calculates losses and returns total loss
 
-     """
+    """
 
     def __init__(
-            self,
-            model,
-            losses,
-            optimizer_cfg,
-            scheduler_cfg=None,
-            num_classes=2,
-            *args,
-            **kwargs,
+        self,
+        model,
+        losses,
+        optimizer_cfg,
+        scheduler_cfg=None,
+        num_classes=2,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -83,6 +83,8 @@ class DetectionLightningModule(BaseLightningModule):
         images, targets, idx = batch
         targets = [{k: v for k, v in t.items()} for t in targets]
         outs = self.model(images)
-        iou = torch.stack([_evaluate_iou(t, o) for t, o in zip(targets, outs)]).mean()
+        iou = torch.stack(
+            [_evaluate_iou(t, o) for t, o in zip(targets, outs)]
+        ).mean()
         self.log("val_loss", 1 - iou, prog_bar=True)
         return {"val_iou": iou}

@@ -152,7 +152,23 @@ def get_augmentations(cfg):
     import torchvision
 
     # transforms = [instantiate(cfg[key]) for key in keys]
-    if is_albu(transforms[0]):
+    if len(transforms) == 0:
+        return None
+
+    # _transforms = [list(i.values()) for i in transforms if i!= {}]
+
+    def is_albu2(_transforms):
+        for i in _transforms:
+            if i == {}:
+                continue
+
+            for tr in i.values():
+                if not is_albu(tr):
+                    return False
+
+        return True
+
+    if is_albu2(transforms):
         transforms = [
             Compose(transforms=dict(item).values())
             for item in transforms

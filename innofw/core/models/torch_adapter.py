@@ -1,25 +1,23 @@
-import logging
-import os
+import logging.config
 
-# third party libraries
 import hydra.utils
 import pytorch_lightning as pl
 import torch
+from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import ModelCheckpoint
 
-# local modules
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from .base import BaseModelAdapter
 from innofw.constants import Stages
 from innofw.core.models import register_models_adapter
-from innofw.utils.defaults import get_default
-from innofw.utils.checkpoint_utils import TorchCheckpointHandler
-
-
-import logging.config
 from innofw.utils import get_project_root
-logging.config.fileConfig(get_project_root() / 'logging.conf')
-LOGGER = logging.getLogger(__name__)
+from innofw.utils.checkpoint_utils import TorchCheckpointHandler
+from innofw.utils.defaults import get_default
 
+# third party libraries
+# local modules
+
+logging.config.fileConfig(get_project_root() / "logging.conf")
+LOGGER = logging.getLogger(__name__)
 
 
 class ModelCheckpointWithLogging(ModelCheckpoint):
@@ -60,30 +58,32 @@ class TorchAdapter(BaseModelAdapter):
         pass
 
     def __init__(
-            self,
-            model,
-            task,
-            log_dir,
-            losses=None,
-            optimizers_cfg=None,
-            schedulers_cfg=None,
-            callbacks=None,
-            initializations=None,
-            trainer_cfg=None,
-            weights_path=None,
-            weights_freq=None,
-            stop_param=None,
-            project=None,
-            experiment=None,
-            logger=None,
-            *args,
-            **kwargs,
+        self,
+        model,
+        task,
+        log_dir,
+        losses=None,
+        optimizers_cfg=None,
+        schedulers_cfg=None,
+        callbacks=None,
+        initializations=None,
+        trainer_cfg=None,
+        weights_path=None,
+        weights_freq=None,
+        stop_param=None,
+        project=None,
+        experiment=None,
+        logger=None,
+        *args,
+        **kwargs,
     ):
         super().__init__(model, log_dir, TorchCheckpointHandler())
         self.metrics = callbacks or []
         self.callbacks = []
 
-        self.set_checkpoint_save(weights_path, weights_freq, project, experiment)
+        self.set_checkpoint_save(
+            weights_path, weights_freq, project, experiment
+        )
         if stop_param:
             self.set_stop_params(stop_param)
         self.ckpt_path = None
@@ -101,7 +101,7 @@ class TorchAdapter(BaseModelAdapter):
             "schedulers_cfg": schedulers_cfg,
             "callbacks": callbacks,
             "trainer_cfg": trainer_cfg,
-            "logger": logger
+            "logger": logger,
         }
         framework = "torch"
         for key, value in objects.items():
@@ -125,7 +125,7 @@ class TorchAdapter(BaseModelAdapter):
             callbacks=self.callbacks,
             default_root_dir=self.log_dir,
             check_val_every_n_epoch=1,
-            logger=objects['logger'],
+            logger=objects["logger"],
         )
 
         # print(arguments)
@@ -141,10 +141,7 @@ class TorchAdapter(BaseModelAdapter):
             )
         else:
             # trainer_cfg['gpus'] = [0, 1, 2]
-            self.trainer = pl.Trainer(
-                **trainer_cfg,
-                **vars(arguments)
-            )
+            self.trainer = pl.Trainer(**trainer_cfg, **vars(arguments))
 
     # def resume_checkpoint(self, ckpt_path):
     #     self.ckpt_path = ckpt_path
@@ -155,7 +152,9 @@ class TorchAdapter(BaseModelAdapter):
 
     def predict(self, datamodule, ckpt_path=None):
         if ckpt_path is not None:
-            self.pl_module = self.ckpt_handler.load_model(self.pl_module, ckpt_path)
+            self.pl_module = self.ckpt_handler.load_model(
+                self.pl_module, ckpt_path
+            )
             result = self._predict(datamodule)
             return datamodule.save_preds(
                 result, stage=Stages.predict, dst_path=self.log_dir
@@ -174,9 +173,13 @@ class TorchAdapter(BaseModelAdapter):
         return outputs  # [0]["metrics"]
 
     def set_stop_params(self, stop_param):
-        self.callbacks.append(EarlyStopping(monitor="val_loss", patience=stop_param))
+        self.callbacks.append(
+            EarlyStopping(monitor="val_loss", patience=stop_param)
+        )
 
-    def set_checkpoint_save(self, weights_path, weights_freq, project, experiment):
+    def set_checkpoint_save(
+        self, weights_path, weights_freq, project, experiment
+    ):
         if weights_path:
             self.callbacks.append(
                 ModelCheckpointWithLogging(
@@ -207,6 +210,7 @@ class TorchAdapter(BaseModelAdapter):
                     # monitor="val_loss",
                 )
             )
+
     # todo: edit
     # checkpoint_callback = ModelCheckpoint(
     #     dirpath=Path(run_save_path, wandb.run.id, "checkpoints"),  # type: ignore

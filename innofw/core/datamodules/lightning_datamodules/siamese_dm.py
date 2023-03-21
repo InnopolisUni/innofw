@@ -1,21 +1,19 @@
 import logging
 import pathlib
 
-import pandas as pd
-
-from innofw.constants import Frameworks, Stages
-from innofw.core.augmentations import Augmentation
-from innofw.core.datasets.siamese_dataset import (
-    SiameseDataset,
-    SiameseDatasetInfer,
-)
-from torch.utils.data import random_split
 import albumentations as albu
 import albumentations.pytorch as albu_pytorch
+import pandas as pd
+from torch.utils.data import random_split
 
+from innofw.constants import Frameworks
+from innofw.constants import Stages
+from innofw.core.augmentations import Augmentation
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
+from innofw.core.datasets.siamese_dataset import SiameseDataset
+from innofw.core.datasets.siamese_dataset import SiameseDatasetInfer
 
 
 class SiameseDataModule(BaseLightningDataModule):
@@ -54,8 +52,7 @@ class SiameseDataModule(BaseLightningDataModule):
 
         save_preds(self, preds, stage: Stages, dst_path: pathlib.Path)
             saves prediction results to destination
-        """
-
+    """
 
     task = ["one-shot-learning"]
     framework = [Frameworks.torch]
@@ -78,16 +75,20 @@ class SiameseDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def get_aug(self, all_augmentations, stage):
-        if self.aug is not None and stage in all_augmentations and all_augmentations[stage] is not None:
+        if (
+            self.aug is not None
+            and stage in all_augmentations
+            and all_augmentations[stage] is not None
+        ):
             return Augmentation(all_augmentations[stage])
         return Augmentation(
-                albu.Compose([albu_pytorch.transforms.ToTensorV2()])
+            albu.Compose([albu_pytorch.transforms.ToTensorV2()])
         )
 
     def setup_train_test_val(self, **kwargs):
-        train_aug = self.get_aug(self.aug, 'train')
-        test_aug = self.get_aug(self.aug, 'test')
-        val_aug = self.get_aug(self.aug, 'val')
+        train_aug = self.get_aug(self.aug, "train")
+        test_aug = self.get_aug(self.aug, "test")
+        val_aug = self.get_aug(self.aug, "val")
 
         train_dataset = SiameseDataset(str(self.train_source), train_aug)
         self.test_dataset = SiameseDataset(str(self.test_source), test_aug)
@@ -99,13 +100,13 @@ class SiameseDataModule(BaseLightningDataModule):
             train_dataset, [train_size, n - train_size]
         )
         # Set validatoin augmentations for val
-        setattr(self.val_dataset, 'transform', val_aug)
+        setattr(self.val_dataset, "transform", val_aug)
 
     def setup_infer(self):
         if self.aug is not None:
             self.predict_dataset = SiameseDatasetInfer(
                 str(self.infer),
-                self.aug['test'],
+                self.aug["test"],
             )
         else:
             self.predict_dataset = (
@@ -119,7 +120,9 @@ class SiameseDataModule(BaseLightningDataModule):
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         images = self.predict_dataset.image_pair_names
-        df = pd.DataFrame(list(zip(images, preds)), columns=["Image name", "Class"])
+        df = pd.DataFrame(
+            list(zip(images, preds)), columns=["Image name", "Class"]
+        )
         dst_filepath = pathlib.Path(dst_path) / "preds.csv"
         df.to_csv(dst_filepath)
         logging.info(f"Saved results to: {dst_filepath}")

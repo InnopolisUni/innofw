@@ -1,20 +1,19 @@
 import pandas as pd
-from torch.utils.data import Dataset
 import torch
-import numpy as np
+from torch.utils.data import Dataset
 
 
 class ECGDataset(Dataset):
     """
-        A class to represent a custom ECG Dataset.
+    A class to represent a custom ECG Dataset.
 
-        file_name: str
-            path to csv file with ECG train data
+    file_name: str
+        path to csv file with ECG train data
 
-        Methods
-        -------
-        __getitem__(self, idx):
-            returns X-features, and Y-targets
+    Methods
+    -------
+    __getitem__(self, idx):
+        returns X-features, and Y-targets
     """
 
     def __init__(self, file_name):

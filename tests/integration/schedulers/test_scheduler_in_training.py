@@ -1,16 +1,17 @@
-import torch
-import math
 import logging
+import math
 
-#
+import torch
 from torch.nn import MSELoss
 from torch.optim import RMSprop
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
-#
 from innofw.core.losses import Loss
-from innofw.core.schedulers import Scheduler
 from innofw.core.optimizers import Optimizer
+from innofw.core.schedulers import Scheduler
+
+#
+#
 
 
 def test_training():

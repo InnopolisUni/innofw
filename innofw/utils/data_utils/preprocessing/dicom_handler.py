@@ -3,17 +3,21 @@ import os.path
 
 import fire
 import numpy as np
-from pydantic.types import FilePath
-from pydicom import dcmread, Dataset
-from pydicom.pixel_data_handlers import apply_modality_lut, apply_voi_lut
 from PIL import Image
+from pydantic.types import FilePath
+from pydicom import Dataset
+from pydicom import dcmread
+from pydicom.pixel_data_handlers import apply_modality_lut
+from pydicom.pixel_data_handlers import apply_voi_lut
 from pydicom.uid import generate_uid
 
 from innofw.utils import get_project_root
 
 
 def img_to_dicom(
-    img: np.ndarray, origin_dicom: FilePath = None, path_to_save: FilePath = None
+    img: np.ndarray,
+    origin_dicom: FilePath = None,
+    path_to_save: FilePath = None,
 ) -> Dataset:
     """
     Converts image array to dicom dataset
@@ -91,7 +95,9 @@ def crate_base_dataset() -> Dataset:
 
 def dicom_to_raster(dataset: Dataset) -> np.ndarray:
     try:
-        img = apply_modality_lut(apply_voi_lut(dataset.pixel_array, dataset), dataset)
+        img = apply_modality_lut(
+            apply_voi_lut(dataset.pixel_array, dataset), dataset
+        )
     except IndexError:
         img = apply_modality_lut(dataset.pixel_array, dataset)
     except Exception as err:

@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
 from pathlib import Path
 
 from innofw.constants import Stages
@@ -26,6 +27,7 @@ class BaseModelAdapter(ABC):
         trains model and saves checkpoints
 
     """
+
     @staticmethod
     @abstractmethod
     def is_suitable_model(model) -> bool:
@@ -73,11 +75,15 @@ class BaseModelAdapter(ABC):
     def set_stop_params(self, stop_param):
         pass
 
-    def set_checkpoint_save(self, weights_path, weights_freq, project, experiment):
+    def set_checkpoint_save(
+        self, weights_path, weights_freq, project, experiment
+    ):
         pass
 
     def save_ckpt(self, model):
-        self.ckpt_handler.save_ckpt(model, self.log_dir, create_default_folder=True)
+        self.ckpt_handler.save_ckpt(
+            model, self.log_dir, create_default_folder=True
+        )
 
     def load_ckpt(self, path):
         return self.ckpt_handler.load_ckpt(path)

@@ -1,7 +1,8 @@
 import os
 import random
-import torch
+
 import numpy as np
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
 
@@ -51,35 +52,47 @@ class SiameseDataset(Dataset):
     def __getitem__(self, idx):
         should_get_same_class = random.randint(0, 1)
         if should_get_same_class:
-            current_class = self.classes[random.randint(0, len(self.classes) - 1)]
+            current_class = self.classes[
+                random.randint(0, len(self.classes) - 1)
+            ]
             class_path = os.path.join(self.datapath, current_class)
             imgs = os.listdir(class_path)
 
             image1 = self.read_img(
-                os.path.join(class_path, imgs[random.randint(0, len(imgs) - 1)])
+                os.path.join(
+                    class_path, imgs[random.randint(0, len(imgs) - 1)]
+                )
             )
             image2 = self.read_img(
-                os.path.join(class_path, imgs[random.randint(0, len(imgs) - 1)])
+                os.path.join(
+                    class_path, imgs[random.randint(0, len(imgs) - 1)]
+                )
             )
         else:
             current_classes = random.sample(self.classes, k=2)
             class_path = os.path.join(self.datapath, current_classes[0])
             imgs = os.listdir(class_path)
             image1 = self.read_img(
-                os.path.join(class_path, imgs[random.randint(0, len(imgs) - 1)])
+                os.path.join(
+                    class_path, imgs[random.randint(0, len(imgs) - 1)]
+                )
             )
 
             class_path = os.path.join(self.datapath, current_classes[1])
             imgs = os.listdir(class_path)
             image2 = self.read_img(
-                os.path.join(class_path, imgs[random.randint(0, len(imgs) - 1)])
+                os.path.join(
+                    class_path, imgs[random.randint(0, len(imgs) - 1)]
+                )
             )
 
         return (
             image1,
             image2,
             torch.from_numpy(
-                np.array([int(should_get_same_class == 0)], dtype=np.float32).copy()
+                np.array(
+                    [int(should_get_same_class == 0)], dtype=np.float32
+                ).copy()
             ),
         )
 
@@ -129,7 +142,9 @@ class SiameseDatasetInfer(Dataset):
 
         for ind, image in enumerate(images):
             for image2 in images[ind:]:
-                image_pairs.append((self.read_img(image), self.read_img(image2)))
+                image_pairs.append(
+                    (self.read_img(image), self.read_img(image2))
+                )
                 image_pair_names.append((image, image2))
 
         self.images = images

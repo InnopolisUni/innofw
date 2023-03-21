@@ -1,11 +1,14 @@
 import shutil
 import tempfile
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
-from pydantic import validate_arguments, FilePath
+from pydantic import FilePath
+from pydantic import validate_arguments
 
 from innofw.constants import CheckpointFieldKeys
 from innofw.utils import get_abs_path
@@ -13,15 +16,16 @@ from innofw.utils import get_abs_path
 
 class CheckpointHandler(ABC):
     """
-        An abstract class that defines common interface for checkpoint handling
+    An abstract class that defines common interface for checkpoint handling
 
-        Methods
-        -------
-        save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
-            saves a model in the destination path with given metadata
-        load_ckpt(ckpt_path: Union[str, Path])
-            loads a checkpoint from a given path
+    Methods
+    -------
+    save_ckpt(model, dst_path: Union[str, Path], metadata: Optional[dict] = None, wrap: bool)
+        saves a model in the destination path with given metadata
+    load_ckpt(ckpt_path: Union[str, Path])
+        loads a checkpoint from a given path
     """
+
     @staticmethod
     @abstractmethod
     def save_ckpt(
@@ -77,7 +81,10 @@ class CheckpointHandler(ABC):
 
     @validate_arguments
     def convert_to_regular_ckpt(
-        self, ckpt_path: Path, dst_path: Optional[Path] = None, inplace: bool = True
+        self,
+        ckpt_path: Path,
+        dst_path: Optional[Path] = None,
+        inplace: bool = True,
     ) -> Path:
         model = self.load_model(None, ckpt_path)
 

@@ -3,8 +3,9 @@ from pathlib import Path
 
 import pytest
 
-# local modules
 from innofw.utils.dm_utils.utils import find_file_by_ext
+
+# local modules
 
 
 @pytest.mark.parametrize(["ext"], [[".csv"], [".txt"], [".png"], [".jpg"]])

@@ -1,14 +1,13 @@
 import os
 import sys
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
+from typing import Union
 
 from innofw.constants import CLI_FLAGS
 
 
-def find_file_by_ext(
-    path: Union[str, Path], ext=".csv"
-) -> Optional[Path]:
+def find_file_by_ext(path: Union[str, Path], ext=".csv") -> Optional[Path]:
     path = Path(path)
 
     if path is None:
@@ -58,7 +57,9 @@ def query_yes_no(question, default="yes") -> bool:
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write("Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n")
+            sys.stdout.write(
+                "Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n"
+            )
 
 
 def find_path(path):

@@ -1,17 +1,15 @@
 #
 from typing import Callable
 
-#
 import pytest
 import torch
-import numpy as np
-from torchmetrics.functional import (
-    accuracy,
-    f1_score,
-)
+from torchmetrics.functional import accuracy
+from torchmetrics.functional import f1_score
+
+from innofw.core.metrics import Metric
 
 #
-from innofw.core.metrics import Metric
+#
 
 
 @pytest.mark.parametrize(
@@ -27,7 +25,7 @@ def test_torch_metrics_adapter(metric_func: Callable):
     label = torch.tensor([1, 0, 1])
     # compute score
     metric = Metric(metric_func)
-    score = metric(pred, label, task='binary')
+    score = metric(pred, label, task="binary")
     # check result
     assert score is not None
     assert isinstance(score, torch.FloatTensor)

@@ -38,7 +38,7 @@ class RibSuppression:
         keypoints=None,
         force_apply=False,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         Perform the ribs suppression in chest X-ray scans.
@@ -51,7 +51,9 @@ class RibSuppression:
         """
         if not isinstance(image, np.ndarray):
             raise TypeError(
-                "Expected type 'numpy.ndarray', got " + type(image).__name__ + "."
+                "Expected type 'numpy.ndarray', got "
+                + type(image).__name__
+                + "."
             )
 
         if len(np.shape(image)) > 2:
@@ -62,7 +64,12 @@ class RibSuppression:
         suppressed = get_suppressed_image(
             image, self.model_suppression, equalize_out=self.equalize_out
         )
-        return {"image": suppressed, "bbox": bbox, "mask": mask, "keypoints": keypoints}
+        return {
+            "image": suppressed,
+            "bbox": bbox,
+            "mask": mask,
+            "keypoints": keypoints,
+        }
 
 
 def load_bone_model_pytorch():
@@ -94,7 +101,12 @@ def get_suppressed_image(image, model, equalize_out=False):
         img_temp = np.zeros(new_shape, dtype=np.uint8)
         img_temp[: img_shape[0], : img_shape[1]] = img
         img = img_temp
-    img_torch = torch.from_numpy(img.copy()).unsqueeze(0).unsqueeze(1).type(torch.float32)
+    img_torch = (
+        torch.from_numpy(img.copy())
+        .unsqueeze(0)
+        .unsqueeze(1)
+        .type(torch.float32)
+    )
     # get the result of suppression
     with torch.no_grad() as tn:
         pred = model(img_torch)
@@ -109,11 +121,18 @@ def get_suppressed_image(image, model, equalize_out=False):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Process input/output image paths")
-    parser.add_argument(
-        "-i", "--input_path", required=True, help="path to lung image in png format"
+    parser = argparse.ArgumentParser(
+        description="Process input/output image paths"
     )
-    parser.add_argument("-o", "--output_path", required=True, help="path to save image")
+    parser.add_argument(
+        "-i",
+        "--input_path",
+        required=True,
+        help="path to lung image in png format",
+    )
+    parser.add_argument(
+        "-o", "--output_path", required=True, help="path to save image"
+    )
     argv = parser.parse_args()
     img = cv2.imread(argv.input_path)
     suppress = RibSuppression()

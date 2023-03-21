@@ -1,10 +1,9 @@
 import albumentations as A
-from pandas import read_csv
+import numpy as np
 
 from innofw.core.augmentations import Augmentation
 from innofw.utils.config import read_cfg
 from innofw.utils.framework import get_augmentations
-import numpy as np
 
 
 def test_albumentations():
@@ -23,15 +22,22 @@ def test_albumentations():
 
 
 def test_stages():
-    cfg = read_cfg(overrides=["augmentations_train=linear-roads-bin-seg", "experiments=KA_130722_9f7134db_linear_regression"])
-    aug = get_augmentations(cfg['augmentations_train'])
+    cfg = read_cfg(
+        overrides=[
+            "augmentations_train=linear-roads-bin-seg",
+            "experiments=KA_130722_9f7134db_linear_regression",
+        ]
+    )
+    aug = get_augmentations(cfg["augmentations_train"])
 
-    img = np.random.randint(0, 255, (3, 448, 448))
+    img = np.random.randint(0, 255, (3, 64, 64))
 
     aug_img = Augmentation(aug)(img)
     assert aug_img.min() >= 0 and aug_img.max() <= 1
 
-    mask = np.random.randint(0, 2, (3, 448, 448))
+    mask = np.random.randint(0, 2, (3, 64, 64))
     aug_img, aug_mask = Augmentation(aug)(img, mask)
     assert aug_img.min() >= 0 and aug_img.max() <= 1
-    assert all(np.unique(aug_mask) == np.unique(mask))  # should not be any division
+    assert all(
+        np.unique(aug_mask) == np.unique(mask)
+    )  # should not be any division

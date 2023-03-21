@@ -1,12 +1,10 @@
 __all__ = ["SegmentationLM"]
 
 # standard libraries
-import logging
 from typing import Any, Optional
 
 # third-party libraries
 import hydra
-import pytorch_lightning as pl
 from omegaconf import DictConfig
 from pytorch_lightning.utilities.types import STEP_OUTPUT
 from torchmetrics.classification import (
@@ -17,6 +15,7 @@ from torchmetrics.classification import (
 )
 import torch
 from torchmetrics import MetricCollection
+
 # import lovely_tensors as lt
 
 # local modules
@@ -89,24 +88,26 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         assert self.losses is not None
         assert self.optimizer_cfg is not None
 
-        self.save_hyperparameters(ignore=["metrics", "optim_config", "scheduler_cfg"])
+        self.save_hyperparameters(
+            ignore=["metrics", "optim_config", "scheduler_cfg"]
+        )
 
     def forward(self, raster):
         return self.model(raster)
 
-#     def forward(self, batch: torch.Tensor) -> torch.Tensor:
-#         """Make a prediction"""
-#         logits = self.model(batch)
-#         outs = (logits > self.threshold).to(torch.uint8)
-#         return outs
+    #     def forward(self, batch: torch.Tensor) -> torch.Tensor:
+    #         """Make a prediction"""
+    #         logits = self.model(batch)
+    #         outs = (logits > self.threshold).to(torch.uint8)
+    #         return outs
 
-#     def predict_proba(self, batch: torch.Tensor) -> torch.Tensor:
-#         """Predict and output probabilities"""
-#         out = self.model(batch)
-#         return out
+    #     def predict_proba(self, batch: torch.Tensor) -> torch.Tensor:
+    #         """Predict and output probabilities"""
+    #         out = self.model(batch)
+    #         return out
 
     def log_losses(
-            self, name: str, logits: torch.Tensor, masks: torch.Tensor
+        self, name: str, logits: torch.Tensor, masks: torch.Tensor
     ) -> torch.FloatTensor:
         """Function to compute and log losses"""
         total_loss = 0
@@ -162,14 +163,14 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
         return output
 
-#     def training_step(self, batch, batch_idx):
-#         """Process a batch in a training loop"""
-#         images, masks = batch["scenes"], batch["labels"]
-#         logits = self.predict_proba(images)
-#         # compute and log losses
-#         total_loss = self.log_losses("train", logits.squeeze(), masks.squeeze())
-#         self.log_metrics("train", torch.sigmoid(logits).view(-1), masks.to(torch.uint8).squeeze().unsqueeze(1).view(-1))
-#         return {"loss": total_loss, "logits": logits}
+    #     def training_step(self, batch, batch_idx):
+    #         """Process a batch in a training loop"""
+    #         images, masks = batch["scenes"], batch["labels"]
+    #         logits = self.predict_proba(images)
+    #         # compute and log losses
+    #         total_loss = self.log_losses("train", logits.squeeze(), masks.squeeze())
+    #         self.log_metrics("train", torch.sigmoid(logits).view(-1), masks.to(torch.uint8).squeeze().unsqueeze(1).view(-1))
+    #         return {"loss": total_loss, "logits": logits}
 
     def training_step(self, batch, *args, **kwargs) -> STEP_OUTPUT:
         return self.stage_step("train", batch, do_logging=True)
@@ -177,33 +178,34 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
     def validation_step(self, batch, *args, **kwargs) -> Optional[STEP_OUTPUT]:
         return self.stage_step("val", batch)
 
-#     def model_load_checkpoint(self, path):
-#         self.model.load_state_dict(torch.load(path)["state_dict"])
+    #     def model_load_checkpoint(self, path):
+    #         self.model.load_state_dict(torch.load(path)["state_dict"])
 
-#     def validation_step(self, batch, batch_id):
-#         """Process a batch in a validation loop"""
-#         images, masks = batch["scenes"], batch["labels"]
-#         logits = self.predict_proba(images)
-#         # compute and log losses
-#         total_loss = self.log_losses("val", logits.squeeze(), masks.squeeze())
-#         self.log("val_loss", total_loss, prog_bar=True)
-#         return {"loss": total_loss, "logits": logits}
+    #     def validation_step(self, batch, batch_id):
+    #         """Process a batch in a validation loop"""
+    #         images, masks = batch["scenes"], batch["labels"]
+    #         logits = self.predict_proba(images)
+    #         # compute and log losses
+    #         total_loss = self.log_losses("val", logits.squeeze(), masks.squeeze())
+    #         self.log("val_loss", total_loss, prog_bar=True)
+    #         return {"loss": total_loss, "logits": logits}
 
-#     def test_step(self, batch, batch_index):
-#         """Process a batch in a testing loop"""
-#         images = batch["scenes"]
+    #     def test_step(self, batch, batch_index):
+    #         """Process a batch in a testing loop"""
+    #         images = batch["scenes"]
 
-#         preds = self.forward(images)
-#         return {"preds": preds}
+    #         preds = self.forward(images)
+    #         return {"preds": preds}
 
-#     def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> Any:
-#         if isinstance(batch, dict):
-#             batch = batch['scenes']
-#         preds = self.forward(batch)
-#         return preds
+    #     def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> Any:
+    #         if isinstance(batch, dict):
+    #             batch = batch['scenes']
+    #         preds = self.forward(batch)
+    #         return preds
 
     def test_step(self, batch, *args, **kwargs) -> Optional[STEP_OUTPUT]:
         return self.stage_step("test", batch)
+
 
 #     # def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: Optional[int] = None) -> Any:
 #     #     tile, coords = batch[SegDataKeys.image], batch[SegDataKeys.coords]

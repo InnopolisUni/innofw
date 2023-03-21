@@ -2,28 +2,24 @@
 from pathlib import Path
 from typing import Any
 
-#
 import pytest
 from pydantic import ValidationError
 
-#
-from tests.fixtures.models import (
-    xgb_reg_model,
-    sklearn_reg_model,
-    catboot_cls_model,
-    torch_model,
-    lightning_model,
-)
-from innofw.utils.checkpoint_utils import (
-    add_metadata2model,
-    load_metadata,
-    CheckpointHandler,
-    PickleCheckpointHandler,
-)
+from innofw.utils.checkpoint_utils import add_metadata2model
+from innofw.utils.checkpoint_utils import CheckpointHandler
+from innofw.utils.checkpoint_utils import load_metadata
+from innofw.utils.checkpoint_utils import PickleCheckpointHandler
 from innofw.utils.checkpoint_utils.torch_checkpoint_handler import (
     TorchCheckpointHandler,
 )
-from innofw.utils import is_path_empty
+from tests.fixtures.models import catboot_cls_model
+from tests.fixtures.models import lightning_model
+from tests.fixtures.models import sklearn_reg_model
+from tests.fixtures.models import torch_model
+from tests.fixtures.models import xgb_reg_model
+
+#
+#
 
 
 def run_checkpoint_handler_tests(file_path):
@@ -57,7 +53,9 @@ def run_checkpoint_handler_tests(file_path):
     assert (
         new_metadata.items() <= file_metadata.items()
     ), "field value should be present and overwritten"
-    assert file_metadata["name"] == metadata["name"], "old fields should not be removed"
+    assert (
+        file_metadata["name"] == metadata["name"]
+    ), "old fields should not be removed"
 
 
 @pytest.mark.parametrize(

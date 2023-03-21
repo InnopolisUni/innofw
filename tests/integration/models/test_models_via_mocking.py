@@ -1,11 +1,10 @@
 import os
 import shutil
 
+import numpy as np
 import pytest
 import torch
 from sklearn.neighbors import KNeighborsClassifier
-
-import numpy as np
 from xgboost import XGBClassifier
 
 from innofw.core.models.sklearn_adapter import SklearnAdapter
@@ -17,7 +16,14 @@ class MockDatamodule:
     def train_dataloader(self):
         return {
             "x": np.array(
-                [[1, 2, 3], [1, 2, 3], [1, 2, 3], [3, 2, 1], [4, 2, 1], [1, 5, 2]]
+                [
+                    [1, 2, 3],
+                    [1, 2, 3],
+                    [1, 2, 3],
+                    [3, 2, 1],
+                    [4, 2, 1],
+                    [1, 5, 2],
+                ]
             ),
             "y": np.array([0, 2, 2, 0, 1, 1]),
         }
@@ -51,6 +57,7 @@ def test_models(model, wrapper, logs):
     model.train(MockDatamodule())
     assert len(os.listdir(logs)) >= l + 1
     shutil.rmtree(logs, ignore_errors=True)
+
 
 def test_unet():
     x = torch.from_numpy(np.random.random((1, 3, 512, 512)))

@@ -1,8 +1,10 @@
-from typing import Optional, Any
-import segmentation_models_pytorch as smp
-from pytorch_lightning.callbacks import Callback
-import torch
+from typing import Any
+from typing import Optional
+
 import hydra
+import segmentation_models_pytorch as smp
+import torch
+from pytorch_lightning.callbacks import Callback
 
 
 class LoggingSMPMetricsCallback(Callback):

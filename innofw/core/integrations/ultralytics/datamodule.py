@@ -1,38 +1,42 @@
 # standard libraries
 import pathlib
-from pathlib import Path
-from typing import List, Optional
 import shutil
+from pathlib import Path
+from typing import List
+from typing import Optional
 
-# third party libraries
 from sklearn.model_selection import train_test_split
 
-# local modules
-from innofw.constants import Frameworks, Stages
+from innofw.constants import Frameworks
+from innofw.constants import Stages
 from innofw.core.datamodules.base import BaseDataModule
+
+# third party libraries
+# local modules
 
 
 class YOLOV5DataModuleAdapter(BaseDataModule):
     """Class defines adapter interface to conform to YOLOv5 data specifications
 
-        Attributes
-        ----------
-        task: List[str]
-            the task the datamodule is intended to be used for
-        framework: List[Union[str, Frameworks]]
-            the model framework the datamodule is designed to work with
+    Attributes
+    ----------
+    task: List[str]
+        the task the datamodule is intended to be used for
+    framework: List[Union[str, Frameworks]]
+        the model framework the datamodule is designed to work with
 
 
-        Methods
-        -------
-        setup_train_test_val()
-            creates necessary .yaml files for the YOLOv5 package.
-            splits training data into train and validation sets
-            allocates files in folders
-        setup_infer()
-            creates necessary .yaml files for the YOLOv5 package.
-            allocates files in folders
+    Methods
+    -------
+    setup_train_test_val()
+        creates necessary .yaml files for the YOLOv5 package.
+        splits training data into train and validation sets
+        allocates files in folders
+    setup_infer()
+        creates necessary .yaml files for the YOLOv5 package.
+        allocates files in folders
     """
+
     task = ["image-detection"]
     framework = [Frameworks.torch]
 
@@ -40,10 +44,13 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         pass
 
     def setup_infer(self):
-        if type(self.infer_dataset) == str and self.infer_dataset.startswith("rts"):
+        if type(self.infer_source) == str and self.infer_source.startswith(
+            "rts"
+        ):
             return
         # root_dir
-        root_path = self.infer_dataset.parent.parent
+        self.infer_source = Path(self.infer_source)
+        root_path = self.infer_source.parent.parent
         # new data folder
         new_data_path = root_path / "unarchived"
         new_data_path.mkdir(exist_ok=True, parents=True)
@@ -53,7 +60,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        infer_img_path = self.infer_dataset / "images"
+        infer_img_path = self.infer_source / "images"
 
         # get all files from train folder
         img_files = list(infer_img_path.iterdir())
@@ -195,7 +202,8 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
                 shutil.copy(file, new_path / file.name)
 
         for files, folder_name in zip(
-            [train_img_files, val_img_files, test_img_files], ["train", "val", "test"]
+            [train_img_files, val_img_files, test_img_files],
+            ["train", "val", "test"],
         ):
             # create a folder
             new_path = new_img_path / folder_name

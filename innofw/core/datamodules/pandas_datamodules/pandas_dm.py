@@ -1,15 +1,18 @@
 # standard libraries
 import logging
 from pathlib import Path
-
-# third party libraries
 from typing import Optional
 
 import pandas as pd
 
+from innofw.constants import Frameworks
+from innofw.constants import Stages
+from innofw.core.datamodules.pandas_datamodules.base import (
+    BasePandasDataModule,
+)
+
+# third party libraries
 # local modules
-from innofw.core.datamodules.pandas_datamodules.base import BasePandasDataModule
-from innofw.constants import Frameworks, Stages
 
 
 class PandasDataModule(BasePandasDataModule):
@@ -28,6 +31,7 @@ class PandasDataModule(BasePandasDataModule):
     save_preds(self, preds, stage: Stages, dst_path: Path):
         Saves inference predictions in CSV format
     """
+
     task = ["table-classification", "table-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
 
@@ -109,6 +113,7 @@ class RegressionPandasDataModule(BasePandasDataModule):
     save_preds(self, preds, stage: Stages, dst_path: Path):
         Saves inference predictions in CSV format
     """
+
     task = ["table-regression"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
 

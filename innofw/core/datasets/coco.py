@@ -4,32 +4,33 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
-from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from torch.utils.data import Dataset
+
+from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 
 
 class CocoDataset(Dataset):
     """
-        A class to represent a Coco format Dataset.
-        https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/md-coco-overview.html
-        ...
+    A class to represent a Coco format Dataset.
+    https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/md-coco-overview.html
+    ...
 
-        Attributes
-        ----------
-        dataframe : pandas.DataFrame
-            df with train data info
-        image_dir : str
-            directory containing images
-        transforms : Iterable[albumentations.augmentations.transforms]
+    Attributes
+    ----------
+    dataframe : pandas.DataFrame
+        df with train data info
+    image_dir : str
+        directory containing images
+    transforms : Iterable[albumentations.augmentations.transforms]
 
 
-        Methods
-        -------
-        __getitem__(self, index: int):
-            returns image and target tensors and image_id
+    Methods
+    -------
+    __getitem__(self, index: int):
+        returns image and target tensors and image_id
 
-        read_image(self, path):
-            reads an image using opencv
+    read_image(self, path):
+        reads an image using opencv
     """
 
     def __init__(self, dataframe, image_dir, transforms=None):
@@ -68,7 +69,11 @@ class CocoDataset(Dataset):
         target["iscrowd"] = iscrowd
 
         if self.transforms:
-            sample = {"image": image, "bboxes": target["boxes"], "labels": labels}
+            sample = {
+                "image": image,
+                "bboxes": target["boxes"],
+                "labels": labels,
+            }
             sample = self.transforms(**sample)
             image = sample["image"]
 
@@ -89,33 +94,37 @@ class CocoDataset(Dataset):
 
 class DicomCocoDataset(CocoDataset):
     """
-        A class to represent a Dicom Coco format Dataset.
+    A class to represent a Dicom Coco format Dataset.
 
-        Methods
-        -------
-        read_image(self, path):
-            reads an image using dicom handler, and converts dicom file to img array
+    Methods
+    -------
+    read_image(self, path):
+        reads an image using dicom handler, and converts dicom file to img array
     """
+
     def read_image(self, path):
         return dicom_to_img(path + ".dcm")
 
 
 class DicomCocoDatasetInfer(Dataset):
     """
-        A class to represent a Dicom Coco format Dataset for inference.
+    A class to represent a Dicom Coco format Dataset for inference.
 
-        dicom_dir : str
-            directory containing images
-        transforms : Iterable[albumentations.augmentations.transforms]
+    dicom_dir : str
+        directory containing images
+    transforms : Iterable[albumentations.augmentations.transforms]
 
-        Methods
-        -------
-        __getitem__(self, idx):
-            return image
+    Methods
+    -------
+    __getitem__(self, idx):
+        return image
     """
+
     def __init__(self, dicom_dir, transforms=None):
         self.images = []
-        self.paths = [os.path.join(dicom_dir, d) for d in os.listdir(dicom_dir)]
+        self.paths = [
+            os.path.join(dicom_dir, d) for d in os.listdir(dicom_dir)
+        ]
         for dicom in self.paths:
             self.images.append(transforms(image=dicom_to_img(dicom))["image"])
 
@@ -128,21 +137,21 @@ class DicomCocoDatasetInfer(Dataset):
 
 class WheatDataset(Dataset):
     """
-        A dataset example for GWC 2021 competition. A class to represent a Coco format Dataset.
-        https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/md-coco-overview.html
-        ...
+    A dataset example for GWC 2021 competition. A class to represent a Coco format Dataset.
+    https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/md-coco-overview.html
+    ...
 
-        Attributes
-        ----------
-        annotations (string): Data frame with annotations.
-        root_dir (string): Directory with all the images.
-        transform (callable, optional): Optional data augmentation to be applied on a sample.
+    Attributes
+    ----------
+    annotations (string): Data frame with annotations.
+    root_dir (string): Directory with all the images.
+    transform (callable, optional): Optional data augmentation to be applied on a sample.
 
 
-        Methods
-        -------
-        __getitem__(self, index: int):
-            returns image, bboxes, domain
+    Methods
+    -------
+    __getitem__(self, index: int):
+        returns image, bboxes, domain
     """
 
     def __init__(self, annotations, root_dir, transforms=None):
@@ -157,14 +166,15 @@ class WheatDataset(Dataset):
         self.root_dir = Path(root_dir)
         self.image_list = annotations["image_name"].values
         self.domain_list = annotations["domain"].values
-        self.boxes = [self.decodeString(item) for item in annotations["BoxesString"]]
+        self.boxes = [
+            self.decodeString(item) for item in annotations["BoxesString"]
+        ]
         self.transforms = transforms
 
     def __len__(self):
         return len(self.image_list)
 
     def __getitem__(self, idx):
-
         imgp = str(self.root_dir / (self.image_list[idx] + ".png"))
         domain = self.domain_list[
             idx
@@ -177,7 +187,9 @@ class WheatDataset(Dataset):
 
         if self.transforms:
             transformed = self.transforms(
-                image=image, bboxes=bboxes, class_labels=["wheat_head"] * len(bboxes)
+                image=image,
+                bboxes=bboxes,
+                class_labels=["wheat_head"] * len(bboxes),
             )  # Albumentations can transform images and boxes
             image = transformed["image"]
             bboxes = transformed["bboxes"]
@@ -205,5 +217,7 @@ class WheatDataset(Dataset):
                 return boxes
             except:
                 print(BoxesString)
-                print("Submission is not well formatted. empty boxes will be returned")
+                print(
+                    "Submission is not well formatted. empty boxes will be returned"
+                )
                 return np.zeros((0, 4))
