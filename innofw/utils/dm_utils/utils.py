@@ -1,9 +1,8 @@
 import os
 import sys
 from pathlib import Path
-from typing import Optional
-from typing import Union
-
+from typing import Union, Optional
+from pydantic import validate_arguments, DirectoryPath
 from innofw.constants import CLI_FLAGS
 
 # source: https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input
@@ -42,20 +41,19 @@ def query_yes_no(question, default="yes") -> bool:
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write(
-                "Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n"
-            )
+            sys.stdout.write("Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n")
 
+@validate_arguments
 def find_folder_with_images(
-    path: Union[str, Path]
+    path: DirectoryPath,
+    img_exts=[".jpg", ".png"]
 ) -> Optional[Path]:
+    img_exts = img_exts if type(img_exts) == list else [img_exts]
     try:
-        path = Path(path)
-        if not path.exists():
-            raise ValueError(f"Invalid path: {path}")
-        if not path.is_dir():
-            raise ValueError(f"Invalid directory path: {path}")
-        target_folders = list(filter(lambda f: f.is_dir() and any(f.glob('*.jpg')) or any(f.glob('*.png')), path.iterdir()))
+        target_folders = []
+        for ext in img_exts:
+            target_folders += list(filter(lambda f: f.is_dir() and any(f.glob(f'*{ext}')), path.iterdir()))
+        target_folders = list(set(target_folders)) # remove duplicates
         if len(target_folders) == 0:
             raise ValueError(f"No folders found with images in {path}")
         elif len(target_folders) > 1:
@@ -85,17 +83,10 @@ def find_file_by_ext(
 ) -> Optional[Path]:
     path = Path(path)
     check_path(path, ext)
-    if type(ext) == list:
-        try:
-            target_files = list(filter(lambda f: f.suffix in ext, path.rglob("*")))
-            return check_files(path, ext, target_files)
-        except Exception as e:
-            print(f"Error: {e}")
-            return None
-    else:
-        try:
-            target_files = list(filter(lambda f: f.suffix == ext, path.rglob("*")))
-            return check_files(path, ext, target_files)
-        except Exception as e:
-            print(f"Error: {e}")
-            return None
+    exts = ext if type(ext) == list else [ext]
+    try:
+        target_files = list(filter(lambda f: f.suffix in exts, path.rglob("*")))
+        return check_files(path, ext, target_files)
+    except ValueError as e:
+        print(f"Error: {e}")
+        return None
