@@ -97,7 +97,7 @@ class SegmentationDM(BaseLightningDataModule):
             None if augmentations is None else augmentations["train"]
         )
         self.val_transform = (
-            None if augmentations is None else augmentations["test"]
+            None if augmentations is None else augmentations["val"]
         )
         self.test_transform = (
             None if augmentations is None else augmentations["test"]
@@ -190,7 +190,7 @@ class SegmentationDM(BaseLightningDataModule):
             )
             self.samplers = {"train": train_sampler, "val": val_sampler}
 
-        logging.debug(len(images), len(masks))
+        logging.debug(f"{len(images)}, {len(masks)}")
         assert len(images) == len(
             masks
         ), "number of images and masks should be equal"

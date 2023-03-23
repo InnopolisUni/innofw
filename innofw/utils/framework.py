@@ -222,6 +222,94 @@ def get_optimizer(
     return obj
 
 
+from pathlib import Path
+
+from pydantic import validator
+from pydantic.dataclasses import dataclass
+
+
+"""
+name: Segmentation
+description: Average of Jaccard and BinaryFocal losses
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    JaccardLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.JaccardLoss
+        mode: binary
+        from_logits: True
+
+        
+# example 1.
+name:
+description
+task:
+    - image-segmentation
+
+jaccard_loss:
+    weight: 1.0
+    _target_: pytorch_toolbelt.losses.JaccardLoss
+    mode: binary
+    from_logits: True
+
+    # optional field: innofw_type  to specify type of the object: object or function
+
+    
+# example 2.
+
+name:
+description
+task:
+    - image-segmentation
+
+jaccard_loss:
+    weight: 0.5
+    _target_: pytorch_toolbelt.losses.JaccardLoss
+    mode: binary
+    from_logits: True
+
+focal_loss:
+    weight: 0.5
+    _target_: pytorch_toolbelt.losses.JaccardLoss
+    mode: binary
+    from_logits: True
+
+    
+# example 3.
+
+jaccard_loss:
+    weight: 0.5
+    _target_: pytorch_toolbelt.losses.JaccardLoss
+    mode: binary
+    from_logits: True
+
+focal_loss:
+    weight: 0.5
+    _target_: sklearn.losses.LogLoss
+
+"""
+
+# https://suneeta-mall.github.io/2022/03/15/hydra-pydantic-config-management-for-training-application.html
+
+
+from typing import List
+
+
+@dataclass
+class Loss:
+    task: List[str]
+
+    @validator("task")
+    def validate_task(
+        cls, task: List[str]
+    ):  # it needs to receive a task and a framework
+        pass
+
+
 def get_losses(cfg, task, framework):
     losses = None
     if "losses" in cfg and cfg.losses is not None:

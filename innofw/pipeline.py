@@ -88,7 +88,6 @@ def run_pipeline(
         "val": augmentations_val,
         "test": augmentations_test,
     }
-
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
     schedulers = get_obj(cfg, "schedulers", task, framework)
@@ -111,9 +110,6 @@ def run_pipeline(
     )
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
-
-    # todo: water erosion
-    # model
     #
     logger = hydra.utils.instantiate(cfg.get("loggers"))
 

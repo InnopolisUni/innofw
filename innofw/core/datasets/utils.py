@@ -17,6 +17,7 @@ def prep_data(image, mask: Optional = None, transform: Optional = None):
             image = sample["image"]
             # print(max(image), min(image), 'sdfsdf')
 
+    raise NotImplementedError("finish it")
     image = np.moveaxis(image, 2, 0)
     # ============== preprocessing ==============
     image = image / 10000

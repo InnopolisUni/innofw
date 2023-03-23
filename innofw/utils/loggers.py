@@ -20,12 +20,24 @@ def setup_wandb(cfg):
         )
         import wandb
 
+        model_name = cfg.models._target_.split(".")[-1]
+        encoder_name = cfg.models.encoder_name
+        # loss_name = cfg.losses.implementations.torch.JaccardLoss.object._target_.split('.')[-1]
+        optim_name = cfg.optimizers._target_.split(".")[-1]
+        lr = cfg.optimizers.lr
+        # scheduler = cfg.schedulers._target_.split('.')[-1][:5]
+        # -{scheduler}
+        # {loss_name}-
+        run_name = f"{model_name}-{encoder_name}-{optim_name}-{lr}".lower()
+
         run = wandb.init(
             entity=wandb_cfg.entity,
-            group=wandb_cfg.group,
-            project=wandb_cfg.project,
-            config=cfg_container,
+            # group=wandb_cfg.group,
+            project=cfg.get("project"),
+            config=cfg_container,  # type: ignore
+            name=run_name,
         )
+
         # os.environ["WANDB_DIR"] = str(run_save_path)
         return run
 

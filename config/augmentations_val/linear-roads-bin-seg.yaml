@@ -1,13 +1,9 @@
 defaults:
-  - combined:
-      - none
-  - position:
-      - random_resized_crop
-      - flip
-      - rotate90
-      - transpose
-      - grid_distortion
-  - color:
-      - random_gamma
-      - blur
-  - postprocessing:
+    - preprocessing:
+        - standard_images
+    - combined:
+        - none
+    - position:
+        - random_resized_crop
+    - color:
+    - postprocessing:

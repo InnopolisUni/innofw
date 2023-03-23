@@ -1,4 +1,5 @@
 import logging.config
+from argparse import Namespace
 
 import hydra.utils
 import pytorch_lightning as pl
@@ -118,8 +119,6 @@ class TorchAdapter(BaseModelAdapter):
             self.pl_module.setup_metrics(self.metrics)
         except AttributeError:
             pass
-
-        from argparse import Namespace
 
         arguments = Namespace(
             callbacks=self.callbacks,

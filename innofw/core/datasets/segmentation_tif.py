@@ -67,7 +67,7 @@ class SegmentationDataset(Dataset):
                 out = self.transform(image=image, mask=mask)
                 image, mask = out["image"], out["mask"]
 
-        image = np.moveaxis(image, 2, 0)  # todo: refactor
+        # image = np.moveaxis(image, 2, 0)  # todo: refactor
         image = image.astype(np.float32)  # todo: refactor
 
         output[SegDataKeys.image] = image

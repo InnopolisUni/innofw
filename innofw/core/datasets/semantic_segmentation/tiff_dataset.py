@@ -16,13 +16,14 @@ from innofw.core.augmentations import Augmentation
 #
 
 
-def read_tif(path, channels=None) -> np.ndarray:
+def read_tif(path, channels=None) -> np.ndarray:  # HWC
     ds = rio.open(path)
     if channels is None:
         ch_num = ds.count
     else:
         ch_num = channels
     return np.dstack([ds.read(i) for i in range(1, ch_num + 1)])
+    # return np.stack([ds.read(i) for i in range(1, ch_num + 1)])
 
 
 def get_metadata(path):
@@ -110,10 +111,10 @@ class SegmentationDataset(Dataset):
                 # image, mask = out["image"], out["mask"]
                 image, mask = self.transform(image, mask)
 
-        try:
-            image = np.moveaxis(image, 2, 0)  # todo: refactor
-        except:
-            pass
+        # try:
+        #     image = np.moveaxis(image, 2, 0)  # todo: refactor
+        # except:
+        #     pass
         try:
             image = image.astype(np.float32)  # todo: refactor
         except:
