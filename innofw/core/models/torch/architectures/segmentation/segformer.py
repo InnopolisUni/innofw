@@ -104,23 +104,3 @@ class SegFormer(nn.Module):
                 out, size=size, mode="bilinear", align_corners=False
             )
         return out
-
-
-# if __name__ == "__main__":
-#     device = torch.device('cuda')
-#     import numpy as np
-#
-#     print(f'{torch.cuda.memory_reserved(0) / (1024 * 1024)} MB reserved')
-#
-#     seg = SegFormer(
-#         num_labels=1,
-#         num_channels=1,
-#         reduce_labels=True,
-#         retain_dim=True,
-#     ).to(device)
-#     print(f'{torch.cuda.memory_reserved(0) / (1024 * 1024)} MB reserved')
-#     image = torch.from_numpy(np.random.rand(4, 1, 512, 512)).float().to(device)
-#     print(f'{torch.cuda.memory_reserved(0) / (1024 * 1024)} MB reserved')
-#     outputs = seg(image)
-#     print(outputs.size())
-# loss = 0.587
