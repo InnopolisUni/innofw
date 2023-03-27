@@ -110,10 +110,10 @@ class TorchAdapter(BaseModelAdapter):
                 objects[key] = get_default(key, framework, task)
 
         self.pl_module = objects["lightning_module"](
-            model,
-            objects["losses"],
-            objects["optimizers_cfg"],
-            objects["schedulers_cfg"],
+            model=model,
+            losses=objects["losses"],
+            optimizer_cfg=objects["optimizers_cfg"],
+            scheduler_cfg=objects["schedulers_cfg"],
         )
         try:
             self.pl_module.setup_metrics(self.metrics)
@@ -165,7 +165,7 @@ class TorchAdapter(BaseModelAdapter):
         # )
 
     def train(self, data_module, ckpt_path=None):
-        self.trainer.fit(self.pl_module, data_module)
+        self.trainer.fit(self.pl_module, data_module, ckpt_path=ckpt_path)
 
     def test(self, data_module):
         outputs = self.trainer.test(self.pl_module, data_module)
