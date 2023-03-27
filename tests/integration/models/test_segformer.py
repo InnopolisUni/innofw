@@ -135,6 +135,9 @@ def test_wrong_config(config):
         get_model(config, base_trainer_on_cpu_cfg)
 
 
+@pytest.mark.skipif(
+    not torch.cuda.is_available(), reason="No GPU is found on this machine"
+)
 def test_gpu_inference():
     device = torch.device("cuda")
 
