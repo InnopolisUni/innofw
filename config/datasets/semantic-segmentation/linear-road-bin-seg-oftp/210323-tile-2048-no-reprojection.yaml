@@ -4,7 +4,11 @@ train:
   source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/200323/processed/2023-03-21-2048-merged-with-old/train
 
 test:
-  source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/
+  source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/200323/processed/2023-03-21-2048-merged-with-old/train/
+
+infer:
+  source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/200323/processed/2023-03-21-2048-merged-with-old/train/
+
 
 # weights_csv_path: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/weights.csv
 

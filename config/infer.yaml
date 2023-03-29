@@ -7,6 +7,8 @@ defaults:
   - losses: auto
   - optimizers: auto
   - schedulers: auto
+  - loggers:
+  - wandb:
   - augmentations_train: none
   - augmentations_test: none
   - augmentations_val: none
@@ -23,6 +25,7 @@ weights_path:
 weights_freq:
 ckpt_path:
 stop_param:
+experiment_name:
 
 accelerator: cpu
 #devices: 1
