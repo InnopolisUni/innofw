@@ -1,15 +1,20 @@
-name: "❓ Question"
+name: "❓ QUESTION"
+description: Ask for a help.
+title: "❓ [QUESTION] - <title>"
+labels: [
+  "question"
+]
 body:
-- type: textarea
-  id: description
-  attributes:
-    label: "Description"
-    description: Please enter an explicit description of your question
-    placeholder: Short and explicit description of your question
-  validations:
-    required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please enter an explicit description of your question
+      placeholder: Short and explicit description of your question
+    validations:
+      required: true
     
-   - type: textarea
+  - type: textarea
     id: info
     attributes:
       label: "Information"
@@ -29,4 +34,3 @@ body:
       render: bash
     validations:
       required: false
-
