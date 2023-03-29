@@ -13,24 +13,16 @@ body:
       placeholder: Short and explicit description of your incident...
     validations:
       required: true
-  - type: input
-    id: reprod-url
-    attributes:
-      label: "Reproduction URL"
-      description: Please enter your GitHub URL to provide a reproduction of the issue
-      placeholder: ex. https://github.com/USERNAME/REPO-NAME
-    validations:
-      required: true
+
   - type: textarea
     id: reprod
     attributes:
       label: "Reproduction steps"
       description: Please enter an explicit description of your issue
       value: |
-        1. Go to '...'
-        2. Click on '....'
-        3. Scroll down to '....'
-        4. See error
+      1. Show all important configs (experiment, dataset, etc.)
+      2. Show the experiment start command 
+      3. Add any other important information for reproducing. 
       render: bash
     validations:
       required: true
@@ -52,20 +44,7 @@ body:
       render: bash
     validations:
       required: false
-  - type: dropdown
-    id: browsers
-    attributes:
-      label: "Browsers"
-      description: What browsers are you seeing the problem on ?
-      multiple: true
-      options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
-        - Opera
-    validations:
-      required: false
+   
   - type: dropdown
     id: os
     attributes:
@@ -76,5 +55,13 @@ body:
         - Windows
         - Linux
         - Mac
+    validations:
+      required: true
+  - type: textarea
+    id: information
+    attributes:
+      label: "Other information"
+      description: Detailed explanation, related issues, suggestions how to fix
+      placeholder: Something that can help to solve the problem.
     validations:
       required: false
