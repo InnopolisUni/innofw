@@ -1,3 +1,4 @@
+name: "❓ Question"
 body:
   - type: textarea
     id: description
