@@ -13,6 +13,7 @@ def find_suitable_model(name):
         "deeplabv3+": "segmentation_models_pytorch.DeepLabV3Plus",
         "yolov5": "innofw.core.integrations.YOLOv5",
         "yolov3": None,
+        "SegFormer": "innofw.core.models.torch.architectures.segmentation.SegFormer",
         "FasterRcnnModel": "innofw.core.models.torch.architectures.detection.faster_rcnn.FasterRcnnModel",
         "resnet18": "innofw.core.models.torch.architectures.classification.resnet.Resnet18",
         "kmeans": "sklearn.cluster.KMeans",

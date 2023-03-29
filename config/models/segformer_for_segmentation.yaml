@@ -1,0 +1,3 @@
+_target_: innofw.core.models.torch.architectures.segmentation.SegFormer
+description: Segmentation model based on transformers
+name: SegFormer

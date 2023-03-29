@@ -39,6 +39,18 @@ unet_cfg_w_target = DictConfig(
     }
 )
 
+# case: SegFormer
+segformer_retaining = DictConfig(
+    {
+        "_target_": "innofw.core.models.torch.architectures.segmentation.SegFormer",
+        "description": "Segmentation model based on transformers",
+        "name": "SegFormer",
+        "retain_dim": True,
+        "num_channels": 3,
+        "num_labels": 1,
+    }
+)
+
 # case: sklearn linear regression
 linear_regression_cfg_w_target = DictConfig(
     {

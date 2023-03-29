@@ -36,6 +36,7 @@ from tests.fixtures.config.models import (
         [
             "innofw.core.models.torch.architectures.classification.resnet.Resnet18"
         ],
+        ["innofw.core.models.torch.architectures.segmentation.SegFormer"],
     ],
 )
 def test_model_creation(target):
@@ -54,7 +55,7 @@ def test_model_creation(target):
 
 @pytest.mark.parametrize(
     ["name"],
-    [["unet"], ["FasterRcnnModel"], ["resnet18"]],
+    [["unet"], ["FasterRcnnModel"], ["resnet18"], ["SegFormer"]],
 )
 def test_model_creation_name_given(name):
     cfg = DictConfig(
