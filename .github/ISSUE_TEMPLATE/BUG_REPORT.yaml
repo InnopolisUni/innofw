@@ -20,9 +20,9 @@ body:
       label: "Reproduction steps"
       description: Please enter an explicit description of your issue
       value: |
-      1. Show all important configs (experiment, dataset, etc.)
-      2. Show the experiment start command 
-      3. Add any other important information for reproducing. 
+        1. Show all important configs (experiment, dataset, etc.)
+        2. Show the experiment start command 
+        3. Add any other important information for reproducing
       render: bash
     validations:
       required: true
