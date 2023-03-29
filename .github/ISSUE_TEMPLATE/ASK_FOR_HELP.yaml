@@ -1,7 +1,3 @@
-name: "❓ QUESTION"
-description: Ask for a help.
-title: "❓ [QUESTION] - <title>"
-
 body:
   - type: textarea
     id: description
