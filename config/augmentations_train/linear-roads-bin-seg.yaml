@@ -13,3 +13,8 @@ defaults:
         - random_gamma
         - blur
     - postprocessing:
+
+
+# position:
+#     rotate90:
+#         p: 0.1
