@@ -38,7 +38,7 @@ InnoFW uses hydra to provide configuration structure that is suitable for the mo
 
 # Quick start
 
-1. install python 3.8-3.10 to your system
+1. install python 3.8-3.9 to your system
 2. clone project
     ```git clone https://github.com/InnopolisUni/innofw.git```
 3. create virtual env
@@ -47,7 +47,7 @@ InnoFW uses hydra to provide configuration structure that is suitable for the mo
     ```pip install -r requirements.txt```
 
 
-For full guide on installation follow this [documentation page](google.com)
+For full guide on installation using poetry or docker follow this [documentation page](google.com)
 
 <!-- ## With Docker
     1. Make sure you have set up an environment:
