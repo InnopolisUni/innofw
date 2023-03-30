@@ -7,7 +7,7 @@ repos:
       entry: poetry
       args: [export, --format, requirements.txt, --output, requirements.txt]
       language: system
-      pass_filenames: false
+      pass_filenames: false  # dummy comment
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
