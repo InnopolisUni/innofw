@@ -63,30 +63,36 @@ def find_folder_with_images(
     except Exception as e:
         print(f"Error: {e}")
         return None
-
-def check_path(path: Union[str, Path], ext: Union[str, list]):
-    if not path.exists():
-        raise ValueError(f"Invalid path: {path}")
-    if not path.is_dir() and not path.suffix in ext:
-        raise ValueError(f"File does not have a valid extension(s): {path}")
-
-def check_files(path: Union[str, Path], ext: Union[str, list], target_files: list):
-    if len(target_files) == 0:
-        raise ValueError(f"No files found with extension(s) {ext} in {path}")
-    elif len(target_files) > 1:
-        raise ValueError(f"Multiple files found with extension(s) {ext} in {path}")
-    else:
-        return target_files[0]
     
+@validate_arguments
 def find_file_by_ext(
     path: Union[str, Path], ext=[".json", ".csv"]
 ) -> Optional[Path]:
     path = Path(path)
-    check_path(path, ext)
-    exts = ext if type(ext) == list else [ext]
+    exts = ext if isinstance(ext, list) else [ext]
+    if path.is_file():
+        if path.suffix in exts:
+            return path
+        else:
+            return None
+    if not path.is_dir():
+        print(f"Error: {path} is not a valid directory or file path")
+        return None
     try:
         target_files = list(filter(lambda f: f.suffix in exts, path.rglob("*")))
         return check_files(path, ext, target_files)
     except ValueError as e:
         print(f"Error: {e}")
         return None
+
+def check_files(path: Path, ext, target_files):
+    if len(target_files) == 0:
+        return None
+    elif len(target_files) > 1:
+        print(f"Error: Multiple files found in {path} with extensions {ext}:")
+        for file_path in target_files:
+            print(f"- {file_path}")
+        return None
+    else:
+        return target_files[0]
+
