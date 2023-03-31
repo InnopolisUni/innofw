@@ -66,9 +66,8 @@ def find_folder_with_images(
     
 @validate_arguments
 def find_file_by_ext(
-    path: Union[str, Path], ext=[".json", ".csv"]
+    path: DirectoryPath, ext=[".json", ".csv"]
 ) -> Optional[Path]:
-    path = Path(path)
     exts = ext if isinstance(ext, list) else [ext]
     if path.is_file():
         if path.suffix in exts:
