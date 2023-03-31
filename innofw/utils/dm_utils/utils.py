@@ -83,8 +83,9 @@ def find_file_by_ext(
     except ValueError as e:
         print(f"Error: {e}")
         return None
-
-def check_files(path: Path, ext, target_files):
+    
+@validate_arguments
+def check_files(path: DirectoryPath, ext, target_files):
     if len(target_files) == 0:
         return None
     elif len(target_files) > 1:
