@@ -1,3 +1,4 @@
 # API reference
 
-::: innofw.core.models.torch_adapter
+<!-- 
+::: innofw.core.models.torch_adapter -->
