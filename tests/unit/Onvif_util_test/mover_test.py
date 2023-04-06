@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, Mock
-from camera_control import CameraControl
+from mover import CameraControl
 
 class TestCameraControl(unittest.TestCase):
 
@@ -53,3 +53,6 @@ class TestCameraControl(unittest.TestCase):
 
         # Testing the method
         pan, tilt, zoom = 1.0, 2
+
+if __name__ == '__main__':
+    unittest.main()
