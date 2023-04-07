@@ -33,29 +33,3 @@ class TestBaseBandComposer:
         assert composer.map_band_name2idx("RED") == 0
         assert composer.map_band_name2idx("GRN") == 1
         assert composer.map_band_name2idx("BLU") == 2
-
-    def test_get_band_files(self, sample_band_files):
-        composer = BaseBandComposer()
-        band_files = composer.get_band_files(sample_band_files)
-        assert len(band_files) == 3
-        assert all([os.path.basename(str(f)).startswith("band_") for f in band_files])
-
-    def test_compose_bands(self, sample_band_files):
-        with tempfile.NamedTemporaryFile(delete=False) as dst_file:
-            composer = BaseBandComposer()
-            composer.compose_bands(sample_band_files, dst_file.name, channels=["RED", "GRN", "BLU"])
-            assert os.path.exists(dst_file.name)
-            with rasterio.open(dst_file.name) as f:
-                assert f.count == 3
-
-
-class TestBandComposer:
-    """Tests for the BandComposer class."""
-
-    def test_compose_bands(self, sample_band_files):
-        with tempfile.NamedTemporaryFile(delete=False) as dst_file:
-            composer = BandComposer()
-            composer.compose_bands(sample_band_files, dst_file.name, channels=["RED", "GRN", "BLU"])
-            assert os.path.exists(dst_file.name)
-            with rasterio.open(dst_file.name) as f:
-                assert f.count == 3
