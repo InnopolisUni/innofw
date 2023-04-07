@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: kmeans
+  - override /models: clustering/kmeans
   - override /datasets: clustering/clustering_credit_cards
   - override /callbacks: clustering
 

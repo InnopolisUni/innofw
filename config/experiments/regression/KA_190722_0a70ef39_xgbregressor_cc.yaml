@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: xgboost_regressor
+  - override /models: regression/xgboost_regressor
   - override /datasets: regression_credit_cards
   - override /callbacks: regression
 

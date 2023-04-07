@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: catboost_regression
+  - override /models: regression/catboost_regression
   - override /datasets: regression_house_prices
 #  - override /callbacks: regression
 

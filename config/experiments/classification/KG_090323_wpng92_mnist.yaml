@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: resnet.yaml
+  - override /models: classification/resnet.yaml
   - override /datasets: classification/classification_mnist.yaml
   - override /augmentations_train: none
   - override /augmentations_val: none

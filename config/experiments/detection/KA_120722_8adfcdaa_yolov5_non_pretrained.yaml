@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: yolov5
+  - override /models: detection/yolov5
   - override /datasets: detection_lep
   - override /initializations: random
 

@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: catboost_regressor_uncertainty
+  - override /models: regression/catboost_regressor_uncertainty
   - override /datasets: qm9
   - override /callbacks: regression
 
