@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: unet
+  - override /models: semantic-segmentation/unet
   - override /datasets: semantic-segmentation/segmentation_brain.yaml
   - override /augmentations_train: none #segmentation_stroke.yaml
   - override /augmentations_val: none

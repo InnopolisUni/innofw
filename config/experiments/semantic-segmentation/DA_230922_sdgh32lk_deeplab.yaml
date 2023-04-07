@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: deeplabv3plus.yaml
+  - override /models: semantic-segmentation/deeplabv3plus.yaml
   - override /datasets: segmentation_landslides
   - override /optimizers: adam.yaml
   - override /losses: segmentation_losses

@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: hier_vae.py
+  - override /models: text-vae/hier_vae.py
   - override /datasets: qm9_selfies
   - override /losses: vae
 

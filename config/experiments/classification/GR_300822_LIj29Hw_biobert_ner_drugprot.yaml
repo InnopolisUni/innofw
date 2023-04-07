@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: Bert_for_token_classification
+  - override /models: classification/Bert_for_token_classification
   - override /datasets: token_classification_drugprot
   - override /losses: token_classification
 
