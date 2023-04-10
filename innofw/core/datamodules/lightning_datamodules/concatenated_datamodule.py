@@ -9,7 +9,6 @@ from innofw.core.augmentations import Augmentation
 import logging
 import os.path
 import pathlib
-import datasets
 import pandas as pd
 from innofw.core.datamodules.lightning_datamodules.drugprot import DataCollatorWithPaddingAndTruncation
 from torch.utils.data import WeightedRandomSampler
@@ -65,7 +64,6 @@ class ConcatenatedLightningDatamodule(BaseLightningDataModule):
         
     def setup_train_test_val(self, **kwargs):
         [dm.setup_train_test_val() for dm in self.datamodules]
-        
         self.train_ds = ConcatDataset([dm.train_dataset for dm in self.datamodules])
         #self.test_ds = ConcatDataset([dm.test_dataset for dm in self.datamodules])
         self.val_ds = ConcatDataset([dm.val_dataset for dm in self.datamodules])
@@ -85,7 +83,6 @@ class ConcatenatedLightningDatamodule(BaseLightningDataModule):
             max_length=512,
             sequence_keys=["input_ids", "labels"]
         )   
-            dataset = self.dataset.with_format("pt")
         elif self.class_name == "ImageLightningDataModule":
             self.prefetch_factor = 2
         
