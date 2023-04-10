@@ -229,6 +229,7 @@ class YOLOV5Adapter(BaseModelAdapter):
                 device=self.device,
                 hf_model_id=None,
                 project="something",
+                epochs=self.epochs,
             )
             self._yolov5_train.run(
                 hyp="hyp.yaml",
@@ -317,7 +318,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             name=self.opt["name"],
         )
 
-        if str(data.infer_source).startswith("rts"):
+        if str(data.infer_source).startswith("rts") or Path(data.infer_source).is_file():
             params.update(source=data.infer_source)
         else:
             params.update(
