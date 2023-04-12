@@ -8,13 +8,14 @@ import numpy
 
 from innofw.constants import PathLike
 from innofw.utils.data_utils.preprocessing.crop_raster import *
+from tests.utils import get_test_folder_path
 
 
 @pytest.fixture
 def sample_data(tmp_path: Path) -> None:
     """Create sample raster files for testing"""
-    data_folder = Path(os.environ['PYTHONPATH']) / 'data'
-    data_folder.mkdir()
+    data_folder = get_test_folder_path() / 'data/images/other/satellite_cropped/prepared/one'
+    # data_folder.mkdir()
     # Create sample rasters
     for i, filename in enumerate(["BLU.jp2", "GRN.jp2", "NIR.jp2", "RED.jp2"]):
         with rasterio.open(data_folder / filename, "w", driver="JP2OpenJPEG",
@@ -42,5 +43,3 @@ def test_crop_multiple_rasters(sample_data: PathLike) -> None:
             assert src.width == 512
             assert src.height == 512
             assert src.transform[0] == src.transform[4] == 5.0
-
-
