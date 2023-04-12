@@ -39,6 +39,10 @@ def run_pipeline(
     predict=False,
     log_root: Optional[Path] = None,
 ) -> float:
+    logging.info(
+        "To disable command line prompts. Set env variable NO_CLI=True; For linux: `export NO_CLI=True`; For Windows: `set NO_CLI=True`"
+    )
+
     print_config_tree(cfg)
 
     try:

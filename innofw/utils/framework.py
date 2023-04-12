@@ -200,6 +200,9 @@ def get_optimizer(
         and config[name] is not None
         # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
+        if config[name]['name'] == 'auto': 
+            return None
+
         # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = framework is Frameworks.torch
         if framework_consistent:
