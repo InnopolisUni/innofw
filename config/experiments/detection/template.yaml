@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: faster_rcnn
+  - override /models: detection/faster_rcnn
   - override /datasets: detection/detection_wheat
 
 
