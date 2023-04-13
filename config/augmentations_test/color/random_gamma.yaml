@@ -1,4 +1,0 @@
-random_gamma:
-  _target_: albumentations.RandomGamma
-  always_apply: False
-  p: 1.0
