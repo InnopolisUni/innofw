@@ -81,7 +81,7 @@ class ImageLightningDataModule(BaseLightningDataModule):
         out = []
         for sublist in preds:
             out.extend(sublist.tolist())
-        images = self.predict_source.image_names
+        images = self.predict_dataset.image_names
         df = pd.DataFrame(
             list(zip(images, out)), columns=["Image name", "Class"]
         )

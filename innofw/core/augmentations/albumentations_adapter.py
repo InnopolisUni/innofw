@@ -37,7 +37,7 @@ class AlbumentationsAdapter(BaseAugmentationAdapter):
                 len(result["image"].shape) == 3
                 and result["image"].shape[2] == 3
             ):
-                img = np.moveaxis(result["image"], -1, 1)
+                img = np.moveaxis(result["image"], -1, 0)
             else:
                 img = result["image"]
 
