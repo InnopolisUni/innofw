@@ -1,9 +1,11 @@
+# standard libraries
 import inspect
 from pathlib import Path
 from urllib.parse import urlparse
 
 import hydra
 from omegaconf import OmegaConf
+from omegaconf.errors import ConfigKeyError
 
 from innofw.constants import DefaultFolders
 from innofw.constants import Frameworks
@@ -200,8 +202,11 @@ def get_optimizer(
         and config[name] is not None
         # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
-        if config[name]['name'] == 'auto': 
-            return None
+        try:
+            if config[name]["name"] == "auto":
+                return None
+        except ConfigKeyError as e:
+            pass
 
         # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = framework is Frameworks.torch
