@@ -1,0 +1,392 @@
+[1mdiff --git a/config/augmentations_train/landslides-kanopus.yaml b/config/augmentations_train/landslides-kanopus.yaml[m
+[1mindex bf96040..d10dcae 100644[m
+[1m--- a/config/augmentations_train/landslides-kanopus.yaml[m
+[1m+++ b/config/augmentations_train/landslides-kanopus.yaml[m
+[36m@@ -1,9 +1,9 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+         - shift_scale_rotate[m
+         - flip[m
+[31m-    - color:[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/color:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+[1mdiff --git a/config/augmentations_train/linear-roads-bin-seg.yaml b/config/augmentations_train/linear-roads-bin-seg.yaml[m
+[1mindex 2392e03..c95d24d 100644[m
+[1m--- a/config/augmentations_train/linear-roads-bin-seg.yaml[m
+[1m+++ b/config/augmentations_train/linear-roads-bin-seg.yaml[m
+[36m@@ -1,15 +1,15 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+         - standard_images[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+         - random_resized_crop[m
+         - flip[m
+         - rotate90[m
+         - transpose[m
+         - grid_distortion[m
+[31m-    - color:[m
+[32m+[m[32m    - /augmentations/color:[m
+         - random_gamma[m
+         - blur[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+[1mdiff --git a/config/augmentations_train/osl.yaml b/config/augmentations_train/osl.yaml[m
+[1mindex 3f32418..90bf5c8 100644[m
+[1m--- a/config/augmentations_train/osl.yaml[m
+[1m+++ b/config/augmentations_train/osl.yaml[m
+[36m@@ -1,13 +1,13 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+         - to_pil_image[m
+         - resize[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+       - random_horizontal_flip[m
+[31m-    - color:[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/color:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+       - to_tensor[m
+       - normalize[m
+ # task:[m
+[1mdiff --git a/config/augmentations_train/water-erosion-bin-seg.yaml b/config/augmentations_train/water-erosion-bin-seg.yaml[m
+[1mindex a478d98..fc7b3f3 100644[m
+[1m--- a/config/augmentations_train/water-erosion-bin-seg.yaml[m
+[1m+++ b/config/augmentations_train/water-erosion-bin-seg.yaml[m
+[36m@@ -1,10 +1,10 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+         - kanopus[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+         - shift_scale_rotate[m
+         - flip[m
+[31m-    - color:[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/color:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+[1mdiff --git a/config/augmentations_val/combined/color_distortions.yaml b/config/augmentations_val/combined/color_distortions.yaml[m
+[1mindex e9692b8..e69de29 100755[m
+[1m--- a/config/augmentations_val/combined/color_distortions.yaml[m
+[1m+++ b/config/augmentations_val/combined/color_distortions.yaml[m
+[36m@@ -1,13 +0,0 @@[m
+[31m-    - _target_: albumentations.OneOf[m
+[31m-      p: 0.3[m
+[31m-      transforms:[m
+[31m-        - _target_: albumentations.RandomGamma[m
+[31m-          always_apply: False[m
+[31m-          p: 1.0[m
+[31m-        - _target_: albumentations.RandomBrightnessContrast[m
+[31m-          always_apply: False[m
+[31m-          p: 1.0[m
+[31m-          brightness_limit:[m
+[31m-              - -0.05[m
+[31m-              - 0.05[m
+[31m-          contrast_limit: 0.5[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/combined/spatial_distortions.yaml b/config/augmentations_val/combined/spatial_distortions.yaml[m
+[1mindex ab955c1..e69de29 100755[m
+[1m--- a/config/augmentations_val/combined/spatial_distortions.yaml[m
+[1m+++ b/config/augmentations_val/combined/spatial_distortions.yaml[m
+[36m@@ -1,21 +0,0 @@[m
+[31m-spatial_distortions:[m
+[31m-  _target_: albumentations.OneOf[m
+[31m-  p: 0.3[m
+[31m-  transforms:[m
+[31m-    - _target_: albumentations.GridDistortion[m
+[31m-      always_apply: False[m
+[31m-      p: 0.4[m
+[31m-      num_steps: 5[m
+[31m-      distort_limit:[m
+[31m-        - -0.0025  # todo: !!! make sure this value is aligned correctly[m
+[31m-        - 0.25[m
+[31m-      interpolation: 0[m
+[31m-      border_mode: 0[m
+[31m-      value:[m
+[31m-        - 0[m
+[31m-        - 0[m
+[31m-        - 0[m
+[31m-      mask_value:[m
+[31m-    - _target_: albumentations.ElasticTransform[m
+[31m-      always_apply: False[m
+[31m-      p: 0.3[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/landslides-kanopus.yaml b/config/augmentations_val/landslides-kanopus.yaml[m
+[1mindex bf96040..d10dcae 100644[m
+[1m--- a/config/augmentations_val/landslides-kanopus.yaml[m
+[1m+++ b/config/augmentations_val/landslides-kanopus.yaml[m
+[36m@@ -1,9 +1,9 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+         - shift_scale_rotate[m
+         - flip[m
+[31m-    - color:[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/color:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+[1mdiff --git a/config/augmentations_val/linear-roads-bin-seg.yaml b/config/augmentations_val/linear-roads-bin-seg.yaml[m
+[1mindex 9143051..9cc0244 100644[m
+[1m--- a/config/augmentations_val/linear-roads-bin-seg.yaml[m
+[1m+++ b/config/augmentations_val/linear-roads-bin-seg.yaml[m
+[36m@@ -1,13 +1,13 @@[m
+ defaults:[m
+[31m-  - combined:[m
+[32m+[m[32m  - /augmentations/combined:[m
+       - none[m
+[31m-  - position:[m
+[32m+[m[32m  - /augmentations/position:[m
+       - random_resized_crop[m
+       - flip[m
+       - rotate90[m
+       - transpose[m
+       - grid_distortion[m
+[31m-  - color:[m
+[32m+[m[32m  - /augmentations/color:[m
+       - random_gamma[m
+       - blur[m
+[31m-  - postprocessing:[m
+[32m+[m[32m  - /augmentations/postprocessing:[m
+[1mdiff --git a/config/augmentations_val/osl.yaml b/config/augmentations_val/osl.yaml[m
+[1mindex 3f32418..90bf5c8 100644[m
+[1m--- a/config/augmentations_val/osl.yaml[m
+[1m+++ b/config/augmentations_val/osl.yaml[m
+[36m@@ -1,13 +1,13 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+         - to_pil_image[m
+         - resize[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+       - random_horizontal_flip[m
+[31m-    - color:[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/color:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+       - to_tensor[m
+       - normalize[m
+ # task:[m
+[1mdiff --git a/config/augmentations_val/position/grid_distortion.yaml b/config/augmentations_val/position/grid_distortion.yaml[m
+[1mindex b4e6701..e69de29 100755[m
+[1m--- a/config/augmentations_val/position/grid_distortion.yaml[m
+[1m+++ b/config/augmentations_val/position/grid_distortion.yaml[m
+[36m@@ -1,15 +0,0 @@[m
+[31m-grid_distortion:[m
+[31m-  _target_: albumentations.GridDistortion[m
+[31m-  always_apply: False[m
+[31m-  p: 0.4[m
+[31m-  num_steps: 5[m
+[31m-  distort_limit:[m
+[31m-      - -0.25[m
+[31m-      - 0.25[m
+[31m-  interpolation: 0[m
+[31m-  border_mode: 0[m
+[31m-  value:[m
+[31m-      - 0[m
+[31m-      - 0[m
+[31m-      - 0[m
+[31m-  mask_value:[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/position/random_crop.yaml b/config/augmentations_val/position/random_crop.yaml[m
+[1mindex b4c3741..e69de29 100755[m
+[1m--- a/config/augmentations_val/position/random_crop.yaml[m
+[1m+++ b/config/augmentations_val/position/random_crop.yaml[m
+[36m@@ -1,6 +0,0 @@[m
+[31m-random_crop:[m
+[31m-  _target_: albumentations.RandomCrop[m
+[31m-  height: 1008  # 448  #[m
+[31m-  width: 1008[m
+[31m-  always_apply: True[m
+[31m-  p: 1.0[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/position/random_horizontal_flip.yaml b/config/augmentations_val/position/random_horizontal_flip.yaml[m
+[1mindex be902e5..e69de29 100644[m
+[1m--- a/config/augmentations_val/position/random_horizontal_flip.yaml[m
+[1m+++ b/config/augmentations_val/position/random_horizontal_flip.yaml[m
+[36m@@ -1,3 +0,0 @@[m
+[31m-random_horizontal_flip:[m
+[31m-  _target_: torchvision.transforms.RandomHorizontalFlip[m
+[31m-  p: 0.5[m
+[1mdiff --git a/config/augmentations_val/position/random_resized_crop.yaml b/config/augmentations_val/position/random_resized_crop.yaml[m
+[1mindex 001c0f2..e69de29 100644[m
+[1m--- a/config/augmentations_val/position/random_resized_crop.yaml[m
+[1m+++ b/config/augmentations_val/position/random_resized_crop.yaml[m
+[36m@@ -1,8 +0,0 @@[m
+[31m-random_crop:[m
+[31m-  _target_: albumentations.RandomResizedCrop[m
+[31m-  height: 1024[m
+[31m-  width: 1024[m
+[31m-  scale:[m
+[31m-    - 0.5[m
+[31m-    - 0.9[m
+[31m-  p: 1.0[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/position/rotate90.yaml b/config/augmentations_val/position/rotate90.yaml[m
+[1mindex 94205dd..e69de29 100755[m
+[1m--- a/config/augmentations_val/position/rotate90.yaml[m
+[1m+++ b/config/augmentations_val/position/rotate90.yaml[m
+[36m@@ -1,4 +0,0 @@[m
+[31m-rotate90:[m
+[31m-  _target_: albumentations.RandomRotate90[m
+[31m-  p: 0.5[m
+[31m-  always_apply: False[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/position/shift_scale_rotate.yaml b/config/augmentations_val/position/shift_scale_rotate.yaml[m
+[1mindex 6bdbaf0..e69de29 100644[m
+[1m--- a/config/augmentations_val/position/shift_scale_rotate.yaml[m
+[1m+++ b/config/augmentations_val/position/shift_scale_rotate.yaml[m
+[36m@@ -1,10 +0,0 @@[m
+[31m-shift_scale_rotate:[m
+[31m-  _target_: albumentations.ShiftScaleRotate[m
+[31m-  shift_limit: 0[m
+[31m-  rotate_limit: 180[m
+[31m-  scale_limit:[m
+[31m-    - -0.5[m
+[31m-    - 1.0[m
+[31m-  interpolation: 0 # cv2.INTER_NEAREST[m
+[31m-  p: 0.5[m
+[31m-  always_apply: False[m
+[1mdiff --git a/config/augmentations_val/position/transpose.yaml b/config/augmentations_val/position/transpose.yaml[m
+[1mindex 3b9e183..e69de29 100755[m
+[1m--- a/config/augmentations_val/position/transpose.yaml[m
+[1m+++ b/config/augmentations_val/position/transpose.yaml[m
+[36m@@ -1,4 +0,0 @@[m
+[31m-transpose:[m
+[31m-  _target_: albumentations.Transpose[m
+[31m-  p: 0.5[m
+[31m-  always_apply: False[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/postprocessing/normalize.yaml b/config/augmentations_val/postprocessing/normalize.yaml[m
+[1mindex ab24b24..e69de29 100644[m
+[1m--- a/config/augmentations_val/postprocessing/normalize.yaml[m
+[1m+++ b/config/augmentations_val/postprocessing/normalize.yaml[m
+[36m@@ -1,4 +0,0 @@[m
+[31m-normalize:[m
+[31m-  _target_: torchvision.transforms.Normalize[m
+[31m-  mean: 0.5[m
+[31m-  std: 0.5[m
+[1mdiff --git a/config/augmentations_val/postprocessing/normalize_arable.yaml b/config/augmentations_val/postprocessing/normalize_arable.yaml[m
+[1mindex a5b16fa..e69de29 100755[m
+[1m--- a/config/augmentations_val/postprocessing/normalize_arable.yaml[m
+[1m+++ b/config/augmentations_val/postprocessing/normalize_arable.yaml[m
+[36m@@ -1,13 +0,0 @@[m
+[31m-normalize_arable:[m
+[31m-  _target_: albumentations.Normalize[m
+[31m-  mean:[m
+[31m-    - 0.05955944[m
+[31m-    - 0.08096218[m
+[31m-    - 0.08822682[m
+[31m-    - 0.26502724[m
+[31m-  std:[m
+[31m-    - 0.02762473[m
+[31m-    - 0.01864855[m
+[31m-    - 0.01559895[m
+[31m-    - 0.07752395[m
+[31m-  max_pixel_value: 1.0[m
+[1mdiff --git a/config/augmentations_val/postprocessing/to_float.yaml b/config/augmentations_val/postprocessing/to_float.yaml[m
+[1mindex aaa8b06..e69de29 100644[m
+[1m--- a/config/augmentations_val/postprocessing/to_float.yaml[m
+[1m+++ b/config/augmentations_val/postprocessing/to_float.yaml[m
+[36m@@ -1,5 +0,0 @@[m
+[31m-to_float:[m
+[31m-  _target_: albumentations.ToFloat[m
+[31m-  max_value: 255[m
+[31m-  always_apply: True[m
+[31m-  p: 1.0[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/postprocessing/to_tensor copy.yaml b/config/augmentations_val/postprocessing/to_tensor copy.yaml[m
+[1mindex 29212e1..e69de29 100755[m
+[1m--- a/config/augmentations_val/postprocessing/to_tensor copy.yaml[m	
+[1m+++ b/config/augmentations_val/postprocessing/to_tensor copy.yaml[m	
+[36m@@ -1,2 +0,0 @@[m
+[31m-to_tensor:[m
+[31m-  _target_: torchvision.transforms.ToTensor[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/postprocessing/to_tensor.yaml b/config/augmentations_val/postprocessing/to_tensor.yaml[m
+[1mindex 6bd203a..e69de29 100755[m
+[1m--- a/config/augmentations_val/postprocessing/to_tensor.yaml[m
+[1m+++ b/config/augmentations_val/postprocessing/to_tensor.yaml[m
+[36m@@ -1,2 +0,0 @@[m
+[31m-to_tensor:[m
+[31m-  _target_: albumentations.pytorch.transforms.ToTensorV2[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/preprocessing/kanopus.yaml b/config/augmentations_val/preprocessing/kanopus.yaml[m
+[1mindex fc4f9c7..e69de29 100644[m
+[1m--- a/config/augmentations_val/preprocessing/kanopus.yaml[m
+[1m+++ b/config/augmentations_val/preprocessing/kanopus.yaml[m
+[36m@@ -1,5 +0,0 @@[m
+[31m-divide_by_5000:[m
+[31m-  _target_: innofw.core.augmentations.preprocessing.ToFloatWClip[m
+[31m-  max_value: 5000[m
+[31m-  p: 1.0[m
+[31m-  always_apply: True[m
+[1mdiff --git a/config/augmentations_val/preprocessing/resize.yaml b/config/augmentations_val/preprocessing/resize.yaml[m
+[1mindex 8686b87..e69de29 100644[m
+[1m--- a/config/augmentations_val/preprocessing/resize.yaml[m
+[1m+++ b/config/augmentations_val/preprocessing/resize.yaml[m
+[36m@@ -1,5 +0,0 @@[m
+[31m-resize:[m
+[31m-  _target_: torchvision.transforms.Resize[m
+[31m-  size:[m
+[31m-    - 100[m
+[31m-    - 100[m
+[1mdiff --git a/config/augmentations_val/preprocessing/to_pil_image.yaml b/config/augmentations_val/preprocessing/to_pil_image.yaml[m
+[1mindex ea15477..e69de29 100644[m
+[1m--- a/config/augmentations_val/preprocessing/to_pil_image.yaml[m
+[1m+++ b/config/augmentations_val/preprocessing/to_pil_image.yaml[m
+[36m@@ -1,2 +0,0 @@[m
+[31m-to_pil_image:[m
+[31m-  _target_: torchvision.transforms.ToPILImage[m
+\ No newline at end of file[m
+[1mdiff --git a/config/augmentations_val/water-erosion-bin-seg.yaml b/config/augmentations_val/water-erosion-bin-seg.yaml[m
+[1mindex a478d98..fc7b3f3 100644[m
+[1m--- a/config/augmentations_val/water-erosion-bin-seg.yaml[m
+[1m+++ b/config/augmentations_val/water-erosion-bin-seg.yaml[m
+[36m@@ -1,10 +1,10 @@[m
+ defaults:[m
+[31m-    - preprocessing:[m
+[32m+[m[32m    - /augmentations/preprocessing:[m
+         - kanopus[m
+[31m-    - combined:[m
+[32m+[m[32m    - /augmentations/combined:[m
+         - none[m
+[31m-    - position:[m
+[32m+[m[32m    - /augmentations/position:[m
+         - shift_scale_rotate[m
+         - flip[m
+[31m-    - color:[m
+[31m-    - postprocessing:[m
+[32m+[m[32m    - /augmentations/color:[m
+[32m+[m[32m    - /augmentations/postprocessing:[m
+* Unmerged path config/experiments/GR_300822_LIj29Hw_biobert_ner_drugprot.yaml
+* Unmerged path config/experiments/IM_040822_rbe23lls_anomaly_detection_timeseries_lstm.yaml
+* Unmerged path config/experiments/
