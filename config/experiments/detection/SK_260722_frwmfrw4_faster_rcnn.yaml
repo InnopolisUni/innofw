@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - override /models: detection/faster_rcnn
+  - override /datasets: detection/detection_wheat
+  - override /optimizers: adam.yaml
+
+
+project: "wheat"
+task: "image-detection"
+random_seed: 42
+epochs: 300
+batch_size: 2
+weights_freq: 1

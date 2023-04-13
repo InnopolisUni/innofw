@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - override /models: classification/Bert_for_token_classification
+  - override /datasets: token_classification_drugprot
+  - override /losses: token_classification
+
+
+project: biobert-ner
+task: text-ner
+random_seed: 42
+batch_size: 1
+weights_freq: 1
+
+epochs: 1
+
+trainer:
+  limit_train_batches: 1

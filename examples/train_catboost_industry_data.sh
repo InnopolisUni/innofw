@@ -1,1 +1,1 @@
-python train.py experiments=GR_230822_ASdw31ga_catboost_industry_data
+python train.py experiments=regression/GR_230822_ASdw31ga_catboost_industry_data

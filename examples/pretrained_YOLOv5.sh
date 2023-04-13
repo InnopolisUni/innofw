@@ -1,1 +1,1 @@
-python train.py experiments=KA_120722_8adfcdaa_yolov5_pretrained.yaml
+python train.py experiments=detection/KA_120722_8adfcdaa_yolov5_pretrained.yaml
