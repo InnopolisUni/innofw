@@ -1,6 +1,0 @@
-defaults:
-  - /augmentations/color:
-    - blur
-    - random_gamma
-    - none
-    - random_brightness_contrast

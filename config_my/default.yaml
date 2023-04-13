@@ -1,6 +1,0 @@
-# This is default.yaml
-defaults:
-  - augmentations/color:
-      blur
-  - augmentations/position:
-      flip
