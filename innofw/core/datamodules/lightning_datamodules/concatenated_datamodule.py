@@ -85,6 +85,10 @@ class ConcatenatedLightningDatamodule(BaseLightningDataModule):
         )   
         elif self.class_name == "ImageLightningDataModule":
             self.prefetch_factor = 2
+        elif self.class_name == "SegmentationDM":
+            self.prefetch_factor = 2
+            self.pin_memory = True
+            self.prefetch_factor = 2
         
         return DataLoader(
             dataset,
