@@ -81,7 +81,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
         self.train_metrics = metrics.clone(prefix="train_")
         self.val_metrics = metrics.clone(prefix="val_")
-        # self.test_metrics = metrics.clone(prefix="test_")
+        self.test_metrics = metrics.clone(prefix="test_")
 
         assert self.losses is not None
         assert self.optimizer_cfg is not None
@@ -136,6 +136,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
         if stage in ["train", "val"]:
             loss = self.log_losses(stage, predictions, label)
+            self.log("loss", loss)
             output["loss"] = loss
 
         if stage != "predict":
