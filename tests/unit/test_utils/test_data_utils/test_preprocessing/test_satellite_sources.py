@@ -10,42 +10,29 @@ import pytest
 from innofw.utils.data_utils.preprocessing.satellite_sources import *
 
 
-class TestSentinel2:
-    @pytest.fixture
-    def sentinel2(self) -> Sentinel2:
-        tmpdir = os.path.join(
-            get_test_folder_path(), "data/images/other/satellite_cropped"
-        )
-        folder = Path(tmpdir)
-        folder.mkdir()
-        # Create a dummy metadata file
-        metadata_file = folder / "MTD_MSIL1C.xml"
-        root = ElementTree.Element("root")
-        child1 = ElementTree.SubElement(root, "IMAGE_FILE")
-        child1.text = "test_bands.tif"
-        tree = ElementTree.ElementTree(root)
-        tree.write(metadata_file)
-        # Create a dummy band file
-        band_file = folder / "test_bands.tif"
-        band_file.touch()
-        # Create an instance of Sentinel2
-        return Sentinel2(folder)
+@pytest.fixture
+def tempdir():
+    with tempfile.TemporaryDirectory() as dir:
+        yield Path(dir)
 
+def test_sentinel2(tempdir):
+    sentinel2 = Sentinel2(tempdir)
+    # Ensure find_metadata_file raises exception if MTD_MSIL1C.xml is not present
+    with pytest.raises(ValueError):
+        sentinel2.find_metadata_file()
+    
+    # Write a dummy MTD_MSIL1C.xml file and ensure it is found
+    metadata_file = tempdir / "MTD_MSIL1C.xml"
+    metadata_file.touch()
+    assert sentinel2.find_metadata_file() == metadata_file
 
-class TestLandsat8:
-    @pytest.fixture
-    def landsat8(self) -> Landsat8:
-        tmpdir = os.path.join(
-            get_test_folder_path(), "data/images/other/landsat8"
-        )
-        folder = Path(tmpdir)
-        # folder.mkdir()
-        # Create a dummy metadata file
-        metadata_file = folder / "test_MTL.txt"
-        metadata_file.touch()
-        # Create an instance of Landsat8
-        return Landsat8(folder)
-
-    def test_find_metadata_file(self, landsat8):
-        expected_file = landsat8.src_folder / "test_MTL.txt"
-        assert landsat8.find_metadata_file() == expected_file
+def test_landsat8(tempdir):
+    landsat8 = Landsat8(tempdir)
+    # Ensure find_metadata_file raises exception if MTL.TXT is not present
+    with pytest.raises(ValueError):
+        landsat8.find_metadata_file()
+    
+    # Write a dummy MTL.txt file and ensure it is found
+    metadata_file = tempdir / "MTL.txt"
+    metadata_file.touch()
+    assert landsat8.find_metadata_file() == metadata_file
