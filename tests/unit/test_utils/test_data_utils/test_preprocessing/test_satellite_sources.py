@@ -10,29 +10,24 @@ import pytest
 from innofw.utils.data_utils.preprocessing.satellite_sources import *
 
 
-@pytest.fixture
-def tempdir():
-    with tempfile.TemporaryDirectory() as dir:
-        yield Path(dir)
-
-def test_sentinel2(tempdir):
-    sentinel2 = Sentinel2(tempdir)
+def test_sentinel2(temp_dir):
+    sentinel2 = Sentinel2(temp_dir)
     # Ensure find_metadata_file raises exception if MTD_MSIL1C.xml is not present
     with pytest.raises(ValueError):
         sentinel2.find_metadata_file()
     
     # Write a dummy MTD_MSIL1C.xml file and ensure it is found
-    metadata_file = tempdir / "MTD_MSIL1C.xml"
+    metadata_file = temp_dir / "MTD_MSIL1C.xml"
     metadata_file.touch()
     assert sentinel2.find_metadata_file() == metadata_file
 
-def test_landsat8(tempdir):
-    landsat8 = Landsat8(tempdir)
+def test_landsat8(temp_dir):
+    landsat8 = Landsat8(temp_dir)
     # Ensure find_metadata_file raises exception if MTL.TXT is not present
     with pytest.raises(ValueError):
         landsat8.find_metadata_file()
     
     # Write a dummy MTL.txt file and ensure it is found
-    metadata_file = tempdir / "MTL.txt"
+    metadata_file = temp_dir / "MTL.txt"
     metadata_file.touch()
     assert landsat8.find_metadata_file() == metadata_file
