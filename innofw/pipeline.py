@@ -17,6 +17,7 @@ from innofw.utils.framework import (
     get_callbacks,
     get_optimizer,
     get_ckpt_path,
+    get_datamodule_concat,
     get_datamodule,
     get_losses,
     get_model,
@@ -85,17 +86,29 @@ def run_pipeline(
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
     schedulers = get_obj(cfg, "schedulers", task, framework)
-    
-    datamodule = get_datamodule(
-        cfg._dataset_dict,
-        framework,
-        task=task,
-        stage=data_stage,
-        augmentations=augmentations,
-        batch_size=cfg.get("batch_size"),
-    )
-    datamodule.setup_train_test_val()
-    
+    try:
+        datamodule = get_datamodule_concat(
+            cfg._dataset_dict,
+            framework,
+            task=task,
+            stage=data_stage,
+            augmentations=augmentations,
+            batch_size=cfg.get("batch_size"),
+        )
+    except:
+        datamodule = get_datamodule(
+            cfg.datasets,
+            framework,
+            task=task,
+            stage=data_stage,
+            augmentations=augmentations,
+            batch_size=cfg.get("batch_size"),
+        )
+    try:    
+        datamodule.setup_train_test_val()
+    except:
+        pass
+
     losses = get_losses(cfg, task, framework)
     callbacks = get_callbacks(
         cfg, task, framework, metrics=metrics, losses=losses, datamodule=datamodule
@@ -148,10 +161,6 @@ def run_pipeline(
         stage_to_func[Stages.train] = a_learner.run
 
     try:
-        # print sample data
-        # datamodule.setup_train_test_val()
-        # train_dl = datamodule.train_dataloader()
-        # val_dl = datamodule.val_dataloader()
         print("train sample stats")  # todo: refactor(through logging; make it optional and make it general, I think such method should be in the datamodule's class)
         # for instance:
         """
