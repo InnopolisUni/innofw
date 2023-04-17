@@ -8,17 +8,6 @@ from unittest.mock import MagicMock
 from innofw.utils.data_utils.preprocessing.band_composer import BaseBandComposer, BandComposer
 
 
-@pytest.fixture
-def sample_band_files(tmp_path):
-    """Creates sample band files in a temporary directory."""
-    channels = ["RED", "GRN", "BLU"]
-    for ch in channels:
-        file_path = tmp_path / f"band_{ch.lower()}.tif"
-        with rasterio.open(file_path, "w") as f:
-            f.write([])
-    return tmp_path
-
-
 class TestBaseBandComposer:
     """Tests for the BaseBandComposer class."""
 
