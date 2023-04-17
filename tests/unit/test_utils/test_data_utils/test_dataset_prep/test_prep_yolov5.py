@@ -28,10 +28,10 @@ class TestPrepareDataset:
             assert (dst_path / d / "images").is_dir()
             assert (dst_path / d / "labels").is_dir()
 
-        # Check that correct number of files were copied
-        assert len(list((dst_path / "train" / "images").glob("*"))) == 5
-        assert len(list((dst_path / "train" / "labels").glob("*"))) == 5
-        assert len(list((dst_path / "test" / "images").glob("*"))) == 5
-        assert len(list((dst_path / "test" / "labels").glob("*"))) == 5
-        assert len(list((dst_path / "infer" / "images").glob("*"))) == 5
-        assert len(list((dst_path / "infer" / "labels").glob("*"))) == 5
+            # Check that correct number of files were copied
+            assert len(list((dst_path / "train" / "images").glob("*"))) == 5
+            assert len(list((dst_path / "train" / "labels").glob("*"))) == 5
+            assert len(list((dst_path / "test" / "images").glob("*"))) == 5
+            assert len(list((dst_path / "test" / "labels").glob("*"))) == 5
+            assert len(list((dst_path / "infer" / "images").glob("*"))) == 5
+            assert len(list((dst_path / "infer" / "labels").glob("*"))) == 5
