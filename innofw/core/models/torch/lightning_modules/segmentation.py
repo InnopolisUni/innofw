@@ -136,7 +136,6 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
         if stage in ["train", "val"]:
             loss = self.log_losses(stage, predictions, label)
-            self.log("loss", loss)
             output["loss"] = loss
 
         if stage != "predict":

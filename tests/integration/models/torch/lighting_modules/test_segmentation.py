@@ -25,9 +25,6 @@ import os
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 
-from innofw.core.models.torch.lightning_modules.segmentation import SemanticSegmentationLightningModule
-
-
 # we should try different losses, different optimizsers and different schedulaers and different models
 
 
@@ -62,6 +59,19 @@ class DummyDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(self.dataset, batch_size=self.batch_size)
+
+
+
+def predict(model, dataloader):
+    model.eval()
+    predictions = []
+    with torch.no_grad():
+        for batch in dataloader:
+            input_data = batch[SegDataKeys.image]
+            preds = model.predict_proba(input_data)
+            predictions.append(preds)
+    return torch.cat(predictions, dim=0)
+
 
 @pytest.fixture
 def segmentation_module() -> LightningModule:
@@ -122,7 +132,8 @@ def test_training_without_checkpoint(segmentation_module: LightningModule):
     trainer.fit(segmentation_module, train_dataloaders=dataloader)
 
 
-# working ##
+## working ##
+
 def test_testing_without_checkpoint(segmentation_module: LightningModule):
     # Set up the trainer
     trainer = Trainer(max_epochs=1, devices=1)
@@ -135,9 +146,7 @@ def test_testing_without_checkpoint(segmentation_module: LightningModule):
 
 
 
-
-
-# def test_testing_without_checkpoint(segmentation_module: LightningModule):
+# def test_testing_with_checkpoint(segmentation_module: LightningModule):
 #     checkpoint_path = "checkpoints"
 #     os.makedirs(checkpoint_path, exist_ok=True)
 
@@ -152,7 +161,7 @@ def test_testing_without_checkpoint(segmentation_module: LightningModule):
 #     trainer.fit(segmentation_module, dataloader)
 
 #     # Load the stored checkpoint
-#     loaded_module = segmentation_module.load_from_checkpoint("checkpoints/epoch=1-step=50.ckpt")
+#     loaded_module = segmentation_module.model_load_checkpoint(f"{checkpoint_callback.best_model_path}")
     
 #     # Test the loaded model
 #     trainer.test(loaded_module, dataloaders=dataloader)
@@ -161,3 +170,46 @@ def test_testing_without_checkpoint(segmentation_module: LightningModule):
 #     shutil.rmtree(checkpoint_path)
 
 
+
+
+## working ## 
+def test_predicting_without_checkpoint(segmentation_module: LightningModule):
+    # Set up the trainer
+    trainer = Trainer(max_epochs=1, devices=1)
+
+    # Create a DataLoader for the prediction data
+    predict_dataloader = DataLoader(DummyDataset(10), batch_size=4)
+
+    # Make predictions
+    predictions = predict(segmentation_module, predict_dataloader)
+
+
+# def test_predicting_with_checkpoint(segmentation_module: LightningModule):
+#     # Instantiate the DummyDataModule
+#     data_module = DummyDataModule(num_samples=100, batch_size=4)
+
+#     # Create a ModelCheckpoint callback
+#     checkpoint_callback = ModelCheckpoint(
+#         monitor='val_loss',  # Change this to the metric you want to monitor
+#         mode='min',          # Save the model with the minimum 'val_loss'
+#         save_top_k=1,
+#         filename='{epoch:02d}-{val_loss:.2f}'
+#     )
+
+#     # Instantiate the Trainer with desired configurations
+#     trainer = Trainer(max_epochs=2, devices=1, callbacks=[checkpoint_callback])
+
+#     # Fit the model (train and validate)
+#     trainer.fit(segmentation_module, data_module)
+
+#     # Find the path to the checkpoint file
+#     checkpoint_path = checkpoint_callback.best_model_path
+
+#     # Load the model from the checkpoint
+#     segmentation_module.model_load_checkpoint(checkpoint_path)
+
+#     # Create a DataLoader for the prediction data
+#     predict_dataloader = DataLoader(DummyDataset(10), batch_size=4)
+
+#     # Make predictions
+#     predictions = predict(segmentation_module, predict_dataloader)
