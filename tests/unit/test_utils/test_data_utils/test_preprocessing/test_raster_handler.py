@@ -5,13 +5,6 @@ from tests.utils import get_test_folder_path
 
 
 def test_add_band(dataset):
-    band_files = [
-        get_test_folder_path() / "data/images/other/satellite_cropped/prepared/one/BLU.jp2",
-        get_test_folder_path() / "data/images/other/satellite_cropped/prepared/one/GRN.jp2",
-        get_test_folder_path() / "data/images/other/satellite_cropped/prepared/one/NIR.jp2",
-        get_test_folder_path() / "data/images/other/satellite_cropped/prepared/one/RED.jp2",
-    ]
-
     assert dataset.ds.count == 4
     assert dataset.ds.shape == (100, 100)
 
