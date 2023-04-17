@@ -11,20 +11,6 @@ from innofw.utils.data_utils.preprocessing.crop_raster import *
 from tests.utils import get_test_folder_path
 
 
-@pytest.fixture
-def sample_data():
-    """Create sample raster files for testing"""
-    data_folder = get_test_folder_path() / 'data/images/other/satellite_cropped/prepared/one'
-    # data_folder.mkdir()
-    # Create sample rasters
-    for i, filename in enumerate(["BLU.jp2", "GRN.jp2", "NIR.jp2", "RED.jp2"]):
-        with rasterio.open(data_folder / filename, "w", driver="JP2OpenJPEG",
-                           height=1024, width=1024, count=1, dtype=rasterio.uint8) as dst:
-            dst.write(i * 10 * numpy.ones((1024, 1024), dtype=rasterio.uint8), 1)
-
-    return data_folder
-
-
 def test_crop_multiple_rasters(sample_data: PathLike) -> None:
     """Test crop_multiple_rasters function"""
     # Define output folder
