@@ -1,15 +1,22 @@
 import os
-import shutil
-import torch
-from torch.utils.data import Dataset, DataLoader
-from pytorch_lightning import LightningModule, Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import LightningDataModule
-from omegaconf import DictConfig
+
 import pytest
-from innofw.core.models.torch.lightning_modules.segmentation import SemanticSegmentationLightningModule
-from innofw.utils.framework import get_model, get_losses
-from innofw.constants import SegDataKeys, Frameworks
+import torch
+from omegaconf import DictConfig
+from pytorch_lightning import LightningDataModule
+from pytorch_lightning import LightningModule
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset
+
+from innofw.constants import Frameworks
+from innofw.constants import SegDataKeys
+from innofw.core.models.torch.lightning_modules.segmentation import (
+    SemanticSegmentationLightningModule,
+)
+from innofw.utils.framework import get_losses
+from innofw.utils.framework import get_model
 from tests.fixtures.config import losses as fixt_losses
 from tests.fixtures.config import models as fixt_models
 from tests.fixtures.config import optimizers as fixt_optimizers
@@ -65,7 +72,7 @@ def segmentation_module() -> LightningModule:
         {
             "models": fixt_models.deeplabv3_plus_w_target,
             "trainer": fixt_trainers.trainer_cfg_w_cpu_devices,
-            "losses": fixt_losses.jaccard_loss_w_target
+            "losses": fixt_losses.jaccard_loss_w_target,
         }
     )
     model = get_model(cfg.models, cfg.trainer)
@@ -77,6 +84,7 @@ def segmentation_module() -> LightningModule:
     )
 
     return module
+
 
 def test_training_with_checkpoint(segmentation_module: LightningModule):
     checkpoint_dir = "checkpoints"
