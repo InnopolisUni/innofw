@@ -18,15 +18,14 @@ def test_make_hist(img, expected_hist):
     assert hist == expected_hist
 
 
-def test_make_kernel_trick():
-    kernel = make_kernel_trick(np.array([[0, 0], [0, 0]]))
-    assert kernel == [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1)]
-
-    kernel = make_kernel_trick(np.array([[1, 2], [3, 4]]))
-    assert kernel == [(1, 0, 0), (2, 0, 1), (3, 1, 0), (4, 1, 1)]
-
-    kernel = make_kernel_trick(np.array([[4, 4], [4, 4]]))
-    assert kernel == [(4, 0, 0), (4, 0, 1), (4, 1, 0), (4, 1, 1)]
+@pytest.mark.parametrize("input_array, expected_output", [
+    (np.array([[0, 0], [0, 0]]), [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1)]),
+    (np.array([[1, 2], [3, 4]]), [(1, 0, 0), (2, 0, 1), (3, 1, 0), (4, 1, 1)]),
+    (np.array([[4, 4], [4, 4]]), [(4, 0, 0), (4, 0, 1), (4, 1, 0), (4, 1, 1)])
+])
+def test_make_kernel_trick(input_array, expected_output):
+    kernel = make_kernel_trick(input_array)
+    assert kernel == expected_output
 
 
 def test_dekernel():
@@ -35,13 +34,13 @@ def test_dekernel():
     assert_array_equal(dekerneled, np.array([[0, 0], [0, 0]]))
 
 
-def test_make_mask():
-    img = np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])
-    mask = make_mask(img, cluster=1)
-    assert_array_equal(mask, np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]]))
-
-    mask = make_mask(img, cluster=0)
-    assert_array_equal(mask, np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]))
+@pytest.mark.parametrize("img, cluster, expected_output", [
+    (np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]]), 1, np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])),
+    (np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]]), 0, np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]))
+])
+def test_make_mask(img, cluster, expected_output):
+    mask = make_mask(img, cluster=cluster)
+    assert np.array_equal(mask, expected_output)
 
 
 def test_make_contrasted():
