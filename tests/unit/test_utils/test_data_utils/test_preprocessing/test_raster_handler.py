@@ -3,21 +3,6 @@ import os
 from innofw.utils.data_utils.preprocessing.raster_handler import *
 from tests.utils import get_test_folder_path
 
-@pytest.fixture
-def dataset(tmp_path):
-    dst_path = tmp_path / "test.tif"
-    metadata = {
-        "driver": "GTiff",
-        "count": 4,
-        "dtype": "uint16",
-        "nodata": 0,
-        "transform": [1.0, 0.0, 0.0, 0.0, -1.0, 0.0],
-        "width": 100,
-        "height": 100,
-        "crs": CRS.from_epsg(4326),
-    }
-    return RasterDataset(dst_path, metadata)
-
 
 def test_add_band(dataset):
     band_files = [
