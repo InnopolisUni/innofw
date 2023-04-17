@@ -12,7 +12,7 @@ from tests.utils import get_test_folder_path
 
 
 @pytest.fixture
-def sample_data(tmp_path: Path) -> None:
+def sample_data():
     """Create sample raster files for testing"""
     data_folder = get_test_folder_path() / 'data/images/other/satellite_cropped/prepared/one'
     # data_folder.mkdir()
