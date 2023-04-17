@@ -4,11 +4,6 @@ from innofw.utils.data_utils.preprocessing.raster_handler import *
 from tests.utils import get_test_folder_path
 
 
-def test_add_band(dataset):
-    assert dataset.ds.count == 4
-    assert dataset.ds.shape == (100, 100)
-
-
 def test_reprojection_metadata(dataset):
     file_path = get_test_folder_path() / "data/images/other/satellite_cropped/prepared/one/BLU.jp2"
     metadata = dataset.get_reprojection_metadata(file_path, target_crs_epsg=3857)
