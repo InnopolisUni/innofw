@@ -1,10 +1,10 @@
 defaults:
-    - preprocessing:
+    - /augmentations/preprocessing:
         - kanopus
-    - combined:
+    - /augmentations/combined:
         - none
-    - position:
+    - /augmentations/position:
         - shift_scale_rotate
         - flip
-    - color:
-    - postprocessing:
+    - /augmentations/color:
+    - /augmentations/postprocessing:
