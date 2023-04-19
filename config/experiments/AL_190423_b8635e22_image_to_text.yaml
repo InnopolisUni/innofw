@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /datasets: image-to-text/flickr8
+  - override /models: image-to-text/basic_encoder_decoder
+  
+project: "image-to-text"
+task: image-to-text
+batch_size: 16
+
+

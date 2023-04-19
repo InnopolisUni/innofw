@@ -1,0 +1,12 @@
+name: flickr8
+task: image-to-text
+description: Flickr8 dataset
+markup_info: Contains images and a single file with mapping between images and texts
+date_time: 19.04.2023
+
+_target_: innofw.core.datamodules.lightning_datamodules.image_to_text.ImageToTextDatamodule
+
+train:
+  source: .flickr8/train  
+test:
+  source: .flickr8/test
