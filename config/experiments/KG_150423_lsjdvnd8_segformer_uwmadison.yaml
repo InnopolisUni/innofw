@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - override /models: segformer_for_segmentation.yaml
+  - override /datasets: semantic-segmentation/segmentation_uwmadison
+  - override /optimizers: adam.yaml
+  - override /augmentations_train: none
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /callbacks: none
+  - override /losses: multiclass_segmentation_losses
+
+models:
+  num_channels: 1
+  num_labels: 4
+  retain_dim: True
+
+project: "organs segmentation"
+task: "multiclass-image-segmentation"
+random_seed: 42
+weights_freq: 1
+batch_size: 16
+epochs: 2
+accelerator: gpu
+#override hydra/job_logging: stdout
+
