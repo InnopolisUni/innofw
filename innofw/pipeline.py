@@ -95,6 +95,7 @@ def run_pipeline(
             augmentations=augmentations,
             batch_size=cfg.get("batch_size"),
         )
+        print('using concatenated datamodule')
     except:
         datamodule = get_datamodule(
             cfg.datasets,
@@ -104,10 +105,9 @@ def run_pipeline(
             augmentations=augmentations,
             batch_size=cfg.get("batch_size"),
         )
-    try:    
-        datamodule.setup_train_test_val()
-    except:
-        pass
+        print('using standart datamodule')
+      
+    datamodule.setup_train_test_val()
 
     losses = get_losses(cfg, task, framework)
     callbacks = get_callbacks(
