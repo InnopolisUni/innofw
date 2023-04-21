@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import pytest
 import torch
@@ -123,3 +124,55 @@ def test_predicting_without_checkpoint(segmentation_module: LightningModule):
     trainer = Trainer(max_epochs=1, devices=1)
     predict_dataloader = DataLoader(DummyDataset(10), batch_size=4)
     predictions = predict(segmentation_module, predict_dataloader)
+
+
+## working ##
+def test_testing_with_checkpoint(segmentation_module: LightningModule):
+    checkpoint_path = "checkpoints"
+    os.makedirs(checkpoint_path, exist_ok=True)
+
+    # # Set up the trainer
+    # checkpoint_callback = ModelCheckpoint(dirpath=checkpoint_path, save_top_k=-1)
+    trainer = Trainer(
+        max_epochs=2, devices=1, default_root_dir=checkpoint_path
+    )
+
+    dataset = DummyDataset(num_samples=100)
+    dataloader = DataLoader(dataset, batch_size=4)
+
+    # Fit the model
+    trainer.fit(segmentation_module, dataloader)
+
+    # Test the loaded model
+    trainer.test(
+        segmentation_module,
+        ckpt_path="checkpoints/lightning_logs/version_0/checkpoints/epoch=1-step=50.ckpt",
+        dataloaders=dataloader,
+    )
+
+    # Delete the checkpoint folder
+    shutil.rmtree(checkpoint_path)
+
+
+def test_predicting_with_checkpoint(segmentation_module: LightningModule):
+    checkpoint_path = "checkpoints"
+
+    # Instantiate the DummyDataModule
+    data_module = DummyDataModule(num_samples=100, batch_size=4)
+
+    # Instantiate the Trainer with desired configurations
+    trainer = Trainer(
+        max_epochs=2, devices=1, default_root_dir=checkpoint_path
+    )
+
+    # Fit the model (train and validate)
+    trainer.fit(segmentation_module, data_module)
+
+    # Create a DataLoader for the prediction data
+    predict_dataloader = DataLoader(DummyDataset(10), batch_size=4)
+
+    trainer.predict(
+        segmentation_module,
+        ckpt_path="checkpoints/lightning_logs/version_0/checkpoints/epoch=1-step=50.ckpt",
+        dataloaders=predict_dataloader,
+    )

@@ -170,3 +170,14 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])
+
+    def predict_step(self, batch: Any, batch_indx: int) -> torch.Tensor:
+        """Predict and output binary predictions"""
+        if isinstance(batch, dict):
+            input_tensor = batch[SegDataKeys.image]
+        else:
+            input_tensor = batch
+
+        proba = self.predict_proba(input_tensor)
+        predictions = (proba > self.threshold).to(torch.uint8)
+        return predictions
