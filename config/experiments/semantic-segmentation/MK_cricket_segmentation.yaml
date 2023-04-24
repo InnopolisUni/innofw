@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - override /models: segformer_for_segmentation
+  - override /datasets: semantic-segmentation/segmentation_cricket
+  - override /augmentations_train: none
+  - override /optimizers: adam
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: segmentation_losses
+  - override /callbacks: segmentation
+
+
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+epochs: 2
+batch_size: 3
+accelerator: cpu

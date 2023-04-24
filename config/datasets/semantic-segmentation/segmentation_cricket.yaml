@@ -1,0 +1,13 @@
+ _target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DicomDirSegmentationLightningDataModule
+date_time: 04.11.2023
+description: cricket segmentation dataset
+markup_info: segmentation masks
+name: cricket segmentation
+task:
+  - image-segmentation
+
+train:
+  source: ./data/cricket/train
+
+test:
+  source: ./data/cricket/test

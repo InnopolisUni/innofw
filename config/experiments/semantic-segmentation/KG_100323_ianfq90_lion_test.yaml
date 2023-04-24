@@ -17,3 +17,4 @@ stop_param: 10
 epochs: 10
 weights_freq: 1
 batch_size: 4
+accelerator: cpu

@@ -1,17 +1,14 @@
 # @package _global_
 defaults:
   - override /models: detection/yolov5
-  - override /datasets: detection/detection_lep
+  - override /datasets: detection/detection_ar_tax_or
   - override /initializations: random
 
 
-project: "lep"
+project: "ar_tax_or"
 task: "image-detection"
 random_seed: 42
-epochs: 1
-batch_size: 2
+epochs: 2
+batch_size: 32
 weights_freq: 1
 accelerator: cpu
-
-
-# ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/lep_yolov5.pt
