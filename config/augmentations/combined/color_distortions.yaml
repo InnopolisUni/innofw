@@ -1,14 +1,15 @@
 color_distortions:
-  _target_: albumentations.OneOf
-  p: 0.3
-  transforms:
-    - _target_: albumentations.RandomGamma
-      always_apply: False
-      p: 1.0
-    - _target_: albumentations.RandomBrightnessContrast
-      always_apply: False
-      p: 1.0
-      brightness_limit:
-          - -0.05
-          - 0.05
-      contrast_limit: 0.5
+    - _target_: albumentations.OneOf
+      p: 0.3
+      transforms:
+        - _target_: albumentations.RandomGamma
+          always_apply: False
+          p: 1.0
+        - _target_: albumentations.RandomBrightnessContrast
+          always_apply: False
+          p: 1.0
+          brightness_limit:
+              - -0.05
+              - 0.05
+          contrast_limit: 0.5
+          
