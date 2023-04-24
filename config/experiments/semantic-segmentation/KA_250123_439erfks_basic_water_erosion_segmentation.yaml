@@ -1,0 +1,40 @@
+# @package _global_
+defaults:
+  - override /models: semantic-segmentation/deeplabv3plus.yaml
+  - override /datasets: segmentation_arable_full.yaml
+  - override /optimizers: adam.yaml
+  - override /losses: segmentation_losses # triple_segmentation_loss
+  - override /augmentations: segmentation_satellite_imagery
+  # - override /initializations: he
+  - override /callbacks: segmentation_2
+  - override /wandb: qb
+
+optimizers:
+  implementations:
+    torch:
+      Adam:
+        function:
+          lr: 3e-4
+
+trainers:
+  overfit_batches: 20  # fit only 20 val batches and 40 train batches
+
+models:
+  encoder_name: resnet101
+
+accelerator: gpu
+devices: 1
+gpus:  
+  - 1  # use second gpu
+
+
+wandb:
+  project: water_erosion
+  group: 250123_just_testing_code
+  job_type: training
+
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+weights_freq: 1
+batch_size: 10

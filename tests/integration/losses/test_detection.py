@@ -1,13 +1,12 @@
 # std
-from dataclasses import dataclass
-
 # other
-from omegaconf import DictConfig, OmegaConf
 import torch
+from omegaconf import DictConfig
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_losses
+
+# local
 
 
 def test_loss_creation():
@@ -25,7 +24,9 @@ def test_loss_creation():
                         },
                         "MSE": {
                             "weight": 0.5,
-                            "function": {"_target_": "torch.nn.functional.mse_loss"},
+                            "function": {
+                                "_target_": "torch.nn.functional.mse_loss"
+                            },
                         },
                     }
                 },

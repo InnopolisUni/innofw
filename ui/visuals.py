@@ -1,10 +1,11 @@
+import albumentations as A
 import cv2
 import streamlit as st
 
-import albumentations as A
-
 from .control import param2func
-from .utils import get_images_list, load_image, upload_image
+from .utils import get_images_list
+from .utils import load_image
+from .utils import upload_image
 
 
 def show_logo():
@@ -32,7 +33,9 @@ def select_image(path_to_images: str, interface_type: str = "Simple"):
                 "Select an image:", image_names_list + ["Upload my image"]
             )
         else:
-            image_name = st.sidebar.selectbox("Select an image:", image_names_list)
+            image_name = st.sidebar.selectbox(
+                "Select an image:", image_names_list
+            )
 
         if image_name != "Upload my image":
             try:
@@ -58,7 +61,9 @@ def show_transform_control(transform_params: dict, n_for_hash: int) -> dict:
         for param in transform_params:
             control_function = param2func[param["type"]]
             if isinstance(param["param_name"], list):
-                returned_values = control_function(**param, n_for_hash=n_for_hash)
+                returned_values = control_function(
+                    **param, n_for_hash=n_for_hash
+                )
                 for name, value in zip(param["param_name"], returned_values):
                     param_values[name] = value
             else:
@@ -91,7 +96,9 @@ def show_credentials():
     )
 
 
-def get_transormations_params(transform_names: list, augmentations: dict) -> list:
+def get_transormations_params(
+    transform_names: list, augmentations: dict
+) -> list:
     transforms = []
     for i, transform_name in enumerate(transform_names):
         # select the params values

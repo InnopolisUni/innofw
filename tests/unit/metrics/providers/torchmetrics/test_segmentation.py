@@ -1,11 +1,12 @@
 # other
-from omegaconf import DictConfig
-import torch
 import pytest
+import torch
+from omegaconf import DictConfig
 
-# local
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
+
+# local
 
 
 def test_metrics_creation():
@@ -18,6 +19,7 @@ def test_metrics_creation():
                         "F1_score": {
                             "function": {
                                 "_target_": "torchmetrics.functional.f1_score",
+                                "task": "binary",
                                 "num_classes": 2,
                             }
                         }
@@ -37,10 +39,10 @@ def test_metrics_creation():
     assert not isinstance(metrics, list)
 
     target = torch.tensor([0, 1, 1, 0, 1, 0])
-    preds = torch.tensor([0, 0, 1, 0, 0, 1])
+    preds = torch.tensor([0, 0, 1, 0, 0, 1])  # 1 / (1 + 0.5 * (1 + 2))
 
     score = metrics(preds, target)
-    assert score == torch.tensor(0.5)
+    assert score == torch.tensor(0.4)
 
 
 def test_multiple_metrics_creation():
@@ -53,18 +55,21 @@ def test_multiple_metrics_creation():
                         "F1_score": {
                             "function": {
                                 "_target_": "torchmetrics.functional.f1_score",
+                                "task": "binary",
                                 "num_classes": 2,
                             }
                         },
                         "IOU_score": {
                             "object": {
                                 "_target_": "torchmetrics.JaccardIndex",
+                                "task": "binary",
                                 "num_classes": 2,
                             }
                         },
                         "Precision": {
                             "object": {
                                 "_target_": "torchmetrics.Precision",
+                                "task": "binary",
                                 "num_classes": 2,
                             }
                         },

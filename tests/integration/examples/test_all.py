@@ -1,11 +1,14 @@
-from innofw.utils import get_project_root
 import logging
 import subprocess
-import pytest
 from pathlib import Path
-from time import sleep
 
-examples_path = (get_project_root() / "examples/working").rglob("*.sh")  # working
+import pytest
+
+from innofw.utils import get_project_root
+
+examples_path = (get_project_root() / "examples/working").rglob(
+    "*.sh"
+)  # working
 examples_path = [[item] for item in examples_path]
 
 

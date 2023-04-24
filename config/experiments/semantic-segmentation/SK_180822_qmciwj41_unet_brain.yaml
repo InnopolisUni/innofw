@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - override /models: semantic-segmentation/unet
+  - override /datasets: semantic-segmentation/segmentation_brain.yaml
+  - override /augmentations_train: none #segmentation_stroke.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: segmentation_losses.yaml
+models:
+  in_channels: 1
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+stop_param: 10
+epochs: 300
+weights_freq: 1
+batch_size: 10

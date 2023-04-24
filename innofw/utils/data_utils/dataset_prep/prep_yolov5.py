@@ -1,11 +1,13 @@
 # create train, test and infer folders
 # with images and labels folders inside
+import logging
 import shutil
 from pathlib import Path
-import logging
 
 from fire import Fire
-from pydantic import validate_arguments, DirectoryPath, FilePath
+from pydantic import DirectoryPath
+from pydantic import FilePath
+from pydantic import validate_arguments
 
 
 @validate_arguments

@@ -35,11 +35,12 @@ def get_device(trainer_cfg):
 class YOLOV5TrainerBaseAdapter(BaseAdapter):
     """Class defines adapter interface to conform to YOLOv5 trainer specifications
 
-        Methods
-        -------
-        adapt(trainer: DictConfig) -> dict
-            converts the trainer configuration into YOLOv5 suitable format
+    Methods
+    -------
+    adapt(trainer: DictConfig) -> dict
+        converts the trainer configuration into YOLOv5 suitable format
     """
+
     def __init__(self):
         pass
 

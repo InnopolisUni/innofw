@@ -1,7 +1,7 @@
 from omegaconf import DictConfig
 
 from innofw.constants import Frameworks
-from innofw.utils.framework import get_datamodule, get_obj
+from innofw.utils.framework import get_datamodule
 
 
 def test_classification_pandas():

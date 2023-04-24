@@ -1,6 +1,11 @@
+from sklearn.metrics import f1_score
+from sklearn.metrics import jaccard_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import r2_score
+
 from innofw.constants import Frameworks
-from innofw.core.metrics.custom_metrics import BaseMetric, register_custom_metrics
-from sklearn.metrics import f1_score, precision_score, r2_score, jaccard_score
+from innofw.core.metrics.custom_metrics import BaseMetric
+from innofw.core.metrics.custom_metrics import register_custom_metrics
 
 
 @register_custom_metrics(
@@ -22,6 +27,7 @@ class F1Score(BaseMetric):
     -------
 
     """
+
     def __init__(self):
         self.metric = f1_score
         super().__init__()
@@ -47,13 +53,16 @@ class Accuracy(BaseMetric):
     score(pred, labels):
         custom accuracy implementation
     """
+
     def __init__(self):
         self.metric = self.score
         super().__init__()
 
     def score(self, pred, labels):
         num_of_predictions = len(labels)
-        correct = sum([1 for i in range(num_of_predictions) if pred[i] == labels[i]])
+        correct = sum(
+            [1 for i in range(num_of_predictions) if pred[i] == labels[i]]
+        )
         return correct / float(num_of_predictions) * 100.0
 
 
@@ -76,6 +85,7 @@ class Precision(BaseMetric):
     -------
 
     """
+
     def __init__(self):
         self.metric = precision_score
         super().__init__()
@@ -101,6 +111,7 @@ class Recall(BaseMetric):
     score(pred, labels):
         custom accuracy implementation
     """
+
     def __init__(self):
         self.metric = self.score
         super().__init__()
@@ -111,10 +122,14 @@ class Recall(BaseMetric):
         return tp / (tp + fn)
 
     def true_positive(self, labels, pred):
-        return sum([1 for gt, pred in zip(labels, pred) if gt == 1 and pred == 1])
+        return sum(
+            [1 for gt, pred in zip(labels, pred) if gt == 1 and pred == 1]
+        )
 
     def false_negative(self, labels, pred):
-        return sum([1 for gt, pred in zip(labels, pred) if gt == 1 and pred == 0])
+        return sum(
+            [1 for gt, pred in zip(labels, pred) if gt == 1 and pred == 0]
+        )
 
 
 @register_custom_metrics(
@@ -136,6 +151,7 @@ class R2(BaseMetric):
     -------
 
     """
+
     def __init__(self):
         self.metric = r2_score
         super().__init__()
@@ -160,6 +176,7 @@ class IOU(BaseMetric):
     -------
 
     """
+
     def __init__(self):
         self.metric = jaccard_score
         super().__init__()

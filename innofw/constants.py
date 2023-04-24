@@ -1,10 +1,13 @@
 # standard libraries
 from enum import Enum
 from pathlib import Path
-from typing import TypeVar, Optional
+from typing import Optional
+from typing import TypeVar
+
+from pydantic import BaseModel
+from pydantic import SecretStr
 
 # third-party libraries
-from pydantic import BaseModel, SecretStr
 
 
 class Stages(Enum):
@@ -19,6 +22,7 @@ class Frameworks(Enum):
     xgboost = "xgboost"
     catboost = "catboost"
     none = "none"
+
 
 PathLike = TypeVar(
     "PathLike", str, Path
@@ -45,7 +49,7 @@ class Status(Enum):
 
 
 class S3FileTags(Enum):
-    hash_value: str = "hash_value"
+    hash_value = "hash_value"
 
 
 class ModelType(Enum):
@@ -54,8 +58,8 @@ class ModelType(Enum):
 
 
 class CheckpointFieldKeys(Enum):
-    model: str = "model"
-    metadata: str = "metadata"
+    model = "model"
+    metadata = "metadata"
 
 
 class TaskType(Enum):
@@ -76,8 +80,8 @@ s3 user with following rights to two buckets: data_mart and model_zoo(ref. Bucke
 - s3:GetBucketLocation
 """
 DefaultS3User = S3Credentials(
-    ACCESS_KEY="MK2IJPXYGYX1ZINEJKLJ",
-    SECRET_KEY="mLBjBz8aClRjR6j+79v7jMVUQZo1k8rwPyntGWxY",
+    ACCESS_KEY=SecretStr("MK2IJPXYGYX1ZINEJKLJ"),
+    SECRET_KEY=SecretStr("mLBjBz8aClRjR6j+79v7jMVUQZo1k8rwPyntGWxY"),
 )
 
 UserWOKeys = S3Credentials(
@@ -86,3 +90,18 @@ UserWOKeys = S3Credentials(
 )
 
 DEFAULT_STORAGE_URL: str = "https://api.blackhole.ai.innopolis.university:443"
+
+
+# === semantic segmentation ===
+# constants
+class SegDataKeys(Enum):
+    image = "image"
+    label = "label"
+    filename = "name"
+    coords = "coords"
+    metadata = "metadata"
+
+
+class SegOutKeys(Enum):  # todo: use it somehow
+    predictions = "predictions"
+    metrics = "metrics"

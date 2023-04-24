@@ -2,24 +2,23 @@
 from pathlib import Path
 from typing import Optional
 
-# third-party libraries
 from fire import Fire
-from pydantic import validate_arguments, AnyUrl
+from pydantic import AnyUrl
+from pydantic import validate_arguments
 from urlpath import URL
 
-# local modules
-from innofw.constants import (
-    S3Credentials,
-    S3FileTags,
-)
-from innofw.utils.checkpoint_utils import add_metadata2model
+from innofw.constants import S3Credentials
+from innofw.constants import S3FileTags
 from innofw.schema.model import ModelConfig
 from innofw.utils import get_abs_path
+from innofw.utils.checkpoint_utils import add_metadata2model
 from innofw.utils.file_hash import compute_file_hash
 from innofw.utils.s3_utils import S3Handler
 from innofw.utils.s3_utils.credentials import get_s3_credentials
 from innofw.utils.s3_utils.minio_interface import get_full_dst_url
 
+# third-party libraries
+# local modules
 
 
 @validate_arguments
@@ -88,7 +87,9 @@ def upload_model(
     if access_key is None or secret_key is None:
         credentials = get_s3_credentials()
     else:
-        credentials = S3Credentials(ACCESS_KEY=access_key, SECRET_KEY=secret_key)
+        credentials = S3Credentials(
+            ACCESS_KEY=access_key, SECRET_KEY=secret_key
+        )
 
     if not ckpt_path.is_absolute():
         ckpt_path = get_abs_path(ckpt_path)

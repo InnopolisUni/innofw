@@ -1,0 +1,36 @@
+name: "❓ QUESTION"
+description: Ask for a help.
+title: "❓ [QUESTION] - <title>"
+labels: [
+  "question"
+]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: Please enter an explicit description of your question
+      placeholder: Short and explicit description of your question
+    validations:
+      required: true
+    
+  - type: textarea
+    id: info
+    attributes:
+      label: "Information"
+      description: Please enter an full explantaion of your question 
+      placeholder: Some important information, ways you already have tried
+    validations:
+      required: true
+ 
+ 
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: "Screenshots"
+      description: If applicable, add screenshots to help explain your problem.
+      value: |
+        ![DESCRIPTION](LINK.png)
+      render: bash
+    validations:
+      required: false

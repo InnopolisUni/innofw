@@ -1,36 +1,25 @@
 # standard libraries
-
 # third party libraries
 import pytest
 import torch
-
-# local modules
-
-
-# model + dataset cfg options:
-# ===============================
 from omegaconf import DictConfig
 
-from innofw.utils.framework import (
-    get_datamodule,
-    get_model,
-    map_model_to_framework,
-)
 from innofw import InnoModel
-from tests.fixtures.config.models import (
-    yolov5_cfg_w_target,
-    linear_regression_cfg_w_target,
-    xgbregressor_cfg_w_target,
-)
-from tests.fixtures.config.trainers import (
-    base_trainer_on_cpu_cfg,
-    trainer_cfg_w_gpu_devices_1,
-    trainer_cfg_w_gpu_single_gpu0,
-)
-from tests.fixtures.config.datasets import (
-    lep_datamodule_cfg_w_target,
-    house_prices_datamodule_cfg_w_target,
-)
+from innofw.utils.framework import get_datamodule
+from innofw.utils.framework import get_model
+from innofw.utils.framework import map_model_to_framework
+from tests.fixtures.config.datasets import house_prices_datamodule_cfg_w_target
+from tests.fixtures.config.datasets import lep_datamodule_cfg_w_target
+from tests.fixtures.config.models import linear_regression_cfg_w_target
+from tests.fixtures.config.models import xgbregressor_cfg_w_target
+from tests.fixtures.config.models import yolov5_cfg_w_target
+from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
+from tests.fixtures.config.trainers import trainer_cfg_w_gpu_devices_1
+from tests.fixtures.config.trainers import trainer_cfg_w_gpu_single_gpu0
+
+# local modules
+# model + dataset cfg options:
+# ===============================
 
 # NOTE:
 # trainer_cfg options:
@@ -156,6 +145,7 @@ def test_on_gpu(model_cfg, dm_cfg, trainer_cfg, task):
     wrp_model.train(dm)
 
     assert True
+
 
 # # [
 # #     yolov5_cfg_w_target,

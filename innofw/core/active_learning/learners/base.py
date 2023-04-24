@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
-
-from innofw.core.datamodules.base import BaseDataModule
-from innofw import InnoModel
+from abc import ABC
+from abc import abstractmethod
 
 from ..datamodule import get_active_datamodule
+from innofw import InnoModel
+from innofw.core.datamodules.base import BaseDataModule
 
 
 class BaseActiveLearner(ABC):
@@ -28,6 +28,7 @@ class BaseActiveLearner(ABC):
     run(ckpt_path):
         Starts an active learning cycle.
     """
+
     def __init__(
         self,
         model: InnoModel,
@@ -57,7 +58,9 @@ class BaseActiveLearner(ABC):
             if self.logger is not None:
                 self.logger.log(
                     {
-                        "train_samples": len(self.active_datamodule.train_idxs),
+                        "train_samples": len(
+                            self.active_datamodule.train_idxs
+                        ),
                         "pool_samples": len(self.active_datamodule.pool_idxs),
                         **eval_metrics,
                     }

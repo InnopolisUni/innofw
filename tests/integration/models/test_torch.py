@@ -1,29 +1,29 @@
 # other
+import hydra.utils
 import pytest
-from omegaconf import DictConfig
 import torch.nn as nn
+from omegaconf import DictConfig
 
-# local
-from innofw.constants import Frameworks
-from innofw.utils.framework import (
-    get_obj,
-    get_model,
-    get_datamodule,
-)
 from innofw import InnoModel
-from tests.fixtures.config.augmentations import resize_augmentation
+from innofw.constants import Frameworks
+from innofw.utils.framework import get_datamodule
+from innofw.utils.framework import get_model
+from innofw.utils.framework import get_obj
+from innofw.utils.framework import get_optimizer
+from tests.fixtures.config import losses as fixt_losses
+from tests.fixtures.config import models as fixt_models
+from tests.fixtures.config import optimizers as fixt_optimizers
+from tests.fixtures.config import trainers as fixt_trainers
+from tests.fixtures.config.augmentations import resize_augmentation_albu
+from tests.fixtures.config.augmentations import resize_augmentation_torchvision
 from tests.fixtures.config.datasets import (
     faces_datamodule_cfg_w_target,
 )
 from tests.fixtures.config.models import (
     resnet_cfg_w_target,
 )
-from tests.fixtures.config import (
-    losses as fixt_losses,
-    optimizers as fixt_optimizers,
-    trainers as fixt_trainers,
-    models as fixt_models,
-)
+
+# local
 
 
 @pytest.mark.parametrize(
@@ -33,7 +33,10 @@ from tests.fixtures.config import (
         [
             "innofw.core.models.torch.architectures.detection.faster_rcnn.FasterRcnnModel"
         ],
-        ["innofw.core.models.torch.architectures.classification.resnet.Resnet18"],
+        [
+            "innofw.core.models.torch.architectures.classification.resnet.Resnet18"
+        ],
+        ["innofw.core.models.torch.architectures.segmentation.SegFormer"],
     ],
 )
 def test_model_creation(target):
@@ -52,7 +55,7 @@ def test_model_creation(target):
 
 @pytest.mark.parametrize(
     ["name"],
-    [["unet"], ["FasterRcnnModel"], ["resnet18"]],
+    [["unet"], ["FasterRcnnModel"], ["resnet18"], ["SegFormer"]],
 )
 def test_model_creation_name_given(name):
     cfg = DictConfig(
@@ -97,7 +100,8 @@ def test_model_n_optimizer_creation():
     task = "image-segmentation"
     framework = Frameworks.torch
     model = get_model(cfg.models, fixt_trainers.base_trainer_on_cpu_cfg)
-    optim = get_obj(cfg, "optimizers", task, framework, params=model.parameters())
+    optim_cfg = get_optimizer(cfg, "optimizers", task, framework)
+    optim = hydra.utils.instantiate(optim_cfg, params=model.parameters())
 
 
 def test_torch_wrapper_creation():
@@ -112,7 +116,9 @@ def test_torch_wrapper_creation():
     framework = Frameworks.torch
     model = get_model(cfg.models, fixt_trainers.base_trainer_on_cpu_cfg)
     losses = get_obj(cfg, "losses", task, framework)
-    wrapped_model = InnoModel(model, task=task, losses=losses, log_dir="./logs/test/")
+    wrapped_model = InnoModel(
+        model, task=task, losses=losses, log_dir="./logs/test/"
+    )
 
     assert wrapped_model is not None
 
@@ -126,7 +132,13 @@ def test_torch_wrapper_creation():
             resnet_cfg_w_target,
             faces_datamodule_cfg_w_target,
             "image-classification",
-            resize_augmentation,
+            resize_augmentation_torchvision,
+        ],
+        [
+            resnet_cfg_w_target,
+            faces_datamodule_cfg_w_target,
+            "image-classification",
+            resize_augmentation_albu,
         ]
         # [model_cfg_wo_target, datamodule_cfg_w_target],
         # [model_cfg_w_empty_target, datamodule_cfg_w_target],
@@ -136,8 +148,19 @@ def test_torch_wrapper_creation():
 def test_model_training(model_cfg, dm_cfg, task, aug):
     model = get_model(model_cfg, fixt_trainers.base_trainer_on_cpu_cfg)
     framework = Frameworks.torch
-    augmentations = None if not aug else get_obj(aug, "augmentations", task, framework)
-    datamodule = get_datamodule(dm_cfg, framework, task=task, augmentations=augmentations)
+    augmentations = (
+        None if not aug else get_obj(aug, "augmentations", task, framework)
+    )
+    datamodule = get_datamodule(
+        dm_cfg,
+        framework,
+        task=task,
+        augmentations={
+            "train": augmentations,
+            "test": augmentations,
+            "val": augmentations,
+        },
+    )
 
     wrapped_model = InnoModel(
         model,

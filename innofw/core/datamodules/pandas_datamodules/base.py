@@ -1,11 +1,12 @@
 # standard libraries
 from abc import ABC
 
-# local modules
 import pandas as pd
 
 from innofw.core.datamodules.base import BaseDataModule
 from innofw.utils.dm_utils.utils import find_file_by_ext
+
+# local modules
 
 
 class BasePandasDataModule(BaseDataModule, ABC):
@@ -32,27 +33,32 @@ class BasePandasDataModule(BaseDataModule, ABC):
     """
 
     def __init__(
-            self,
-            train,
-            test,
-            target_col,
-            infer=None,
-            stage=None,
-            *args,
-            **kwargs,
+        self,
+        train,
+        test,
+        target_col,
+        infer=None,
+        stage=None,
+        *args,
+        **kwargs,
     ):
-
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
 
         ext = ".csv"
         self.train_dataset = (
-            self.train if self.train is None else find_file_by_ext(self.train, ext)
+            self.train
+            if self.train is None
+            else find_file_by_ext(self.train, ext)
         )
         self.test_dataset = (
-            self.test if self.test is None else find_file_by_ext(self.test, ext)
+            self.test
+            if self.test is None
+            else find_file_by_ext(self.test, ext)
         )
         self.predict_dataset = (
-            self.infer if self.infer is None else find_file_by_ext(self.infer, ext)
+            self.infer
+            if self.infer is None
+            else find_file_by_ext(self.infer, ext)
         )
         self.target_col = target_col
 

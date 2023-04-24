@@ -1,1 +1,1 @@
-python train.py experiments=GR_300822_skOLIn2s_vae_qm9
+python train.py experiments=text-vae/GR_300822_skOLIn2s_vae_qm9

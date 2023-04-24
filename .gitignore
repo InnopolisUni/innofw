@@ -1,4 +1,7 @@
 ./data
+wandb/
+lightning_logs/
+*.pth
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -116,8 +119,8 @@ logs
 data/
 !tests/data/
 tests/data/images/detection/unarchived/
-train/
-infer/
+/train/
+/infer/
 *.pt
 hyp.yaml
 deepchem_data_dir

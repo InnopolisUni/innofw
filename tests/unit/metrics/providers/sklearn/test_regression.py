@@ -1,18 +1,16 @@
 #
 from typing import Callable
 
-#
-import pytest
-import torch
 import numpy as np
-from sklearn.metrics import (
-    r2_score,
-    mean_absolute_error as mae,
-    mean_squared_error as mse,
-)
+import pytest
+from sklearn.metrics import mean_absolute_error as mae
+from sklearn.metrics import mean_squared_error as mse
+from sklearn.metrics import r2_score
+
+from innofw.core.metrics import Metric
 
 #
-from innofw.core.metrics import Metric
+#
 
 
 @pytest.mark.parametrize(["metric_func"], [[r2_score], [mae], [mse]])

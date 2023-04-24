@@ -1,39 +1,42 @@
 # standard libraries
 import os
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
 from pathlib import Path
-import pathlib
+from typing import Dict
+from typing import Optional
+from typing import Union
 from urllib.parse import urlparse
-from typing import Dict, Optional
 
-# third party libraries
-
-# local modules
 from innofw.constants import Stages
 from innofw.data_mart import upload_dataset
-
 from innofw.data_mart.downloader import download_archive
-from innofw.utils import get_default_data_save_dir, get_abs_path
+from innofw.utils import get_abs_path
+from innofw.utils import get_default_data_save_dir
+
+# third party libraries
+# local modules
 
 
 class BaseDataModule(ABC):
     """
-        An abstract class to define interface and methods of datamodules
+    An abstract class to define interface and methods of datamodules
 
-        Attributes
-        ----------
-        task: List[str]
-            the task the datamodule is intended to be used for
-        framework: List[Union[str, Frameworks]]
-            the model framework the datamodule is designed to work with
+    Attributes
+    ----------
+    task: List[str]
+        the task the datamodule is intended to be used for
+    framework: List[Union[str, Frameworks]]
+        the model framework the datamodule is designed to work with
 
-        Methods
-        -------
-        setup(stage: Stages = None, *args, **kwargs)
-            Sets up datasets for the stage
-        setup_infer():
-            Sets up inference dataset(s)
+    Methods
+    -------
+    setup(stage: Stages = None, *args, **kwargs)
+        Sets up datasets for the stage
+    setup_infer():
+        Sets up inference dataset(s)
     """
+
     task = ["None"]
     framework = ["None"]
 
@@ -47,26 +50,26 @@ class BaseDataModule(ABC):
         **kwargs,
     ):
         """
-            Args:
-                train: Optional[Dict[str, str]]
-                    information about the train data location
-                    dictionary should have two fields: `source`, `target`
-                    `source` can be either url to zip file or path to the local folder
-                    in case `source` is an url then `target` is a path where data should be download
-                test: Optional[Dict[str, str]]
-                    information about the test data location
-                    dictionary should have two fields: `source`, `target`
-                    `source` can be either url to zip file or path to the local folder
-                    in case `source` is an url then `target` is a path where data should be download
-                infer: Optional[Dict[str, str]]
-                    information about the inference data location
-                    dictionary should have two fields: `source`, `target`
-                    `source` can be either url to zip file or path to the local folder
-                    in case `source` is an url then `target` is a path where data should be download
-                stage: Stages
-                    stage when the datamodule is being created
-                *args:
-                **kwargs:
+        Args:
+            train: Optional[Dict[str, str]]
+                information about the train data location
+                dictionary should have two fields: `source`, `target`
+                `source` can be either url to zip file or path to the local folder
+                in case `source` is an url then `target` is a path where data should be download
+            test: Optional[Dict[str, str]]
+                information about the test data location
+                dictionary should have two fields: `source`, `target`
+                `source` can be either url to zip file or path to the local folder
+                in case `source` is an url then `target` is a path where data should be download
+            infer: Optional[Dict[str, str]]
+                information about the inference data location
+                dictionary should have two fields: `source`, `target`
+                `source` can be either url to zip file or path to the local folder
+                in case `source` is an url then `target` is a path where data should be download
+            stage: Stages
+                stage when the datamodule is being created
+            *args:
+            **kwargs:
         """
         if stage != Stages.predict:
             self.train = self._get_data(train)
@@ -121,7 +124,9 @@ class BaseDataModule(ABC):
         elif stage is Stages.predict:
             return self.predict_dataloader()
         else:
-            raise ValueError("Wrong stage passed use on of following:", list(Stages))
+            raise ValueError(
+                "Wrong stage passed use on of following:", list(Stages)
+            )
 
     @abstractmethod
     def train_dataloader(self):
@@ -136,12 +141,11 @@ class BaseDataModule(ABC):
         pass
 
     @abstractmethod
-    def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
+    def save_preds(self, preds, stage: Stages, dst_path: Path):
         pass
 
-    def _get_data(self, path: Dict[str, str]):
-        """Function to get the path to the data
-        """
+    def _get_data(self, path: Dict[str, str]) -> Optional[Union[str, Path]]:
+        """Function to get the path to the data"""
         if path is None:
             return None
 
@@ -152,6 +156,9 @@ class BaseDataModule(ABC):
                 raise ValueError(f"{name} path is not specified")
 
         source = path["source"]
+
+        if source is None:
+            return None
 
         if source.startswith("$"):
             source = os.getenv(source[1:])

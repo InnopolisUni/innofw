@@ -1,16 +1,17 @@
+import logging
 import pathlib
 
-import logging
 import pandas as pd
 import torch
 from torch.utils.data import random_split
 
-from innofw.constants import Stages, Frameworks
+from innofw.constants import Frameworks
+from innofw.constants import Stages
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
-from innofw.utils.dm_utils.utils import find_file_by_ext
 from innofw.core.datasets.timeseries import ECGDataset
+from innofw.utils.dm_utils.utils import find_file_by_ext
 
 
 def collate_fn(batch):
@@ -19,23 +20,23 @@ def collate_fn(batch):
 
 class TimeSeriesLightningDataModule(BaseLightningDataModule):
     """
-        A Class used for working with Time Series
-        ...
+    A Class used for working with Time Series
+    ...
 
-        Attributes
-        ----------
-        aug : dict
-            The list of augmentations
-        val_size: float
-            The proportion of the dataset to include in the validation set
+    Attributes
+    ----------
+    aug : dict
+        The list of augmentations
+    val_size: float
+        The proportion of the dataset to include in the validation set
 
-        Methods
-        -------
-        save_preds(preds, stage: Stages, dst_path: pathlib.Path):
-            Saves inference predictions to csv file
+    Methods
+    -------
+    save_preds(preds, stage: Stages, dst_path: pathlib.Path):
+        Saves inference predictions to csv file
 
-        setup_infer():
-            The method prepares inference data
+    setup_infer():
+        The method prepares inference data
 
     """
 
@@ -62,8 +63,10 @@ class TimeSeriesLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        train_dataset = ECGDataset(find_file_by_ext(self.train_dataset, ".csv"))
-        self.test_dataset = ECGDataset(find_file_by_ext(self.test_dataset, ".csv"))
+        train_dataset = ECGDataset(find_file_by_ext(self.train_source, ".csv"))
+        self.test_dataset = ECGDataset(
+            find_file_by_ext(self.test_source, ".csv")
+        )
 
         # divide into train, val, test
         n = len(train_dataset)

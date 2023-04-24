@@ -1,1 +1,1 @@
-python train.py experiments=SK_010822_jvslrmvk_resnet.yaml accelerator=gpu +devices=1
+python train.py experiments=classification/SK_010822_jvslrmvk_resnet.yaml accelerator=gpu ++devices=1

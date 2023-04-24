@@ -1,0 +1,14 @@
+defaults:
+    - /augmentations/preprocessing:
+        - to_pil_image
+        - resize
+    - /augmentations/combined:
+        - none
+    - /augmentations/position:
+      - random_horizontal_flip
+    - /augmentations/color:
+    - /augmentations/postprocessing:
+      - to_tensor
+      - normalize
+# task:
+#   - one-shot-learning

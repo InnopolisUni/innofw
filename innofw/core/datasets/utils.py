@@ -3,21 +3,23 @@ from typing import Optional
 import numpy as np
 import torch
 
+from innofw.constants import SegDataKeys
 
-def prep_data(
-    image, mask: Optional = None, transform: Optional = None
-):
+
+def prep_data(image, mask: Optional = None, transform: Optional = None):
     if transform is not None:
         if mask is not None:
-            sample = transform(image=image.astype("uint8"), mask=mask.astype("uint8"))
+            sample = transform(image=image, mask=mask)
             image, mask = sample["image"], sample["mask"]
+            # print(max(imag/e), min(image), 'sdfsdf', max(mask), min(mask))
         else:
-            sample = transform(image=image.astype("uint8"))
+            sample = transform(image=image)
             image = sample["image"]
+            # print(max(image), min(image), 'sdfsdf')
 
     image = np.moveaxis(image, 2, 0)
     # ============== preprocessing ==============
-    image = image / 255.0
+    image = image / 10000
     # ===========================================
     image = torch.from_numpy(image)
     image = image.float()
@@ -26,6 +28,6 @@ def prep_data(
         mask = torch.from_numpy(mask.copy())
         mask = torch.unsqueeze(mask, 0).float()
 
-        return {"scenes": image, "labels": mask}
+        return {SegDataKeys.image: image, SegDataKeys.label: mask}
 
-    return {"scenes": image}
+    return {SegDataKeys.image: image}

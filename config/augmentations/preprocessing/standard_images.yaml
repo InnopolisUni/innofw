@@ -1,0 +1,5 @@
+divide_by_255:
+  _target_: albumentations.ToFloat
+  max_value: 255
+  p: 1.0
+  always_apply: True

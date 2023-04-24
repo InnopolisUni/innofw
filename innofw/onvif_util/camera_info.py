@@ -1,6 +1,7 @@
+from typing import Optional
+
 import fire
 from onvif import ONVIFCamera
-from typing import Optional
 
 
 def get_camera_info(ip, port, user: Optional[str], password: Optional[str]):
@@ -24,7 +25,10 @@ def get_camera_info(ip, port, user: Optional[str], password: Optional[str]):
     token = profiles[0].token
     mycam = media_service.create_type("GetStreamUri")
     mycam.ProfileToken = token
-    mycam.StreamSetup = {"Stream": "RTP-Unicast", "Transport": {"Protocol": "RTSP"}}
+    mycam.StreamSetup = {
+        "Stream": "RTP-Unicast",
+        "Transport": {"Protocol": "RTSP"},
+    }
     print(media_service.GetStreamUri(mycam))
 
 

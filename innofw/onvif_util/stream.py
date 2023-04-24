@@ -1,5 +1,5 @@
-import fire
 import cv2
+import fire
 
 
 def show_stream(uri):

@@ -1,30 +1,31 @@
 #
 from typing import Optional
 
-#
-import torch
 import torch.nn as nn
 import torchvision.models as models
+
+#
 
 
 class Resnet18(nn.Module):
     """
-        Resnet model for classification task
-        ...
+    Resnet model for classification task
+    ...
 
-        Attributes
-        ----------
-        num_classes : int
-            number of classes to predict
-        model : nn.Module
-            Resnet model by torchvision
+    Attributes
+    ----------
+    num_classes : int
+        number of classes to predict
+    model : nn.Module
+        Resnet model by torchvision
 
-        Methods
-        -------
-        forward(x):
-            returns result of the data forwarding
+    Methods
+    -------
+    forward(x):
+        returns result of the data forwarding
 
     """
+
     def __init__(
         self, num_classes: Optional[int] = 2, pretrained=True, *args, **kwargs
     ):
@@ -36,5 +37,8 @@ class Resnet18(nn.Module):
 
     def forward(self, x):
         # x = x.unsqueeze(0)
+        import torch
+
+        x = torch.moveaxis(x, -1, 1)
         out = self.model(x)
         return nn.functional.softmax(out, dim=1)

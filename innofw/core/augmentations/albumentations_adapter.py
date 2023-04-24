@@ -1,7 +1,9 @@
 import albumentations as A
 import numpy as np
-from innofw.core.augmentations.base import BaseAugmentationAdapter
+import torch
+
 from innofw.core.augmentations import register_augmentations_adapter
+from innofw.core.augmentations.base import BaseAugmentationAdapter
 
 """
 references:
@@ -24,15 +26,32 @@ class AlbumentationsAdapter(BaseAugmentationAdapter):
     forward(x, y=None):
         performs transformations
     """
+
     def __init__(self, transforms, *args, **kwargs):
         super().__init__(transforms)
 
-    def forward(self, x, y=None):
+    def forward(self, x, y=None, z=None):
         if y is not None:
             result = self.transforms(image=np.array(x), mask=y)
-            return result["image"], result["mask"]
+            if (
+                len(result["image"].shape) == 3
+                and result["image"].shape[2] == 3
+            ):
+                img = np.moveaxis(result["image"], -1, 0)
+            else:
+                img = result["image"]
 
-        return self.transforms(image=np.array(x))["image"]
+            return img, result["mask"]
+        img = self.transforms(image=np.array(x))["image"]
+
+        if len(img.shape) == 3 and img.shape[2] == 3:
+            if isinstance(img, np.ndarray):
+                img = np.moveaxis(img, -1, 0)  # HWC -> CHW
+            elif isinstance(img, torch.Tensor):
+                img = torch.moveaxis(img, -1, 0)  # HWC -> CHW for tensors
+            else:
+                raise NotImplementedError()
+        return img
 
     def __repr__(self):
         return f"Albumentations: {self.transforms}"

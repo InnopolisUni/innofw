@@ -1,15 +1,14 @@
 import hydra.utils
 import pandas as pd
+import streamlit as st
 import streamlit_pydantic as sp
 
+from innofw.constants import TaskType
 from innofw.utils.extra import is_intersecting
 from innofw.utils.framework import map_model_to_framework
-from innofw.constants import TaskType
 
 # iterate over a module and find all model schemas
 # find schemas which match the task
-
-import streamlit as st
 
 
 def find_model_schema(task: TaskType):
@@ -36,7 +35,9 @@ def find_model_schema(task: TaskType):
 def table_input_handler(task, project_tab, model_tab, data_tab):
     objects, classes, class_paths = find_model_schema(task)
     model = project_tab.selectbox(
-        label="Select model", options=classes, format_func=lambda cls: cls().name
+        label="Select model",
+        options=classes,
+        format_func=lambda cls: cls().name,
     )
     idx = classes.index(model)
     with model_tab.container():

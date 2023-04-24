@@ -31,7 +31,13 @@ class ClassificationLightningModule(BaseLightningModule):
     """
 
     def __init__(
-            self, model, losses, optimizer_cfg, scheduler_cfg, *args: Any, **kwargs: Any
+        self,
+        model,
+        losses,
+        optimizer_cfg,
+        scheduler_cfg,
+        *args: Any,
+        **kwargs: Any,
     ):
         super().__init__(*args, **kwargs)
         self.model = model
@@ -50,14 +56,14 @@ class ClassificationLightningModule(BaseLightningModule):
         image, target = batch
         outputs = self.forward(image.float())
         loss = self.losses(outputs, target.long())
-        self.log_metrics('train', outputs, target.long())
+        self.log_metrics("train", outputs, target.long())
         return {"loss": loss}
 
     def validation_step(self, batch, batch_idx):
         image, target = batch
         outputs = self.forward(image.float())
         loss = self.losses(outputs, target.long())
-        self.log_metrics('val', outputs, target.long())
+        self.log_metrics("val", outputs, target.long())
         self.log("val_loss", loss, prog_bar=True)
         return {"val_loss": loss}
 
