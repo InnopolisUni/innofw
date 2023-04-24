@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - /datasets@_dataset_dict.classification_mnist1: classification/classification_mnist
+  - /datasets@_dataset_dict.classification_mnist2: classification/classification_mnist
+  - override /models: resnet.yaml
+  - override /augmentations_train: none #classification.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: log_loss.yaml
+  - override /optimizers: adam
+
+project: "mnist_classification"
+task: "image-classification"
+random_seed: 42
+original_work_dir: ${hydra:runtime.cwd}
+weights_freq: 1
+batch_size: 8
+stop_param: 1
+epochs: 1
