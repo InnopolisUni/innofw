@@ -1,4 +1,3 @@
-# standard libraries
 # other
 import hydra
 from omegaconf import DictConfig
@@ -7,8 +6,6 @@ from segmentation_models_pytorch import Unet
 from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
 from innofw.utils.framework import get_optimizer
-
-# local modules
 
 
 def test_scheduler_creation():
