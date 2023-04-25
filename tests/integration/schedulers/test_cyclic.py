@@ -1,3 +1,4 @@
+# standard libraries
 # other
 import hydra
 from omegaconf import DictConfig
@@ -7,9 +8,7 @@ from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
 from innofw.utils.framework import get_optimizer
 
-# local
-
-# local
+# local modules
 
 
 def test_scheduler_creation():
