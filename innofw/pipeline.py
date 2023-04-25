@@ -115,10 +115,6 @@ def run_pipeline(
     )
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
-
-    # todo: water erosion
-    # model
-    #
     logger = hydra.utils.instantiate(cfg.get("loggers"))
 
     # wrap the model
