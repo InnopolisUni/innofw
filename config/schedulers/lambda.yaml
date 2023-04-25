@@ -1,15 +1,3 @@
-# task:
-#   - all
-
-# implementations:
-#   torch:
-#     Custom:
-#       function:
-#         _target_: torch.optim.lr_scheduler.LambdaLR
-#         lr_lambda:
-#           _target_: innofw.core.schedulers.lambdas.dummy_func
-#         verbose: True
-
 task:
   - all
 
