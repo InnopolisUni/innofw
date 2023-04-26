@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Union, Optional
 from pydantic import validate_arguments, DirectoryPath
 from innofw.constants import CLI_FLAGS
+import logging
 
 # source: https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input
 def query_yes_no(question, default="yes") -> bool:
@@ -61,7 +62,7 @@ def find_folder_with_images(
         else:
             return target_folders[0]
     except Exception as e:
-        print(f"Error: {e}")
+        logging.error(f"Error: {e}")
         return None
     
 @validate_arguments
@@ -75,21 +76,21 @@ def find_file_by_ext(
         else:
             return None
     if not path.is_dir():
-        print(f"Error: {path} is not a valid directory or file path")
+        logging.error(f"Error: {path} is not a valid directory or file path")
         return None
     try:
         target_files = list(filter(lambda f: f.suffix in exts, path.rglob("*")))
-        return check_files(path, ext, target_files)
+        return is_unitary(path, ext, target_files)
     except ValueError as e:
-        print(f"Error: {e}")
+        logging.error(f"Error: {e}")
         return None
     
 @validate_arguments
-def check_files(path: DirectoryPath, ext, target_files):
+def is_unitary(path: DirectoryPath, ext, target_files):
     if len(target_files) == 0:
         return None
     elif len(target_files) > 1:
-        print(f"Error: Multiple files found in {path} with extensions {ext}:")
+        logging.error(f"Error: Multiple files found in {path} with extensions {ext}:")
         for file_path in target_files:
             print(f"- {file_path}")
         return None

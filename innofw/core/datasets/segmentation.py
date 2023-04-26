@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import cv2
-import numpy as np
 from torch.utils.data import Dataset
 
 from innofw.constants import SegDataKeys
