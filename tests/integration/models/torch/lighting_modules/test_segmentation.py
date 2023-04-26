@@ -3,25 +3,13 @@ import shutil
 
 import pytest
 import torch
-from omegaconf import DictConfig
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning import LightningModule
 from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
-from innofw.constants import Frameworks
 from innofw.constants import SegDataKeys
-from innofw.core.models.torch.lightning_modules.segmentation import (
-    SemanticSegmentationLightningModule,
-)
-from innofw.utils.framework import get_losses
-from innofw.utils.framework import get_model
-from tests.fixtures.config import losses as fixt_losses
-from tests.fixtures.config import models as fixt_models
-from tests.fixtures.config import optimizers as fixt_optimizers
-from tests.fixtures.config import trainers as fixt_trainers
 
 
 class DummyDataset(Dataset):
@@ -56,77 +44,70 @@ class DummyDataModule(LightningDataModule):
         return DataLoader(self.dataset, batch_size=self.batch_size)
 
 
-def predict(model, dataloader):
-    model.eval()
-    predictions = []
-    with torch.no_grad():
-        for batch in dataloader:
-            input_data = batch[SegDataKeys.image]
-            preds = model.predict_proba(input_data)
-            predictions.append(preds)
-    return torch.cat(predictions, dim=0)
-
-
-@pytest.fixture
-def segmentation_module() -> LightningModule:
-    cfg = DictConfig(
-        {
-            "models": fixt_models.deeplabv3_plus_w_target,
-            "trainer": fixt_trainers.trainer_cfg_w_cpu_devices,
-            "losses": fixt_losses.jaccard_loss_w_target,
-        }
-    )
-    model = get_model(cfg.models, cfg.trainer)
-    losses = get_losses(cfg, "image-segmentation", Frameworks.torch)
-    optimizer_cfg = DictConfig(fixt_optimizers.adam_optim_w_target)
-
-    module = SemanticSegmentationLightningModule(
-        model=model, losses=losses, optimizer_cfg=optimizer_cfg
-    )
-
-    return module
-
-
 def test_training_with_checkpoint(segmentation_module: LightningModule):
     checkpoint_dir = "checkpoints"
     os.makedirs(checkpoint_dir, exist_ok=True)
 
-    checkpoint_callback = ModelCheckpoint(
-        dirpath=checkpoint_dir,
-        filename="segmentation_module-{epoch:02d}",
-        save_top_k=1,
-        monitor="loss",
-        mode="min",
-        save_weights_only=True,
+    trainer = Trainer(max_epochs=2, devices=1, default_root_dir=checkpoint_dir)
+    dataset = DummyDataset(num_samples=100)
+    dataloader = DataLoader(dataset, batch_size=4)
+    trainer.fit(segmentation_module, train_dataloaders=dataloader)
+    trainer.fit(
+        segmentation_module,
+        ckpt_path="checkpoints/lightning_logs/version_0/checkpoints/epoch=1-step=50.ckpt",
+        train_dataloaders=dataloader,
     )
 
-    trainer = Trainer(max_epochs=1, devices=1, callbacks=[checkpoint_callback])
-    dataset = DummyDataset(num_samples=100)
-    dataloader = DataLoader(dataset, batch_size=4)
-    trainer.fit(segmentation_module, train_dataloaders=dataloader)
 
-
+@pytest.mark.skipif(
+    not torch.cuda.is_available(), reason="No GPU is found on this machine"
+)
 def test_training_without_checkpoint(segmentation_module: LightningModule):
-    trainer = Trainer(max_epochs=1, devices=1)
+    trainer = Trainer(accelerator="gpu", max_epochs=1, devices=1)
     dataset = DummyDataset(num_samples=100)
     dataloader = DataLoader(dataset, batch_size=4)
     trainer.fit(segmentation_module, train_dataloaders=dataloader)
+
+    training_metric_values = segmentation_module.training_metric_values
+
+    # Choose a metric to check for improvement, e.g., train_f1
+    metric_name = "BinaryF1Score"
+    print(training_metric_values)
+    # Check if the chosen metric is improving
+    for i in range(1, len(training_metric_values)):
+        assert (
+            training_metric_values[i][metric_name]
+            > training_metric_values[i - 1][metric_name]
+        )
 
 
 def test_testing_without_checkpoint(segmentation_module: LightningModule):
-    trainer = Trainer(max_epochs=1, devices=1)
+    trainer = Trainer(max_epochs=1, accelerator="gpu", devices=1)
     dataset = DummyDataset(num_samples=100)
     dataloader = DataLoader(dataset, batch_size=4)
-    trainer.test(segmentation_module, dataloaders=dataloader)
+    test_results = trainer.test(segmentation_module, dataloaders=dataloader)
+
+    # Check if test_results is a non-empty list
+    assert len(test_results) > 0
+
+    # Check if the first dictionary in test_results contains the expected metrics
+    expected_metrics = {
+        "test_BinaryF1Score",
+        "test_BinaryJaccardIndex",
+        "test_BinaryPrecision",
+        "test_BinaryRecall",
+    }
+    for metric in expected_metrics:
+        assert metric in test_results[0]
 
 
 def test_predicting_without_checkpoint(segmentation_module: LightningModule):
     trainer = Trainer(max_epochs=1, devices=1)
     predict_dataloader = DataLoader(DummyDataset(10), batch_size=4)
-    predictions = predict(segmentation_module, predict_dataloader)
+    # predictions = predict(segmentation_module, predict_dataloader)
+    trainer.predict(segmentation_module, dataloaders=predict_dataloader)
 
 
-## working ##
 def test_testing_with_checkpoint(segmentation_module: LightningModule):
     checkpoint_path = "checkpoints"
     os.makedirs(checkpoint_path, exist_ok=True)

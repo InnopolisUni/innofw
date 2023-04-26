@@ -66,6 +66,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
             self.model = model
 
         self.losses = losses
+        self.training_metric_values = []
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
         self.threshold = threshold
@@ -133,6 +134,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         #     predictions = torch.sigmoid(predictions)
 
         output[SegOutKeys.predictions] = predictions
+        self.training_metric_values.append(self.train_metrics.clone())
 
         if stage in ["train", "val"]:
             loss = self.log_losses(stage, predictions, label)
