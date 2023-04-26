@@ -6,11 +6,17 @@ task:
 implementations:
   torch:
     CrossEntropyFocalLoss:
-      weight: 1.0
+      weight: 0.25
       object:
         _target_: pytorch_toolbelt.losses.CrossEntropyFocalLoss
-#    JaccardLoss:
-#      weight: 0.5
-#      object:
-#        _target_: pytorch_toolbelt.losses.JaccardLoss
-#        mode: multiclass
+    JaccardLoss:
+      weight: 0.5
+      object:
+        _target_: pytorch_toolbelt.losses.JaccardLoss
+        mode: multiclass
+    DiceLoss:
+      weight: 0.25
+      object:
+        _target_: pytorch_toolbelt.losses.DiceLoss
+        mode: multiclass
+

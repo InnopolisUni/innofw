@@ -1,18 +1,17 @@
 # @package _global_
 defaults:
-  - override /models: segformer_for_segmentation.yaml
+  - override /models: deeplabv3plus
   - override /datasets: semantic-segmentation/segmentation_uwmadison
   - override /optimizers: lion.yaml
   - override /augmentations_train: none
   - override /augmentations_val: none
   - override /augmentations_test: none
-#  - override /callbacks: multiclass_segmentation
   - override /losses: multiclass_segmentation_losses
   - override /loggers: wandb
 
 models:
-  num_channels: 1
-  num_labels: 4
+  in_channels: 1
+  classes: 4
   retain_dim: True
 
 optimizers:
@@ -23,7 +22,7 @@ task: "multiclass-image-segmentation"
 random_seed: 42
 weights_freq: 1
 batch_size: 16
-epochs: 100
+epochs: 1
 accelerator: gpu
 override hydra/job_logging: stdout
 
@@ -33,7 +32,7 @@ wandb:
   entity: "k-galliamov"
   group: none
   tags:
-    - "SegFormer"
+    - "UNet"
     - "LION"
     - "CrossEntropyLoss"
     - "JaccardLoss"
