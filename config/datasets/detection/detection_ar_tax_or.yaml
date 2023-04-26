@@ -15,7 +15,7 @@ train:
 test:
   source: ./data/ArTaxOr/test
 infer:
-  source: ./data/ArTaxOr/infer
+  source: ./data/ArTaxOr/test
 
 
 num_workers: 8

@@ -8,7 +8,6 @@ defaults:
 project: "ar_tax_or"
 task: "image-detection"
 random_seed: 42
-epochs: 2
-batch_size: 8
+epochs: 40
+batch_size: 16
 weights_freq: 1
-accelerator: gpu
