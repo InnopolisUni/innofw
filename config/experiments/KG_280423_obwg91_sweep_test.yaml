@@ -1,0 +1,33 @@
+# wandb sweep config
+program: train.py
+method: bayes
+metric:
+  name: val_MulticlassJaccardIndex
+  goal: maximize
+
+name: hp_tuning
+project: uw_madison
+
+parameters:
+
+  experiments:
+    value: "KG_260423_boqe16_unet_uwmadison.yaml"
+
+  batch_size:
+    values: [ 8, 16, 32, 64, 128 ]
+
+  models.encoder_name:
+    values: ['resnet34', 'resnet50', 'resnet101']
+
+  optimizers.lr:
+    min: 0.0001
+    max: 0.01
+
+  epochs:
+    values: [50, 75, 100]
+
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}

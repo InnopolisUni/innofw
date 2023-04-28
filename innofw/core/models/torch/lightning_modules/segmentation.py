@@ -232,14 +232,28 @@ class MulticlassSemanticSegmentationLightningModule(BaseLightningModule):
         metrics = MetricCollection(
             [
                 MulticlassF1Score(
-                    threshold=threshold, num_classes=num_classes
+                    threshold=threshold,
+                    num_classes=num_classes,
+                    average="weighted",
+                    ignore_index=0,
                 ),
-                MulticlassRecall(threshold=threshold, num_classes=num_classes),
+                MulticlassRecall(
+                    threshold=threshold,
+                    num_classes=num_classes,
+                    average="weighted",
+                    ignore_index=0,
+                ),
                 MulticlassPrecision(
-                    threshold=threshold, num_classes=num_classes
+                    threshold=threshold,
+                    num_classes=num_classes,
+                    average="weighted",
+                    ignore_index=0,
                 ),
                 MulticlassJaccardIndex(
-                    threshold=threshold, num_classes=num_classes
+                    threshold=threshold,
+                    num_classes=num_classes,
+                    average="weighted",
+                    ignore_index=0,
                 ),
             ]
         )
