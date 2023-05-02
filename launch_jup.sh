@@ -1,1 +1,0 @@
-jupyter --no-browser --ip "*"
