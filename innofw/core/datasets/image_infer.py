@@ -7,16 +7,19 @@ from torch.utils.data import Dataset
 class ImageFolderInferDataset(Dataset):
     """
     A class to represent a custom Image Dataset for inference.
+
     image_dir : str
         directory containing images
     transforms : Iterable[albumentations.augmentations.transforms]
     gray : Optional[bool]
         if images in the dir are grayscale
+
     Methods
     -------
     __getitem__(self, idx):
         returns image read by opencv
     """
+
     def __init__(self, image_dir, transforms=None, gray=False):
         super().__init__()
         self.image_dir = image_dir
@@ -34,6 +37,8 @@ class ImageFolderInferDataset(Dataset):
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         if self.transforms:
             image = self.transforms(image)
+
         return image
+
     def __len__(self) -> int:
         return len(self.image_names)
