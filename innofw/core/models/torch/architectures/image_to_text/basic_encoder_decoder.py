@@ -2,7 +2,17 @@ import torch
 from typing import Dict, Union
 
 class BasicImageToTextEncoderDecoder(torch.nn.Module):
+    # Vinyals, O., Toshev, A., Bengio, S., & Erhan, D. (2015). Show and tell: A neural image caption generator. 
+    # In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 3156-3164).
+
+    # The model is heavily inspired by the original paper, but it is not an exact replica.
+    # The model is composed of an encoder and a decoder. The encoder is a pretrained CNN, which is used to extract
+    # features from the image. The decoder is a LSTM, which is used to generate the caption. The decoder is trained
+    # using teacher forcing
+
     class Encoder(torch.nn.Module):
+        # The encoder is a pretrained CNN, which is used to extract features from the image.
+
         def __init__(self,
                      encoder_network_size: int,
                      dropout_probability: float,
@@ -10,7 +20,16 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
                      image_transforms: torch.nn.Module,
                      average_pool_size: int,
                      fine_tune_backbone: bool
-                     ):
+            ):
+            """
+            Args:
+                encoder_network_size: The size of the network, which is used to encode the image.
+                dropout_probability: The probability of dropout.
+                backbone_model: The pretrained CNN, which is used to extract features from the image.
+                image_transforms: The transforms, which are applied to the image before it is passed to the CNN.
+                average_pool_size: The size of the average pooling layer.
+                fine_tune_backbone: Whether to fine tune the backbone model.
+            """
             super().__init__()
             self.network_size = encoder_network_size
             self.image_encoder = torch.nn.Sequential(*backbone_model.children())[:-2]
@@ -30,6 +49,14 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
             
         
         def forward(self, image: torch.Tensor) -> torch.Tensor:     
+            """Encodes an input image.
+            
+            Args:
+                image: The image, which is to be encoded.
+
+            Returns:
+                The encoded image.
+            """
             X = self.transforms(image)
             X = self.image_encoder(X)
             X = self.avg_pool(X) 
@@ -42,7 +69,6 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
                 decoder_hidden_size: int,
                 embedding_size: int,
                 dropout_probability: float,
-                # lstm_size: int,
                 encoder_network_size: int,
                 encoder_backbone_model: torch.nn.Module,
                 encoder_transforms: torch.nn.Module,
@@ -50,6 +76,18 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
                 encoder_fine_tune: bool,
                 word2int: Dict[str, int]=None,
             ):
+            """
+            Args:
+                decoder_hidden_size: The size of the hidden state of the LSTM.
+                embedding_size: The size of the embedding.
+                dropout_probability: The probability of dropout.
+                encoder_network_size: The size of the network, which is used to encode the image.
+                encoder_backbone_model: The pretrained CNN, which is used to extract features from the image.
+                encoder_transforms: The transforms, which are applied to the image before it is passed to the CNN.
+                encoder_avg_pool_size: The size of the average pooling layer.
+                encoder_fine_tune: Whether to fine tune the backbone model.
+                word2int: A dictionary, which maps words to integers.
+            """
 
             super().__init__()
             self.decoder_hidden_size = decoder_hidden_size
@@ -74,13 +112,7 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
                 hidden_size=decoder_hidden_size
             )
 
-            self.device = torch.device('cpu')
-
-            self.f_beta = torch.nn.Linear(encoder_network_size, decoder_hidden_size)
             self.dropout = torch.nn.Dropout(dropout_probability)
-
-            self.initial_hidden = torch.nn.Linear(encoder_network_size, decoder_hidden_size)
-            self.initial_cell = torch.nn.Linear(encoder_network_size, decoder_hidden_size)
 
 
     @property
@@ -89,6 +121,11 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
 
 
     def initialize(self, word2int):
+        """Loads the word2int dictionary and initializes the embedding and linear layer.
+
+        Args:
+            word2int: A dictionary, which maps words to integers.
+        """
         self.vocabulary_size = len(word2int)
         self.START = word2int["<s>"]
 
@@ -97,6 +134,10 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
         )
         self.linear = torch.nn.Linear(self.decoder_hidden_size, self.vocabulary_size)
         self._initialization_complete = True
+
+        # Better convergence
+        # see: https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning/blob/master/models.py#L124
+
         self.embedding.weight.data.uniform_(-0.1, 0.1)
         self.linear.bias.data.fill_(0)
         self.linear.weight.data.uniform_(-0.1, 0.1)
@@ -107,6 +148,18 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
                 captions: Union[torch.Tensor, None],
                 max_caption_length: int,
                 teacher_forcing=False):
+        
+        """Runs the model.
+
+        Args:
+            images: The images, which are to be encoded.
+            captions: The target captions.
+            max_caption_length: The maximum length of the captions.
+            teacher_forcing: Whether to use teacher forcing.
+            
+        Returns:
+            The predictions of the model.
+        """
 
         assert self._initialization_complete, \
             "Trying to use uninitialized model. Please, run `.initialize(word2int)` \
@@ -142,4 +195,5 @@ class BasicImageToTextEncoderDecoder(torch.nn.Module):
             predictions[:, t, :] = self.linear(self.dropout(h))
             if not teacher_forcing:
                 embeddings = torch.cat([embeddings, self.embedding(predictions[:, [t], :].argmax(dim=-1))], dim=1)
+                
         return predictions

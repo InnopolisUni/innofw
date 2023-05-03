@@ -2,7 +2,9 @@
 defaults:
   - override /datasets: image-to-text/flickr8
   - override /models: image-to-text/basic_encoder_decoder
-  
+  - override /optimizers: adam
+  - override /losses: image-to-text
+
 project: "image-to-text"
 task: image-to-text
 batch_size: 16
