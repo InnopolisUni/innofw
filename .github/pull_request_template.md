@@ -18,12 +18,27 @@ Please ensure you have documented the functionality of your changes, especially 
 - List major changes made in bullet points
 - Include any minor changes or refactoring
 
+## What type of PR is this? (check all applicable)
+
+- [ ] Refactor
+- [ ] Feature
+- [ ] Bug Fix
+- [ ] Optimization
+- [ ] Documentation Update
+
 ### Checklist
 - [ ] I have tested my changes locally and all tests passed
 - [ ] I have updated the documentation (if necessary)
 - [ ] I have added new dependencies (if necessary)
 - [ ] My changes do not introduce any breaking changes or conflicts with existing code
 - [ ] I have activated the pre-commit hook and ensured that linting checks pass
+
+## Added/updated tests?
+
+- [ ] Yes
+- [ ] No, and this is why: _please replace this line with details on why tests
+      have not been included_
+- [ ] I need help with writing tests
 
 ### Additional Notes
 Provide any additional information or context that may be helpful for the reviewer.
