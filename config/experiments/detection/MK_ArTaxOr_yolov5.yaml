@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection/detection_ar_tax_or
+  - override /initializations: random
+
+
+project: "ar_tax_or"
+task: "image-detection"
+random_seed: 42
+epochs: 40
+batch_size: 16
+weights_freq: 1
