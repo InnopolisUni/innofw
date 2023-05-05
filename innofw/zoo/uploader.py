@@ -6,6 +6,7 @@ from fire import Fire
 from pydantic import AnyUrl
 from pydantic import validate_arguments
 from urlpath import URL
+from omegaconf import OmegaConf
 
 from innofw.constants import S3Credentials
 from innofw.constants import S3FileTags
@@ -23,13 +24,10 @@ from innofw.utils.s3_utils.minio_interface import get_full_dst_url
 
 @validate_arguments
 def upload_model(
+    model_config_path: str,
     ckpt_path: Path,
-    config_save_path: Path,
+    data_folder: str,
     remote_save_path: AnyUrl,
-    target: str,
-    data: str,
-    description: str,
-    name: str,
     metrics: dict,
     access_key: Optional[str] = None,
     secret_key: Optional[str] = None,
@@ -38,15 +36,13 @@ def upload_model(
     """Function to upload a model weights into s3(remote storage) and generate config file for the model
 
     Arguments:
+        model_config_path - path to the model config    
         ckpt_path - path to the local file with model weights. Can be relative to the project folder path
-        config_save_path - path where to store the config file of the model. Can be relative to the project folder path
         remote_save_path - url to the file or file folder
             Example:
              1. https://api.blackhole.ai.innopolis.university/pretrained/
              2. https://api.blackhole.ai.innopolis.university/pretrained/catboost_qm9.cbm
-        target - target class or callable name
-        data - path to the data or name of the dataset from s3. If path is specified it is recommended to use relative to the project folder path.
-        name - name of the model
+        data_folder - path to the data or name of the dataset from s3. If path is specified it is recommended to use relative to the project folder path.
         metrics - dictionary with keys as metrics name and values as metrics scores.
             Example:
                 {'f1_score': 0.5}
@@ -61,28 +57,21 @@ def upload_model(
     >>> from innofw.zoo import upload_model
 
     >>> upload_model(
+    ...     model_config_path = "config/models/classification/satellite_imagery"
     ...     ckpt_path = "pretrained/best.pkl",
-    ...     config_save_path = "config/models/result.yaml",
     ...     remote_save_path = "https://api.blackhole.ai.innopolis.university/pretrained/model.pickle",
-    ...     target = "sklearn.linear_models.LinearRegression",
-    ...     data = "some/path/to/data",
-    ...     description = "some description",
-    ...     name = "some name",
+    ...     data_folder = "data/UCMerced/"
     ...     metrics = {"some metric": 0.04},
     ...     access_key = "some key",
     ...     secret_key = "some secret"
     ...     )
 
     in cli:
-        python innofw/zoo/uploader.py --ckpt_path pretrained/best.pkl\
-                                      --config_save_path config/models/result.yaml\
+        python innofw/zoo/uploader.py --model_config_path config/models/classification/satellite_imagery
+                                      --ckpt_path pretrained/best.pkl\
                                       --remote_save_path https://api.blackhole.ai.innopolis.university/pretrained/model.pickle\
-                                      --access_key $access_key --secret_key $secret_key\
-                                      --target sklearn.linear_model.LinearRegression\
-                                      --data some/path/to/data\
-                                      --description "some description"\
-                                      --metrics '{"some metric": 0.04}'\
-                                      --name something
+                                      --data_folder data/UCMerced/
+                                      --metrics '{"some metric": 0.04}'
     """
     if access_key is None or secret_key is None:
         credentials = get_s3_credentials()
@@ -94,17 +83,19 @@ def upload_model(
     if not ckpt_path.is_absolute():
         ckpt_path = get_abs_path(ckpt_path)
 
+    config = OmegaConf.load(model_config_path)
+
     url = URL(remote_save_path).anchor
     s3handler = S3Handler(url, credentials)
 
     exp_upload_url = get_full_dst_url(ckpt_path, remote_save_path)
 
     metadata = {
-        "_target_": target,
+        "_target_": config._target_,
         "weights": exp_upload_url,
-        "data": data,
-        "name": name,
-        "description": description,
+        "data": data_folder,
+        "name": config.name,
+        "description": config.description,
         "metrics": metrics,
     }
 
@@ -126,19 +117,6 @@ def upload_model(
     assert upload_url == exp_upload_url
 
     add_metadata2model(ckpt_path, metadata)
-
-    # config file creation with specified s3 weights path
-    model_cfg = ModelConfig(
-        **kwargs,
-        _target_=target,
-        name=name,
-        description=description,
-        ckpt_path=upload_url,
-    )
-    # save the config file
-    config_save_path = get_abs_path(config_save_path)
-    config_save_path.parent.mkdir(exist_ok=True, parents=True)
-    model_cfg.save_as_yaml(config_save_path)
 
 
 if __name__ == "__main__":
