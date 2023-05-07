@@ -5,26 +5,32 @@ metric:
   name: val_MulticlassJaccardIndex
   goal: maximize
 
-name: hp_tuning
+name: param_tuning_deeplabv3plus
 project: uw_madison
 
 parameters:
 
   experiments:
-    value: "KG_260423_boqe16_unet_uwmadison.yaml"
+    value: "KG_260423_inwrg21_deeplab_uwmadison.yaml"
+
+  augmentations_train:
+    values: [none, 'position/random_horizontal_flip.yaml']
 
   batch_size:
-    values: [ 8, 16, 32, 64, 128 ]
+    values: [ 64, 128, 256 ]
 
   models.encoder_name:
     values: ['resnet34', 'resnet50', 'resnet101']
 
+  optimizers:
+    values: ['lion.yaml', 'adam.yaml']
+
   optimizers.lr:
-    min: 0.0001
-    max: 0.01
+    min: 0.0035
+    max: 0.0070
 
   epochs:
-    values: [50, 75, 100]
+    values: [15, 20]
 
 command:
   - ${env}

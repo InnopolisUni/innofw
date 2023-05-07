@@ -224,9 +224,12 @@ class MulticlassSemanticSegmentationLightningModule(BaseLightningModule):
             num_classes = model.num_classes
         elif hasattr(model, "num_labels"):
             num_classes = model.num_labels
+        elif hasattr(model, "segmentation_head"):
+            num_classes = model.segmentation_head[0].out_channels
         else:
             raise AttributeError(
-                f'Please make sure {type(model).__name__} has either "num_classes" or "num_labels" attribute'
+                f'Please make sure {type(model).__name__} has either "num_classes" or "num_labels" attribute,'
+                f" or has a segmentation head."
             )
 
         metrics = MetricCollection(

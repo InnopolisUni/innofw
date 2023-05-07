@@ -8,8 +8,8 @@ task:
   - multiclass-image-segmentation
 
 test:
-  source: ./data/organs/train
+  source: ./data/organs/test
   # target:
 train:
-  source: ./data/organs/test
+  source: ./data/organs/train
   # target:
