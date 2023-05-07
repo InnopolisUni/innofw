@@ -54,7 +54,7 @@ class DummyDataModule(LightningDataModule):
         return DataLoader(self.dataset, batch_size=self.batch_size)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def segmentation_module() -> LightningModule:
     cfg = DictConfig(
         {
@@ -74,7 +74,7 @@ def segmentation_module() -> LightningModule:
     return module
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def trainer_with_temporary_directory():
     with tempfile.TemporaryDirectory() as tmp_dir:
         trainer = Trainer(
@@ -86,9 +86,11 @@ def trainer_with_temporary_directory():
         yield trainer, tmp_dir
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def dummy_data_module():
-    return DummyDataModule(num_samples=100, batch_size=4)
+    data_module = DummyDataModule(num_samples=100, batch_size=4)
+    data_module.setup()  # Call the setup method to define the dataset attribute
+    return data_module
 
 
 @pytest.fixture(scope="module")
