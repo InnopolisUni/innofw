@@ -1,6 +1,7 @@
 import logging
 import os.path
 import pathlib
+import rasterio
 
 import pandas as pd
 from torch.utils.data import random_split
@@ -62,7 +63,15 @@ class ImageLightningDataModule(BaseLightningDataModule):
         test_aug = self.get_aug(self.aug, "test")
         val_aug = self.get_aug(self.aug, "val")
 
-        train_dataset = ImageFolder(
+        if os.listdir(os.path.join(self.train_source, os.listdir(self.train_source)[0]))[0].endswith(".tif"):
+            train_dataset = ImageFolder(
+                str(self.train_source), transform=train_aug, loader=lambda path: rasterio.open(path).read().transpose((1, 2, 0)),
+            )
+            self.test_dataset = ImageFolder(
+                str(self.train_source), transform=test_aug, loader=lambda path: rasterio.open(path).read().transpose((1, 2, 0)),
+            )
+        else:
+            train_dataset = ImageFolder(
             str(self.train_source), transform=train_aug
         )
         self.test_dataset = ImageFolder(

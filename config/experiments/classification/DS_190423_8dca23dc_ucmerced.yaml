@@ -18,6 +18,7 @@ models:
   description: resnet classification model trained on ucmerced dataset
   ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/satellite-classification.ckpt
 
+
 project: "ucmerced_classification"
 task: "image-classification"
 random_seed: 42
@@ -27,10 +28,10 @@ batch_size: 256
 epochs: 30
 accelerator: gpu
 
-
 # wandb:
 #  enable: False
 #  entity: sadjava
 #  project: ucmerced
 #  group: 200423_just_testing_wandb
 #  job_type: training
+

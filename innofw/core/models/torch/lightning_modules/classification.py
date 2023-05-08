@@ -3,6 +3,13 @@ from typing import Any
 import torch
 
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
+from torchmetrics.classification import (
+    MulticlassAccuracy,
+    MulticlassRecall,
+    MulticlassPrecision,
+    MulticlassF1Score,
+)
+from torchmetrics import MetricCollection
 
 
 class ClassificationLightningModule(BaseLightningModule):
@@ -20,6 +27,8 @@ class ClassificationLightningModule(BaseLightningModule):
         optimizer configurations
     scheduler_cfg : cfg
         scheduler configuration
+    threshold: float
+        threshold to use while training
 
     Methods
     -------
@@ -36,6 +45,7 @@ class ClassificationLightningModule(BaseLightningModule):
         losses,
         optimizer_cfg,
         scheduler_cfg,
+        threshold=0.5,
         *args: Any,
         **kwargs: Any,
     ):
@@ -44,6 +54,18 @@ class ClassificationLightningModule(BaseLightningModule):
         self.losses = losses
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
+        self.threshold = threshold
+        metrics = MetricCollection(
+            [
+                MulticlassAccuracy(num_classes=model.num_classes, threshold=threshold), 
+                MulticlassPrecision(num_classes=model.num_classes, threshold=threshold), 
+                MulticlassRecall(num_classes=model.num_classes, threshold=threshold), 
+                MulticlassF1Score(num_classes=model.num_classes, threshold=threshold),
+            ]
+        )
+        self.train_metrics = metrics.clone(prefix="train_")
+        self.val_metrics = metrics.clone(prefix="val_")
+        self.test_metrics = metrics.clone(prefix="test_")
 
     def forward(self, x, *args, **kwargs) -> Any:
         return self.model(x)
@@ -53,21 +75,42 @@ class ClassificationLightningModule(BaseLightningModule):
         Arguments
             batch - tensor
         """
-        image, target = batch
-        outputs = self.forward(image.float())
-        loss = self.losses(outputs, target.long())
-        self.log_metrics("train", outputs, target.long())
-        return {"loss": loss}
+        return self.stage_step("train", batch)
 
     def validation_step(self, batch, batch_idx):
-        image, target = batch
-        outputs = self.forward(image.float())
-        loss = self.losses(outputs, target.long())
-        self.log_metrics("val", outputs, target.long())
-        self.log("val_loss", loss, prog_bar=True)
-        return {"val_loss": loss}
+        return self.stage_step("val", batch)
 
     def predict_step(self, batch, batch_idx, **kwargs):
         outputs = self.forward(batch.float())
         outputs = torch.argmax(outputs, 1)
         return outputs
+    
+    def stage_step(self, stage, batch, do_logging=False, *args, **kwargs):
+        output = dict()
+        # todo: check that model is in mode no autograd
+        image, label = batch
+
+        predictions = self.forward(image.float())
+        
+        if stage in ["train", "val"]:
+            loss = self.losses(predictions, label)
+            self.log(f"{stage}_loss", loss, on_step=False, on_epoch=True)
+            output["loss"] = loss
+        if stage != "predict":
+            metrics = self.compute_metrics(
+                stage, predictions, label
+            )
+            self.log_metrics(stage, metrics)
+        return output
+
+    def log_metrics(self, stage, metrics_res):
+        for key, value in metrics_res.items():
+            self.log(key, value, sync_dist=True, on_step=False, on_epoch=True)
+
+    def compute_metrics(self, stage, predictions, labels):
+        if stage == "train":
+            return self.train_metrics(predictions, labels)
+        elif stage == "val":
+            return self.val_metrics(predictions, labels)
+        elif stage == "test":
+            return self.test_metrics(predictions, labels)
