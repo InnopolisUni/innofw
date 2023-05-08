@@ -35,7 +35,7 @@ def upload_model(
     """Function to upload a model weights into s3(remote storage) and generate config file for the model
 
     Arguments:
-        experiment_config_path - path to the experiment config    
+        experiment_config_path - path to the experiment config (relatively to config/experiments folder)   
         ckpt_path - path to the local file with model weights. Can be relative to the project folder path
         remote_save_path - url to the file or file folder
             Example:
@@ -55,7 +55,7 @@ def upload_model(
     >>> from innofw.zoo import upload_model
 
     >>> upload_model(
-    ...     experiment_config_path = "config/experiments/classification/DS_190423_8dca23dc_ucmerced.yaml"
+    ...     experiment_config_path = "classification/DS_190423_8dca23dc_ucmerced.yaml"
     ...     ckpt_path = "pretrained/best.pkl",
     ...     remote_save_path = "https://api.blackhole.ai.innopolis.university/pretrained/model.pickle",
     ...     metrics = {"some metric": 0.04},
@@ -64,7 +64,7 @@ def upload_model(
     ...     )
 
     in cli:
-        python innofw/zoo/uploader.py --experiment_config_path config/experiments/classification/DS_190423_8dca23dc_ucmerced.yaml
+        python innofw/zoo/uploader.py --experiment_config_path classification/DS_190423_8dca23dc_ucmerced.yaml
                                       --ckpt_path pretrained/best.pkl\
                                       --remote_save_path https://api.blackhole.ai.innopolis.university/pretrained/model.pickle\
                                       --metrics '{"some metric": 0.04}'

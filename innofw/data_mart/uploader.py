@@ -35,7 +35,7 @@ def upload_dataset(
     """Function to upload a dataset into s3(remote storage) and generate config file for the dataset
 
     Arguments:
-        dataset_config_path: path to the dataset config
+        dataset_config_path: path to the dataset config (relatively to config/datasets folder)
         remote_save_path - url to the dataset save location.
             New filename can be specified for the archive file
             Example:
@@ -50,14 +50,14 @@ def upload_dataset(
     >>> from innofw.data_mart import upload_dataset
 
     >>> upload_dataset(
-    ...     dataset_config_path = "config/datasets/classification/industry_data",
+    ...     dataset_config_path = "classification/industry_data",
     ...     remote_save_path = "https://api.blackhole.ai.innopolis.university/public-datasets/industry_data.zip",
     ...     access_key = "some key",
     ...     secret_key = "some secret"
     ...     )
 
     in cli:
-        python innofw/data_mart/uploader.py --dataset_config_path config/datasets/classification/industry_data
+        python innofw/data_mart/uploader.py --dataset_config_path classification/industry_data
                                             --remote_save_path  https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/\
     """
     if access_key is None or secret_key is None:
