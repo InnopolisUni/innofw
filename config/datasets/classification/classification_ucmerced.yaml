@@ -11,10 +11,8 @@ date_time: 19.04.2023
 _target_: innofw.core.datamodules.lightning_datamodules.image_folder_dm.ImageLightningDataModule
 
 train:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/UCMerced/train.zip
-  target: ./data/UCMerced/train
+  source: ./data/UCMerced/images/train
 test:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/UCMerced/test.zip
-  target: ./data/UCMerced/test
+  source: ./data/UCMerced/images/test
 infer:
-  target: ./data/UCMerced/infer
+  source: ./data/UCMerced/images/infer

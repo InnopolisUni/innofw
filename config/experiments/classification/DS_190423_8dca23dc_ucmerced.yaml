@@ -8,7 +8,7 @@ defaults:
   - override /losses: log_loss
   - override /optimizers: adam
   - override /trainer: auto
-  #- override /loggers: wandb
+  - override /loggers: wandb
   - override /callbacks: none
 
 models:
@@ -25,11 +25,10 @@ weights_freq: 1
 batch_size: 256
 epochs: 30
 accelerator: gpu
-ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/satellite-classification.ckpt
 
-# wandb:
-#  enable: False
-#  entity: sadjava
-#  project: ucmerced
-#  group: 200423_just_testing_wandb
-#  job_type: training
+wandb:
+ enable: True
+ entity: sadjava
+ project: ucmerced
+ group: 200423_just_testing_wandb
+ job_type: training
