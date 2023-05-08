@@ -35,13 +35,12 @@ def upload_model(
     """Function to upload a model weights into s3(remote storage) and generate config file for the model
 
     Arguments:
-        model_config_path - path to the model config    
+        experiment_config_path - path to the experiment config    
         ckpt_path - path to the local file with model weights. Can be relative to the project folder path
         remote_save_path - url to the file or file folder
             Example:
              1. https://api.blackhole.ai.innopolis.university/pretrained/
              2. https://api.blackhole.ai.innopolis.university/pretrained/catboost_qm9.cbm
-        data_folder - path to the data or name of the dataset from s3. If path is specified it is recommended to use relative to the project folder path.
         metrics - dictionary with keys as metrics name and values as metrics scores.
             Example:
                 {'f1_score': 0.5}
@@ -56,20 +55,18 @@ def upload_model(
     >>> from innofw.zoo import upload_model
 
     >>> upload_model(
-    ...     model_config_path = "config/models/classification/satellite_imagery"
+    ...     experiment_config_path = "config/experiments/classification/DS_190423_8dca23dc_ucmerced.yaml"
     ...     ckpt_path = "pretrained/best.pkl",
     ...     remote_save_path = "https://api.blackhole.ai.innopolis.university/pretrained/model.pickle",
-    ...     data_folder = "data/UCMerced/"
     ...     metrics = {"some metric": 0.04},
     ...     access_key = "some key",
     ...     secret_key = "some secret"
     ...     )
 
     in cli:
-        python innofw/zoo/uploader.py --model_config_path config/models/classification/satellite_imagery
+        python innofw/zoo/uploader.py --experiment_config_path config/experiments/classification/DS_190423_8dca23dc_ucmerced.yaml
                                       --ckpt_path pretrained/best.pkl\
                                       --remote_save_path https://api.blackhole.ai.innopolis.university/pretrained/model.pickle\
-                                      --data_folder data/UCMerced/
                                       --metrics '{"some metric": 0.04}'
     """
     if access_key is None or secret_key is None:
