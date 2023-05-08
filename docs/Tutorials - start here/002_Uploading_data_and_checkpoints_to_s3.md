@@ -66,14 +66,14 @@ python innofw/data_mart/uploader.py --dataset_config_path path/to/dataset/config
                                     --access_key access_key --secret_key secret_key\
 ```
 ## Uploading model checkpoint to s3
-For uploading your checkpoint, you need to specify config file of your experiment, path to checkpoint and metrics you want to save. You config file must be stored in <b>config/experiments</b> folder.
+For uploading your checkpoint, you need to specify config file of your experiment, path to checkpoint and metrics you want to save.
 ### Python
 You can run this python script to upload checkpoint.
 ``` python
 from innofw.zoo import upload_model
 
 
-upload_model(experiment_config_path="classification/DS_190423_8dca23dc_ucmerced.yaml",
+upload_model(experiment_config_path="config/experiments/classification/DS_190423_8dca23dc_ucmerced.yaml",
             ckpt_path = "pretrained/best.pkl",
             remote_save_path = "https://api.blackhole.ai.innopolis.university/pretrained/model.pickle",
             metrics = {"some metric": 0.04},
