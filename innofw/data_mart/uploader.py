@@ -47,9 +47,9 @@ def upload_dataset(
 
     Usage:
 
-    >>> from innofw.zoo import upload_model
+    >>> from innofw.data_mart import upload_dataset
 
-    >>> upload_model(
+    >>> upload_dataset(
     ...     dataset_config_path = "config/datasets/classification/industry_data",
     ...     remote_save_path = "https://api.blackhole.ai.innopolis.university/public-datasets/industry_data.zip",
     ...     access_key = "some key",
