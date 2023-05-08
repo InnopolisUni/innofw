@@ -6,7 +6,7 @@ from fire import Fire
 from pydantic import AnyUrl
 from pydantic import validate_arguments
 from urlpath import URL
-from omegaconf import OmegaConf
+import hydra
 
 from innofw.constants import S3Credentials
 from innofw.constants import S3FileTags
@@ -24,9 +24,8 @@ from innofw.utils.s3_utils.minio_interface import get_full_dst_url
 
 @validate_arguments
 def upload_model(
-    model_config_path: str,
+    experiment_config_path: str,
     ckpt_path: Path,
-    data_folder: str,
     remote_save_path: AnyUrl,
     metrics: dict,
     access_key: Optional[str] = None,
@@ -83,19 +82,22 @@ def upload_model(
     if not ckpt_path.is_absolute():
         ckpt_path = get_abs_path(ckpt_path)
 
-    config = OmegaConf.load(model_config_path)
+    with hydra.initialize(config_path="../../config", version_base="1.2"):
+        config = hydra.compose(config_name="train.yaml", overrides=[f"experiments={experiment_config_path}"])
 
     url = URL(remote_save_path).anchor
     s3handler = S3Handler(url, credentials)
 
     exp_upload_url = get_full_dst_url(ckpt_path, remote_save_path)
+    train_data = config.get("datasets").get("train").target
+    data = train_data[:train_data.find("/train")]
 
     metadata = {
-        "_target_": config._target_,
+        "_target_": config.models._target_,
         "weights": exp_upload_url,
-        "data": data_folder,
-        "name": config.name,
-        "description": config.description,
+        "data": data,
+        "name": config.models.name,
+        "description": config.models.description,
         "metrics": metrics,
     }
 

@@ -16,6 +16,7 @@ models:
   num_classes: 21
   name: ucmerced_classification
   description: resnet classification model trained on ucmerced dataset
+  ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/satellite-classification.ckpt
 
 project: "ucmerced_classification"
 task: "image-classification"
@@ -25,7 +26,7 @@ weights_freq: 1
 batch_size: 256
 epochs: 30
 accelerator: gpu
-ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/satellite-classification.ckpt
+
 
 # wandb:
 #  enable: False
