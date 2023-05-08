@@ -66,7 +66,7 @@ def upload_dataset(
         credentials = S3Credentials(
             ACCESS_KEY=access_key, SECRET_KEY=secret_key
         )
-    config = OmegaConf.load(dataset_config_path)
+    config = OmegaConf.load("config/datasets/" + dataset_config_path)
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
 
