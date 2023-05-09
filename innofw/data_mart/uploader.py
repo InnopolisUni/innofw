@@ -11,7 +11,7 @@ from pydantic import AnyUrl
 from pydantic import validate_arguments
 from pydantic.types import DirectoryPath
 from urlpath import URL
-from omegaconf import OmegaConf
+import hydra
 
 from innofw.constants import S3Credentials
 from innofw.constants import S3FileTags
@@ -58,7 +58,7 @@ def upload_dataset(
 
     in cli:
         python innofw/data_mart/uploader.py --dataset_config_path classification/industry_data
-                                            --remote_save_path  https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/\
+                                            --remote_save_path https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/\
     """
     if access_key is None or secret_key is None:
         credentials = get_s3_credentials()
@@ -66,7 +66,9 @@ def upload_dataset(
         credentials = S3Credentials(
             ACCESS_KEY=access_key, SECRET_KEY=secret_key
         )
-    config = OmegaConf.load("config/datasets/" + dataset_config_path)
+    with hydra.initialize(config_path="../../config", version_base="1.2"):
+        config = hydra.compose(config_name="train.yaml", overrides=[f"experiments={experiment_config_path}"])
+    
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
 
