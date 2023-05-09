@@ -67,7 +67,7 @@ def upload_dataset(
             ACCESS_KEY=access_key, SECRET_KEY=secret_key
         )
     with hydra.initialize(config_path="../../config", version_base="1.2"):
-        config = hydra.compose(config_name="train.yaml", overrides=[f"experiments={experiment_config_path}"])
+        config = hydra.compose(config_name="train.yaml", overrides=[f"datasets={dataset_config_path}"])
     
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
@@ -76,7 +76,7 @@ def upload_dataset(
             dst_filename = tmpdir / f"{folder}"
             file_path = Path(str(dst_filename) + ".zip")
 
-            folder_path = config.get(folder)["target"]
+            folder_path = config.datasets.get(folder)["target"]
 
             shutil.make_archive(str(dst_filename), "zip", Path(folder_path))
 
