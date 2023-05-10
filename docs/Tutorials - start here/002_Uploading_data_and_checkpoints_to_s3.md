@@ -1,14 +1,14 @@
 # Uploading data and model checkpoints to s3
-There are two ways for uploading: 
+There are two ways to upload them: 
 1. using python script
 2. from cli (command line interface)
 
 Both optinions will be considered.
 
-For both uploading data and model using either cli or python script you can omit access_key and secret_key arguments, but they will be asked anyway. So you need to specify them anyway.
+For both uploading data and model using either cli or python script you can omit access_key and secret_key arguments, but they will be asked. So you need to specify them anyway.
 
 ## Uploading data 
-For uploading data you need to have the dataset config file that must be stored in <b>config/datasets</b> folder. Here is the example:
+To upload data you need to have the dataset config file that must be stored in <b>config/datasets</b> folder. Here is the example:
 ``` yaml
 # classification/classification_mnist.yaml
 task:
@@ -45,7 +45,7 @@ data/
 ```
 
 ### Python
-For uploading your data to s3 you need to run the following code snippet with appropriate values.
+To upload your data to s3 you need to run the following code snippet with appropriate values.
 
 ```
 from innofw.data_mart import upload_dataset
@@ -58,7 +58,7 @@ upload_dataset(dataset_config_path="classification/config.yaml",
 ```
 
 ### CLI
-For uploading your data to s3 you can also run this command in cli.
+To upload your data to s3 you can also run this command in cli.
 
 ``` bash
 python innofw/data_mart/uploader.py --dataset_config_path classification/config.yaml
@@ -66,7 +66,7 @@ python innofw/data_mart/uploader.py --dataset_config_path classification/config.
                                     --access_key access_key --secret_key secret_key\
 ```
 ## Uploading model checkpoint to s3
-For uploading your checkpoint, you need to specify config file of your experiment that must be stored in <b>config/experiments</b> folder, path to checkpoint and metrics you want to save.
+To upload your checkpoint you need to specify config file of your experiment that must be stored in <b>config/experiments</b> folder, path to checkpoint and metrics you want to save.
 ### Python
 You can run this python script to upload checkpoint with appropriate values.
 ``` python
@@ -81,7 +81,7 @@ upload_model(experiment_config_path="classification/config.yaml",
             secret_key = "secret key")
 ```
 ### CLI
-For uploading your checkpoint you can also run this command.
+To upload your checkpoint you can also run this command.
 ``` bash
 python innofw/zoo/uploader.py --ckpt_path pretrained/best.pkl
                               --experiment_config_path classification/config.yaml
