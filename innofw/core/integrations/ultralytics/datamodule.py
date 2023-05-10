@@ -43,6 +43,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
     def predict_dataloader(self):
         pass
 
+    # TODO: Change folder structure to the new structure used in setup_train_test_val function
     def setup_infer(self):
         if type(self.infer_source) == str and self.infer_source.startswith(
             "rts"
@@ -103,6 +104,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         augmentations=None,
         stage=False,
         channels_num: int = 3,
+        random_state: int = 42, # TODO: Pass the random seed value to the constructor if it exists in the config file
         *args,
         **kwargs,
     ):
@@ -137,7 +139,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         self.val_size = val_size
         self.num_classes = num_classes
         self.names = names
-        self.random_state = 42 # TODO: Take the random seed which is written in the configuration file?
+        self.random_state = random_state
         self.augmentations = augmentations
 
         # folder_name = self.train_dataset.stem
