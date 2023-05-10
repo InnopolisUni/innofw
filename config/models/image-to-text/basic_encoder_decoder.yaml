@@ -1,0 +1,18 @@
+name: basic-encoder-decoder
+description: Basic Encoder-Decoder architecture for image to text transformation
+
+# task: image-to-text
+_target_: innofw.core.models.torch.architectures.image_to_text.basic_encoder_decoder.BasicImageToTextEncoderDecoder
+decoder_hidden_size: 32
+embedding_size: 32
+dropout_probability: 0.07
+encoder_network_size: 16
+encoder_backbone_model: 
+  _target_: torchvision.models.resnet18
+  weights: 
+    _partial_: true
+    _target_: torchvision.models.ResNet18_Weights
+encoder_transforms: 
+  _target_:  torchvision.models.ResNet18_Weights.IMAGENET1K_V1.transforms
+encoder_avg_pool_size: 8
+encoder_fine_tune: true

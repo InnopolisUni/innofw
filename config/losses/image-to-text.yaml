@@ -1,0 +1,15 @@
+# aka cross-entropy loss
+name: Cross-entropy
+description: Cross Entropy loss
+task:
+  image-to-text  
+framework:
+  - torch
+
+
+implementations:
+  torch:
+    CrossEntropy:
+      weight: 1.0
+      object:
+          _target_: torch.nn.CrossEntropyLoss
