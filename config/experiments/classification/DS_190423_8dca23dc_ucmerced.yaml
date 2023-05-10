@@ -8,7 +8,7 @@ defaults:
   - override /losses: log_loss
   - override /optimizers: adam
   - override /trainer: auto
-  - override /loggers: wandb
+  #- override /loggers: wandb
   - override /callbacks: none
 
 models:
@@ -16,6 +16,8 @@ models:
   num_classes: 21
   name: ucmerced_classification
   description: resnet classification model trained on ucmerced dataset
+  ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/satellite-classification.ckpt
+
 
 project: "ucmerced_classification"
 task: "image-classification"
@@ -26,9 +28,10 @@ batch_size: 256
 epochs: 30
 accelerator: gpu
 
-wandb:
- enable: True
- entity: sadjava
- project: ucmerced
- group: 200423_just_testing_wandb
- job_type: training
+# wandb:
+#  enable: False
+#  entity: sadjava
+#  project: ucmerced
+#  group: 200423_just_testing_wandb
+#  job_type: training
+
