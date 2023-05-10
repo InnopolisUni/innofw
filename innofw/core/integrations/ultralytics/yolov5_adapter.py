@@ -318,7 +318,10 @@ class YOLOV5Adapter(BaseModelAdapter):
             name=self.opt["name"],
         )
 
-        if str(data.infer_source).startswith("rts") or Path(data.infer_source).is_file():
+        if (
+            str(data.infer_source).startswith("rts")
+            or Path(data.infer_source).is_file()
+        ):
             params.update(source=data.infer_source)
         else:
             params.update(
