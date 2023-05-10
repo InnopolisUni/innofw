@@ -137,7 +137,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         self.val_size = val_size
         self.num_classes = num_classes
         self.names = names
-        self.random_state = 42
+        self.random_state = 42 # TODO: Take the random seed which is written in the configuration file?
         self.augmentations = augmentations
 
         # folder_name = self.train_dataset.stem
@@ -150,9 +150,10 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         # new data folder
         new_data_path = root_path / "unarchived"
         new_data_path.mkdir(exist_ok=True, parents=True)
-
-        new_img_path = new_data_path / "images"
-        new_lbl_path = new_data_path / "labels"
+        
+        new_train_path = new_data_path / "train"
+        new_val_path = new_data_path / "val"
+        new_test_path = new_data_path / "test"
 
         # === split train images and labels into train and val sets and move files ===
 
@@ -166,6 +167,10 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         assert (
             len(label_files) == len(img_files) != 0
         ), "number of images and labels should be the same"
+        
+        # sort the files so that the images and labels are in the same order
+        img_files.sort()
+        label_files.sort()
 
         # split into train and val
         (
@@ -189,35 +194,54 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
 
         assert len(test_img_files) == len(
             test_label_files
-        ), "number of test images and labels should be the same"
+        ), "number of test images and labels should be the same"     
+       
+       
+        # Creating the training directory
         for files, folder_name in zip(
-            [train_label_files, val_label_files, test_label_files],
-            ["train", "val", "test"],
+            [train_img_files, train_label_files],
+            ["images", "labels"]
         ):
             # create a folder
-            new_path = new_lbl_path / folder_name
+            new_path = new_train_path / folder_name
             new_path.mkdir(exist_ok=True, parents=True)
-            # copy files into folder
+            
+            # Copy files into folder
             for file in files:
                 shutil.copy(file, new_path / file.name)
-
+                
+        # Creating the vallidation directory
         for files, folder_name in zip(
-            [train_img_files, val_img_files, test_img_files],
-            ["train", "val", "test"],
+            [val_img_files, val_label_files],
+            ["images", "labels"]
         ):
             # create a folder
-            new_path = new_img_path / folder_name
+            new_path = new_val_path /folder_name
             new_path.mkdir(exist_ok=True, parents=True)
-
-            # copy files into new folder
+            
+            # Copy files into folder
             for file in files:
                 shutil.copy(file, new_path / file.name)
+                
+        # Creating the test directory
+        for files, folder_name in zip(
+            [test_img_files, test_label_files],
+            ["images", "labels"]
+        ):
+            # create a folder
+            new_path = new_test_path /folder_name
+            new_path.mkdir(exist_ok=True, parents=True)
+            
+            # Copy files into folder
+            for file in files:
+                shutil.copy(file, new_path / file.name)
+        
 
         self.data = str(new_data_path / "data.yaml")
 
-        self.train_dataset = str(new_img_path / "train")
-        self.val_dataset = str(new_img_path / "val")
-        self.test_dataset = str(new_img_path / "test")
+        self.train_dataset = str(new_train_path)
+        self.val_dataset = str(new_val_path)
+        self.test_dataset = str(new_test_path)
         # create a yaml file
         with open(self.data, "w+") as file:
             file.write(f"train: {self.train_dataset}\n")
