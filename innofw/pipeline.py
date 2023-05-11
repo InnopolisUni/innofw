@@ -139,7 +139,7 @@ def run_pipeline(
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
         "logger": logger,
-        "random_seed": cfg.get("random_seed")
+        "random_state": cfg.get("random_seed")
     }
     inno_model = InnoModel(**model_params)
     result = None
