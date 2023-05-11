@@ -43,7 +43,6 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
     def predict_dataloader(self):
         pass
 
-    # TODO: Change folder structure to the new structure used in setup_train_test_val function
     def setup_infer(self):
         if type(self.infer_source) == str and self.infer_source.startswith(
             "rts"
@@ -56,7 +55,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         new_data_path = root_path / "unarchived"
         new_data_path.mkdir(exist_ok=True, parents=True)
 
-        new_img_path = new_data_path / "images"
+        new_infer_path = new_data_path / "infer"
 
         # === split train images and labels into train and val sets and move files ===
 
@@ -66,9 +65,9 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         # get all files from train folder
         img_files = list(infer_img_path.iterdir())
 
-        for files, folder_name in zip([img_files], ["infer"]):
+        for files, folder_name in zip([img_files], ["images"]):
             # create a folder
-            new_path = new_img_path / folder_name
+            new_path = new_infer_path / folder_name
             new_path.mkdir(exist_ok=True, parents=True)
 
             # copy files into new folder
@@ -104,7 +103,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         augmentations=None,
         stage=False,
         channels_num: int = 3,
-        random_state: int = 42, # TODO: Pass the random seed value to the constructor if it exists in the config file
+        random_state: int = 42,
         *args,
         **kwargs,
     ):
