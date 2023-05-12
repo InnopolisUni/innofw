@@ -42,6 +42,31 @@ from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
                 {
                     "description": "Segmentation model based on transformers",
                     "name": "SegFormer",
+                    "num_channels": 3,
+                    "num_labels": 2,
+                    "retain_dim": True,
+                }
+            ),
+            torch.from_numpy(np.random.rand(4, 3, 360, 480)).float(),
+            (4, 2, 360, 480),
+        ],
+        [
+            DictConfig(
+                {
+                    "description": "Segmentation model based on transformers",
+                    "name": "SegFormer",
+                    "num_channels": 1,
+                    "num_labels": 5,
+                }
+            ),
+            torch.from_numpy(np.random.rand(4, 1, 512, 1024)).float(),
+            (4, 5, 128, 256),
+        ],
+        [
+            DictConfig(
+                {
+                    "description": "Segmentation model based on transformers",
+                    "name": "SegFormer",
                     "num_channels": 1,
                     "num_labels": 5,
                 }

@@ -1,9 +1,9 @@
 defaults:
-    - preprocessing:
-    - combined:
+    - /augmentations/preprocessing:
+    - /augmentations/combined:
         - none
-    - position:
+    - /augmentations/position:
         - shift_scale_rotate
         - flip
-    - color:
-    - postprocessing:
+    - /augmentations/color:
+    - /augmentations/postprocessing:

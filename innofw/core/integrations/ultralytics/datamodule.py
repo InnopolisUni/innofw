@@ -239,10 +239,10 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         
 
         self.data = str(new_data_path / "data.yaml")
+        self.train_dataset = str(new_img_path / "train")
+        self.val_dataset = str(new_img_path / "val")
+        self.test_dataset = str(new_img_path / "test")
 
-        self.train_dataset = str(new_train_path / "images")
-        self.val_dataset = str(new_val_path / "images")
-        self.test_dataset = str(new_test_path / "images")
         # create a yaml file
         with open(self.data, "w+") as file:
             file.write(f"train: {self.train_dataset}\n")

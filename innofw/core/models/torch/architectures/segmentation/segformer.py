@@ -94,12 +94,13 @@ class SegFormer(nn.Module):
             ignore_mismatched_sizes=True,
             config=configuration,
         )
+        self.num_labels = self.num_classes = num_labels
         self.retain_dim = retain_dim
 
     def forward(self, x: torch.Tensor):
         out = self.model(pixel_values=x).logits
         if self.retain_dim:
-            size = tuple(x.shape[2:][::-1])
+            size = tuple(x.shape[2:])
             out = nn.functional.interpolate(
                 out, size=size, mode="bilinear", align_corners=False
             )

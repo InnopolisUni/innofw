@@ -1,0 +1,24 @@
+name: Segmentation
+description: Average of multiclass Jaccard and CrossEntropyFocal losses
+task:
+  - multiclass-image-segmentation
+
+implementations:
+  torch:
+    CrossEntropyFocalLoss:
+      weight: 0.25
+      object:
+        _target_: pytorch_toolbelt.losses.CrossEntropyFocalLoss
+        ignore_index: 0
+    JaccardLoss:
+      weight: 0.5
+      object:
+        _target_: pytorch_toolbelt.losses.JaccardLoss
+        mode: multiclass
+    DiceLoss:
+      weight: 0.25
+      object:
+        _target_: pytorch_toolbelt.losses.DiceLoss
+        mode: multiclass
+        ignore_index: 0
+

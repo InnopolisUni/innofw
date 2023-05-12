@@ -23,10 +23,10 @@ image_size: 640
 channels_num: 3
 num_classes: 7
 names:
-  0: Hymenoptera
-  1: Hemiptera
-  2: Lepidoptera
-  3: Coleoptera
-  4: Diptera
-  5: Araneae
+  0: Araneae
+  1: Coleoptera
+  2: Diptera
+  3: Hemiptera
+  4: Hymenoptera
+  5: Lepidoptera
   6: Odonata

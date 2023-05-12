@@ -3,11 +3,12 @@ defaults:
   - override /models: detection/yolov5
   - override /datasets: detection/detection_ar_tax_or
   - override /optimizers: sgd
+  - override /initializations: random
   
+
 project: "ar_tax_or"
 task: "image-detection"
-random_seed: 0
-epochs: 30
-stop_param: 10
-batch_size: 12
+random_seed: 42
+epochs: 40
+batch_size: 16
 weights_freq: 1
