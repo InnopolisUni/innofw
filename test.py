@@ -3,6 +3,9 @@ import sys
 import dotenv
 import hydra
 
+from hydra.core.hydra_config import HydraConfig
+from omegaconf import OmegaConf
+
 from pckg_util import check_gpu_and_torch_compatibility
 
 check_gpu_and_torch_compatibility()
@@ -23,6 +26,13 @@ def main(config):
     # utils.extras(config)
 
     from innofw.pipeline import run_pipeline
+    
+    if not config.get("experiment_name"):
+        hydra_cfg = HydraConfig.get()
+        experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
+            "experiments"
+        ]
+        config.experiment_name = experiment_name
 
     # Test model
     return run_pipeline(config, test=True, train=False, predict=False)

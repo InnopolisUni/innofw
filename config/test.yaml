@@ -25,6 +25,7 @@ batch_size:
 weights_path:
 weights_freq:
 ckpt_path:
+experiment_name:
 
 accelerator: cpu
 #devices: 1
