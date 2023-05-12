@@ -1,11 +1,7 @@
-# Uploading data and model checkpoints to s3
-There are two ways to upload them: 
-1. using python script
-2. from cli (command line interface)
+# Uploading Data and Model Checkpoints to Amazon S3
+There are two methods for uploading data and model checkpoints to Amazon S3: using the API and the command line interface (CLI). Both options will be covered in this tutorial.
 
-Both optinions will be considered.
-
-For both uploading data and model using either cli or python script you can omit access_key and secret_key arguments, but they will be asked. So you need to specify them anyway.
+When uploading data or a model using either the command line interface (CLI) or an API, you have the option to omit the access_key and secret_key arguments. The framework will search for these values in the ~/.aws/credentials and .env files. However, if these values are not found, you will be prompted in CLI.
 
 ## Uploading data 
 To upload data you need to have the dataset config file that must be stored in <b>config/datasets</b> folder. Here is the example:
@@ -44,10 +40,10 @@ data/
 
 ```
 
-### Python
-To upload your data to s3 you need to run the following code snippet with appropriate values.
+### API
+To upload data using the API use the provided Python code snippet, specifying the appropriate values.
 
-```
+``` python 
 from innofw.data_mart import upload_dataset
 
 
@@ -58,17 +54,17 @@ upload_dataset(dataset_config_path="classification/config.yaml",
 ```
 
 ### CLI
-To upload your data to s3 you can also run this command in cli.
+Alternatively, you can upload data to S3 using the CLI. Run the following command, replacing the placeholders with the appropriate values.
 
 ``` bash
-python innofw/data_mart/uploader.py --dataset_config_path classification/config.yaml
-                                    --remote_save_path  https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/ 
-                                    --access_key access_key --secret_key secret_key\
+python innofw/data_mart/uploader.py --dataset_config_path classification/config.yaml \
+                                    --remote_save_path  https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/ \
+                                    --access_key access_key --secret_key secret_key
 ```
 ## Uploading model checkpoint to s3
-To upload your checkpoint you need to specify config file of your experiment that must be stored in <b>config/experiments</b> folder, path to checkpoint and metrics you want to save.
-### Python
-You can run this python script to upload checkpoint with appropriate values.
+To upload your checkpoint, you need to specify the config file for your experiment, which should be stored in the config/experiments folder. Additionally, provide the path to the checkpoint and specify the metrics you want to save.
+### API
+You can call this Python function to upload a checkpoint with appropriate values.
 ``` python
 from innofw.zoo import upload_model
 
@@ -81,10 +77,11 @@ upload_model(experiment_config_path="classification/config.yaml",
             secret_key = "secret key")
 ```
 ### CLI
-To upload your checkpoint you can also run this command.
+You can also use the CLI to upload your model checkpoint. Run the following command, replacing the placeholders with the appropriate values.
 ``` bash
-python innofw/zoo/uploader.py --ckpt_path pretrained/best.pkl
-                              --experiment_config_path classification/config.yaml
-                              --remote_save_path https://api.blackhole.ai.innopolis.university/pretrained/testing/lin_reg_house_prices.pickle
+python innofw/zoo/uploader.py --ckpt_path pretrained/best.pkl\
+                              --experiment_config_path classification/config.yaml\
+                              --remote_save_path https://api.blackhole.ai.innopolis.university/pretrained/testing/lin_reg_house_prices.pickle\
+                              --metrics '{"some metric": 0.04}'\
                               --access_key access_key --secret_key secret_key
 ```
