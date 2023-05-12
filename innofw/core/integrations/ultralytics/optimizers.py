@@ -14,7 +14,7 @@ class YOLOV5OptimizerBaseAdapter(BaseAdapter):
     def __init__(self):
         self.possible_values = {"optimizer": ["Adam", "AdamW", "SGD"]}
         self.opt = {"optimizer": "Adam"}
-        self.hyp = {"momentum": 0.937, "weight decay": 5e-4}
+        self.hyp = {"momentum": 0.937, "weight_decay": 5e-4}
 
     def adapt(self, optimizer) -> dict:
         return {"opt": self.opt, "hyp": self.hyp}

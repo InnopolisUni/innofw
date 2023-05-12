@@ -116,7 +116,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             "sync_bn": False,
             "cos_lr": False,
             "image_weights": False,
-            "noplots": True,
+            "noplots": False,
             "noautoanchor": False,
             "noval": False,
             "nosave": False,

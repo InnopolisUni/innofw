@@ -7,7 +7,7 @@ defaults:
 project: "ar_tax_or"
 task: "image-detection"
 random_seed: 0
-epochs: 100
+epochs: 30
 stop_param: 10
 batch_size: 12
 weights_freq: 1
