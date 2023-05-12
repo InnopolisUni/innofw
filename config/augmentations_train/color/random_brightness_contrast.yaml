@@ -1,8 +1,0 @@
-random_brightness_contrast:
-  _target_: albumentations.RandomBrightnessContrast
-  always_apply: False
-  p: 0.7
-  brightness_limit:
-      - -0.02
-      - 0.02
-  contrast_limit: 0.5

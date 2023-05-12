@@ -36,7 +36,7 @@ def load_metadata_from_remote(ckpt_path, credentials) -> dict:
 
 @validate_arguments
 def show_model_metadata(
-    ckpt_path: Union[FilePath, AnyUrl],
+    ckpt_path: Union[AnyUrl, FilePath],
     access_key: Optional[str] = None,
     secret_key: Optional[str] = None,
 ) -> None:
@@ -91,6 +91,7 @@ def show_model_metadata(
 
     pprint(metadata)
     # logging.info(metadata)
+    return metadata
 
 
 if __name__ == "__main__":

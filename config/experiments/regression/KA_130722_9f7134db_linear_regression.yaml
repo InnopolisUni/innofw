@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: regression/linear_regression
+  - override /datasets: regression/regression_house_prices
+  - override /callbacks: regression
+
+
+project: "house_prices"
+task: "table-regression"
+random_seed: 42

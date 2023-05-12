@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - override /models: text-vae/hier_vae.py
+  - override /datasets: qm9_selfies
+  - override /losses: vae
+
+
+experiment_name: "GR_061022_DkOLIn2s_vae_qm9_reverse"
+project: chem-vae
+task: text-vae-reverse
+random_seed: 42
+accelerator: cpu
+devices: 1
+batch_size: 128
+num_workers: 0
+
+datasets:
+  work_mode: reverse

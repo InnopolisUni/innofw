@@ -32,7 +32,17 @@ def test_download_model(file_url, tmp_path, credentials):
 
     downloaded_file.unlink()
 
-    dst_path = tmp_path / "other_name.cbm"
+    # Test case 1: Try to download a file that doesn't exist and check if it raises an exception.
+    with pytest.raises(Exception):
+        download_model(
+            "https://api.blackhole.ai.innopolis.university/pretrained/testing/invalid_file.pkl",
+            tmp_path,
+            credentials.ACCESS_KEY.get_secret_value(),
+            credentials.SECRET_KEY.get_secret_value(),
+        )
+
+    # Test case 2: Try to download a file in other folder and check if the file is saved in other folder.
+    dst_path = tmp_path / "other_folder"
     downloaded_file: Path = download_model(
         file_url,
         dst_path,
