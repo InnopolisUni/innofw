@@ -12,3 +12,5 @@ random_seed: 42
 epochs: 40
 batch_size: 16
 weights_freq: 1
+
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/artaxor.pt

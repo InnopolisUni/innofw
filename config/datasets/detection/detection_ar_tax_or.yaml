@@ -11,11 +11,14 @@ _target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapte
 
 
 train:
-  source: ./data/ArTaxOr/train
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/train.zip
+  target: ./data/ArTaxOr/train
 test:
-  source: ./data/ArTaxOr/test
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/test.zip
+  target: ./data/ArTaxOr/test
 infer:
-  source: ./data/ArTaxOr/test
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/test.zip
+  target: ./data/ArTaxOr/infer
 
 
 num_workers: 48
