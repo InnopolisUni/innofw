@@ -44,9 +44,11 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         pass
 
     def setup_infer(self):
-        if type(self.infer_source) == str and self.infer_source.startswith(
-            "rts"
-        ) or Path(self.infer_source).is_file():
+        if (
+            type(self.infer_source) == str
+            and self.infer_source.startswith("rts")
+            or Path(self.infer_source).is_file()
+        ):
             return
         # root_dir
         self.infer_source = Path(self.infer_source)
