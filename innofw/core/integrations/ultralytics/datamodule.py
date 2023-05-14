@@ -119,16 +119,26 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
             val_size - fraction size of the validation set
         """
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
+        
         if self.train:
             self.train_source = Path(self.train)
+            # In this datamodule, the train source should be the folder train itself not the folder "train/images"
+            if str(self.train_source).endswith("images"):
+                self.train_source = Path(str(self.train_source)[:-7])
         if self.test:
             self.test_source = Path(self.test)
+            if str(self.test_source).endswith("images"):
+                self.test_source = Path(str(self.test_source)[:-7])
+                
+        if self.infer:
+            self.infer_source = (
+                Path(self.infer)
+                if not (type(self.infer) == str and self.infer.startswith("rts"))
+                else self.infer
+            )
+            if str(self.infer_source).endswith("images"):
+                self.infer_source = Path(str(self.infer_source)[:-7])                    
 
-        self.infer_source = (
-            Path(self.infer)
-            if not (type(self.infer) == str and self.infer.startswith("rts"))
-            else self.infer
-        )
 
         self.batch_size = batch_size
         # super().__init__(train, test, batch_size, num_workers)
@@ -147,7 +157,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
 
     def setup_train_test_val(self, **kwargs):
         # root_dir
-        root_path = self.train_source.parent.parent
+        root_path = self.train_source.parent
         # new data folder
         new_data_path = root_path / "unarchived"
         new_data_path.mkdir(exist_ok=True, parents=True)
