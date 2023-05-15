@@ -50,31 +50,9 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
             return
         # root_dir
         self.infer_source = Path(self.infer_source)
-        root_path = self.infer_source.parent.parent
-        # new data folder
-        new_data_path = root_path / "unarchived"
-        new_data_path.mkdir(exist_ok=True, parents=True)
+        root_path = self.infer_source.parent
 
-        new_infer_path = new_data_path / "infer"
-
-        # === split train images and labels into train and val sets and move files ===
-
-        # split images and labels
-        infer_img_path = self.infer_source / "images"
-
-        # get all files from train folder
-        img_files = list(infer_img_path.iterdir())
-
-        for files, folder_name in zip([img_files], ["images"]):
-            # create a folder
-            new_path = new_infer_path / folder_name
-            new_path.mkdir(exist_ok=True, parents=True)
-
-            # copy files into new folder
-            for file in files:
-                shutil.copy(file, new_path / file.name)
-
-        self.data = str(new_data_path / "data.yaml")
+        self.data = str(root_path / "data.yaml")
 
         with open(self.data, "w+") as file:
             file.write(f"nc: {self.num_classes}\n")
@@ -159,12 +137,11 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
         # root_dir
         root_path = self.train_source.parent
         # new data folder
-        new_data_path = root_path / "unarchived"
+        new_data_path = root_path / "train_splitted"
         new_data_path.mkdir(exist_ok=True, parents=True)
         
         new_train_path = new_data_path / "train"
         new_val_path = new_data_path / "val"
-        new_test_path = new_data_path / "test"
 
         # === split train images and labels into train and val sets and move files ===
 
@@ -194,19 +171,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
             img_files,
             test_size=self.val_size,
             random_state=self.random_state,
-        )
-
-        # get all files from test folder
-        test_img_path = self.test_source / "images"
-        test_lbl_path = self.test_source / "labels"
-
-        test_img_files = list(test_img_path.iterdir())
-        test_label_files = list(test_lbl_path.iterdir())
-
-        assert len(test_img_files) == len(
-            test_label_files
-        ), "number of test images and labels should be the same"     
-       
+        )       
        
         # Creating the training directory
         for files, folder_name in zip(
@@ -232,26 +197,12 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
             
             # Copy files into folder
             for file in files:
-                shutil.copy(file, new_path / file.name)
-                
-        # Creating the test directory
-        for files, folder_name in zip(
-            [test_img_files, test_label_files],
-            ["images", "labels"]
-        ):
-            # create a folder
-            new_path = new_test_path /folder_name
-            new_path.mkdir(exist_ok=True, parents=True)
-            
-            # Copy files into folder
-            for file in files:
-                shutil.copy(file, new_path / file.name)
-        
+                shutil.copy(file, new_path / file.name)       
 
-        self.data = str(new_data_path / "data.yaml")
+        self.data = str(root_path / "data.yaml")
         self.train_dataset = str(new_data_path / "train")
         self.val_dataset = str(new_data_path / "val")
-        self.test_dataset = str(new_data_path / "test")
+        self.test_dataset = self.test_source
 
         # create a yaml file
         with open(self.data, "w+") as file:

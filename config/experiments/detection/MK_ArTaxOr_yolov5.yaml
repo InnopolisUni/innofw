@@ -3,8 +3,7 @@ defaults:
   - override /models: detection/yolov5
   - override /datasets: detection/detection_ar_tax_or
   - override /optimizers: sgd
-  - override /initializations: random
-  
+    
 
 project: "ar_tax_or"
 task: "image-detection"
