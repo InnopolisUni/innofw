@@ -11,7 +11,7 @@ There are different variations of yolov5 model. For example, you can use yolov5s
     1- Link to your dataset (if it is hosted on s3) or the path to your dataset (if it is on local machine). You will need to give the link to the training set, testing set and inference set separatly
     2- You need to add some information about the dataset such as the name, description, markup info, the task you are working on
 
-* If your dataset needs a specific preprocessing that is not currently supported in the framework, You can create your own LightningDataModule and save it inside the following directory: `innofw\core\datamodules\lightning_datamodules\detection`. After creating the class, you will need to add it to the configuration file of your dataset using `_target_` key.
+* If your dataset needs a specific preprocessing, You can create your own adapter. After creating the adapter, you will need to add it to the configuration file of your dataset using `_target_` key.
 
 ## Training
 * You need to create a configuration file for your experiment and save it inside the following directory: `config\experiments\detection`. You can see the current configuration files that currently exist in the directory. You can use them as a template for your training. You can also use the configuration file `template.yaml` as a template for your training.
