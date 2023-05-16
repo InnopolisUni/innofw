@@ -1,13 +1,13 @@
 defaults:
-    - preprocessing:
+    - /augmentations/preprocessing:
         - to_pil_image
         - resize
-    - combined:
+    - /augmentations/combined:
         - none
-    - position:
+    - /augmentations/position:
       - random_horizontal_flip
-    - color:
-    - postprocessing:
+    - /augmentations/color:
+    - /augmentations/postprocessing:
       - to_tensor
       - normalize
 # task:

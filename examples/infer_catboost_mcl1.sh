@@ -1,1 +1,1 @@
-python infer.py experiments=GR_070922_jLqZn8Wh_catboost_regressor_mcl1 ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/catboost_regression_mcl1.pickle
+python infer.py experiments=regression/GR_070922_jLqZn8Wh_catboost_regressor_mcl1 ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/catboost_regression_mcl1.pickle

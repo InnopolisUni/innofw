@@ -1,1 +1,1 @@
-python infer.py experiments=SK_010822_jvslrmvk_resnet.yaml ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/mnist_classification.pt.ckpt
+python infer.py experiments=classification/SK_010822_jvslrmvk_resnet.yaml ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/mnist_classification.pt.ckpt

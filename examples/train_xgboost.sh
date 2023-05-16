@@ -1,1 +1,1 @@
-python train.py experiments=KA_190722_0a70ef39_xgbregressor_cc
+python train.py experiments=regression/KA_190722_0a70ef39_xgbregressor_cc

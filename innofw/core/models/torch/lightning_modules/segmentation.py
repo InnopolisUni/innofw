@@ -85,7 +85,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
         self.train_metrics = metrics.clone(prefix="train_")
         self.val_metrics = metrics.clone(prefix="val_")
-        # self.test_metrics = metrics.clone(prefix="test_")
+        self.test_metrics = metrics.clone(prefix="test_")
 
         assert self.losses is not None
         assert self.optimizer_cfg is not None
@@ -174,6 +174,17 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])
+
+    def predict_step(self, batch: Any, batch_indx: int) -> torch.Tensor:
+        """Predict and output binary predictions"""
+        if isinstance(batch, dict):
+            input_tensor = batch[SegDataKeys.image]
+        else:
+            input_tensor = batch
+
+        proba = self.predict_proba(input_tensor)
+        predictions = (proba > self.threshold).to(torch.uint8)
+        return predictions
 
 
 class MulticlassSemanticSegmentationLightningModule(BaseLightningModule):

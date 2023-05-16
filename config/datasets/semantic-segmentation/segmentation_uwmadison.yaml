@@ -5,6 +5,7 @@ markup_info: segmentation masks
 name: UW-Madison dataset
 task:
   - multiclass-image-segmentation
+
 test:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/uw_madison_organs/test.zip
   target: ./data/organs/test
