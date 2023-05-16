@@ -343,6 +343,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             batch_size=data.batch_size,
             device=self.device,
             weights=ckpt_path,
+            task='test'
         )
 
         self.update_checkpoints_path()
