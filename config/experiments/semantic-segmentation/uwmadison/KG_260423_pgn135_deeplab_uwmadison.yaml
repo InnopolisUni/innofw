@@ -3,7 +3,7 @@ defaults:
   - override /models: semantic-segmentation/deeplabv3plus.yaml
   - override /datasets: semantic-segmentation/segmentation_uwmadison
   - override /optimizers: adam.yaml
-  - override /augmentations_train: position/random_horizontal_flip.yaml
+  - override /augmentations_train: ../augmentations/position/random_horizontal_flip.yaml
   - override /augmentations_val: none
   - override /augmentations_test: none
   - override /callbacks: multiclass_segmentation
@@ -18,15 +18,16 @@ models:
 optimizers:
   lr: 0.004313519324382217
 
+n_classes: 4
 project: "organs segmentation"
 task: "multiclass-image-segmentation"
 random_seed: 42
 # weights_freq: 1
-# ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation/uw_madison_deeplabv3plus.pickle
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation/uw_madison_deeplabv3plus.pickle
 batch_size: 128
-epochs: 40
+epochs: 1
 accelerator: gpu
-devices: 2
+devices: 1
 override hydra/job_logging: stdout
 
 wandb:

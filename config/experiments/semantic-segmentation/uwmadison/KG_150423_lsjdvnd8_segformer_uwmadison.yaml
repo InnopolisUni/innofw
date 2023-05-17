@@ -6,7 +6,7 @@ defaults:
   - override /augmentations_train: none
   - override /augmentations_val: none
   - override /augmentations_test: none
-#  - override /callbacks: multiclass_segmentation
+  - override /callbacks: multiclass_segmentation
   - override /losses: multiclass_segmentation_losses
   - override /loggers: wandb
 
@@ -23,6 +23,7 @@ task: "multiclass-image-segmentation"
 random_seed: 42
 weights_freq: 1
 batch_size: 16
+n_classes: 4
 epochs: 100
 accelerator: gpu
 override hydra/job_logging: stdout
@@ -32,11 +33,5 @@ wandb:
   project: uw_madison
   entity: "k-galliamov"
   group: none
-  tags:
-    - "SegFormer"
-    - "LION"
-    - "CrossEntropyLoss"
-    - "JaccardLoss"
-    - "DiceLoss"
   job_type: training
 
