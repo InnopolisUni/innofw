@@ -151,7 +151,7 @@ class YOLOV5Adapter(BaseModelAdapter):
 
         self.hyp = {
             "lr0": 0.01,
-            "lrf": 0.1,
+            "lrf": 0.01,
             "momentum": 0.937,
             "weight_decay": 0.0005,
             "warmup_epochs": 3.0,

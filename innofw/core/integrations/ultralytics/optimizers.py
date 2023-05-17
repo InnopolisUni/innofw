@@ -26,6 +26,9 @@ class YOLOV5OptimizerBaseAdapter(BaseAdapter):
             self.opt = {"optimizer": "AdamW"}
         elif optimizer._target_.lower().endswith("sgd"):
             self.opt = {"optimizer": "SGD"}
+        
+        self.hyp["lr0"] = optimizer.lr0
+        self.hyp["lrf"] = optimizer.lrf
 
         return {"opt": self.opt, "hyp": self.hyp}
             
