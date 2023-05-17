@@ -1,4 +1,0 @@
-_target_: segmentation_models_pytorch.DeepLabV3Plus
-ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation/uw_madison_deeplabv3plus.pickle
-description: DeepLabV3+ trained on UW-Madison dataset
-name: DeepLabV3Plus
