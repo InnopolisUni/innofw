@@ -22,6 +22,7 @@ project: "organs segmentation"
 task: "multiclass-image-segmentation"
 random_seed: 42
 # weights_freq: 1
+# ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation/uw_madison_deeplabv3plus.pickle
 batch_size: 128
 epochs: 40
 accelerator: gpu
