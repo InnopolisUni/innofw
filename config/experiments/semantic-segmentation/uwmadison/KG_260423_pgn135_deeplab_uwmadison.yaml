@@ -22,11 +22,11 @@ n_classes: 4
 project: "organs segmentation"
 task: "multiclass-image-segmentation"
 random_seed: 42
-# weights_freq: 1
+weights_freq: 1
 ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation/uw_madison_deeplabv3plus.pickle
 
 # When tuning from the checkpoint, the number of epochs has to be set to at least
-#  the № of epoch on which the checkpoint was created + 1 (in this case, 39 + 1 = 40 would be lower bound)
+#  the № of epoch on which the checkpoint was created + 1 (in this case, 39 + 1 = 40 would be a lower bound)
 epochs: 50
 batch_size: 128
 accelerator: gpu
