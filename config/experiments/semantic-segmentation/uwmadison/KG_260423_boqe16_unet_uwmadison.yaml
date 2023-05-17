@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: unet
+  - override /models: semantic-segmentation/unet
   - override /datasets: semantic-segmentation/segmentation_uwmadison
   - override /optimizers: adam.yaml
   - override /augmentations_train: none
