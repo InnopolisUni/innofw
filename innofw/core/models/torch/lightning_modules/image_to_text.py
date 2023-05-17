@@ -1,15 +1,17 @@
 import torch 
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
+from innofw.core.models.torch.architectures.image_to_text.nic import NeuralImageCaption
+from torchmetrics.functional.text.bleu import bleu_score
+from torchmetrics.functional.text.rouge import rouge_score
 
 class ImageToTextLightningModule(BaseLightningModule):
     
     def __init__(self, 
-                model,
+                model: NeuralImageCaption,
                 losses,
                 optimizer_cfg,
                 scheduler_cfg, 
-                max_caption_length: int=128, 
-                use_teacher_forcing=False,
+                max_caption_length: int = 128, 
                 *args, **kwargs):
         super().__init__(*args, **kwargs)
         
@@ -17,25 +19,98 @@ class ImageToTextLightningModule(BaseLightningModule):
         self.optimizer_cfg = optimizer_cfg
         self.scheduler_cfg = scheduler_cfg
         self.max_caption_length = max_caption_length
-        self.use_teacher_forcing = use_teacher_forcing
+        self.losses = losses
 
-        # Expects the first loss 
-        # to be the cross entropy loss
-        # Others are ignored
-        self.losses = losses[0][2]
+    def log_losses(
+        self, name: str, logits: torch.Tensor, masks: torch.Tensor
+    ) -> torch.FloatTensor:
+        """Function to compute and log losses"""
+        total_loss = 0
+        for loss_name, weight, loss in self.losses:
+            # for loss_name in loss_dict:
+            if masks.shape[-1] == 1:
+                masks = logits.squeeze(-1)
+            ls_mask = loss(logits, masks)
+            total_loss += weight * ls_mask
+
+            self.log(
+                f"loss/{name}/{weight} * {loss_name}",
+                ls_mask,
+                on_step=False,
+                on_epoch=True,
+            )
+        # val_loss and train_loss
+        self.log(f"{name}_loss", total_loss, on_step=False, on_epoch=True)
+        return total_loss
     
     def setup(self, stage: str):
-        if self.trainer and self.trainer.datamodule and not self.model.is_ready:
-            self.model.initialize(self.trainer.datamodule.word2int)
+        # if self.trainer and self.trainer.datamodule and not self.model.is_ready:
+        #     self.model.initialize(self.trainer.datamodule.word2int)
+        ...
 
     def training_step(self, batch, batch_ids):
-        captions, image = batch
-        outputs = self.model(
-            image,
-            captions,
-            max_caption_length=self.max_caption_length,
-            teacher_forcing=self.use_teacher_forcing
-        )
-        outputs = outputs.permute(0, 2, 1)
-        loss = self.losses(outputs, captions)
-        return {"loss": loss}
+        images, captions = batch
+        output = self.model.forward(images)
+        output = output.permute(0, 2, 1)
+        loss = torch.nn.functional.cross_entropy(output, captions)
+        return loss
+    
+    def validation_step(self, batch, batch_ids):
+        images, captions = batch
+        output = self.model.forward(images)
+        output = output.permute(0, 2, 1)
+        loss = torch.nn.functional.cross_entropy(output, captions)
+
+        text_captions = self.trainer.datamodule.tokenizer_model.Decode(captions.tolist())
+        text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
+
+        
+        # Measure BLEU-1, BLEU-2 and BLUE-4 score
+        bleu1 = bleu_score(text_outputs, text_captions, n_gram=1)
+        bleu2 = bleu_score(text_outputs, text_captions, n_gram=2)
+        bleu4 = bleu_score(text_outputs, text_captions, n_gram=4)
+
+        # Measure ROUGE-L score
+        rouge_l = rouge_score(text_outputs, text_captions, rouge_keys=("rougeL"))
+
+        # Measure METEOR score
+        # meteor = meteor_score(text_outputs, text_captions)
+
+        self.log("val_loss", loss)
+        self.log("bleu1", bleu1)
+        self.log("bleu2", bleu2)
+        self.log("bleu4", bleu4)
+        self.log("rouge_l", rouge_l)
+        # self.log("meteor", meteor)
+        
+        return loss
+    
+    def test_step(self, batch, batch_ids):
+        images, captions = batch
+        output = self.model.forward(images)
+        output = output.permute(0, 2, 1)
+        loss = torch.nn.functional.cross_entropy(output, captions)
+        text_captions = self.trainer.datamodule.tokenizer_model.Decode(captions.tolist())
+        text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
+
+        
+        # Measure BLEU-1, BLEU-2 and BLUE-4 score
+        bleu1 = bleu_score(text_outputs, text_captions, n_gram=1)
+        bleu2 = bleu_score(text_outputs, text_captions, n_gram=2)
+        bleu4 = bleu_score(text_outputs, text_captions, n_gram=4)
+
+        # Measure ROUGE-L score
+        rouge_l = rouge_score(text_outputs, text_captions, rouge_keys=("rougeL"))
+
+        # Measure METEOR score
+        # meteor = meteor_score(text_outputs, text_captions)
+
+        self.log("val_loss", loss)
+        self.log("bleu1", bleu1)
+        self.log("bleu2", bleu2)
+        self.log("bleu4", bleu4)
+        self.log("rouge_l", rouge_l)
+        # self.log("meteor", meteor)
+        
+        return loss
+
