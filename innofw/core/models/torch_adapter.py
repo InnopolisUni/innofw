@@ -166,7 +166,7 @@ class TorchAdapter(BaseModelAdapter):
         # )
 
     def train(self, data_module, ckpt_path=None):
-        self.trainer.fit(self.pl_module, data_module)
+        self.trainer.fit(self.pl_module, data_module, ckpt_path=ckpt_path)
 
     def test(self, data_module):
         outputs = self.trainer.test(self.pl_module, data_module)

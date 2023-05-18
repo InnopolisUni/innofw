@@ -1,15 +1,15 @@
 _target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DirSegmentationLightningDataModule
-channels_num: 1
-date_time: 30.09.2022
-description: stroke segmentation dataset
+date_time: 14.05.2022
+description: gastrointestinal organs segmentations dataset
 markup_info: segmentation masks
 name: UW-Madison dataset
 task:
   - multiclass-image-segmentation
 
 test:
-  source: ./data/organs/test
-  # target:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/uw_madison_organs/test.zip
+  target: ./data/organs/test
 train:
-  source: ./data/organs/train
-  # target:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/uw_madison_organs/train.zip
+  target: ./data/organs/train
+

@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /models: unet
+  - override /models: semantic-segmentation/unet
   - override /datasets: semantic-segmentation/segmentation_uwmadison
   - override /optimizers: adam.yaml
   - override /augmentations_train: none
@@ -8,7 +8,7 @@ defaults:
   - override /augmentations_test: none
   - override /callbacks: multiclass_segmentation
   - override /losses: multiclass_segmentation_losses
-#  - override /loggers: wandb
+  - override /loggers: wandb
 
 n_classes: 4
 
@@ -30,11 +30,9 @@ accelerator: gpu
 devices: 1
 override hydra/job_logging: stdout
 
-#wandb:
-#  enable: True
-#  tags:
-#    - "best_from_sweep"
-#  project: uw_madison
-#  entity: "k-galliamov"
-#  job_type: training
+wandb:
+ enable: True
+ project: uw_madison
+ entity: "k-galliamov"
+ job_type: training
 
