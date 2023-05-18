@@ -1,0 +1,35 @@
+# wandb sweep config
+program: train.py
+method: bayes
+metric:
+  name: precision
+  goal: maximize
+
+name: param_tuning_yolov5
+project: ArTaxOR
+
+parameters:
+
+  experiments:
+    value: "detection/MK_ArTaxOr_yolov5.yaml"
+
+  batch_size:
+    values: [12, 24, 32]
+
+  optimizers:
+    values: ['sgd.yaml', 'adam.yaml']
+  
+  models.arch:
+    values: ['yolov5s', 'yolov5m', 'yolov5x']
+    
+  optimizers.lr0:
+    values: [1e-2, 1e-3, 1e-4]
+
+  optimizers.lrf:
+    values: [1e-1, 1e-2]
+
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}
