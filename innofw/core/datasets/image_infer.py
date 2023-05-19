@@ -2,6 +2,8 @@ import os
 
 import cv2
 from torch.utils.data import Dataset
+import torch
+from innofw.constants import SegDataKeys
 
 
 class ImageFolderInferDataset(Dataset):
@@ -41,4 +43,21 @@ class ImageFolderInferDataset(Dataset):
         return image
 
     def __len__(self) -> int:
-        return len(self.image_names)
+    
+class StrokeFolderInferDataset(ImageFolderInferDataset):
+    def __getitem__(self, index: int):
+        image_name = self.image_names[index]
+        image = cv2.imread(
+            os.path.join(self.image_dir, image_name), cv2.IMREAD_COLOR
+        )
+        if self.gray:
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        image = torch.from_numpy(image)
+        image = image.unsqueeze(0).float()
+        image = torch.div(image, 255)
+
+        if self.transforms:
+            image = self.transforms(image)
+        return {
+            SegDataKeys.image: image.float()
+        }

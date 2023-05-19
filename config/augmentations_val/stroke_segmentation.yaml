@@ -1,0 +1,27 @@
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    Compose:
+      object:
+        _target_: albumentations.Compose
+        transforms:
+          # - _target_: albumentations.augmentations.transforms.Normalize
+          #   mean: 0.5
+          #   std: 0.25
+          - _target_: albumentations.InvertImg
+            p:
+              -0.5
+          - _target_: albumentations.Rotate
+            limit: 
+              - 90
+          # - _target_: albumentations.HorizontalFlip
+          #   p:
+          #     - 0.5
+          # - _target_: albumentations.ShiftScaleRotate
+          #   shift_limit:
+          #     - [-0.0625, 0.0625]
+          # - _target_: albumentations.pytorch.transforms.ToTensorV2
+          # изменение цветов (инверсия 255 - изначальная картинка), контрасты
+          # 

@@ -1,0 +1,28 @@
+task:
+  - semantic_segmentation
+
+name: stroke_segmentation
+description: "Created by AT&T Laboratories Cambridge.
+Link: https://cam-orl.co.uk/facedatabase.html"
+
+markup_info: Набор данных содержит черно белые изображения мозга
+date_time: 19.07.2022
+
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.MyDirSegmentationLightningDataModule
+
+train:
+  source: /home/dmitry/innofw/task2/train
+  target: /home/dmitry/innofw/task2/train
+
+test:
+  source: /home/dmitry/innofw/task2/test
+  target: /home/dmitry/innofw/task2/test
+
+infer:
+  source: /home/dmitry/innofw/task2/infer
+  target: /home/dmitry/innofw/task2/infer
+
+
+num_workers: 0
+
+val_size: 0.2

@@ -1,0 +1,11 @@
+name: Segmentation
+description: Average of Jaccard and BinaryFocal losses
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    FocalTverskyLoss:
+      weight: 1
+      object:
+        _target_: innofw.core.losses.focal_tversky_loss.FocalTverskyLoss
