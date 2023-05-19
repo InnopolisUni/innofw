@@ -48,7 +48,7 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
 
     """
 
-    task = ["image-segmentation"]
+    task = ["image-segmentation", "multiclass-image-segmentation"]
     framework = [Frameworks.torch]
 
     def __init__(

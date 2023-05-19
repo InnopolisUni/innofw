@@ -1,0 +1,32 @@
+task:
+  - image-detection
+
+name: detection_ar_tax_or
+description: Dataset for image detection
+
+markup_info: Dataset for image detection
+date_time: 19.04.2023
+
+_target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
+
+
+train:
+  source: ./data/ArTaxOr/train
+test:
+  source: ./data/ArTaxOr/test
+infer:
+  source: ./data/ArTaxOr/test
+
+
+num_workers: 8
+image_size: 600
+channels_num: 3
+num_classes: 7
+names:
+  0: Araneae
+  1: Coleoptera
+  2: Diptera
+  3: Hemiptera
+  4: Hymenoptera
+  5: Lepidoptera
+  6: Odonata

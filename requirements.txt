@@ -1183,9 +1183,9 @@ python-dotenv==0.20.0 ; python_version >= "3.8" and python_version < "3.10" \
 pytorch-lightning==1.7.7 ; python_version >= "3.8" and python_version < "3.10" \
     --hash=sha256:27c2dd01a18db2415168e3fa3775ccb5a1fa1e2961a50439ad9365507fe9d4ae \
     --hash=sha256:4438b8284d7f7fdb06cf3566a7b5b6f102ac8971cf7bb6d3f1b1de64628241f3
-pytorch-toolbelt==0.5.2 ; python_version >= "3.8" and python_version < "3.10" \
-    --hash=sha256:5b4a5d5075df5ac5c10ffd0884321c54bba149aade2a5fc12ece5f7eb82bf6df \
-    --hash=sha256:5d779ff1bc242b16342bf043694fe80dc4e65578bc4dc1e929701fa88e086bab
+pytorch-toolbelt==0.6.3 ; python_version >= "3.8" and python_version < "3.10" \
+    --hash=sha256:32d8676f3beec069985a23d102bc6330ac7390c7041618ee8a3e6af3cad95564 \
+    --hash=sha256:54e6b92177dfb61c122d11de3f1ddefac88162aff6c48aeb5ceff88fc2266f40
 pytz-deprecation-shim==0.1.0.post0 ; python_version >= "3.8" and python_version < "3.10" \
     --hash=sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6 \
     --hash=sha256:af097bae1b616dde5c5744441e2ddc69e74dfdcb0c263129610d85b87445a59d
