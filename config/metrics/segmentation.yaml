@@ -12,8 +12,10 @@ implementations:
     IOU_score:
       object:
         _target_: torchmetrics.JaccardIndex
+        task: binary
         num_classes: 2
     Precision:
       object:
         _target_: torchmetrics.Precision
+        task: binary
         num_classes: 2
