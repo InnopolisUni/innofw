@@ -43,6 +43,7 @@ class ImageFolderInferDataset(Dataset):
         return image
 
     def __len__(self) -> int:
+        return len(self.image_names)
     
 class StrokeFolderInferDataset(ImageFolderInferDataset):
     def __getitem__(self, index: int):
