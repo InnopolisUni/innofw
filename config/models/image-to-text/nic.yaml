@@ -1,0 +1,19 @@
+name: nic
+description: Neural Image Caption model described in Show and Tell (2015)
+
+# task: image-to-text
+_target_: innofw.core.models.torch.architectures.image_to_text.nic.NeuralImageCaption
+backbone: 
+    _target_: torchvision.models.resnet50
+    pretrained: True
+preprocess:
+    _target_: torchvision.transforms.Resize
+    size: 
+      - 224
+      - 224
+rnn_hidden_size: 512
+vocab_size: 65536
+max_sequence_length: 128
+start_token: 1
+end_token: 2
+pad_token: 0

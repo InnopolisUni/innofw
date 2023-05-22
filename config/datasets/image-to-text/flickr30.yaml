@@ -1,0 +1,12 @@
+name: flickr30
+task: image-to-text
+description: Flickr30 dataset
+markup_info: Contains images and a single file with mapping between images and texts
+date_time: 17.05.2023
+
+_target_: innofw.core.datamodules.lightning_datamodules.image_to_text.ImageToTextDatamodule
+
+train:
+  source: .flickr30/train  
+test:
+  source: .flickr30/test

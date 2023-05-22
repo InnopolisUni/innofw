@@ -1,12 +1,32 @@
 # @package _global_
 defaults:
   - override /datasets: image-to-text/flickr8
-  - override /models: image-to-text/basic_encoder_decoder
+  - override /models: image-to-text/nic
   - override /optimizers: adam
   - override /losses: image-to-text
 
 project: "image-to-text"
 task: image-to-text
-batch_size: 16
+batch_size: 64
+datasets:
+  preprocess:
+    _target_: torchvision.transforms.Resize
+    size: 
+      - 224
+      - 224
+  start_token: 1
+  end_token: 2
+  pad_token: 0
+  batch_size: 64
+  vocab_size: 8094
 
+optimizers:
+  lr: 3E-5
+
+trainer:
+  accelerator: gpu
+  max_epochs: 4
+
+models:
+  vocab_size: 8094
 

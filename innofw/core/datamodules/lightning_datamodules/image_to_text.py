@@ -135,7 +135,7 @@ class ImageToTextDatamodule(BaseLightningDataModule):
 
         if not hasattr(self, 'tokenizer_model'):           
             spm.SentencePieceTrainer.train(
-                input=os.path.join(self.train_source, "captions.txt"),
+                input=os.path.join(self.train_source, "corpus.txt"),
                 model_prefix="tokenizer_",
                 vocab_size=self.vocab_size,
                 model_type="bpe",
