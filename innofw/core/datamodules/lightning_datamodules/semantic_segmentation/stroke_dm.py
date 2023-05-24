@@ -150,6 +150,7 @@ class MyDirSegmentationLightningDataModule(
             mask = mask[0]
             mask[mask < 0.1] = 0
             mask[mask != 0] = 1
+            mask = mask.type(torch.FloatTensor)
             path = os.path.join(dst_path, 'img' + str(i) + '.png')
 
             save_image(mask, path)
