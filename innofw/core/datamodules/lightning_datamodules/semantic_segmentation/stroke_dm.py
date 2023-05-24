@@ -143,15 +143,6 @@ class MyDirSegmentationLightningDataModule(
 
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        # в val step либо после обучения
-        print("_________________SAVE_PREDS________________")
-        #dicoms = []
-        #sc_names = []
-        #shutil.rmtree(os.path.join(self.dicoms, "png"), ignore_errors=True)
-        # for i in os.listdir(self.dicoms):
-        #     if i.endswith(".dcm"):
-        #         dicoms.append(os.path.join(self.dicoms, i))
-        #         sc_names.append("SC" + i)
         print(preds)
         pred = [p for pp in preds for p in pp]
         for i, m in enumerate(pred):
