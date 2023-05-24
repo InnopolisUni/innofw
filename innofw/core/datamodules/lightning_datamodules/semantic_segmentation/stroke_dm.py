@@ -150,23 +150,13 @@ class MyDirSegmentationLightningDataModule(
             mask = mask[0]
             mask[mask < 0.1] = 0
             mask[mask != 0] = 1
-            path = os.path.join(dst_path, 'img' + str(i) + '.jpg')
+            path = os.path.join(dst_path, 'img' + str(i) + '.png')
 
             save_image(mask, path)
-            #img = dicom_to_img(dicoms[i])
-            # img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            # img[mask != 0] = 255
-            #img_to_dicom(img, dicoms[i], os.path.join(dst_path, sc_names[i]))
         logging.info(f"Saved results to: {dst_path}")
 
 
     def setup_infer(self):
-        # dicoms = [f for f in os.listdir(self.dicoms) if "dcm" in f]
-        # for dicom in dicoms:
-        #     dicom_to_img(
-        #         os.path.join(self.dicoms, dicom),
-        #         os.path.join(png_path, dicom.replace("dcm", "png")),
-        #     )
         self.predict_dataset = self.dataset(
             os.path.join(self.predict_source, "image"),
             gray=True
