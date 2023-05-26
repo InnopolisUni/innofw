@@ -19,7 +19,7 @@ from innofw.utils.loggers import setup_clear_ml, setup_wandb
 dotenv.load_dotenv(override=True)
 
 
-@hydra.main(config_path="config/", config_name="test.yaml", version_base="1.2")
+@hydra.main(config_path="config/", config_name="predict.yaml", version_base="1.2")
 def main(config):
     # Imports can be nested inside @hydra.main to optimize tab completion
     # https://github.com/facebookresearch/hydra/issues/934
@@ -37,12 +37,13 @@ def main(config):
         config.experiment_name = experiment_name
     setup_clear_ml(config)
     setup_wandb(config)
-
+    
     # Test model
-    return run_pipeline(config, test=True, train=False, predict=False)
+    return run_pipeline(config, test=False, train=False, predict=True)
 
 
 if __name__ == "__main__":
     sys.argv.append("hydra.run.dir=./logs")
     sys.argv.append("hydra.job.chdir=True")
+    sys.argv.append("experiments=NP_210523_yolov8_insects.yaml")
     main()

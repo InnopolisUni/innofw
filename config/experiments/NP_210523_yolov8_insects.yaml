@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - override /models: ultralytics
+  - override /datasets: detection/detection_insects
+  - override /optimizers: SGD
+project: "insects"
+task: "image-detection"
+random_seed: 43
+epochs: 15
+batch_size: 8
+weights_freq: 1
+#ckpt_path: 'C:\\Users\\nikit\\Downloads\\innofw-main\\innofw-main\\logs\\something\\20230522-125003\\weights\\best.pt'

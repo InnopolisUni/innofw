@@ -1,55 +1,62 @@
 # standard libraries
 import pathlib
-import shutil
 from pathlib import Path
-from typing import List
-from typing import Optional
-
-from sklearn.model_selection import train_test_split
-
-from innofw.constants import Frameworks
-from innofw.constants import Stages
-from innofw.core.datamodules.base import BaseDataModule
+from typing import List, Optional
+import shutil
 
 # third party libraries
+from sklearn.model_selection import train_test_split
+
 # local modules
+from innofw.constants import Frameworks, Stages
+from innofw.core.datamodules.base import BaseDataModule
 
 
-class YOLOV5DataModuleAdapter(BaseDataModule):
-    """Class defines adapter interface to conform to YOLOv5 data specifications
+class UltralyticsDataModuleAdapter(BaseDataModule):
+    """Class defines adapter interface to conform to Ultralytics data specifications
 
-    Attributes
-    ----------
-    task: List[str]
-        the task the datamodule is intended to be used for
-    framework: List[Union[str, Frameworks]]
-        the model framework the datamodule is designed to work with
+        Attributes
+        ----------
+        task: List[str]
+            the task the datamodule is intended to be used for
+        framework: List[Union[str, Frameworks]]
+            the model framework the datamodule is designed to work with
 
 
-    Methods
-    -------
-    setup_train_test_val()
-        creates necessary .yaml files for the YOLOv5 package.
-        splits training data into train and validation sets
-        allocates files in folders
-    setup_infer()
-        creates necessary .yaml files for the YOLOv5 package.
-        allocates files in folders
+        Methods
+        -------
+        setup_train_test_val()
+            creates necessary .yaml files for the Ultralytics package.
+            splits training data into train and validation sets
+            allocates files in folders
+        setup_infer()
+            creates necessary .yaml files for the Ultralytics package.
+            allocates files in folders
     """
-
     task = ["image-detection"]
-    framework = [Frameworks.torch]
+    framework = [Frameworks.ultralytics]
 
     def predict_dataloader(self):
         pass
 
     def setup_infer(self):
+<<<<<<< Updated upstream
         if type(self.infer_source) == str and self.infer_source.startswith(
             "rts"
         ) or Path(self.infer_source).is_file():
+=======
+<<<<<<< Updated upstream
+        if (
+            type(self.infer_source) == str
+            and self.infer_source.startswith("rts")
+            or Path(self.infer_source).is_file()
+        ):
+=======
+        if type(self.infer_source) == str and self.infer_source.startswith("rts"):
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             return
         # root_dir
-        self.infer_source = Path(self.infer_source)
         root_path = self.infer_source.parent.parent
         # new data folder
         new_data_path = root_path / "unarchived"
@@ -118,16 +125,19 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
             val_size - fraction size of the validation set
         """
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
+        #super().__init__(train, test, stage=stage, *args, **kwargs)
         if self.train:
             self.train_source = Path(self.train)
         if self.test:
             self.test_source = Path(self.test)
+        if self.infer:
+            self.infer_source = Path(self.infer)
 
-        self.infer_source = (
-            Path(self.infer)
-            if not (type(self.infer) == str and self.infer.startswith("rts"))
-            else self.infer
-        )
+        # self.infer_source = (
+        #     Path(self.infer)
+        #     if not (type(self.infer) == str and self.infer.startswith("rts"))
+        #     else self.infer
+        # )
 
         self.batch_size = batch_size
         # super().__init__(train, test, batch_size, num_workers)
@@ -202,8 +212,7 @@ class YOLOV5DataModuleAdapter(BaseDataModule):
                 shutil.copy(file, new_path / file.name)
 
         for files, folder_name in zip(
-            [train_img_files, val_img_files, test_img_files],
-            ["train", "val", "test"],
+            [train_img_files, val_img_files, test_img_files], ["train", "val", "test"]
         ):
             # create a folder
             new_path = new_img_path / folder_name
