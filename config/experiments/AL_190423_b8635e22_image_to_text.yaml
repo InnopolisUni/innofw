@@ -7,7 +7,7 @@ defaults:
 
 project: "image-to-text"
 task: image-to-text
-batch_size: 64
+batch_size: 2
 datasets:
   preprocess:
     _target_: torchvision.transforms.Resize
@@ -29,4 +29,31 @@ trainer:
 
 models:
   vocab_size: 8094
+
+augmentations_train:
+  preprocessing:
+    resize:
+      _target_: torchvision.transforms.Resize
+      size:
+        - 224
+        - 224
+
+
+augmentations_test:
+  preprocessing:
+   resize:
+      _target_: torchvision.transforms.Resize
+      size:
+        - 224
+        - 224
+
+augmentations_val:
+  preprocessing:
+   resize:
+      _target_: torchvision.transforms.Resize
+      size:
+        - 224
+        - 224
+
+
 

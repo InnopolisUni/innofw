@@ -6,11 +6,11 @@ _target_: innofw.core.models.torch.architectures.image_to_text.nic.NeuralImageCa
 backbone: 
     _target_: torchvision.models.resnet50
     pretrained: True
-preprocess:
-    _target_: torchvision.transforms.Resize
-    size: 
-      - 224
-      - 224
+# preprocess:
+#     _target_: torchvision.transforms.Resize
+#     size: 
+#       - 224
+#       - 224
 rnn_hidden_size: 512
 vocab_size: 65536
 max_sequence_length: 128

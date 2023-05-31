@@ -1,7 +1,8 @@
 from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
 from innofw.constants import Stages
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Any, Optional, Dict
+from innofw.core.datasets.image_to_text import ImageToTextDataset
 from torch.utils.data import Dataset, DataLoader
 
 import pandas as pd
@@ -34,48 +35,7 @@ class ImageToTextDatamodule(BaseLightningDataModule):
     #         sentence.append(words.get("<pad>"))
     #     return sentence
 
-    class ImageToTextDataset(Dataset):
-        def __init__(
-            self,
-            base_dir,
-            df: pd.DataFrame,
-            word2int: spm.SentencePieceProcessor,
-            preprocess: torch.nn.Module = None,
-            max_caption_length=128,
-        ) -> None:
-            super().__init__()
-            self.df = df
-            self.train_source = base_dir
-            self.caption_length = max_caption_length
-            self.word2int = word2int
-            self.preprocess = preprocess
-
-        # def _encode(self, caption):
-        #     return torch.LongTensor(
-        #         ImageToTextDatamodule.encode_sentence(
-        #             self.word2int, caption, self.length
-        #         )
-        #     )
-
-        def __len__(self):
-            return len(self.df.index)
-
-        def __getitem__(self, index):
-            data = self.df.iloc[index]
-            image = torch.Tensor(
-                np.array(
-                    pil.open(
-                        os.path.join(self.train_source, "Images", data["image"]),
-                    ).convert("RGB")
-                ).transpose(2, 0, 1)
-            )
-            if self.preprocess:
-                image = self.preprocess(image)
-
-            encoded = self.word2int.Encode(data["caption"])
-            # Add padding
-            padded = encoded[: self.caption_length] + [self.word2int.pad_id()] * (self.caption_length - len(encoded) - 1) + [self.word2int.eos_id()]
-            return image, torch.LongTensor(padded)
+    
 
     def __init__(
         self,
@@ -92,6 +52,7 @@ class ImageToTextDatamodule(BaseLightningDataModule):
         batch_size: int = 16,
         preprocess: torch.nn.Module = None,
         tokenizer_model: Optional[str] = None,
+        augmentations: Dict[str, Any] = None,
         *args,
         **kwargs,
     ):
@@ -106,6 +67,7 @@ class ImageToTextDatamodule(BaseLightningDataModule):
         self.pad_token = pad_token
         self.preprocess = preprocess
         self.batch_size = batch_size
+        self.augmentations = augmentations
 
         if tokenizer_model:
             # Load sentencepiece model
@@ -125,6 +87,9 @@ class ImageToTextDatamodule(BaseLightningDataModule):
         # Remove val from train
         self.train_df = self.train_df.drop(self.val_df.index)
             
+
+        self.train_df['caption'].to_csv(os.path.join(self.train_source, "corpus.txt"), 
+                                        index=False, header=False)
 
         # if self.word2int is None:
         #     self.word2int = dict({"<pad>": 1, "<s>": 2, "</s>": 3, "<?>": 0})
@@ -155,29 +120,26 @@ class ImageToTextDatamodule(BaseLightningDataModule):
 
     def val_dataloader(self):
         return DataLoader(
-            ImageToTextDatamodule.ImageToTextDataset(
-                # self.train_source, 
-                # self.val_df, 
-                # self.tokenizer_model, 
-                # self.max_caption_length,
-                base_dir=self.train_source,
+            ImageToTextDataset(
+                images_path=self.train_source,
                 df=self.val_df,
-                word2int=self.tokenizer_model,
-                max_caption_length=self.max_caption_length,
-                preprocess=self.preprocess
+                # captions_path=os.path.join(self.predict_source, "captions.txt"),
+                encoder=self.tokenizer_model,
+                transforms=self.augmentations['val'],
+                captions_length=self.max_caption_length,
             ), batch_size=self.batch_size
         )
 
-    def test_dataloader(self):
-        return DataLoader(
-            ImageToTextDatamodule.ImageToTextDataset(
-                base_dir=self.test_source,
-                df=self.test_df,
-                word2int=self.tokenizer_model,
-                max_caption_length=self.max_caption_length,
-                preprocess=self.preprocess
-            ), batch_size=self.batch_size
-        )
+    # def test_dataloader(self):
+    #     return DataLoader(
+    #          ImageToTextDataset(
+    #             image_dir=os.path.join(self.test_source, "Images"),
+    #             # captions_path=os.path.join(self.test_source, "captions.txt"),
+    #             encoder=self.tokenizer_model,
+    #             transforms=self.augmentations['test']
+                
+    #         ), batch_size=self.batch_size
+    #     )
     
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         if stage == Stages.infer:
@@ -187,11 +149,12 @@ class ImageToTextDatamodule(BaseLightningDataModule):
 
     def train_dataloader(self):
         return DataLoader(
-            ImageToTextDatamodule.ImageToTextDataset(
-                base_dir=self.train_source,
+            ImageToTextDataset(
+                images_path=self.train_source, 
+                # captions_path=os.path.join(self.train_source, "captions.txt"),
                 df=self.train_df,
-                word2int=self.tokenizer_model,
-                max_caption_length=self.max_caption_length,
-                preprocess=self.preprocess
+                encoder=self.tokenizer_model,
+                transforms=self.augmentations['train'],
+                captions_length=self.max_caption_length,
             ), batch_size=self.batch_size
         )

@@ -3,11 +3,9 @@ import torch
 class CNNEncoder(torch.nn.Module):
     def __init__(self, 
                  backbone: torch.nn.Module, 
-                 preprocess: torch.nn.Module,
                  rnn_hidden_size: int,
         ):
         super().__init__()
-        self.preprocess = preprocess
 
         # According to Vinyals (2015), "it is natural to use a CNN as an image “encoder”, 
         # by first pre-training it for an image classification 
@@ -32,8 +30,6 @@ class CNNEncoder(torch.nn.Module):
             - x: :math:`(N, C, H, W)`
             - Output: :math:`(N, rnn_hidden_size)`
         """
-
-        x = self.preprocess(x)
         x = self.feature_extractor(x)
         x = torch.flatten(x, start_dim=1)
         x = self.remap(x)
@@ -131,7 +127,7 @@ class NeuralImageCaption(torch.nn.Module):
     def __init__(
             self,
             backbone: torch.nn.Module,
-            preprocess: torch.nn.Module,
+            # preprocess: torch.nn.Module,
             rnn_hidden_size: int,
             vocab_size: int,
             max_sequence_length: int,
@@ -143,7 +139,7 @@ class NeuralImageCaption(torch.nn.Module):
 
         self.encoder = CNNEncoder(
             backbone=backbone,
-            preprocess=preprocess,
+            # preprocess=preprocess,
             rnn_hidden_size=rnn_hidden_size,
         )
 
