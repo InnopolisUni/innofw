@@ -114,7 +114,9 @@ class RNNDecoder(torch.nn.Module):
             if length == 0:
                 step_output, (hidden, cell) = self.rnn(step_input)
             else:
-                step_output, (hidden, cell) = self.rnn(step_input, (hidden, cell))
+                step_output, (hidden[:, indices], cell[:, indices]) = self.rnn(
+                    step_input, (hidden[:, indices], cell[:, indices])
+                )
             outputs[indices, [1 + length]] = self.fc(step_output.squeeze(dim=1))
 
             indices = indices & (outputs[:, length].argmax(dim=-1) != self.end_token)
