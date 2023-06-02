@@ -22,25 +22,26 @@ class ImageToTextLightningModule(BaseLightningModule):
         self.losses = losses
 
     def log_losses(
-        self, name: str, logits: torch.Tensor, masks: torch.Tensor
+        self, name: str, logits: torch.FloatTensor, truths: torch.LongTensor,
+        on_step: bool = None, on_epoch: bool = None
     ) -> torch.FloatTensor:
         """Function to compute and log losses"""
         total_loss = 0
         for loss_name, weight, loss in self.losses:
             # for loss_name in loss_dict:
-            if masks.shape[-1] == 1:
-                masks = logits.squeeze(-1)
-            ls_mask = loss(logits, masks)
-            total_loss += weight * ls_mask
+            local_loss = loss(logits, truths)
+            total_loss += weight * local_loss
 
             self.log(
                 f"loss/{name}/{weight} * {loss_name}",
-                ls_mask,
-                on_step=False,
-                on_epoch=True,
+                local_loss,
+                on_step=on_step,
+                on_epoch=on_epoch,
+            
             )
+    
         # val_loss and train_loss
-        self.log(f"{name}_loss", total_loss, on_step=False, on_epoch=True)
+        self.log(f"{name}_loss", total_loss, on_step=on_step, on_epoch=on_step)
         return total_loss
     
     def setup(self, stage: str):
@@ -52,14 +53,14 @@ class ImageToTextLightningModule(BaseLightningModule):
         images, captions = batch
         output = self.model.forward(images)
         output = output.permute(0, 2, 1)
-        loss = torch.nn.functional.cross_entropy(output, captions)
+        loss = self.log_losses("train", output, captions)
         return loss
     
     def validation_step(self, batch, batch_ids):
         images, captions = batch
         output = self.model.forward(images)
         output = output.permute(0, 2, 1)
-        loss = torch.nn.functional.cross_entropy(output, captions)
+        loss = self.log_losses("val", output, captions)
 
         text_captions = self.trainer.datamodule.tokenizer_model.Decode(captions.tolist())
         text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
