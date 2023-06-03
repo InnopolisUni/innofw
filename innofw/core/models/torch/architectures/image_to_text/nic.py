@@ -14,6 +14,9 @@ class CNNEncoder(torch.nn.Module):
         # Use only the last hidden layer as input to the RNN.
         self.feature_extractor = torch.nn.Sequential(*list(backbone.children())[:-1])
 
+        for module in [*self.feature_extractor.children()][-5:]:
+            module.requires_grad_ = True
+
         # Remap the output of the CNN to the correct hidden size of the RNN.
         self.remap = torch.nn.LazyLinear(out_features=rnn_hidden_size)
 
