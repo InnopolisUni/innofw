@@ -17,26 +17,6 @@ import sentencepiece as spm
 class ImageToTextDatamodule(BaseLightningDataModule):
     task = "image-to-text"
 
-    # @staticmethod
-    # def split_sentence(sentence):
-    #     return re.findall("\w+", sentence.lower())
-
-    # @staticmethod
-    # def encode_sentence(words, sentence, length: int):
-    #     sentence = ImageToTextDatamodule.split_sentence(sentence)
-    #     sentence = [words.get(x, words.get("<?>")) for x in sentence]
-    #     if len(sentence) + 2 > length:
-    #         raise ValueError(
-    #             f"Unable to encode sentence of size {len(sentence)}\
-    #                          in a sentence of target length {length}"
-    #         )
-    #     sentence = [words.get("<s>")] + sentence + [words.get("</s>")]
-    #     while len(sentence) < length:
-    #         sentence.append(words.get("<pad>"))
-    #     return sentence
-
-    
-
     def __init__(
         self,
         train: Optional[Dict[str, str]] = None,
@@ -90,14 +70,7 @@ class ImageToTextDatamodule(BaseLightningDataModule):
 
         self.train_df['caption'].to_csv(os.path.join(self.train_source, "corpus.txt"), 
                                         index=False, header=False)
-
-        # if self.word2int is None:
-        #     self.word2int = dict({"<pad>": 1, "<s>": 2, "</s>": 3, "<?>": 0})
-        #     word_set = set()
-        #     for sentence in self.train_df["caption"]:
-        #         word_set.update(ImageToTextDatamodule.split_sentence(sentence))
-        #     self.word2int.update(enumerate(word_set, start=len(self.word2int)))
-
+        
         if not hasattr(self, 'tokenizer_model'):           
             spm.SentencePieceTrainer.train(
                 input=os.path.join(self.train_source, "corpus.txt"),
@@ -123,23 +96,11 @@ class ImageToTextDatamodule(BaseLightningDataModule):
             ImageToTextDataset(
                 images_path=self.train_source,
                 df=self.val_df,
-                # captions_path=os.path.join(self.predict_source, "captions.txt"),
                 encoder=self.tokenizer_model,
                 transforms=self.augmentations['val'],
                 captions_length=self.max_caption_length,
             ), batch_size=self.batch_size
         )
-
-    # def test_dataloader(self):
-    #     return DataLoader(
-    #          ImageToTextDataset(
-    #             image_dir=os.path.join(self.test_source, "Images"),
-    #             # captions_path=os.path.join(self.test_source, "captions.txt"),
-    #             encoder=self.tokenizer_model,
-    #             transforms=self.augmentations['test']
-                
-    #         ), batch_size=self.batch_size
-    #     )
     
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         if stage == Stages.infer:
@@ -151,7 +112,6 @@ class ImageToTextDatamodule(BaseLightningDataModule):
         return DataLoader(
             ImageToTextDataset(
                 images_path=self.train_source, 
-                # captions_path=os.path.join(self.train_source, "captions.txt"),
                 df=self.train_df,
                 encoder=self.tokenizer_model,
                 transforms=self.augmentations['train'],

@@ -41,9 +41,10 @@ class ImageToTextDataset(Dataset):
             encoded = self.encoder.Encode(data["caption"])
             image = self.transforms(image)
 
+            finished = encoded[: self.caption_length] + [self.encoder.eos_id()]
+            true_length = len(finished)
+
             # Add padding
-            padded = encoded[: self.caption_length] + \
-                [self.encoder.pad_id()] * (self.caption_length - len(encoded) - 1) + \
-                [self.encoder.eos_id()]
+            padded = finished + [self.encoder.pad_id()] * (self.caption_length - len(finished)) 
             
-            return image, torch.LongTensor(padded)
+            return image, torch.LongTensor(padded), true_length

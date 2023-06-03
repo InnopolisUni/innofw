@@ -5,7 +5,6 @@ from torchmetrics.functional.text.bleu import bleu_score
 from torchmetrics.functional.text.rouge import rouge_score
 
 class ImageToTextLightningModule(BaseLightningModule):
-    
     def __init__(self, 
                 model: NeuralImageCaption,
                 losses,
@@ -49,18 +48,47 @@ class ImageToTextLightningModule(BaseLightningModule):
         #     self.model.initialize(self.trainer.datamodule.word2int)
         ...
 
+
     def training_step(self, batch, batch_ids):
-        images, captions = batch
+        images, captions, lengths = batch
         output = self.model.forward(images)
-        output = output.permute(0, 2, 1)
-        loss = self.log_losses("train", output, captions)
+
+        output_ = torch.nn.utils.rnn.pack_padded_sequence(
+            output,
+            lengths.cpu(),
+            batch_first=True,
+            enforce_sorted=False,
+        )
+
+        captions_ = torch.nn.utils.rnn.pack_padded_sequence(
+            captions,
+            lengths.cpu(),
+            batch_first=True,
+            enforce_sorted=False,
+        )
+
+        loss = self.log_losses("train",  output_.data, captions_.data)
         return loss
     
     def validation_step(self, batch, batch_ids):
-        images, captions = batch
+        images, captions, lengths = batch
         output = self.model.forward(images)
-        output = output.permute(0, 2, 1)
-        loss = self.log_losses("val", output, captions)
+
+        output_ = torch.nn.utils.rnn.pack_padded_sequence(
+            output,
+            lengths.cpu(),
+            batch_first=True,
+            enforce_sorted=False,
+        )
+
+        captions_ = torch.nn.utils.rnn.pack_padded_sequence(
+            captions,
+            lengths.cpu(),
+            batch_first=True,
+            enforce_sorted=False,
+        )
+
+        loss = self.log_losses("val", output_.data, captions_.data)
 
         text_captions = self.trainer.datamodule.tokenizer_model.Decode(captions.tolist())
         text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
