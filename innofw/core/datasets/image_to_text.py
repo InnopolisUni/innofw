@@ -19,7 +19,6 @@ class ImageToTextDataset(Dataset):
         ) -> None:
             super().__init__()
             self.train_source = images_path
-            # self.caption_source = captions_path
             self._df = df.copy()
             self.transforms = transforms
             self.encoder = encoder

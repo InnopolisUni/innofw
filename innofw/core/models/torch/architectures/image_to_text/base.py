@@ -6,5 +6,5 @@ class ImageToText(torch.nn.Module, ABC):
         super().__init__()
 
     @abstractmethod
-    def initialize():
-        pass
+    def forward(self, image: torch.Tensor, captions: torch.Tensor=None, forcing=False) -> torch.Tensor:
+        ...

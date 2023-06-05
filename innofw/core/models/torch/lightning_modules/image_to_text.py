@@ -10,7 +10,7 @@ class ImageToTextLightningModule(BaseLightningModule):
                 losses,
                 optimizer_cfg,
                 scheduler_cfg, 
-                max_caption_length: int = 128, 
+                max_caption_length: int = 128,
                 *args, **kwargs):
         super().__init__(*args, **kwargs)
         
@@ -51,7 +51,8 @@ class ImageToTextLightningModule(BaseLightningModule):
 
     def training_step(self, batch, batch_ids):
         images, captions, lengths = batch
-        output = self.model.forward(images)
+
+        output = self.model.forward(images, captions, True)
 
         output_ = torch.nn.utils.rnn.pack_padded_sequence(
             output,

@@ -1,4 +1,6 @@
-import torch 
+import torch
+
+from innofw.core.models.torch.architectures.image_to_text.base import ImageToText 
 
 class CNNEncoder(torch.nn.Module):
     def __init__(self, 
@@ -79,7 +81,7 @@ class RNNDecoder(torch.nn.Module):
         self.pad_token = pad_token
     
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, y: torch.Tensor = None, forcing=False) -> torch.Tensor:
         """Decodes an input feature vector of image to a sequence of words.
 
         Args:
@@ -112,8 +114,11 @@ class RNNDecoder(torch.nn.Module):
             if length == 0:
                 step_input = x.unsqueeze(dim=1)
             else:
-                step_input = self.embedding(outputs[indices, length].argmax(dim=-1, keepdim=True))
-
+                if not forcing:
+                    step_input = self.embedding(outputs[indices, length].argmax(dim=-1, keepdim=True))
+                else:
+                    step_input = self.embedding(y[indices, length].unsqueeze(dim=1))
+    
             if length == 0:
                 step_output, (hidden, cell) = self.rnn(step_input)
             else:
@@ -128,7 +133,7 @@ class RNNDecoder(torch.nn.Module):
         return outputs
     
 
-class NeuralImageCaption(torch.nn.Module):
+class NeuralImageCaption(ImageToText):
     def __init__(
             self,
             backbone: torch.nn.Module,
@@ -157,7 +162,7 @@ class NeuralImageCaption(torch.nn.Module):
             pad_token=pad_token,
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, image: torch.Tensor, captions: torch.Tensor=None, forcing=False) -> torch.Tensor:
         """Transforms the input image to a sequence of words.
 
         Args:
@@ -171,6 +176,6 @@ class NeuralImageCaption(torch.nn.Module):
             - Output: :math:`(N, seq_len, vocab_size)`
         """
 
-        x = self.encoder(x)
-        x = self.decoder(x)
+        x = self.encoder(image)
+        x = self.decoder(x, y=captions, forcing=forcing)
         return x
