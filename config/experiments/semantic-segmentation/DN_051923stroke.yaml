@@ -19,6 +19,27 @@ batch_size: 64
 original_work_dir: ${hydra:runtime.cwd}
 weights_freq: 1
 override hydra/job_logging: stdout
+losses:
+  task:
+    - image-segmentation
+  implementations:
+    torch:
+      CrossEntropyFocalLoss:
+          weight: 0.25
+          object:
+            _target_: pytorch_toolbelt.losses.BinaryFocalLoss
+            ignore_index: 0
+      JaccardLoss:
+          weight: 0.5
+          object:
+            _target_: pytorch_toolbelt.losses.JaccardLoss
+            mode: binary
+      DiceLoss:
+          weight: 0.25
+          object:
+            _target_: pytorch_toolbelt.losses.DiceLoss
+            mode: binary
+            ignore_index: 0
 metrics:
   num_classes: 1
   task: "image-segmentation"
