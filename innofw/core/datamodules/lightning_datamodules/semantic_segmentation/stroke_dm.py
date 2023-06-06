@@ -163,17 +163,34 @@ class MyDirSegmentationLightningDataModule(
             mask = mask.type(torch.FloatTensor)
             path = os.path.join(dst_path, 'img' + str(i) + '.png')
 
-            save_image(mask, path)
+            img = cv2.imread(str(jpgs[i]))
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            img = torch.from_numpy(img)
+            img = torch.div(img, 255)
+            img[mask!=0] = 1
+            img = img.type(torch.FloatTensor)
+            save_image(img, path)
+            masks.append(img)
+
         logging.info(f"Saved results to: {dst_path}")
         return masks
 
 
     def setup_infer(self):
-        self.predict_dataset = self.dataset(
-            os.path.join(self.predict_source, "image"),
-            gray=True
-            # test aug
-        )
+        if os.path.isfile(str(self.predict_source)):
+            self.predict_dataset = self.dataset(
+                os.path.join(self.predict_source),
+                gray=True
+                # test aug
+            )
+            self.jpgs = self.predict_source  
+        else:
+            self.predict_dataset = self.dataset(
+                os.path.join(self.predict_source, "image"),
+                gray=True
+                # test aug
+            )
+            self.jpgs = str(os.path.join(self.predict_source, "image"))        
 
 class DicomDirSegmentationLightningDataModule(
     DirSegmentationLightningDataModule
