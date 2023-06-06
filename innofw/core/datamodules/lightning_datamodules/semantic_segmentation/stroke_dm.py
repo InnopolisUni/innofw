@@ -2,6 +2,7 @@ import logging
 import os
 import pathlib
 import shutil
+import numpy as np
 
 import cv2
 import torch
@@ -143,8 +144,17 @@ class MyDirSegmentationLightningDataModule(
 
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        print(preds)
         pred = [p for pp in preds for p in pp]
+        masks = []
+        jpgs = []
+
+        if os.path.isdir(str(self.jpgs)):
+            for i in os.listdir(self.jpgs):
+                if i.endswith(".jpg"):
+                    jpgs.append(os.path.join(self.jpgs, i))
+        else:
+            jpgs.append(os.path.join(self.jpgs, 0))
+
         for i, m in enumerate(pred):
             mask = m.clone()
             mask = mask[0]
@@ -155,6 +165,7 @@ class MyDirSegmentationLightningDataModule(
 
             save_image(mask, path)
         logging.info(f"Saved results to: {dst_path}")
+        return masks
 
 
     def setup_infer(self):
