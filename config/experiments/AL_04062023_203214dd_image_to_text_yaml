@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /datasets: image-to-text/flickr8
+  - override /datasets: image-to-text/flickr30
   - override /models: image-to-text/nic
   - override /optimizers: adam
   - override /losses: image-to-text
@@ -22,16 +22,17 @@ datasets:
 batch_size: 256
 
 optimizers:
-  lr: 5E-4
+  lr: 5E-6
 
 epochs: 100
 
 trainer:
   accelerator: gpu
-  val_check_interval: 100
+  val_check_interval: .1
 
 models:
   vocab_size: 8094
+  rnn_hidden_size: 2048
 
 augmentations_train:
   preprocessing:

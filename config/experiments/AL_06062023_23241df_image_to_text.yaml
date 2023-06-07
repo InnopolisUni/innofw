@@ -1,17 +1,13 @@
 # @package _global_
 defaults:
-  - override /datasets: image-to-text/flickr8
+  - override /datasets: image-to-text/flickr30
   - override /models: image-to-text/nic
   - override /optimizers: adam
   - override /losses: image-to-text
-  - override /loggers: wandb 
-    #- override /schedulers: cosine_annealing
-
-    #schedulers:
-    #eta: 1E-5
-
-project: "image-to-text"
+  - override /loggers: wandb
+ 
 task: image-to-text
+project: neural-image-caption
 datasets:
   start_token: 1
   end_token: 2
@@ -22,16 +18,16 @@ datasets:
 batch_size: 256
 
 optimizers:
-  lr: 5E-4
+  lr: 45E-7
 
 epochs: 100
 
 trainer:
   accelerator: gpu
-  val_check_interval: 100
 
 models:
   vocab_size: 8094
+  rnn_hidden_size: 8094
 
 augmentations_train:
   preprocessing:
@@ -57,6 +53,9 @@ augmentations_val:
       size:
         - 224
         - 224
+devices:
+  # - 1
+  - 1
 
 wandb:
     enable: True
@@ -64,3 +63,4 @@ wandb:
     project: innofw
     group:
     job_type: training
+    name: final
