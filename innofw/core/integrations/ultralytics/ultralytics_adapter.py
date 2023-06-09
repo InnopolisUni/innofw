@@ -7,11 +7,6 @@ from typing import Optional
 
 # third party libraries
 import torch
-# from yolov5 import (
-#     train as yolov5_train,
-#     val as yolov5_val,
-#     detect as yolov5_detect,
-# )
 
 # local modules
 from innofw.constants import Frameworks
@@ -170,18 +165,6 @@ class UltralyticsAdapter(BaseModelAdapter):
                 pass
 
         self.update_checkpoints_path()
-
-    @property
-    def _yolov5_train(self):
-        return yolov5_train
-
-    @property
-    def _yolov5_val(self):
-        return yolov5_val
-
-    @property
-    def _yolov5_predict(self):
-        return yolov5_detect
 
     def predict(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
