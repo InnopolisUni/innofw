@@ -7,6 +7,11 @@ from typing import Optional
 
 # third party libraries
 import torch
+# from yolov5 import (
+#     train as yolov5_train,
+#     val as yolov5_val,
+#     detect as yolov5_detect,
+# )
 
 # local modules
 from innofw.constants import Frameworks
@@ -94,8 +99,6 @@ class UltralyticsAdapter(BaseModelAdapter):
         }
 
         self.hyp = {
-            "lr0": 0.01,
-            "lrf": 0.1,
             "momentum": 0.937,
             "weight_decay": 0.0005,
             "warmup_epochs": 3.0,
@@ -108,15 +111,22 @@ class UltralyticsAdapter(BaseModelAdapter):
         optimizers = UltralyticsOptimizerBaseAdapter().adapt(optimizers_cfg)
         self.opt = {**self.opt, **optimizers["opt"]}
         self.hyp = {**self.hyp, **optimizers["hyp"]}
-        
+
         schedulers = UltralyticsSchedulerBaseAdapter().adapt(schedulers_cfg)
         self.opt = {**self.opt, **schedulers["opt"]}
         self.hyp = {**self.hyp, **schedulers["hyp"]}
-
+        
         losses = UltralyticsLossesBaseAdapter().adapt(losses)
         self.opt = {**self.opt, **losses["opt"]}
         self.hyp = {**self.hyp, **losses["hyp"]}
 
+        self.hyp.update(
+            lr0=schedulers_cfg.lr0,
+            lrf=schedulers_cfg.lrf
+        )
+        self.opt.update(
+            optimizer=optimizers_cfg.name
+        )
         with open("hyp.yaml", "w+") as f:
             yaml.dump(self.hyp, f)
 
@@ -137,11 +147,8 @@ class UltralyticsAdapter(BaseModelAdapter):
     def train(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
         
-        ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-            ckpt_path, inplace=False, dst_path=None
-        )
-        
-        self.opt.update(
+        if ckpt_path is None:
+            self.opt.update(
                 project="something",
                 device=self.device,
                 epochs=self.epochs,
@@ -150,56 +157,70 @@ class UltralyticsAdapter(BaseModelAdapter):
                 workers=data.workers,
                 batch=data.batch_size,
             )
-        
-        if ckpt_path is None:
             self.model.train(**self.opt,**self.hyp)
         else:
-
-            self.opt.update(
-                resume=str(ckpt_path)
-            )
-            self.model.train(**self.opt,**self.hyp)
+            try:
+                ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
+            ckpt_path, inplace=False, dst_path=None)
+                self.opt.update(
+                 resume=str(ckpt_path)
+             )
+                self.model.train(**self.opt,**self.hyp)
+            except:
+                pass
 
         self.update_checkpoints_path()
 
+    @property
+    def _yolov5_train(self):
+        return yolov5_train
+
+    @property
+    def _yolov5_val(self):
+        return yolov5_val
+
+    @property
+    def _yolov5_predict(self):
+        return yolov5_detect
+
     def predict(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
-        
+
         ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-            ckpt_path, inplace=False, dst_path=None
-        )
-        
+             ckpt_path, inplace=False, dst_path=None
+         )
+
         self.model._load(ckpt_path)
-        
+
         params = dict(
-            conf=0.25,
-            iou=0.45,
-            save=True,
-            device=self.device,
-            augment=False,
-        )
+             conf=0.25,
+             iou=0.45,
+             save=True,
+             device=self.device,
+             augment=False,
+         )
         if str(data.infer_source).startswith("rts"):
             params.update(source=data.infer_source)
         else:
             params.update(source=data.infer_source / "images")
 
         self.model.predict(**params)
-        
+
         self.update_checkpoints_path()
 
     def test(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
 
         ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-            ckpt_path, inplace=False, dst_path=None
-        )
+             ckpt_path, inplace=False, dst_path=None
+         )
         self.model._load(ckpt_path)
         self.model.val(
-            imgsz=data.imgsz,
-            data=data.data,
-            iou=0.6,
-            batch=data.batch_size,
-            device=self.device,
-        )
+             imgsz=data.imgsz,
+             data=data.data,
+             iou=0.6,
+             batch=data.batch_size,
+             device=self.device,
+         )
 
         self.update_checkpoints_path()
