@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 import sentencepiece as spm
 from torch.utils.data import Dataset
-
+import logging
 
 class ImageToTextDataset(Dataset):
     """Dataset for image to text task
@@ -76,13 +76,16 @@ class ImageToTextDataset(Dataset):
                 ).convert("RGB")
             ).transpose(2, 0, 1)
         )
-        encoded = self.encoder.Encode(data["caption"])
-        image = self.transforms(image)
+        try:
+            encoded = self.encoder.Encode(data["caption"])
+        except:
+            logging.warn(f"Could not encode caption. {type(data['caption'])}. Returning empty caption")
+            encoded = []
 
+        image = self.transforms(image)
         finished = encoded[: self.caption_length] + [self.encoder.eos_id()]
         true_length = len(finished)
 
         # Add padding
         padded = finished + [self.encoder.pad_id()] * (self.caption_length - len(finished)) 
-        
         return image, torch.LongTensor(padded), true_length

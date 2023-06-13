@@ -120,7 +120,10 @@ class ImageToTextDatamodule(BaseLightningDataModule):
 
     def setup_infer(self):
         """Prepare inference dataset."""
-        self.test_df = pd.read_csv(os.path.join(self.test_source, "captions.txt"))
+        self.test_df = pd.read_csv(os.path.join(self.predict_source, "captions.txt")) 
+        self.tokenizer_model = spm.SentencePieceProcessor()
+        self.tokenizer_model.load("tokenizer_.model")
+        
 
     def val_dataloader(self):
         return DataLoader(
@@ -133,6 +136,18 @@ class ImageToTextDatamodule(BaseLightningDataModule):
             ), batch_size=self.batch_size
         )
     
+    
+    def predict_dataloader(self):
+        return DataLoader(
+            ImageToTextDataset(
+                images_path=self.predict_source,
+                df=self.test_df,
+                encoder=self.tokenizer_model,
+                transforms=self.augmentations['test'],
+                captions_length=self.max_caption_length,
+            ), batch_size=self.batch_size
+        )
+
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         """Save predictions to file.
 
@@ -144,8 +159,10 @@ class ImageToTextDatamodule(BaseLightningDataModule):
             dst_path (Path): Destination path
         """
 
-        if stage == Stages.infer:
-            preds = pd.DataFrame(preds, columns=["caption"])
+        if stage == Stages.predict:
+            if isinstance(preds[0], list):
+                preds = sum(preds, [])
+            preds = pd.DataFrame({"caption": preds})
             preds.to_csv(dst_path / "captions.txt", index=False)
          
 

@@ -10,3 +10,5 @@ train:
   source: .flickr30/train  
 test:
   source: .flickr30/test
+infer:
+  source: .flickr30/test

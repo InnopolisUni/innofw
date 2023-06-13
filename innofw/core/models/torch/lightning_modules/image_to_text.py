@@ -209,9 +209,8 @@ class ImageToTextLightningModule(BaseLightningModule):
             list: List of predicted text captions.
         """
 
-        images, captions = batch
+        images, captions, _ = batch
         output = self.model.forward(images)
-        output = output.permute(0, 2, 1)
 
         text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
         return text_outputs

@@ -4,10 +4,11 @@ defaults:
   - override /models: image-to-text/nic
   - override /optimizers: adam
   - override /losses: image-to-text
-  - override /loggers: wandb
+    #  - override /loggers: wandb
  
 task: image-to-text
 project: neural-image-caption
+experiment_name: neural-image-caption-0
 datasets:
   start_token: 1
   end_token: 2
@@ -53,9 +54,6 @@ augmentations_val:
       size:
         - 224
         - 224
-devices:
-  # - 1
-  - 2
 
 wandb:
     enable: True
