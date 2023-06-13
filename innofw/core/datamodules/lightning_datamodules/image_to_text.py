@@ -162,7 +162,7 @@ class ImageToTextDatamodule(BaseLightningDataModule):
         if stage == Stages.predict:
             if isinstance(preds[0], list):
                 preds = sum(preds, [])
-            preds = pd.DataFrame({"caption": preds})
+            preds = pd.DataFrame({"image": self.test_df["image"], "caption": preds})
             preds.to_csv(dst_path / "captions.txt", index=False)
          
 
