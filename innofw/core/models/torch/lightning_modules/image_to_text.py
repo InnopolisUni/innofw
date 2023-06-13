@@ -5,6 +5,13 @@ from torchmetrics.functional.text.bleu import bleu_score
 from torchmetrics.functional.text.rouge import rouge_score
 
 class ImageToTextLightningModule(BaseLightningModule):
+    """Lightning module for image to text architectures.
+    
+    Lightining module for training, evaluation and testing of image to text architectures.
+    Provides a capability to train with teacher forcing.
+    Evaluates the model using BLEU and ROUGE metrics.
+    """
+
     def __init__(self, 
                 model: NeuralImageCaption,
                 losses,
@@ -12,6 +19,7 @@ class ImageToTextLightningModule(BaseLightningModule):
                 scheduler_cfg, 
                 max_caption_length: int = 128,
                 *args, **kwargs):
+    
         super().__init__(*args, **kwargs)
         
         self.model = model
@@ -42,14 +50,17 @@ class ImageToTextLightningModule(BaseLightningModule):
         # val_loss and train_loss
         self.log(f"{name}_loss", total_loss, on_step=on_step, on_epoch=on_step)
         return total_loss
-    
-    def setup(self, stage: str):
-        # if self.trainer and self.trainer.datamodule and not self.model.is_ready:
-        #     self.model.initialize(self.trainer.datamodule.word2int)
-        ...
+ 
+    def training_step(self, batch, batch_id):
+        """Training step for image to text architectures.
+        
+        Args:
+            batch (tuple): Batch of images, captions and lengths.
+            batch_id (int): Batch id.
 
-
-    def training_step(self, batch, batch_ids):
+        Returns:
+            torch.FloatTensor: Loss value.
+        """
         images, captions, lengths = batch
 
         output = self.model.forward(images, captions, True)
@@ -71,7 +82,20 @@ class ImageToTextLightningModule(BaseLightningModule):
         loss = self.log_losses("train",  output_.data, captions_.data)
         return loss
     
-    def validation_step(self, batch, batch_ids):
+    def validation_step(self, batch, batch_id):
+        """Validation step for image to text architectures.
+
+        Performs validation step for image to text architectures. 
+        Evaluates the model using BLEU and ROUGE metrics.
+        
+        Args:
+            batch (tuple): Batch of images, captions and lengths.
+            batch_id (int): Batch id.
+
+        Returns:
+            torch.FloatTensor: Loss value.
+        """
+        
         images, captions, lengths = batch
         output = self.model.forward(images)
 
@@ -115,11 +139,39 @@ class ImageToTextLightningModule(BaseLightningModule):
         
         return loss
     
-    def test_step(self, batch, batch_ids):
-        images, captions = batch
+    def test_step(self, batch, batch_id):
+        """Test step for image to text architectures.
+
+        Performs test step for image to text architectures. 
+        Evaluates the model using BLEU and ROUGE metrics.
+        
+        Args:
+            batch (tuple): Batch of images, captions and lengths.
+            batch_id (int): Batch id.
+
+        Returns:
+            torch.FloatTensor: Loss value.
+        """
+        images, captions, lengths = batch
         output = self.model.forward(images)
-        output = output.permute(0, 2, 1)
+
+        output_ = torch.nn.utils.rnn.pack_padded_sequence(
+            output,
+            lengths.cpu(),
+            batch_first=True,
+            enforce_sorted=False,
+        )
+
+        captions_ = torch.nn.utils.rnn.pack_padded_sequence(
+            captions,
+            lengths.cpu(),
+            batch_first=True,
+            enforce_sorted=False,
+        )
+
+        loss = self.log_losses("val", output_.data, captions_.data)
         loss = torch.nn.functional.cross_entropy(output, captions)
+
         text_captions = self.trainer.datamodule.tokenizer_model.Decode(captions.tolist())
         text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
 
@@ -143,4 +195,24 @@ class ImageToTextLightningModule(BaseLightningModule):
         # self.log("meteor", meteor)
         
         return loss
+    
+    def predict_step(self, batch, batch_ids):
+        """Predict step for image to text architectures.
 
+        Only returns the predicted text captions.
+
+        Args:
+            batch (tuple): Batch of images and captions.
+            batch_ids (int): Batch id.
+
+        Returns:
+            list: List of predicted text captions.
+        """
+
+        images, captions = batch
+        output = self.model.forward(images)
+        output = output.permute(0, 2, 1)
+
+        text_outputs = self.trainer.datamodule.tokenizer_model.Decode(output.argmax(dim=-1).tolist())
+        return text_outputs
+    
