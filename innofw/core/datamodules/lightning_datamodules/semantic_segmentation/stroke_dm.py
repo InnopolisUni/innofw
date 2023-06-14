@@ -101,7 +101,7 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
         self.train_dataset, self.val_dataset = torch.utils.data.random_split(
             train_val, [len(train_val) - val_size, val_size]
         )
-        # Set validatoin augmentations for val
+
         setattr(self.val_dataset, "transform", val_aug)
         self.test_dataset = SegmentationDataset(
             os.path.join(self.test_source, "image"),
@@ -177,15 +177,15 @@ class StrokeSegmentationDatamodule(DirSegmentationLightningDataModule):
         if Path(self.predict_source).is_file():
             self.predict_dataset = self.dataset(
                 Path(self.predict_source),
-                gray=True
-                # test aug
+                gray=True,
+                transforms=self.get_aug(self.aug, "test")
             )
             self.predict_source = str(self.predict_source)
         else:
             self.predict_dataset = self.dataset(
                 Path(self.predict_source, "image"),
-                gray=True
-                # test aug
+                gray=True,
+                transforms=self.get_aug(self.aug, "test")
             )
             self.predict_source = [
                 self.predict_source / str(file)

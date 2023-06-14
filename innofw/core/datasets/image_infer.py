@@ -43,12 +43,14 @@ class ImageFolderInferDataset(Dataset):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         if self.gray:
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        image = torch.from_numpy(image)
-        image = image.unsqueeze(0).float()
-        image = torch.div(image, 255)
 
-        if self.transforms:
+
+        if self.transforms != None:
             image = self.transforms(image)
+        else:
+            image = torch.from_numpy(image)
+            image = image.unsqueeze(0).float()
+            image = torch.div(image, 255)
         return {SegDataKeys.image: image.float()}
 
     def __len__(self) -> int:
