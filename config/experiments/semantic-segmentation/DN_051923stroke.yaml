@@ -3,7 +3,7 @@ task: "image-segmentation"
 defaults:
   - override /models: semantic-segmentation/unet_smp.yaml
   - override /datasets: semantic-segmentation/stroke_dataset.yaml
-  - override /losses: multiclass_segmentation_losses.yaml
+  - override /losses: binary_seg_loss.yaml
   - override /augmentations_train: stroke_segmentation.yaml
   - override /augmentations_val: stroke_segmentation.yaml
   - override /metrics: segmentation.yaml
@@ -19,27 +19,6 @@ batch_size: 64
 original_work_dir: ${hydra:runtime.cwd}
 weights_freq: 1
 override hydra/job_logging: stdout
-losses:
-  task:
-    - image-segmentation
-  implementations:
-    torch:
-      CrossEntropyFocalLoss:
-          weight: 0.25
-          object:
-            _target_: pytorch_toolbelt.losses.BinaryFocalLoss
-            ignore_index: 0
-      JaccardLoss:
-          weight: 0.5
-          object:
-            _target_: pytorch_toolbelt.losses.JaccardLoss
-            mode: binary
-      DiceLoss:
-          weight: 0.25
-          object:
-            _target_: pytorch_toolbelt.losses.DiceLoss
-            mode: binary
-            ignore_index: 0
 metrics:
   num_classes: 1
   task: "image-segmentation"

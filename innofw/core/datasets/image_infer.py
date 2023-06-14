@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
+
 import cv2
-from torch.utils.data import Dataset
 import torch
+from torch.utils.data import Dataset
+
 from innofw.constants import SegDataKeys
 
 
@@ -37,9 +39,7 @@ class ImageFolderInferDataset(Dataset):
                 Path(self.image_dir, image_name), cv2.IMREAD_COLOR
             )
         else:
-            image = cv2.imread(
-                self.image_dir, cv2.IMREAD_COLOR
-            )
+            image = cv2.imread(self.image_dir, cv2.IMREAD_COLOR)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         if self.gray:
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
@@ -49,12 +49,9 @@ class ImageFolderInferDataset(Dataset):
 
         if self.transforms:
             image = self.transforms(image)
-        return {
-            SegDataKeys.image: image.float()
-        }
+        return {SegDataKeys.image: image.float()}
 
     def __len__(self) -> int:
         if os.path.isdir(self.image_dir):
             return len(self.image_names)
         return 1
-    

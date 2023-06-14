@@ -2,26 +2,25 @@ import logging
 import os
 import pathlib
 import shutil
-import numpy as np
+from pathlib import Path
 
 import cv2
 import torch
-
 from torchvision.utils import save_image
+
 from innofw.constants import Frameworks
 from innofw.constants import Stages
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
-import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader
 from innofw.core.datasets.image_infer import ImageFolderInferDataset
 from innofw.core.datasets.segmentation import SegmentationDataset
+from innofw.core.datasets.semantic_segmentation.stroke_dataset import (
+    StrokeSegmentationDataset,
+)
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
-from innofw.core.datasets.semantic_segmentation.stroke_dataset import StrokeSegmentationDataset
-from pathlib import Path
-from pathlib import PurePath
+
 
 class DirSegmentationLightningDataModule(BaseLightningDataModule):
     """
@@ -117,10 +116,9 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
         pass
 
 
-class StrokeSegmentationDatamodule(
-    DirSegmentationLightningDataModule
-):
+class StrokeSegmentationDatamodule(DirSegmentationLightningDataModule):
     dataset = ImageFolderInferDataset
+
     def setup_train_test_val(self, **kwargs):
         train_aug = self.get_aug(self.aug, "train")
         test_aug = self.get_aug(self.aug, "test")
@@ -135,14 +133,13 @@ class StrokeSegmentationDatamodule(
         self.train_dataset, self.val_dataset = torch.utils.data.random_split(
             train_val, [len(train_val) - val_size, val_size]
         )
-        # Set validation augmentations for val
+
         setattr(self.val_dataset, "transform", val_aug)
         self.test_dataset = StrokeSegmentationDataset(
             os.path.join(self.test_source, "image"),
             os.path.join(self.test_source, "label"),
-            test_aug
+            test_aug,
         )
-
 
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         pred = [p for pp in preds for p in pp]
@@ -162,20 +159,19 @@ class StrokeSegmentationDatamodule(
             mask[mask < 0.1] = 0
             mask[mask != 0] = 1
             mask = mask.type(torch.FloatTensor)
-            path = Path(dst_path, 'img' + str(i) + '.png')
+            path = Path(dst_path, "img" + str(i) + ".png")
 
             img = cv2.imread(str(jpgs[i]))
             img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
             img = torch.from_numpy(img)
             img = torch.div(img, 255)
-            img[mask!=0] = 1
+            img[mask != 0] = 1
             img = img.type(torch.FloatTensor)
             save_image(img, path)
             masks.append(img)
 
         logging.info(f"Saved results to: {dst_path}")
         return masks
-
 
     def setup_infer(self):
         if Path(self.predict_source).is_file():
@@ -191,7 +187,10 @@ class StrokeSegmentationDatamodule(
                 gray=True
                 # test aug
             )
-            self.predict_source = [self.predict_source / str(file) for file in Path(self.predict_source).iterdir()]
+            self.predict_source = [
+                self.predict_source / str(file)
+                for file in Path(self.predict_source).iterdir()
+            ]
 
 
 class DicomDirSegmentationLightningDataModule(
