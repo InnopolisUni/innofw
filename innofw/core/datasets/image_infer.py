@@ -1,5 +1,5 @@
 import os
-
+from pathlib import Path
 import cv2
 from torch.utils.data import Dataset
 import torch
@@ -31,29 +31,10 @@ class ImageFolderInferDataset(Dataset):
         self.gray = gray
 
     def __getitem__(self, index: int):
-        image_name = self.image_names[index]
-        image = cv2.imread(
-            os.path.join(self.image_dir, image_name), cv2.IMREAD_COLOR
-        )
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        if self.gray:
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        if self.transforms:
-            image = self.transforms(image)
-
-        return image
-
-    def __len__(self) -> int:
-        if os.path.isdir(self.image_dir):
-            return len(self.image_names)
-        return 1
-    
-class StrokeFolderInferDataset(ImageFolderInferDataset):
-    def __getitem__(self, index: int):
-        if os.path.isdir(self.image_dir):
+        if Path(self.image_dir).is_dir():
             image_name = self.image_names[index]
             image = cv2.imread(
-                os.path.join(self.image_dir, image_name), cv2.IMREAD_COLOR
+                Path(self.image_dir, image_name), cv2.IMREAD_COLOR
             )
         else:
             image = cv2.imread(
@@ -71,3 +52,9 @@ class StrokeFolderInferDataset(ImageFolderInferDataset):
         return {
             SegDataKeys.image: image.float()
         }
+
+    def __len__(self) -> int:
+        if os.path.isdir(self.image_dir):
+            return len(self.image_names)
+        return 1
+    

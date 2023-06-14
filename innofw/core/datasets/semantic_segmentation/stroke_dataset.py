@@ -35,25 +35,7 @@ class StrokeSegmentationDataset(Dataset):
         if self.maskPaths is None:
             return image
         
-        mask_path = str(imagePath).replace('.jpg', '.txt')
-        mask_path = mask_path.replace('image', 'label')
-        coordinates = []
-        if str(mask_path)[-4:] != '.txt':
-            raise NameError('Eror: mask should be .txt format')
-        if Path(mask_path).is_file():
-            with open(mask_path) as f:
-                for line in f:
-                    coordinates.append([float(x) for x in line.split()])
-        else:
-            print(imagePath)
-
-        mask = np.zeros((512, 512), dtype=bool)               
-        for contour_coordinates in coordinates:
-            contour_coordinates = contour_coordinates[1:]
-            sublist = [contour_coordinates[n: n+2] for n in range(0, len(contour_coordinates), 2)]
-            int_sublist = [[int(i * 512), int(j * 512)] for (j, i) in sublist]
-            mask = np.maximum(polygon2mask((512, 512), np.array(int_sublist)), mask)
-        mask = mask.astype(np.float32) 
+        mask = self.create_mask(imagePath)
         if self.transforms != None:
             image, mask = self.transforms(image, mask)
         else:
@@ -62,11 +44,29 @@ class StrokeSegmentationDataset(Dataset):
             mask = torch.from_numpy(mask)
         image = torch.div(image, 255)
         
-        
-        
         mask = mask[None, :]
 
         return {
             SegDataKeys.image: image.float(),
             SegDataKeys.label: mask.float(),
         }
+    
+    def create_mask(self, imagePath):
+        mask_path = str(imagePath).replace('.jpg', '.txt')
+        mask_path = mask_path.replace('image', 'label')
+        coordinates = []
+        if Path(mask_path).is_file():
+            with open(mask_path) as f:
+                for line in f:
+                    coordinates.append([float(x) for x in line.split()])
+
+        mask = np.zeros((512, 512), dtype=bool)               
+        for contour_coordinates in coordinates:
+            contour_coordinates = contour_coordinates[1:]
+            sublist = [contour_coordinates[n: n+2] for n in range(0, len(contour_coordinates), 2)]
+            int_sublist = [[int(i * 512), int(j * 512)] for (j, i) in sublist]
+            mask = np.maximum(polygon2mask((512, 512), np.array(int_sublist)), mask)
+        return mask.astype(np.float32) 
+
+
+        

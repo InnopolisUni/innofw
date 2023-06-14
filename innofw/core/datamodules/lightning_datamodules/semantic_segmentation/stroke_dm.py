@@ -15,12 +15,13 @@ from innofw.core.datamodules.lightning_datamodules.base import (
 )
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
-from innofw.core.datasets.image_infer import ImageFolderInferDataset, StrokeFolderInferDataset
+from innofw.core.datasets.image_infer import ImageFolderInferDataset
 from innofw.core.datasets.segmentation import SegmentationDataset
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
 from innofw.core.datasets.semantic_segmentation.stroke_dataset import StrokeSegmentationDataset
-
+from pathlib import Path
+from pathlib import PurePath
 
 class DirSegmentationLightningDataModule(BaseLightningDataModule):
     """
@@ -116,10 +117,10 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
         pass
 
 
-class MyDirSegmentationLightningDataModule(
+class StrokeSegmentationDatamodule(
     DirSegmentationLightningDataModule
 ):
-    dataset = StrokeFolderInferDataset
+    dataset = ImageFolderInferDataset
     def setup_train_test_val(self, **kwargs):
         train_aug = self.get_aug(self.aug, "train")
         test_aug = self.get_aug(self.aug, "test")
@@ -143,17 +144,17 @@ class MyDirSegmentationLightningDataModule(
         )
 
 
-    def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
+    def save_preds(self, preds, stage: Stages, dst_path: Path):
         pred = [p for pp in preds for p in pp]
         masks = []
         jpgs = []
 
-        if os.path.isdir(str(self.jpgs)):
-            for i in os.listdir(self.jpgs):
+        if Path(self.predict_source).is_dir():
+            for i in Path(self.predict_source).iterdir():
                 if i.endswith(".jpg"):
-                    jpgs.append(os.path.join(self.jpgs, i))
+                    jpgs.append(Path(self.predict_source, i))
         else:
-            jpgs.append(os.path.join(self.jpgs, 0))
+            jpgs.append(self.predict_source)
 
         for i, m in enumerate(pred):
             mask = m.clone()
@@ -161,7 +162,7 @@ class MyDirSegmentationLightningDataModule(
             mask[mask < 0.1] = 0
             mask[mask != 0] = 1
             mask = mask.type(torch.FloatTensor)
-            path = os.path.join(dst_path, 'img' + str(i) + '.png')
+            path = Path(dst_path, 'img' + str(i) + '.png')
 
             img = cv2.imread(str(jpgs[i]))
             img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -177,20 +178,21 @@ class MyDirSegmentationLightningDataModule(
 
 
     def setup_infer(self):
-        if os.path.isfile(str(self.predict_source)):
+        if Path(self.predict_source).is_file():
             self.predict_dataset = self.dataset(
-                os.path.join(self.predict_source),
+                Path(self.predict_source),
                 gray=True
                 # test aug
             )
-            self.jpgs = self.predict_source  
+            self.predict_source = str(self.predict_source)
         else:
             self.predict_dataset = self.dataset(
-                os.path.join(self.predict_source, "image"),
+                Path(self.predict_source, "image"),
                 gray=True
                 # test aug
             )
-            self.jpgs = str(os.path.join(self.predict_source, "image"))        
+            self.predict_source = [self.predict_source / str(file) for file in Path(self.predict_source).iterdir()]
+
 
 class DicomDirSegmentationLightningDataModule(
     DirSegmentationLightningDataModule
