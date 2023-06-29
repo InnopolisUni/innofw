@@ -11,10 +11,7 @@ class UltralyticsSchedulerBaseAdapter(BaseAdapter):
     """
     def __init__(self):
         self.opt = {}
-        self.hyp = {
-            "lr0": 1e-2,
-            "lrf": 1e-1,
-        }
+        self.hyp = {}
 
     def adapt(self, scheduler) -> dict:
         return {"opt": self.opt, "hyp": self.hyp}

@@ -1,3 +1,5 @@
 export access_key=one
 export secret_key=two
-#python innofw/data_mart/uploader.py --folder_path data/industry_data --config_save_path config/temp/dataset.yaml --remote_save_path  https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/  --task image-regression --framework torch --target innofw.core.datamodules.lightning_datamodules.detection_coco.CocoLightningDataModule --name "some dataset" --description "something" --markup_info "something" --date_time "something"
+#python innofw/data_mart/uploader.py --dataset_config_path classification/classification_ucmerced.yaml
+#                                    --remote_save_path https://api.blackhole.ai.innopolis.university/public-datasets/test_dataset/ \
+#                                    --access_key $access_key --secret_key $secret_key\

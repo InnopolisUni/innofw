@@ -1,3 +1,4 @@
+# standard libraries
 import inspect
 from pathlib import Path
 
@@ -5,9 +6,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import hydra
-from hydra.utils import instantiate
-import torch
-from ultralytics import YOLO
+from omegaconf import OmegaConf
+from omegaconf.errors import ConfigKeyError
 
 # local modules
 from innofw.constants import Frameworks
@@ -185,15 +185,18 @@ def get_optimizer(
         and config[name] is not None
         # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
-        if "task" not in config[name]:
-            return None
+        try:
+            if config[name]["name"] == "auto":
+                return None
+        except ConfigKeyError as e:
+            pass
 
-        if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-            config[name], framework
-        ):
-            items = []
-            for key, value in config[name].implementations[framework.value].items():
-                if key == "meta":
+        # Assume by default that torch optimizers are suitable for all tasks
+        framework_consistent = framework is Frameworks.torch
+        if framework_consistent:
+            items = dict()
+            for key, value in config[name].items():
+                if key == "meta" or key == "description":
                     continue
                 if "function" in value:
                     item = value["function"]

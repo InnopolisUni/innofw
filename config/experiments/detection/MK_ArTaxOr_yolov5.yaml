@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection/detection_ar_tax_or
+  - override /optimizers: sgd
+
+optimizers:
+  lr0: 0.01
+  lrf: 0.01 
+
+project: "ar_tax_or"
+task: "image-detection"
+random_seed: 42
+epochs: 40
+batch_size: 16
+weights_freq: 1
+
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/artaxor.pt

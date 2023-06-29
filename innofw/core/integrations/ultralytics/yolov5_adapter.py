@@ -116,7 +116,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             "sync_bn": False,
             "cos_lr": False,
             "image_weights": False,
-            "noplots": True,
+            "noplots": False,
             "noautoanchor": False,
             "noval": False,
             "nosave": False,
@@ -151,7 +151,7 @@ class YOLOV5Adapter(BaseModelAdapter):
 
         self.hyp = {
             "lr0": 0.01,
-            "lrf": 0.1,
+            "lrf": 0.01,
             "momentum": 0.937,
             "weight_decay": 0.0005,
             "warmup_epochs": 3.0,
@@ -318,7 +318,10 @@ class YOLOV5Adapter(BaseModelAdapter):
             name=self.opt["name"],
         )
 
-        if str(data.infer_source).startswith("rts") or Path(data.infer_source).is_file():
+        if (
+            str(data.infer_source).startswith("rts")
+            or Path(data.infer_source).is_file()
+        ):
             params.update(source=data.infer_source)
         else:
             params.update(
@@ -343,6 +346,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             batch_size=data.batch_size,
             device=self.device,
             weights=ckpt_path,
+            task='test'
         )
 
         self.update_checkpoints_path()

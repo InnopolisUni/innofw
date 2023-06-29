@@ -127,3 +127,4 @@ deepchem_data_dir
 tests/lightning_logs
 pretrained/
 catboost_info
+unarchived/

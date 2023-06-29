@@ -39,6 +39,10 @@ def run_pipeline(
         predict=False,
         log_root: Optional[Path] = None,
 ) -> float:
+    logging.info(
+        "To disable command line prompts. Set env variable NO_CLI=True; For linux: `export NO_CLI=True`; For Windows: `set NO_CLI=True`"
+    )
+
     print_config_tree(cfg)
 
     try:
@@ -104,6 +108,8 @@ def run_pipeline(
             stage=data_stage,
             augmentations=augmentations,
             batch_size=cfg.get("batch_size"),
+            random_state = cfg.get("random_seed")
+
         )
         print('using standart datamodule')
         
@@ -139,6 +145,7 @@ def run_pipeline(
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
         "logger": logger,
+        "random_state": cfg.get("random_seed")
     }
     inno_model = InnoModel(**model_params)
     result = None
