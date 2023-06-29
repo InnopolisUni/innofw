@@ -15,24 +15,25 @@ from innofw.core.datamodules.base import BaseDataModule
 class UltralyticsDataModuleAdapter(BaseDataModule):
     """Class defines adapter interface to conform to Ultralytics data specifications
 
-        Attributes
-        ----------
-        task: List[str]
-            the task the datamodule is intended to be used for
-        framework: List[Union[str, Frameworks]]
-            the model framework the datamodule is designed to work with
+    Attributes
+    ----------
+    task: List[str]
+        the task the datamodule is intended to be used for
+    framework: List[Union[str, Frameworks]]
+        the model framework the datamodule is designed to work with
 
 
-        Methods
-        -------
-        setup_train_test_val()
-            creates necessary .yaml files for the Ultralytics package.
-            splits training data into train and validation sets
-            allocates files in folders
-        setup_infer()
-            creates necessary .yaml files for the Ultralytics package.
-            allocates files in folders
+    Methods
+    -------
+    setup_train_test_val()
+        creates necessary .yaml files for the Ultralytics package.
+        splits training data into train and validation sets
+        allocates files in folders
+    setup_infer()
+        creates necessary .yaml files for the Ultralytics package.
+        allocates files in folders
     """
+
     task = ["image-detection"]
     framework = [Frameworks.ultralytics]
 
@@ -40,21 +41,11 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         pass
 
     def setup_infer(self):
-<<<<<<< Updated upstream
-        if type(self.infer_source) == str and self.infer_source.startswith(
-            "rts"
-        ) or Path(self.infer_source).is_file():
-=======
-<<<<<<< Updated upstream
         if (
             type(self.infer_source) == str
             and self.infer_source.startswith("rts")
             or Path(self.infer_source).is_file()
         ):
-=======
-        if type(self.infer_source) == str and self.infer_source.startswith("rts"):
->>>>>>> Stashed changes
->>>>>>> Stashed changes
             return
         # root_dir
         root_path = self.infer_source.parent.parent
@@ -125,7 +116,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             val_size - fraction size of the validation set
         """
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
-        #super().__init__(train, test, stage=stage, *args, **kwargs)
+        # super().__init__(train, test, stage=stage, *args, **kwargs)
         if self.train:
             self.train_source = Path(self.train)
         if self.test:
