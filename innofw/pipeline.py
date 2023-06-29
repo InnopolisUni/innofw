@@ -103,6 +103,7 @@ def run_pipeline(
         stage=data_stage,
         augmentations=augmentations,
         batch_size=cfg.get("batch_size"),
+        random_state = cfg.get("random_seed")
     )
     losses = get_losses(cfg, task, framework)
     callbacks = get_callbacks(
@@ -138,6 +139,7 @@ def run_pipeline(
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
         "logger": logger,
+        "random_state": cfg.get("random_seed")
     }
     inno_model = InnoModel(**model_params)
     result = None

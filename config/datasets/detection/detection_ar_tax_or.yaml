@@ -11,22 +11,25 @@ _target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapte
 
 
 train:
-  source: ./data/ArTaxOr/train
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/train.zip
+  target: ./data/ArTaxOr/train
 test:
-  source: ./data/ArTaxOr/test
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/test.zip
+  target: ./data/ArTaxOr/test
 infer:
-  source: ./data/ArTaxOr/test
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/test.zip
+  target: ./data/ArTaxOr/infer
 
 
-num_workers: 8
-image_size: 600
+num_workers: 48
+image_size: 640
 channels_num: 3
 num_classes: 7
 names:
-  0: Araneae
-  1: Coleoptera
-  2: Diptera
-  3: Hemiptera
-  4: Hymenoptera
-  5: Lepidoptera
+  0: Hymenoptera
+  1: Hemiptera
+  2: Lepidoptera
+  3: Coleoptera
+  4: Diptera
+  5: Araneae
   6: Odonata
