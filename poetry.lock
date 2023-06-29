@@ -5262,6 +5262,36 @@ devenv = ["black", "pyroma", "pytest-cov", "zest.releaser"]
 test = ["pytest (>=4.3)", "pytest-mock (>=3.3)"]
 
 [[package]]
+name = "ultralytics"
+version = "8.0.124"
+description = "Ultralytics YOLOv8 for SOTA object detection, multi-object tracking, instance segmentation, pose estimation and image classification."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ultralytics-8.0.124-py3-none-any.whl", hash = "sha256:615596afaa0ecbfa95b6ec0c93d64bbec56fb66f9cc8f2173be2004c8053ee14"},
+    {file = "ultralytics-8.0.124.tar.gz", hash = "sha256:ab582affc448b27d6cba8e06c992eef917b9d93d1f5c1a8e22d4f6696a71c606"},
+]
+
+[package.dependencies]
+matplotlib = ">=3.2.2"
+opencv-python = ">=4.6.0"
+pandas = ">=1.1.4"
+Pillow = ">=7.1.2"
+psutil = "*"
+PyYAML = ">=5.3.1"
+requests = ">=2.23.0"
+scipy = ">=1.4.1"
+seaborn = ">=0.11.0"
+torch = ">=1.7.0"
+torchvision = ">=0.8.1"
+tqdm = ">=4.64.0"
+
+[package.extras]
+dev = ["check-manifest", "coverage", "mkdocs-material", "mkdocs-redirects", "mkdocs-ultralytics-plugin", "mkdocstrings[python]", "pytest", "pytest-cov"]
+export = ["coremltools (>=6.0)", "openvino-dev (>=2022.3)", "tensorflowjs"]
+
+[[package]]
 name = "urllib3"
 version = "1.26.12"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -5735,4 +5765,4 @@ clearml = []
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.10"
-content-hash = "c39f9b9b663b07bed4e4c3a2c977a628de876095a7be0d56ce0583339c9e9387"
+content-hash = "b2214b1f1de2e1da58b4aaba1bbff67b7f4911e0f35f8525324dcfb499a5b4ab"
