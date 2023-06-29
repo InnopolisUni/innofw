@@ -1,3 +1,4 @@
+# @package _global_
 defaults:
   - override /models: ultralytics
   - override /datasets: detection/detection_insects
