@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import hydra
 from hydra.utils import instantiate
 import torch
+from ultralytics import YOLO
 
 # local modules
 from innofw.constants import Frameworks
@@ -18,6 +19,7 @@ from innofw.constants import DefaultFolders
 from innofw.core.datamodules.lightning_datamodules.concatenated_datamodule import (
     ConcatenatedLightningDatamodule,
 )
+
 
 def map_model_to_framework(model):
     import sklearn
@@ -35,6 +37,8 @@ def map_model_to_framework(model):
         return model.framework
     elif isinstance(model, catboost.CatBoost):
         return Frameworks.catboost
+    elif isinstance(model, YOLO):
+        return Frameworks.ultralytics
     else:
         raise NotImplementedError(f"Framework is not supported. {model}")
 
@@ -57,26 +61,26 @@ TABLE_FRAMEWORKS = ["xgboost", "sklearn", "catboost"]
 
 
 def get_obj(
-        config,
-        name,
-        task,
-        framework: Frameworks,
-        search_func=None,
-        _recursive_=True,
-        *args,
-        **kwargs,
+    config,
+    name,
+    task,
+    framework: Frameworks,
+    search_func=None,
+    _recursive_=True,
+    *args,
+    **kwargs,
 ):
     obj = None
     if (
-            name in config
-            and config[name] is not None
-            # and "implementations" in config[name]
+        name in config
+        and config[name] is not None
+        # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
         if "task" not in config[name]:
             return None
 
         if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-                config[name], framework
+            config[name], framework
         ):
             items = []
             for key, value in config[name].implementations[framework.value].items():
@@ -108,10 +112,11 @@ def get_obj(
 
     return obj
 
-def get_augmentations(cfg):
 
+def get_augmentations(cfg):
     from albumentations import Compose
     from omegaconf import DictConfig
+
     empty_cfg = DictConfig({})
 
     if cfg == {}:
@@ -122,7 +127,7 @@ def get_augmentations(cfg):
     # 3. position
     # 4. color
     # 5. postprocessing
-    keys = ['preprocessing', "combined", "position", "color", "postprocessing"]
+    keys = ["preprocessing", "combined", "position", "color", "postprocessing"]
     transforms = []
 
     # if "preprocessing" in cfg:
@@ -132,13 +137,14 @@ def get_augmentations(cfg):
     #     transforms.append(preprocessing)
 
     import albumentations as A
+
     def is_albu(aug):
         return isinstance(aug, A.Compose) or isinstance(
             aug, A.core.transforms_interface.BasicTransform
         )
 
     for key in keys:
-        try:    
+        try:
             a = hydra.utils.instantiate(cfg[key])
             transforms.append(a)
         except:
@@ -161,29 +167,29 @@ def get_augmentations(cfg):
             if item != empty_cfg
         ]
         return torchvision.transforms.Compose(transforms=transforms)
-        
+
 
 def get_optimizer(
-        config,
-        name,
-        task,
-        framework: Frameworks,
-        search_func=None,
-        _recursive_=True,
-        *args,
-        **kwargs,
+    config,
+    name,
+    task,
+    framework: Frameworks,
+    search_func=None,
+    _recursive_=True,
+    *args,
+    **kwargs,
 ):
     obj = None
     if (
-            name in config
-            and config[name] is not None
-            # and "implementations" in config[name]
+        name in config
+        and config[name] is not None
+        # and "implementations" in config[name]
     ):  # framework not in TABLE_FRAMEWORKS and
         if "task" not in config[name]:
             return None
 
         if is_suitable_for_task(config[name], task) and is_suitable_for_framework(
-                config[name], framework
+            config[name], framework
         ):
             items = []
             for key, value in config[name].implementations[framework.value].items():
@@ -216,7 +222,7 @@ def get_losses(cfg, task, framework):
         if "task" not in cfg["losses"]:
             return None
         if is_suitable_for_task(cfg.losses, task) and is_suitable_for_framework(
-                cfg.losses, framework
+            cfg.losses, framework
         ):
             losses = []
             for key, value in cfg.losses.implementations[framework.value].items():
@@ -247,7 +253,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
         if "task" not in cfg["callbacks"]:
             return None
         if is_suitable_for_task(cfg.callbacks, task) and is_suitable_for_framework(
-                cfg.callbacks, framework
+            cfg.callbacks, framework
         ):
             for _, cb_conf in cfg.callbacks.implementations[framework.value].items():
                 if "_target_" in cb_conf:
@@ -276,22 +282,19 @@ from innofw.utils.extra import is_intersecting
 
 def get_model(cfg, trainer_cfg):
     model_datacls = ModelConfig(**cfg, trainer_cfg=trainer_cfg)
-    return hydra.utils.instantiate(
-        model_datacls.models
-    )
+    return hydra.utils.instantiate(model_datacls.models)
 
 
 def get_datamodule(cfg, framework: Frameworks, task=None, *args, **kwargs):
     dataset_datacls = DatasetConfig(**cfg, framework=framework)
-    datamodule = hydra.utils.instantiate(
-        dataset_datacls.datasets, *args, **kwargs
-    )
+    datamodule = hydra.utils.instantiate(dataset_datacls.datasets, *args, **kwargs)
     if not is_intersecting(task, datamodule.task):
         raise ValueError("Wrong task provided", task, datamodule.task)
 
     if not is_intersecting(framework, datamodule.framework):
         raise ValueError("Wrong framework provided")
     return datamodule
+
 
 def get_datamodule_concat(cfg, framework: Frameworks, task=None, *args, **kwargs):
     datamodules = []
@@ -304,8 +307,11 @@ def get_datamodule_concat(cfg, framework: Frameworks, task=None, *args, **kwargs
         if not is_intersecting(framework, datamodule.framework):
             raise ValueError("Wrong framework provided")
         datamodules.append(datamodule)
-    
-    return ConcatenatedLightningDatamodule(datamodule.__class__.__name__, datamodules, datamodule.batch_size)    
+
+    return ConcatenatedLightningDatamodule(
+        datamodule.__class__.__name__, datamodules, datamodule.batch_size
+    )
+
 
 def get_experiment(cfg):
     experiment_datacls = ExperimentConfig(**cfg)
