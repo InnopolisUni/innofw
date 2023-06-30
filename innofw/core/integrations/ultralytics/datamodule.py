@@ -40,7 +40,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
     def predict_dataloader(self):
         pass
 
-    def setup_infer(self):
+    def setup_infer(self):  # todo: fix this to make it proper yolo folder structure
         if (
             type(self.infer_source) == str
             and self.infer_source.startswith("rts")
@@ -69,6 +69,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
     def __init__(
         self,
         train: Optional[str],
+        # val: Optional[str],  # todo: add this
         test: Optional[str],
         infer: Optional[str],
         num_workers: int,
@@ -96,26 +97,25 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             val_size - fraction size of the validation set
         """
         super().__init__(train, test, infer, stage=stage, *args, **kwargs)
-        
+
         if self.train:
             self.train_source = Path(self.train)
-            # In this datamodule, the train source should be the folder train itself not the folder "train/images"
-            if str(self.train_source).endswith("images"):
-                self.train_source = Path(str(self.train_source)[:-7])
+            # # In this datamodule, the train source should be the folder train itself not the folder "train/images"
+            # if str(self.train_source).endswith("images"):
+            #     self.train_source = Path(str(self.train_source)[:-7])
         if self.test:
             self.test_source = Path(self.test)
-            if str(self.test_source).endswith("images"):
-                self.test_source = Path(str(self.test_source)[:-7])
-                
+            # if str(self.test_source).endswith("images"):
+            #     self.test_source = Path(str(self.test_source)[:-7])
+
         if self.infer:
             self.infer_source = (
                 Path(self.infer)
                 if not (type(self.infer) == str and self.infer.startswith("rts"))
                 else self.infer
             )
-            if str(self.infer_source).endswith("images"):
-                self.infer_source = Path(str(self.infer_source)[:-7])                    
-
+            # if str(self.infer_source).endswith("images"):
+            #     self.infer_source = Path(str(self.infer_source)[:-7])
 
         self.batch_size = batch_size
         # super().__init__(train, test, batch_size, num_workers)
@@ -133,20 +133,37 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         # labels_path = Path(self.train_dataset).parent.parent / "labels"
 
     def setup_train_test_val(self, **kwargs):
+        """
+        Input folder structure is as follows:
+        images/
+            train/
+
+            test/
+
+        labels/
+            train/
+
+            test/
+
+
+        Method will divide train folder's contents into train and val folders
+        """
         # root_dir
-        root_path = self.train_source.parent
+        root_path = self.train_source.parent.parent
         # new data folder
-        new_data_path = root_path / "train_splitted"
+        new_data_path = root_path / "innofw_split_data"
         new_data_path.mkdir(exist_ok=True, parents=True)
-        
-        new_train_path = new_data_path / "train"
-        new_val_path = new_data_path / "val"
+
+        new_img_path = new_data_path / "images"
+        new_lbl_path = new_data_path / "labels"
 
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        train_img_path = self.train_source / "images"
-        train_lbl_path = self.train_source / "labels"
+        train_img_path = self.train_source
+        train_lbl_path = (
+            self.train_source.parent.parent / "labels" / self.train_source.name
+        )
 
         # get all files from train folder
         img_files = list(train_img_path.iterdir())
@@ -154,7 +171,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         assert (
             len(label_files) == len(img_files) != 0
         ), "number of images and labels should be the same"
-        
+
         # sort the files so that the images and labels are in the same order
         img_files.sort()
         label_files.sort()
@@ -170,37 +187,35 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             img_files,
             test_size=self.val_size,
             random_state=self.random_state,
-        )       
-       
-        # Creating the training directory
+        )
+
+        # Creating the images directory
         for files, folder_name in zip(
-            [train_img_files, train_label_files],
-            ["images", "labels"]
+            [train_img_files, val_img_files], ["train", "val"]
         ):
             # create a folder
-            new_path = new_train_path / folder_name
+            new_path = new_img_path / folder_name
             new_path.mkdir(exist_ok=True, parents=True)
-            
+
             # Copy files into folder
             for file in files:
                 shutil.copy(file, new_path / file.name)
-                
-        # Creating the vallidation directory
+
+        # Creating the labels directory
         for files, folder_name in zip(
-            [val_img_files, val_label_files],
-            ["images", "labels"]
+            [train_label_files, val_label_files], ["train", "val"]
         ):
             # create a folder
-            new_path = new_val_path /folder_name
+            new_path = new_lbl_path / folder_name
             new_path.mkdir(exist_ok=True, parents=True)
-            
+
             # Copy files into folder
             for file in files:
-                shutil.copy(file, new_path / file.name)       
+                shutil.copy(file, new_path / file.name)
 
         self.data = str(root_path / "data.yaml")
-        self.train_dataset = str(new_data_path / "train")
-        self.val_dataset = str(new_data_path / "val")
+        self.train_dataset = str(new_img_path / "train")
+        self.val_dataset = str(new_img_path / "val")
         self.test_dataset = self.test_source
 
         # create a yaml file
