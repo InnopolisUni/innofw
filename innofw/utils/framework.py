@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import hydra
 from omegaconf import OmegaConf
 from omegaconf.errors import ConfigKeyError
+from ultralytics import YOLO
 
 # local modules
 from innofw.constants import Frameworks
@@ -192,30 +193,24 @@ def get_optimizer(
             pass
 
         # Assume by default that torch optimizers are suitable for all tasks
-        framework_consistent = framework is Frameworks.torch
+        framework_consistent = (
+            framework is Frameworks.torch or framework is Frameworks.ultralytics
+        )
         if framework_consistent:
             items = dict()
             for key, value in config[name].items():
                 if key == "meta" or key == "description":
                     continue
-                if "function" in value:
-                    item = value["function"]
-                elif "object" in value:
-                    item = value["object"]
-                else:
-                    raise ValueError("wrong config structure of optimizer")
-                items.append(item)
+                items[key] = value
+            items = [OmegaConf.create(items)]
         else:
-            raise ValueError(
-                f"These {name} are not applicable with selected model and/or task"
-            )
+            raise ValueError(f"These {name} are not applicable with selected model")
 
         obj = items[0] if len(items) == 1 else items
     elif search_func is not None:
         obj = search_func(task, framework, config[name], *args, **kwargs)
     # else:
     #     raise ValueError("Unable to instantiate the object")
-
     return obj
 
 

@@ -1,8 +1,9 @@
 # @package _global_
 defaults:
   - override /models: ultralytics
-  - override /datasets: detection/detection_insects
+  - override /datasets: detection/detection_ar_tax_or
   - override /loggers: wandb
+  - override /optimizers: sgd
 
 project: "insects"
 task: "image-detection"

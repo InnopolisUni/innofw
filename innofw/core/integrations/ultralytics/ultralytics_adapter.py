@@ -19,6 +19,7 @@ from .schedulers import UltralyticsSchedulerBaseAdapter
 from innofw.core.models import BaseModelAdapter, register_models_adapter
 from ultralytics import YOLO
 
+
 @register_models_adapter(name="ultralytics_adapter")
 class UltralyticsAdapter(BaseModelAdapter):
     """
@@ -102,7 +103,7 @@ class UltralyticsAdapter(BaseModelAdapter):
             "box": 0.05,
             "cls": 0.5,
         }
-    
+
         optimizers = UltralyticsOptimizerBaseAdapter().adapt(optimizers_cfg)
         self.opt = {**self.opt, **optimizers["opt"]}
         self.hyp = {**self.hyp, **optimizers["hyp"]}
@@ -110,18 +111,22 @@ class UltralyticsAdapter(BaseModelAdapter):
         schedulers = UltralyticsSchedulerBaseAdapter().adapt(schedulers_cfg)
         self.opt = {**self.opt, **schedulers["opt"]}
         self.hyp = {**self.hyp, **schedulers["hyp"]}
-        
+
         losses = UltralyticsLossesBaseAdapter().adapt(losses)
         self.opt = {**self.opt, **losses["opt"]}
         self.hyp = {**self.hyp, **losses["hyp"]}
 
-        self.hyp.update(
-            lr0=schedulers_cfg.lr0,
-            lrf=schedulers_cfg.lrf
-        )
-        self.opt.update(
-            optimizer=optimizers_cfg.name
-        )
+        if schedulers_cfg is not None:
+            if "lr0" in schedulers_cfg:
+                self.hyp.update(
+                    lr0=schedulers_cfg.lr0,
+                )
+            if "lrf" in schedulers_cfg:
+                self.hyp.update(
+                    lr0=schedulers_cfg.lrf,
+                )
+
+        self.opt.update(optimizer=optimizers_cfg.name)
         with open("hyp.yaml", "w+") as f:
             yaml.dump(self.hyp, f)
 
@@ -141,7 +146,7 @@ class UltralyticsAdapter(BaseModelAdapter):
 
     def train(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
-        
+
         if ckpt_path is None:
             self.opt.update(
                 project="something",
@@ -152,15 +157,14 @@ class UltralyticsAdapter(BaseModelAdapter):
                 workers=data.workers,
                 batch=data.batch_size,
             )
-            self.model.train(**self.opt,**self.hyp)
+            self.model.train(**self.opt, **self.hyp)
         else:
             try:
                 ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-            ckpt_path, inplace=False, dst_path=None)
-                self.opt.update(
-                 resume=str(ckpt_path)
-             )
-                self.model.train(**self.opt,**self.hyp)
+                    ckpt_path, inplace=False, dst_path=None
+                )
+                self.opt.update(resume=str(ckpt_path))
+                self.model.train(**self.opt, **self.hyp)
             except:
                 pass
 
@@ -170,18 +174,18 @@ class UltralyticsAdapter(BaseModelAdapter):
         data.setup()
 
         ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-             ckpt_path, inplace=False, dst_path=None
-         )
+            ckpt_path, inplace=False, dst_path=None
+        )
 
         self.model._load(ckpt_path)
 
         params = dict(
-             conf=0.25,
-             iou=0.45,
-             save=True,
-             device=self.device,
-             augment=False,
-         )
+            conf=0.25,
+            iou=0.45,
+            save=True,
+            device=self.device,
+            augment=False,
+        )
         if str(data.infer_source).startswith("rts"):
             params.update(source=data.infer_source)
         else:
@@ -195,15 +199,15 @@ class UltralyticsAdapter(BaseModelAdapter):
         data.setup()
 
         ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-             ckpt_path, inplace=False, dst_path=None
-         )
+            ckpt_path, inplace=False, dst_path=None
+        )
         self.model._load(ckpt_path)
         self.model.val(
-             imgsz=data.imgsz,
-             data=data.data,
-             iou=0.6,
-             batch=data.batch_size,
-             device=self.device,
-         )
+            imgsz=data.imgsz,
+            data=data.data,
+            iou=0.6,
+            batch=data.batch_size,
+            device=self.device,
+        )
 
         self.update_checkpoints_path()

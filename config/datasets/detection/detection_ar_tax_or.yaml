@@ -7,7 +7,7 @@ description: Dataset for image detection
 markup_info: Dataset for image detection
 date_time: 19.04.2023
 
-_target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
 
 
 train:
