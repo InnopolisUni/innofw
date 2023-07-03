@@ -80,9 +80,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        self.train_source, train_csv = self.find_csv_and_data(
-            self.train_source
-        )
+        self.train_source, train_csv = self.find_csv_and_data(self.train_source)
         self.test_source, test_csv = self.find_csv_and_data(self.test_source)
         self.aug = {"train": None, "test": None, "val": None}  # todo: fix
         if (
@@ -134,7 +132,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
         setattr(self.val_dataset, "transform", self.aug["val"])
 
     def find_csv_and_data(self, path):
-        csv_path = find_file_by_ext(path, '.csv')
+        csv_path = find_file_by_ext(path, ".csv")
         train_df = pd.read_csv(csv_path)
         arr = train_df["bbox"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
         bboxes = np.stack(arr)

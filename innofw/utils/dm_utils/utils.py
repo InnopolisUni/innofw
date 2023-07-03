@@ -48,7 +48,7 @@ def query_yes_no(question, default="yes") -> bool:
 
 @validate_arguments
 def find_folder_with_images(
-    path: DirectoryPath, img_exts=[".jpg", ".png"]
+    path: DirectoryPath, img_exts=[".jpg", ".png", ".dcm"]
 ) -> Optional[Path]:
     img_exts = img_exts if type(img_exts) == list else [img_exts]
     try:
