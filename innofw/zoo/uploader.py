@@ -72,22 +72,25 @@ def upload_model(
     if access_key is None or secret_key is None:
         credentials = get_s3_credentials()
     else:
-        credentials = S3Credentials(
-            ACCESS_KEY=access_key, SECRET_KEY=secret_key
-        )
+        credentials = S3Credentials(ACCESS_KEY=access_key, SECRET_KEY=secret_key)
 
     if not ckpt_path.is_absolute():
         ckpt_path = get_abs_path(ckpt_path)
+    from hydra.core.global_hydra import GlobalHydra
 
+    GlobalHydra.instance().clear()
     with hydra.initialize(config_path="../../config", version_base="1.2"):
-        config = hydra.compose(config_name="train.yaml", overrides=[f"experiments={experiment_config_path}"])
+        config = hydra.compose(
+            config_name="train.yaml",
+            overrides=[f"experiments={experiment_config_path}"],
+        )
 
     url = URL(remote_save_path).anchor
     s3handler = S3Handler(url, credentials)
 
     exp_upload_url = get_full_dst_url(ckpt_path, remote_save_path)
     train_data = config.get("datasets").get("train").target
-    data = train_data[:train_data.find("/train")]
+    data = train_data[: train_data.find("/train")]
 
     metadata = {
         "_target_": config.models._target_,

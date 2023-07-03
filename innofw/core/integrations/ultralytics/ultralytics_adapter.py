@@ -125,8 +125,8 @@ class UltralyticsAdapter(BaseModelAdapter):
                 self.hyp.update(
                     lr0=schedulers_cfg.lrf,
                 )
-
-        self.opt.update(optimizer=optimizers_cfg.name)
+        if optimizers_cfg is not None:
+            self.opt.update(optimizer=optimizers_cfg.name)
         with open("hyp.yaml", "w+") as f:
             yaml.dump(self.hyp, f)
 

@@ -146,27 +146,30 @@ def get_augmentations(cfg):
 
     for key in keys:
         try:
-            a = hydra.utils.instantiate(cfg[key])
-            transforms.append(a)
-        except:
+            for v in cfg[key].values():
+                a = hydra.utils.instantiate(v)
+                transforms.append(a)
+        except Exception as e:
             pass
 
     import torchvision
 
+    if len(transforms) == 0:
+        return
     # transforms = [instantiate(cfg[key]) for key in keys]
     if is_albu(transforms[0]):
-        transforms = [
-            Compose(transforms=dict(item).values())
-            for item in transforms
-            if item != empty_cfg
-        ]
+        # transforms = [
+        #     Compose(transforms=dict(item).values())
+        #     for item in transforms
+        #     if item != empty_cfg
+        # ]
         return Compose(transforms=transforms)
     else:
-        transforms = [
-            torchvision.transforms.Compose(transforms=dict(item).values())
-            for item in transforms
-            if item != empty_cfg
-        ]
+        # transforms = [
+        #     torchvision.transforms.Compose(transforms=dict(item).values())
+        #     for item in transforms
+        #     if item != empty_cfg
+        # ]
         return torchvision.transforms.Compose(transforms=transforms)
 
 
