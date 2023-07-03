@@ -80,8 +80,9 @@ class QsarDataModule(BasePandasDataModule):
         if self._preprocessed:
             return
 
-        train_csv = pd.read_csv(self.train_dataset)
-        test_csv = pd.read_csv(self.test_dataset)
+        if isinstance(self.train_dataset, str) or isinstance(self.train_dataset, Path):
+            train_csv = pd.read_csv(self.train_dataset)
+            test_csv = pd.read_csv(self.test_dataset)
 
         train_smiles, train_target = (
             train_csv[self.smiles_col].values,
@@ -130,9 +131,7 @@ class QsarDataModule(BasePandasDataModule):
         elif stage is Stages.predict:
             return self.predict_dataloader()
         else:
-            raise ValueError(
-                "Wrong stage passed use on of following:", list(Stages)
-            )
+            raise ValueError("Wrong stage passed use on of following:", list(Stages))
 
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         df = pd.read_csv(

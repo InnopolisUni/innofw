@@ -61,8 +61,11 @@ class PandasDataModule(BasePandasDataModule):
 
     def setup_train_test_val(self):
         try:
-            self.train_dataset = pd.read_csv(self.train_dataset)
-            self.test_dataset = pd.read_csv(self.test_dataset)
+            if isinstance(self.train_dataset, str) or isinstance(
+                self.train_dataset, Path
+            ):
+                self.train_dataset = pd.read_csv(self.train_dataset)
+                self.test_dataset = pd.read_csv(self.test_dataset)
         except Exception as err:
             raise FileNotFoundError(f"Could not read csv file: {err}")
 
@@ -141,8 +144,11 @@ class RegressionPandasDataModule(BasePandasDataModule):
 
     def setup_train_test_val(self):
         try:
-            self.train_dataset = pd.read_csv(self.train_dataset)
-            self.test_dataset = pd.read_csv(self.test_dataset)
+            if isinstance(self.train_dataset, str) or isinstance(
+                self.train_dataset, Path
+            ):
+                self.train_dataset = pd.read_csv(self.train_dataset)
+                self.test_dataset = pd.read_csv(self.test_dataset)
         except Exception as err:
             raise FileNotFoundError(f"Could not read csv file: {err}")
 
@@ -220,11 +226,14 @@ class ClusteringPandasDataModule(BasePandasDataModule):
         self.setup(flag)
 
     def setup_train_test_val(self):
-        try:
+        # try:
+        if isinstance(self.train_dataset, str) or isinstance(self.train_dataset, Path):
             self.train_dataset = pd.read_csv(self.train_dataset)
             self.test_dataset = pd.read_csv(self.test_dataset)
-        except Exception as err:
-            raise FileNotFoundError(f"Could not read csv file: {err}")
+        # except Exception as err:
+        #     raise FileNotFoundError(
+        #         f"Could not read csv file: {self.test_dataset} error: {err}"
+        #     )
 
     def _get_x_n_y(self, dataset, target_col):
         result = {}

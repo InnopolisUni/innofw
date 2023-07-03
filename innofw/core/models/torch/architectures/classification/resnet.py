@@ -38,9 +38,9 @@ class Resnet18(nn.Module):
 
     def forward(self, x):
         # x = x.unsqueeze(0)
-        import torch
-        
-        x = torch.moveaxis(x, -1, 1)
+        # import torch
+
+        # x = torch.moveaxis(x, -1, 1)
         out = self.model(x)
         return nn.functional.softmax(out, dim=1)
 
