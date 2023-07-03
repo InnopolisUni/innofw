@@ -24,9 +24,7 @@ from innofw.core.datamodules.lightning_datamodules.base import (
 
 def get_samples(path) -> List[Path]:  # todo: move out
     if isinstance(path, list):
-        samples = reduce(
-            lambda x, y: x + y, [list(p.rglob("*.tif")) for p in path]
-        )
+        samples = reduce(lambda x, y: x + y, [list(p.rglob("*.tif")) for p in path])
     else:
         samples = list(path.rglob("*.tif"))
 
@@ -83,9 +81,7 @@ class SegmentationDM(BaseLightningDataModule):
         ):  # tod: convert csv generator to a script from notebook
             self.filtered_files = pd.read_csv(filtered_files_csv_path)
             assert "filename" in self.filtered_files
-            self.filtered_files = self.filtered_files.set_index(
-                "filename"
-            ).index
+            self.filtered_files = self.filtered_files.set_index("filename").index
 
             if self.weights is not None:
                 logging.info("filtering samples and weights using csv file")
@@ -93,15 +89,9 @@ class SegmentationDM(BaseLightningDataModule):
                 # filter values
                 self.weights = self.weights[i2.isin(self.filtered_files)]
 
-        self.train_transform = (
-            None if augmentations is None else augmentations["train"]
-        )
-        self.val_transform = (
-            None if augmentations is None else augmentations["test"]
-        )
-        self.test_transform = (
-            None if augmentations is None else augmentations["test"]
-        )
+        self.train_transform = None if augmentations is None else augmentations["train"]
+        self.val_transform = None if augmentations is None else augmentations["test"]
+        self.test_transform = None if augmentations is None else augmentations["test"]
 
         self.channels = channels
 
@@ -156,9 +146,7 @@ class SegmentationDM(BaseLightningDataModule):
 
                 # filter
                 def filter_samples(samples, filtered_names):
-                    f_samples = [
-                        s for s in samples if s.name in filtered_names
-                    ]
+                    f_samples = [s for s in samples if s.name in filtered_names]
                     assert len(f_samples) == len(
                         filtered_names
                     )  # todo: not always will be true
@@ -170,12 +158,10 @@ class SegmentationDM(BaseLightningDataModule):
             self.samplers = {"train": None, "val": None, "test": None}
         else:
             images = [
-                self.img_path / img_name
-                for img_name in self.weights["file_names"]
+                self.img_path / img_name for img_name in self.weights["file_names"]
             ]
             masks = [
-                self.label_path / img_name
-                for img_name in self.weights["file_names"]
+                self.label_path / img_name for img_name in self.weights["file_names"]
             ]
             train_weights, val_weights = train_test_split(
                 self.weights["weights"],
@@ -190,10 +176,8 @@ class SegmentationDM(BaseLightningDataModule):
             )
             self.samplers = {"train": train_sampler, "val": val_sampler}
 
-        logging.debug(len(images), len(masks))
-        assert len(images) == len(
-            masks
-        ), "number of images and masks should be equal"
+        # logging.debug(f"{len(images)}, {len(masks)}")
+        assert len(images) == len(masks), "number of images and masks should be equal"
 
         train_images, val_images, train_masks, val_masks = train_test_split(
             images,
