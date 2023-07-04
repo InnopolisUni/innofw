@@ -3,7 +3,7 @@ task: "image-segmentation"
 defaults:
   - override /models: semantic-segmentation/unet_smp.yaml
   - override /datasets: semantic-segmentation/stroke_dataset.yaml
-  - override /losses: binary_seg_loss.yaml
+  - override /losses: semantic-segmentation/focal_tversky_loss.yaml
   - override /augmentations_train: stroke_segmentation.yaml
   - override /augmentations_val: stroke_segmentation.yaml
   - override /metrics: segmentation.yaml
@@ -32,7 +32,6 @@ optimizers:
 
 wandb:
   enable: True
-  entity: 15dnau
   project: unet
   group: innofw
   job_type: training

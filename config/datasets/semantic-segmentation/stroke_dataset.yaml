@@ -8,19 +8,16 @@ Link: https://cam-orl.co.uk/facedatabase.html"
 markup_info: Набор данных содержит черно белые изображения мозга
 date_time: 19.07.2022
 
-_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.MyDirSegmentationLightningDataModule
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule
 
 train:
-  source: /home/dmitry/innofw/task2/train
-  target: /home/dmitry/innofw/task2/train
+  source: /home/user/data/train
 
 test:
-  source: /home/dmitry/innofw/task2/test
-  target: /home/dmitry/innofw/task2/test
+  source: /home/user/data/test
 
 infer:
-  source: /home/dmitry/innofw/task2/infer
-  target: /home/dmitry/innofw/task2/infer
+  source: /home/user/data/infer
 
 
 num_workers: 0
