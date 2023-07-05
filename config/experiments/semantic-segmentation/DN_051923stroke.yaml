@@ -1,0 +1,38 @@
+# @package _global_
+task: "image-segmentation"
+defaults:
+  - override /models: semantic-segmentation/unet_smp.yaml
+  - override /datasets: semantic-segmentation/stroke_dataset.yaml
+  - override /losses: semantic-segmentation/focal_tversky_loss.yaml
+  - override /augmentations_train: stroke_segmentation.yaml
+  - override /augmentations_val: stroke_segmentation.yaml
+  - override /metrics: segmentation.yaml
+  - override /optimizers: lion.yaml
+  - override /loggers: wandb
+
+project: "segmentation"
+
+accelerator: gpu
+random_seed: 42
+epochs: 50
+batch_size: 64
+original_work_dir: ${hydra:runtime.cwd}
+weights_freq: 1
+override hydra/job_logging: stdout
+metrics:
+  num_classes: 1
+  task: "image-segmentation"
+models:
+  in_channels: 1
+  classes: 1
+  encoder_name: resnet34
+
+optimizers:
+  lr: 3e-4
+
+wandb:
+  enable: True
+  project: unet
+  group: innofw
+  job_type: training
+  tags: ['Unet', 'MSL', 'Lion', 'resnet34', '+InvertImg']
