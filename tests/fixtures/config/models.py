@@ -5,9 +5,8 @@ yolov5_cfg_w_target = DictConfig(
     {
         "name": "yolov5",
         "description": "model by ultralytics",
-        "_target_": "innofw.core.integrations.YOLOv5",
-        "arch": "yolov5s",
-        "num_classes": 4,
+        "_target_": "ultralytics.YOLO",
+        "model": "yolov5su",
     }
 )
 faster_rcnn_cfg_w_target = DictConfig(

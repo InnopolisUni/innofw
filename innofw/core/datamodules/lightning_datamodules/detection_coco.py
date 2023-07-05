@@ -20,7 +20,7 @@ from innofw.core.datasets.coco import DicomCocoDatasetInfer
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
 from innofw.utils.dm_utils.utils import find_file_by_ext
-from innofw.utils.dm_utils.utils import find_path
+from innofw.utils.dm_utils.utils import find_folder_with_images
 
 
 def collate_fn(batch):
@@ -80,9 +80,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        self.train_source, train_csv = self.find_csv_and_data(
-            self.train_source
-        )
+        self.train_source, train_csv = self.find_csv_and_data(self.train_source)
         self.test_source, test_csv = self.find_csv_and_data(self.test_source)
         self.aug = {"train": None, "test": None, "val": None}  # todo: fix
         if (
@@ -141,7 +139,7 @@ class CocoLightningDataModule(BaseLightningDataModule):
         for i, col in enumerate(["x", "y", "w", "h"]):
             train_df[col] = bboxes[:, i]
         train_df["box_area"] = train_df["w"] * train_df["h"]
-        return find_path(path), train_df
+        return find_folder_with_images(path), train_df
 
     def train_dataloader(self):
         train_dataloader = torch.utils.data.DataLoader(

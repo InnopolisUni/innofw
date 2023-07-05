@@ -1,0 +1,7 @@
+name: ultralytics
+description: ultralytics
+
+_target_: ultralytics.YOLO
+
+model: yolov8s.pt
+
