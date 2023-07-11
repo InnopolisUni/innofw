@@ -1,24 +1,10 @@
 import os
 import sys
 from pathlib import Path
-from typing import Optional
-from typing import Union
-
+from typing import Union, Optional
+from pydantic import validate_arguments, DirectoryPath, FilePath
 from innofw.constants import CLI_FLAGS
-
-
-def find_file_by_ext(path: Union[str, Path], ext=".csv") -> Optional[Path]:
-    path = Path(path)
-
-    if path is None:
-        return
-    if str(path).endswith(ext):
-        return path
-    target_files = list(path.rglob(f"*{ext}"))
-    if len(target_files) == 0:
-        raise ValueError(f"Unable to find file with extension: {ext}")
-    else:
-        return target_files[0]
+import logging
 
 
 # source: https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input
@@ -57,12 +43,63 @@ def query_yes_no(question, default="yes") -> bool:
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write(
-                "Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n"
+            sys.stdout.write("Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n")
+
+
+@validate_arguments
+def find_folder_with_images(
+    path: DirectoryPath, img_exts=[".jpg", ".png", ".dcm"]
+) -> Optional[Path]:
+    img_exts = img_exts if type(img_exts) == list else [img_exts]
+    try:
+        target_folders = []
+        for ext in img_exts:
+            target_folders += list(
+                filter(lambda f: f.is_dir() and any(f.glob(f"*{ext}")), path.iterdir())
             )
+        target_folders = list(set(target_folders))  # remove duplicates
+        if len(target_folders) == 0:
+            raise ValueError(f"No folders found with images in {path}")
+        elif len(target_folders) > 1:
+            raise ValueError(f"Multiple folders found with images in {path}")
+        else:
+            return target_folders[0]
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        return None
 
 
-def find_path(path):
-    # get first directory in the path
-    dir = next(os.walk(path))[1][0]
-    return os.path.join(path, dir)
+@validate_arguments
+def find_file_by_ext(
+    path: Union[DirectoryPath, FilePath], ext=[".json", ".csv"]
+) -> Optional[Path]:
+    if isinstance(path, FilePath):
+        return path
+    exts = ext if isinstance(ext, list) else [ext]
+    if path.is_file():
+        if path.suffix in exts:
+            return path
+        else:
+            return None
+    if not path.is_dir():
+        logging.error(f"Error: {path} is not a valid directory or file path")
+        return None
+    try:
+        target_files = list(filter(lambda f: f.suffix in exts, path.rglob("*")))
+        return is_unitary(path, ext, target_files)
+    except ValueError as e:
+        logging.error(f"Error: {e}")
+        return None
+
+
+@validate_arguments
+def is_unitary(path: DirectoryPath, ext, target_files):
+    if len(target_files) == 0:
+        return None
+    # elif len(target_files) > 1:
+    #     logging.error(f"Error: Multiple files found in {path} with extensions {ext}:")
+    #     for file_path in target_files:
+    #         print(f"- {file_path}")
+    #     return None
+    else:
+        return target_files[0]

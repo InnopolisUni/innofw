@@ -1,13 +1,10 @@
 # standard libraries
 from enum import Enum
 from pathlib import Path
-from typing import Optional
-from typing import TypeVar
-
-from pydantic import BaseModel
-from pydantic import SecretStr
+from typing import TypeVar, Optional
 
 # third-party libraries
+from pydantic import BaseModel, SecretStr
 
 
 class Stages(Enum):
@@ -21,8 +18,8 @@ class Frameworks(Enum):
     sklearn = "sklearn"
     xgboost = "xgboost"
     catboost = "catboost"
+    ultralytics = "ultralytics"
     none = "none"
-
 
 PathLike = TypeVar(
     "PathLike", str, Path
@@ -91,15 +88,14 @@ UserWOKeys = S3Credentials(
 
 DEFAULT_STORAGE_URL: str = "https://api.blackhole.ai.innopolis.university:443"
 
-
 # === semantic segmentation ===
 # constants
 class SegDataKeys(Enum):
-    image = "image"
-    label = "label"
-    filename = "name"
-    coords = "coords"
-    metadata = "metadata"
+    image = 'image'
+    label = 'label'
+    filename = 'name'
+    coords = 'coords'
+    metadata = 'metadata'
 
 
 class SegOutKeys(Enum):  # todo: use it somehow

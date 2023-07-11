@@ -1,0 +1,34 @@
+task:
+  - image-detection
+
+name: detection_insects
+description: Набор данных содержит фотографии членистоногих, включая насекомых, пауков, ракообразных, многоножек, многоножек и т.д.
+
+markup_info: Набор данных содержит разметку bounding box легких и патологий.
+date_time: 21.05.2023
+
+_target_: innofw.core.datamodules.lightning_datamodules.detection.UltralyticsDataModule
+
+train:
+  source: ./data/dataK/train/
+
+test:
+  source: ./data/dataK/test/
+
+infer:
+  source: ./data/dataK/test/
+  
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 640
+num_classes: 7
+names:
+  - 'Hymenoptera'
+  - 'Hemiptera'
+  - 'Lepidoptera'
+  - 'Coleoptera'
+  - 'Diptera'
+  - 'Araneae'
+  - 'Odonata'

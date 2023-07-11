@@ -75,9 +75,7 @@ def download_archive(
     new_dst_path = Path(dst_path)  # / URL(file_url).parts[-1]
     new_dst_path.mkdir(exist_ok=True, parents=True)
     url = URL(file_url).anchor
-    downloaded_file = S3Handler(url, credentials).download_file(
-        file_url, dst_path
-    )
+    downloaded_file = S3Handler(url, credentials).download_file(file_url, dst_path)
     # uncompress the file
     LOGGER.warning("might be doing redundant decompression")
     patoolib.extract_archive(

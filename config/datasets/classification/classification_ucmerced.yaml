@@ -1,0 +1,21 @@
+task:
+  - image-classification
+
+name: ucmerced
+description: "Dataset for satellite imagery classification
+Citation: Yi Yang and Shawn Newsam, 'Bag-Of-Visual-Words and Spatial Extensions for Land-Use Classification,' ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (ACM GIS), 2010."
+
+markup_info: Dataset contains 21 class of images
+date_time: 19.04.2023
+
+_target_: innofw.core.datamodules.lightning_datamodules.image_folder_dm.ImageLightningDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/UCMerced/train.zip
+  target: ./data/UCMerced/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/UCMerced/test.zip
+  target: ./data/UCMerced/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/UCMerced/test.zip
+  target: ./data/UCMerced/infer

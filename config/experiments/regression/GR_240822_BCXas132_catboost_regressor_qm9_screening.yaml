@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: qm9
+  - override /callbacks: regression
+
+
+project: "qm9"
+task: "qsar-regression"
+random_seed: 42
+
+datasets:
+  target_value: 0.35
+  delta_precision: 0.05

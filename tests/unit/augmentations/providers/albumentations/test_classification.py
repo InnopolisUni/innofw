@@ -25,11 +25,10 @@ def test_stages():
     cfg = read_cfg(
         overrides=[
             "augmentations_train=linear-roads-bin-seg",
-            "experiments=KA_130722_9f7134db_linear_regression",
+            "experiments=regression/KA_130722_9f7134db_linear_regression",
         ]
     )
-    aug = get_augmentations(cfg["augmentations_train"])
-
+    aug = get_augmentations(cfg["augmentations_train"]["augmentations"])
     img = np.random.randint(0, 255, (3, 64, 64))
 
     aug_img = Augmentation(aug)(img)
@@ -38,6 +37,4 @@ def test_stages():
     mask = np.random.randint(0, 2, (3, 64, 64))
     aug_img, aug_mask = Augmentation(aug)(img, mask)
     assert aug_img.min() >= 0 and aug_img.max() <= 1
-    assert all(
-        np.unique(aug_mask) == np.unique(mask)
-    )  # should not be any division
+    assert all(np.unique(aug_mask) == np.unique(mask))  # should not be any division

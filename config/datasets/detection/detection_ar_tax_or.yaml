@@ -1,0 +1,35 @@
+task:
+  - image-detection
+
+name: detection_ar_tax_or
+description: Dataset for image detection
+
+markup_info: Dataset for image detection
+date_time: 19.04.2023
+
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/train.zip
+  target: ./data/ArTaxOr/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/test.zip
+  target: ./data/ArTaxOr/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/artaxor/test.zip
+  target: ./data/ArTaxOr/infer
+
+
+num_workers: 48
+image_size: 640
+channels_num: 3
+num_classes: 7
+names:
+  0: Hymenoptera
+  1: Hemiptera
+  2: Lepidoptera
+  3: Coleoptera
+  4: Diptera
+  5: Araneae
+  6: Odonata

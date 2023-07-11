@@ -1,0 +1,12 @@
+defaults:
+    - /augmentations/preprocessing:
+        - invert_img
+    - /augmentations/combined:
+        - none
+    - /augmentations/position:
+        - flip
+        - rotate
+    - /augmentations/color:
+        - none
+    - /augmentations/postprocessing:
+        - to_tensor

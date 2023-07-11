@@ -27,6 +27,9 @@ from innofw.core.models.torch.lightning_modules.detection import (
     DetectionLightningModule,
 )
 from innofw.core.models.torch.lightning_modules.segmentation import (
+    MulticlassSemanticSegmentationLightningModule,
+)
+from innofw.core.models.torch.lightning_modules.segmentation import (
     SemanticSegmentationLightningModule,
 )
 from innofw.utils.find_model import find_suitable_model
@@ -54,6 +57,20 @@ def get_default(obj_name: str, framework: str, task: str):
         "torch": {
             "image-segmentation": {
                 "lightning_module": SemanticSegmentationLightningModule,
+                "losses": [("CrossEntropy", 1, torch.nn.CrossEntropyLoss())],
+                "optimizers_cfg": OmegaConf.create(
+                    {"_target_": "torch.optim.Adam", "lr": 3e-4}
+                ),
+                "callbacks": [],
+                "trainer_cfg": OmegaConf.create(
+                    {
+                        "_target_": "pytorch_lightning.Trainer",
+                        "max_epochs": 100,
+                    }
+                ),
+            },
+            "multiclass-image-segmentation": {
+                "lightning_module": MulticlassSemanticSegmentationLightningModule,
                 "losses": [("CrossEntropy", 1, torch.nn.CrossEntropyLoss())],
                 "optimizers_cfg": OmegaConf.create(
                     {"_target_": "torch.optim.Adam", "lr": 3e-4}

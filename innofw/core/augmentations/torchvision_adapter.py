@@ -30,9 +30,9 @@ class TorchvisionAdapter(BaseAugmentationAdapter):
 
     @staticmethod
     def is_suitable_input(transforms) -> bool:
-        return isinstance(
-            transforms, torchvision.transforms.Compose
-        ) or isinstance(transforms, nn.Module)
+        return isinstance(transforms, torchvision.transforms.Compose) or isinstance(
+            transforms, nn.Module
+        )
 
     def forward(self, x):
         return self.transforms(np.array(x))

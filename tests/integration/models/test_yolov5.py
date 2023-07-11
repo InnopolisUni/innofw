@@ -5,7 +5,7 @@ import pytest
 
 from innofw import InnoModel
 from innofw.constants import Frameworks
-from innofw.core.integrations import YOLOv5
+from ultralytics import YOLO
 from innofw.utils.framework import get_datamodule
 from innofw.utils.framework import get_model
 from tests.fixtures.config.datasets import lep_datamodule_cfg_w_target
@@ -41,7 +41,7 @@ model_cfg_w_missing_target["_target_"] = None
 def test_model_instantiation(cfg):
     model = get_model(cfg, base_trainer_on_cpu_cfg)
 
-    assert isinstance(model, YOLOv5)
+    assert isinstance(model, YOLO)
 
 
 # def test_model_instantiation_wrong_data
@@ -53,7 +53,7 @@ def test_model_instantiation(cfg):
 )
 def test_datamodule_instantiation(cfg):
     task = "image-detection"
-    framework = Frameworks.torch
+    framework = Frameworks.ultralytics
     datamodule = get_datamodule(cfg, framework, task=task)
 
 
@@ -70,7 +70,7 @@ def test_model_predicting(model_cfg, dm_cfg):
     ckpt_path = str(get_test_folder_path() / "weights/detection_lep/best.pt")
     model = get_model(model_cfg, base_trainer_on_cpu_cfg)
     task = "image-detection"
-    framework = Frameworks.torch
+    framework = Frameworks.ultralytics
     datamodule = get_datamodule(dm_cfg, framework, task=task)
 
     wrapped_model = InnoModel(
