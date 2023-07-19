@@ -11,6 +11,12 @@ defaults:
   - override /datasets: semantic-segmentation/stroke_dataset.yaml
   - override /losses: semantic-segmentation/focal_tversky_loss.yaml
   - override /loggers: wandb  # <-- add this line to use wandb logger
+
+wandb:  # <-- necessary to add these values
+ enable: True
+ project: temp_name
+ entity: wandb_username
+ job_type: training
 ```
 
 ## Sweep
