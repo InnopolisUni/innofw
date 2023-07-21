@@ -42,6 +42,8 @@ class SegmentationDM(BaseLightningDataModule):
         train,
         test,
         infer=None,
+        img_foldername: str = "images",
+        label_foldername: str = "masks",
         augmentations=None,
         weights_csv_path: Optional[FilePath] = None,
         filtered_files_csv_path: Optional[FilePath] = None,
@@ -102,6 +104,9 @@ class SegmentationDM(BaseLightningDataModule):
         self.random_seed = 42
         self.with_caching = with_caching
 
+        self.img_foldername = img_foldername
+        self.label_foldername = label_foldername
+
     def save_preds(self):
         pass
 
@@ -132,8 +137,8 @@ class SegmentationDM(BaseLightningDataModule):
     # todo: add datamodule checkpointing
 
     def setup_train_test_val(self, **kwargs):
-        self.img_path = self.train_source / "images"
-        self.label_path = self.train_source / "masks"
+        self.img_path = self.train_source / self.img_foldername  # images
+        self.label_path = self.train_source / self.label_foldername  # masks
         # self.img_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(self.train_dataset)
         # self.label_path = [Path(p) for p in self.train_dataset] if isinstance(self.train_dataset, ListConfig) else self.train_dataset  # Path(label_path)
 
