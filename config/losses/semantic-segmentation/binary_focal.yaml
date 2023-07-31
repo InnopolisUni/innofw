@@ -1,0 +1,15 @@
+name: Segmentation
+description: BinaryFocal losses
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    JaccardLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.BinaryFocalLoss
+        alpha:
+        gamma: 2.0
+        reduction: mean
+        # activation:

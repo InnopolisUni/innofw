@@ -1,0 +1,11 @@
+name: Segmentation
+description: Binary Lovasz Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    BinaryLovaszLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.BinaryLovaszLoss

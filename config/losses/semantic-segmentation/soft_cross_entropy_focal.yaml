@@ -1,0 +1,13 @@
+name: Segmentation
+description: Soft Cross Entropy loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    SoftCrossEntropyLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.SoftCrossEntropyLoss
+        reduction: mean
+        smooth_factor: 0.1

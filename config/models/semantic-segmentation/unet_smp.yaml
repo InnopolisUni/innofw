@@ -1,8 +1,8 @@
 _target_: segmentation_models_pytorch.Unet 
-description: Base Unet segmentation model with 4 channels input
+description: Base Unet segmentation model with 3 channels input
 name: Unet
-in_channels: 4
+in_channels: 3
 classes: 1
-encoder_name: resnext50_32x4d
-encoder_weights: imagenet
+encoder_name: resnet34
+encoder_weights:
 #activation: sigmoid
