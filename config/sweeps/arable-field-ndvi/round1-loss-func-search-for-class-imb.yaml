@@ -1,0 +1,48 @@
+# wandb sweep config
+program: train.py
+method: bayes
+metric:
+  name: val_BinaryJaccardIndex  # val_loss
+  goal: maximize  # minimize
+
+name: step1-find-better-loss-func
+project: arable-field-bin-seg-ndvi
+
+parameters:
+  experiments:
+    value: "semantic-segmentation/arable-bin-seg-ndvi/fields/baseline.yaml"
+
+  models:
+    value: "semantic-segmentation/unet_smp"
+
+  models.encoder_name:
+    value: "dpn98"
+
+  # large number of losses including different weight combinations
+  losses:
+    values: [
+             'semantic-segmentation/focal_tversky_loss.yaml',
+             'semantic-segmentation/dice_w_smooth.yaml',
+             'semantic-segmentation/dice_w_smooth_0_2.yaml',
+             'semantic-segmentation/dice_w_smooth_0_0_5.yaml',
+             'semantic-segmentation/dice.yaml',
+             'semantic-segmentation/jaccard.yaml',
+             'semantic-segmentation/soft_bce_with_logits.yaml',
+             ]
+
+  optimizers.lr:
+    values: [
+      3e-2,
+      3e-3,
+      3e-4,
+      3e-5,
+    ]
+
+  epochs:
+    values: [50]
+
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}

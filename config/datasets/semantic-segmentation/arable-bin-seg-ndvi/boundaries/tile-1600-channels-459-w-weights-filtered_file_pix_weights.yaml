@@ -1,0 +1,23 @@
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM
+# ${.root}
+train:
+  source: /mnt/nvmestorage/qb/data_n_weights/arable-borders-bin-seg-ndvi/200723/processed/1600/train/
+
+test:
+  source: /mnt/nvmestorage/qb/data_n_weights/arable-borders-bin-seg-ndvi/200723/processed/1600/train/
+
+weights_csv_path: /mnt/nvmestorage/qb/data_n_weights/arable-borders-bin-seg-ndvi/200723/processed/1600/train/arable_weights_filtered_tile_1600_file_plus_pix_weights.csv
+
+img_foldername: img_469
+label_foldername: boundary
+
+num_workers: 32
+batch_size: 16
+channels: 3
+
+
+name: something
+task: image-segmentation
+description: some
+markup_info: some
+date_time: some

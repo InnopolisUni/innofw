@@ -210,11 +210,11 @@ class SegmentationDM(BaseLightningDataModule):
         img_path = self.test_source / "images"
         label_path = self.test_source / "masks"
 
-        if self.weights is None:
-            images = get_samples(img_path)
-            masks = get_samples(label_path)
-        else:
-            raise NotImplementedError()
+        # if self.weights is None:
+        images = get_samples(img_path)
+        masks = get_samples(label_path)
+        # else:
+        #     raise NotImplementedError()
 
         # create datasets
         self.test_ds = SegmentationDataset(

@@ -1,0 +1,53 @@
+# wandb sweep config
+program: train.py
+method: bayes
+metric:
+  name: val_BinaryJaccardIndex  # val_loss
+  goal: maximize  # minimize
+
+name: step1-find-better-loss-func
+project: arable-bound-bin-seg-ndvi
+
+parameters:
+  experiments:
+    value: "semantic-segmentation/arable-bin-seg-ndvi/boundaries/baseline.yaml"
+
+  models:
+    value: "semantic-segmentation/unet_smp"
+
+  # large number of losses including different weight combinations
+  losses:
+    values: [
+             'semantic-segmentation/balanced_bce.yaml',
+             'semantic-segmentation/binary_focal.yaml',
+             'semantic-segmentation/binary_lovasz.yaml',
+             'semantic-segmentation/binary_soft_f1.yaml',
+             'semantic-segmentation/cross_entropy_focal.yaml',
+             'semantic-segmentation/dice_w_smooth.yaml',
+             'semantic-segmentation/dice.yaml',
+             'semantic-segmentation/focal_tversky_loss.yaml',
+             'semantic-segmentation/jaccard.yaml',
+             'semantic-segmentation/log_cosh.yaml',
+             'semantic-segmentation/wing.yaml',
+             'semantic-segmentation/soft_bce_with_logits.yaml',
+            #  'semantic-segmentation/focal_cosine.yaml',  # not enough gpu memory -> reduce batch size
+            #  'semantic-segmentation/triple_loss_old_pipe.yaml',  # error dims
+            #  'semantic-segmentation/soft_cross_entropy_focal.yaml',  # error
+             ]
+
+  optimizers.lr:
+    values: [
+      3e-2,
+      3e-3,
+      3e-4,
+      3e-5,
+    ]
+
+  epochs:
+    values: [30]
+
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}

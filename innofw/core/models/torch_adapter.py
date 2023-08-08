@@ -3,7 +3,7 @@ import logging.config
 import hydra.utils
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from .base import BaseModelAdapter
@@ -81,9 +81,7 @@ class TorchAdapter(BaseModelAdapter):
         self.metrics = callbacks or []
         self.callbacks = []
 
-        self.set_checkpoint_save(
-            weights_path, weights_freq, project, experiment
-        )
+        self.set_checkpoint_save(weights_path, weights_freq, project, experiment)
         if stop_param:
             self.set_stop_params(stop_param)
         self.ckpt_path = None
@@ -152,9 +150,7 @@ class TorchAdapter(BaseModelAdapter):
 
     def predict(self, datamodule, ckpt_path=None):
         if ckpt_path is not None:
-            self.pl_module = self.ckpt_handler.load_model(
-                self.pl_module, ckpt_path
-            )
+            self.pl_module = self.ckpt_handler.load_model(self.pl_module, ckpt_path)
             result = self._predict(datamodule)
             return datamodule.save_preds(
                 result, stage=Stages.predict, dst_path=self.log_dir
@@ -174,22 +170,24 @@ class TorchAdapter(BaseModelAdapter):
 
     def set_stop_params(self, stop_param):
         self.callbacks.append(
-            EarlyStopping(monitor="val_loss", patience=stop_param)
+            EarlyStopping(monitor="val_loss", patience=15, mode="min", min_delta=0.1),
+            LearningRateMonitor(
+                logging_interval="epoch",
+            ),
         )
 
-    def set_checkpoint_save(
-        self, weights_path, weights_freq, project, experiment
-    ):
+    def set_checkpoint_save(self, weights_path, weights_freq, project, experiment):
         if weights_path:
             self.callbacks.append(
                 ModelCheckpointWithLogging(
                     dirpath=weights_path,
-                    filename=f"{project}_{experiment}" + "_{epoch}",
+                    filename=f"{project}_{experiment}"
+                    + "_{val_BinaryF1Score:.2f}_{epoch}",
                     every_n_epochs=weights_freq,
-                    save_top_k=1,  # -1
-                    # todo: add monitor
-                    # mode="max",
-                    # monitor="val_loss",
+                    save_top_k=1,
+                    save_last=True,
+                    mode="min",
+                    monitor="val_loss",
                 )
             )
         else:
@@ -202,12 +200,14 @@ class TorchAdapter(BaseModelAdapter):
             self.callbacks.append(
                 ModelCheckpointWithLogging(
                     dirpath=log_dir,
-                    filename=f"model",
+                    filename=f"{project}_{experiment}"
+                    + "_{val_BinaryF1Score:.2f}_{epoch}",
+                    # filename=f"model",
                     every_n_epochs=weights_freq,
-                    save_top_k=1,  # -1
-                    # todo: add monitor
-                    # mode="max",
-                    # monitor="val_loss",
+                    save_top_k=1,
+                    save_last=True,
+                    mode="min",
+                    monitor="val_loss",
                 )
             )
 
@@ -221,4 +221,3 @@ class TorchAdapter(BaseModelAdapter):
     #     mode="max",
     #     every_n_epochs=5,
     # )
-    
