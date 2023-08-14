@@ -1,0 +1,4 @@
+name: catboost classifier
+description: CatBoost classification model
+_target_: catboost.CatBoostClassifier
+verbose: 100

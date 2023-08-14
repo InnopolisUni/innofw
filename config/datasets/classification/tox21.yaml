@@ -1,0 +1,35 @@
+task:
+  - table-regression
+
+name: tox21
+description: "Link: https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data"
+
+markup_info: Информация о разметке
+date_time: 18.08.2014
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+###### Case: remote data #####
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tox21/train.zip
+  target: ./data/tox21/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tox21/test.zip
+  target: ./data/tox21/test
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tox21/test.zip
+  target: ./data/tox21/test
+
+##############################
+###### Case: local data ######
+#train:
+#  source: /local/path/train.csv
+#test:
+#  source: /local/path/test.csv
+##############################
+
+
+# Available targets
+#target_col: [NR-AR,	NR-AR-LBD,	NR-AhR,	NR-Aromatase,	NR-ER,	NR-ER-LBD,	NR-PPAR-gamma,	SR-ARE,	SR-ATAD5,	SR-HSE,	SR-MMP,	SR-p53]
+smiles_col: smiles
+val_size: 0.2

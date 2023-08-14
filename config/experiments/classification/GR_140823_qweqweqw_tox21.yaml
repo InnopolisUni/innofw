@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - override /models: classification/catboost_classification
+  - override /datasets: classification/tox21
+  - override /callbacks: classification
+
+
+project: "qm9"
+task: "qsar-regression"
+random_seed: 42
+
+datasets:
+  # Available targets
+  #[NR-AR,	NR-AR-LBD,	NR-AhR,	NR-Aromatase,	NR-ER,	NR-ER-LBD,	NR-PPAR-gamma,	SR-ARE,	SR-ATAD5,	SR-HSE,	SR-MMP,	SR-p53]
+  target_col: NR-AR
