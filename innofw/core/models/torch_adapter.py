@@ -169,11 +169,12 @@ class TorchAdapter(BaseModelAdapter):
         return outputs  # [0]["metrics"]
 
     def set_stop_params(self, stop_param):
-        self.callbacks.append(
-            EarlyStopping(monitor="val_loss", patience=15, mode="min", min_delta=0.1),
+        self.callbacks.extend(
+            [
+            EarlyStopping(monitor="val_loss", patience=stop_param, mode="min", min_delta=0.1),
             LearningRateMonitor(
                 logging_interval="epoch",
-            ),
+            ),]
         )
 
     def set_checkpoint_save(self, weights_path, weights_freq, project, experiment):
