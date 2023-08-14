@@ -37,7 +37,9 @@ class ADAM(Optimizer):
     def __init__(self, *args, **kwargs):
         super().__init__(optimizer=None)
         self.optim = Adam(*args, **kwargs)
-
+        self.defaults = {
+            "betas": (0.9, 0.999)
+        }
 
 class LION(Optimizer):  # [1]
     """
