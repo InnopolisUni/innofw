@@ -1,0 +1,18 @@
+task:
+  - table-regression
+
+name: pipes
+description: Sibur pipes 
+
+markup_info: Информация о разметке
+date_time: 31.08.2020
+
+_target_: innofw.core.datamodules.pandas_datamodules.PandasDataModule
+
+train:
+ source: ./data/pipes/train/train.csv
+test:
+ source: ./data/pipes/test/test.csv
+
+
+target_col: result
