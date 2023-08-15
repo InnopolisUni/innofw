@@ -86,8 +86,12 @@ class QsarDataModule(BasePandasDataModule):
             train_csv = pd.read_csv(self.train_dataset)
             test_csv = pd.read_csv(self.test_dataset)
 
-        train_csv.dropna(subset=[self.target_col], inplace=True)
-        test_csv.dropna(subset=[self.target_col], inplace=True)
+        train_csv.dropna(
+            subset=[self.smiles_col, self.target_col], inplace=True, how="any"
+        )
+        test_csv.dropna(
+            subset=[self.smiles_col, self.target_col], inplace=True, how="any"
+        )
 
         train_smiles, train_target = (
             train_csv[self.smiles_col].values,
