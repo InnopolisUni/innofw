@@ -1,0 +1,20 @@
+task:
+  - qsar-regression
+
+name: mcl1_pic50
+description: Preprocessed MCL1 dataset
+
+markup_info: Markap info
+date_time: 15.08.23
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+
+train:
+  source: ./data/mcl1_pic50/train
+test:
+  source: ./data/mcl1_pic50/test
+infer:
+  source: ./data/mcl1_pic50/infer
+smiles_col: Clean Smiles
+target_col: pIC50
+val_size: 0.2
