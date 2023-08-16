@@ -67,6 +67,7 @@ class CatBoostAdapter(BaseModelAdapter):
         data = datamodule.train_dataloader()
 
         x, y = data["x"], data["y"]
+        print(y.shape)
         cat_features = x.select_dtypes(include=["object"]).columns.tolist()
         train_pool = Pool(x, y, cat_features=cat_features)
         self.model.fit(train_pool)
@@ -80,7 +81,7 @@ class CatBoostAdapter(BaseModelAdapter):
         test_pool = Pool(x, y, cat_features=cat_features)
         results = {}
         y_pred = self.model.predict(test_pool)
-        if y_pred.ndim == 2:
+        if self.model._init_params["loss_function"] == "RMSEWithUncertainty":
             y_pred = y_pred[:, 0]
 
         for metric in self.metrics:

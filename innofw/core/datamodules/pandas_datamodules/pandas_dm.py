@@ -2,6 +2,8 @@
 import logging
 from pathlib import Path
 from typing import Optional
+from typing import Sequence
+from typing import Union
 
 import pandas as pd
 
@@ -70,14 +72,18 @@ class PandasDataModule(BasePandasDataModule):
             raise FileNotFoundError(f"Could not read csv file: {err}")
 
     @staticmethod
-    def _get_x_n_y(dataset: pd.DataFrame, target_col: str):
-        dataset.dropna(subset=[target_col], inplace=True)
+    def _get_x_n_y(
+        dataset: pd.DataFrame, target_col: Union[str, Sequence[str]]
+    ):
+        if not isinstance(target_col, Sequence):
+            target_col = [target_col]
+        dataset.dropna(subset=target_col, inplace=True)
         result = {}
         if target_col is None:
             result["x"] = dataset
             result["y"] = None
         else:
-            result["x"] = dataset.loc[:, dataset.columns != target_col]
+            result["x"] = dataset.drop(columns=target_col)
             result["y"] = dataset[target_col]
         return result
 
