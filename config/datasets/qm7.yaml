@@ -1,0 +1,20 @@
+task:
+  - qsar-regression
+
+name: qm7
+description: "Link: http://quantum-machine.org/datasets/"
+
+markup_info: Информация о разметке
+date_time: 01.01.2012
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/qm7/train.zip
+  target: ./data/qm7/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/qm7/test.zip
+  target: ./data/qm7/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/qm7/test.zip
+  target: ./data/qm7/infer
