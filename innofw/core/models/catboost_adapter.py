@@ -2,6 +2,7 @@
 import importlib
 import logging
 
+import numpy as np
 from catboost import CatBoost
 from catboost import Pool
 from torch.utils.tensorboard import SummaryWriter
@@ -87,8 +88,13 @@ class CatBoostAdapter(BaseModelAdapter):
         for metric in self.metrics:
             score = metric["func"](y_pred, y, **metric["args"])
 
-            # name = get_func_name(metric)
-            results[metric["func"].__name__] = score
+            if isinstance(score, np.ndarray):
+                for i in range(len(score)):
+                    results[
+                        f'{metric["func"].__name__}__{y.columns[i]}'
+                    ] = score[i]
+            else:
+                results[metric["func"].__name__] = score
         self.log_results(results)
         return results
 
