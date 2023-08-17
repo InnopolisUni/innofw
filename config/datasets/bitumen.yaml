@@ -16,4 +16,10 @@ test:
  source: ./data/bitumen/test/test.csv
 
 val_size: 0.2
-target_col: [bitumen_oxidation__tar_consumption,bitumen_oxidation__oxidation_temperature,bitumen_oxidation__air_consumption,bitumen_oxidation__oxidation_time]
+target_col: 
+  - "Время окисления, ч"
+  - "Расход воздуха, мл/сек"
+  - "Минимальная температура окисления, °С"
+  - "Максимальная температура окисления, °С"
+  - "Количество гудрона, л"
+  - "Температура воздуха, °С"
