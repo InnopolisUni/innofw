@@ -77,7 +77,8 @@ class PandasDataModule(BasePandasDataModule):
     ):
         if not isinstance(target_col, Sequence):
             target_col = [target_col]
-        dataset.dropna(subset=target_col, inplace=True)
+        if len(target_col) == 1:
+            dataset.dropna(subset=target_col, inplace=True)
         result = {}
         if target_col is None:
             result["x"] = dataset

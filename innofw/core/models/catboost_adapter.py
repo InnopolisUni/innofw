@@ -2,7 +2,6 @@
 import importlib
 import logging
 
-import numpy as np
 from catboost import CatBoost
 from catboost import Pool
 from torch.utils.tensorboard import SummaryWriter
@@ -68,7 +67,6 @@ class CatBoostAdapter(BaseModelAdapter):
         data = datamodule.train_dataloader()
 
         x, y = data["x"], data["y"]
-        print(y.shape)
         cat_features = x.select_dtypes(include=["object"]).columns.tolist()
         train_pool = Pool(x, y, cat_features=cat_features)
         self.model.fit(train_pool)
@@ -86,15 +84,13 @@ class CatBoostAdapter(BaseModelAdapter):
             y_pred = y_pred[:, 0]
 
         for metric in self.metrics:
-            score = metric["func"](y_pred, y, **metric["args"])
+            for i, column in enumerate(y.columns):
+                y_true = y[column].dropna()
+                score = metric["func"](
+                    y_true, y_pred[y_true.index, i], **metric["args"]
+                )
 
-            if isinstance(score, np.ndarray):
-                for i in range(len(score)):
-                    results[
-                        f'{metric["func"].__name__}__{y.columns[i]}'
-                    ] = score[i]
-            else:
-                results[metric["func"].__name__] = score
+                results[f'{metric["func"].__name__}__{column}'] = score
         self.log_results(results)
         return results
 
