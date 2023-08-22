@@ -1,11 +1,11 @@
 import logging
 from pathlib import Path
-from pickle import dump
-from pickle import load
 from typing import Optional
 from typing import Union
 
 import sklearn
+from joblib import dump
+from joblib import load
 
 from innofw.constants import CheckpointFieldKeys
 from innofw.utils import get_abs_path
@@ -75,8 +75,7 @@ class PickleCheckpointHandler(CheckpointHandler):
                 CheckpointFieldKeys.metadata: metadata,
             }
 
-        with open(dst_path, "wb+") as f:
-            dump(data, f)
+        dump(data, dst_path)
 
         logging.info(f"Saved a checkpoint at: {dst_path}")
 
@@ -91,5 +90,4 @@ class PickleCheckpointHandler(CheckpointHandler):
         """
         if not ckpt_path.is_absolute():
             ckpt_path = get_abs_path(ckpt_path)
-        with open(ckpt_path, "rb") as f:
-            return load(f)  # ModelCheckpoint(**load(f))
+        return load(ckpt_path)  # ModelCheckpoint(**load(f))
