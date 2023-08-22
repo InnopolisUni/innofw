@@ -1,5 +1,5 @@
 task:
-  - table-regression
+  - qsar-classification
 
 name: tox21
 description: "Link: https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data"
