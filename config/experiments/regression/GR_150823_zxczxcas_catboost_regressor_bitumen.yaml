@@ -12,13 +12,3 @@ random_seed: 42
 models:
   loss_function: MultiRMSE
   allow_const_label: true
-
-callbacks:
-  implementations:
-    catboost:
-      mae:
-        multioutput: raw_values
-      mse:
-        multioutput: raw_values
-      r2:
-        multioutput: raw_values
