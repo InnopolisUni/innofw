@@ -75,10 +75,11 @@ class PandasDataModule(BasePandasDataModule):
     def _get_x_n_y(
         dataset: pd.DataFrame, target_col: Union[str, Sequence[str]]
     ):
-        if not isinstance(target_col, Sequence):
+        if isinstance(target_col, str):
             target_col = [target_col]
         if len(target_col) == 1:
             dataset.dropna(subset=target_col, inplace=True)
+            dataset.reset_index(inplace=True)
         result = {}
         if target_col is None:
             result["x"] = dataset

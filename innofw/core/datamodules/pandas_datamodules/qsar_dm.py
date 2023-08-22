@@ -34,7 +34,7 @@ class QsarDataModule(BasePandasDataModule):
         The SmilesDataset class is used to create a PyTorch dataset object for each of these sets.
     """
 
-    task = ["qsar-classification", "qsar-regression"]
+    task = ["qsar-classification", "qsar-regression", "qsar-classification"]
     framework = [Frameworks.sklearn, Frameworks.xgboost, Frameworks.catboost]
     train_smiles_dataset: SmilesDataset = None
     test_smiles_dataset: SmilesDataset = None

@@ -50,61 +50,63 @@ class SmilesDataset(Dataset):
         self.y = np.array(property_list)
         self.property_name = property_name
 
-        self._convert_smiles()
-
-        self.generate_descriptors(
-            [AllChem.GetMorganFingerprintAsBitVect, MACCSkeys.GenMACCSKeys]
+        X, y = self.calculate_descriptors(
+            [AllChem.GetMorganFingerprintAsBitVect, MACCSkeys.GenMACCSKeys],
+            smiles,
+            property_list,
         )
+        self.X = X
+        self.y = pd.DataFrame({property_name: y})
 
-    def _convert_smiles(self):
-        self.mols = []
-        self.smiles_cleaned = []
-        self.y_cleaned = []
+    @staticmethod
+    def _convert_smiles(smiles: Sequence[str], y: Sequence) -> tuple:
+        mols = []
+        y_cleaned = []
 
         for mol, property_, smiles in tqdm(
-            zip(self.smiles, self.y, self.smiles),
-            desc="Cleaning salts...",
-            total=len(self.smiles),
+            zip(smiles, y, smiles),
+            desc="Cleaning salts for SMILES...",
+            total=len(smiles),
         ):
             mol_cleaned = clean_salts(mol)
             if mol_cleaned is not None:
-                self.mols.append(mol_cleaned)
-                self.y_cleaned.append(property_)
-                self.smiles_cleaned.append(smiles)
+                mols.append(mol_cleaned)
+                y_cleaned.append(property_)
 
-        self.y = np.array(self.y_cleaned)
-        self.smiles = self.smiles_cleaned
+        return mols, y_cleaned
 
-    def __getitem__(self, idx):
-        return self.X[idx], self.y[idx]
+    def calculate_descriptors(
+        self, featurizers: List, smiles: Sequence[str], y: Sequence
+    ) -> tuple:
+        mols, y_cleaned = self._convert_smiles(smiles, y)
 
-    def __len__(self):
-        return len(self.y)
-
-    def generate_descriptors(self, featurizers):
-        self.smiles_features = {}
-        self.featurizer_names = []
+        smiles_features = {}
 
         for featurizer in tqdm(featurizers, desc="Calculating descriptors..."):
             if featurizer == AllChem.GetMorganFingerprintAsBitVect:
-                self.smiles_features[featurizer.__name__] = np.vstack(
-                    [featurizer(mol, 2) for mol in self.mols]
+                smiles_features[featurizer.__name__] = np.vstack(
+                    [featurizer(mol, 2) for mol in mols]
                 )
             else:
-                self.smiles_features[featurizer.__name__] = np.vstack(
-                    [featurizer(mol) for mol in self.mols]
+                smiles_features[featurizer.__name__] = np.vstack(
+                    [featurizer(mol) for mol in mols]
                 )
-            self.featurizer_names.append(featurizer.__name__)
 
-        self.init_features(self.featurizer_names)
+        X = np.concatenate(
+            [
+                smiles_features[featurizer.__name__]
+                for featurizer in featurizers
+            ],
+            axis=1,
+        )
 
-    def init_features(self, features: Optional[List[str]] = None):
-        self.cur_features = features or self.cur_features
-        X = [
-            self.smiles_features[featurizer_name]
-            for featurizer_name in self.cur_features
-        ]
-        self.X = np.concatenate(X, axis=1)
+        return X, y_cleaned
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y.loc[idx]
+
+    def __len__(self):
+        return len(self.y)
 
     @classmethod
     def from_df(
