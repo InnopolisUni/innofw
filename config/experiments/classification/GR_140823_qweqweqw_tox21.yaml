@@ -5,7 +5,7 @@ defaults:
   - override /callbacks: classification
 
 
-project: "qm9"
+project: "tox21"
 task: "qsar-classification"
 random_seed: 42
 
