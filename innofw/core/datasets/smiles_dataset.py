@@ -47,7 +47,6 @@ class SmilesDataset(Dataset):
         property_name: str,
     ):
         self.smiles = smiles
-        self.y = np.array(property_list)
         self.property_name = property_name
 
         X, y = self.calculate_descriptors(
@@ -103,7 +102,7 @@ class SmilesDataset(Dataset):
         return X, y_cleaned
 
     def __getitem__(self, idx):
-        return self.X[idx], self.y.loc[idx]
+        return self.X[idx], self.y.loc[idx].item()
 
     def __len__(self):
         return len(self.y)

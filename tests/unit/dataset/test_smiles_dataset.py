@@ -29,7 +29,7 @@ def test_smiles_dataset_smoke():
     assert sut.y is not None
     assert sut.property_name == target_col
     assert isinstance(sut.X, np.ndarray)
-    assert isinstance(sut.y, np.ndarray)
+    assert isinstance(sut.y, pd.DataFrame)
     assert len(sut.X) == len(smiles)
     assert len(sut.y) == len(property_list)
 
@@ -63,7 +63,7 @@ def test_smiles_dataset_from_df():
     assert sut.y is not None
     assert sut.property_name == target_col
     assert isinstance(sut.X, np.ndarray)
-    assert isinstance(sut.y, np.ndarray)
+    assert isinstance(sut.y, pd.DataFrame)
 
     # test correct sample behavior
     sample = sut[0]
