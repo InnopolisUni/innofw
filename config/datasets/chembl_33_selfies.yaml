@@ -1,0 +1,18 @@
+task:
+  - qsar-regression
+  - text-vae-forward
+  - text-vae
+
+name: chembl_33_selfies
+description: "Link: https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_33/"
+
+markup_info: Информация о разметке
+date_time: 09.06.2023
+
+_target_: innofw.core.datamodules.lightning_datamodules.QsarSelfiesDataModule
+train:
+  source: ./data/chembl_33/train/train.csv
+test:
+  source: ./data/chembl_33/test/test.csv
+smiles_col: SMILES
+target_col: 
