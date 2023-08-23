@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - override /models: text-vae/hier_vae.py
-  - override /datasets: chembl_33_selfies
+  - override /datasets: chembl_33_smiles
   - override /losses: simple_vae
 
 
