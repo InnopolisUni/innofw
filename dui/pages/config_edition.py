@@ -32,9 +32,8 @@ def decompose(configurations, recurse=False, level=0):
                         ]),
 
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        # dbc.Col(dbc.Input(className="keyfield", value=k, type="text")),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text", list="parameters")),
-                        dbc.Col(dbc.Input(className="valuefield", value=v, type="text")),
+                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text", list="parameters"), className="keyfield_col"),
+                        dbc.Col(dbc.Input(className="valuefield", value=v, type="text"), className="valuefield_col"),
                         dbc.Col(dbc.Button(className="bi bi-pencil", outline=True, color="secondary"), width="auto") if "override /" in k else dbc.Col(width="auto"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
                     ], style={"margin-left": 100*level}, className="child")
@@ -68,7 +67,7 @@ def simplify_dict(dict):
     for k, v in dict.items():
         if type(v) is list:
             intermediate_dict = {key: value for element in v for key, value in element.items()}
-            intermediate_dict = simplify_dict(intermediate_dict) #TODO: проверить, что это точно работает
+            intermediate_dict = simplify_dict(intermediate_dict)
             new_dict[k] = intermediate_dict
         else:
             new_dict[k] = v
@@ -79,7 +78,11 @@ def layout(config_name=None):
     config_name = urllib.parse.unquote(config_name)
     exp_path = experiment_configs_path / config_name
 
-    html_components = [html.Br(), dbc.Input(id="config_name", value=config_name, type="text", style={"width": "auto"})]
+    html_components = [dbc.Row([dbc.Col([html.H4("Experiment Configurator", style={"height": 40})]),
+                                dbc.Col([html.Div(html.Img(src=dash.get_asset_url('_innofw_.svg'), style={"height": 40, "width": 60}),
+                                   className="self-align-right")]),html.Span(className="border-bottom")],style={"margin-top": 10, "margin-bottom": 10, "margin-right": 15}),
+                       html.Br(),
+                       dbc.Input(id="config_name", value=config_name, type="text", style={"width": "auto"})]
     if exp_path.exists():
         with open(exp_path, "r") as yamlfile:
             data = yaml.load(yamlfile, Loader=yaml.FullLoader)
@@ -121,20 +124,33 @@ def layout(config_name=None):
 
         dbc.Col(dbc.Button("Start Training", id="strain_btn", color="success", className="me-2", n_clicks=0)),
 
+        dbc.Row(html.Div(className="modal-content", children=[
+             dbc.ModalHeader(dbc.ModalTitle("Saving")),
+             dbc.ModalBody(f"Configuration {config_name} is saved"),
+             dbc.ModalFooter(
+                 [
+                    dbc.Button("Ok", id="confirm_save_btn", className="ms-auto", n_clicks=0)
+                 ],),
+             ]),
+            id="confirm_save_modal",
+            className="modalSavingConfirmator",
+            ),
+
+
+
+
+
+
         dbc.Modal(
-            [
-                dbc.ModalHeader(dbc.ModalTitle("Удаление")),
-                dbc.ModalBody(f"Вы уверены что хотите удалить конфигурационный файл {config_name}"),
-                dbc.ModalFooter(
+            [dbc.ModalHeader(dbc.ModalTitle("Deletion")),
+            dbc.ModalBody(f"Are you sure you want to delete {config_name}?"),
+            dbc.ModalFooter(
                     [
                         dcc.Link(dbc.Button("Delete", id="confirm_delete_btn", color="danger", className="me-1", n_clicks=0),
                                      href=f"/delete_config/{config_name}", refresh=True),
                         dbc.Button(
-                            "Cancel", id="cancel", className="ms-auto", n_clicks=0
-                        )
-                    ]
-                ),
-            ],
+                            "Cancel", id="cancel", className="ms-auto", n_clicks=0)
+                    ]),],
             id="modal",
             is_open=False),
     ]))
@@ -143,34 +159,16 @@ def layout(config_name=None):
 
     return config_edition_page_layout
 
-
-# def parse_config_from_html(config_parameters, recurse=False):
-#     config_dict = {}
-#     parent = ""
-#     for el in config_parameters:
 #
-#         if el["props"]["className"] == "uniter":
-#             # recurse
-#             d = parse_config_from_html(el["props"]["children"], recurse=True)
-#             config_dict.update(d)
-#         elif el["props"]["className"] == "parent":
-#             k = el["props"]["children"][1]["props"]["children"]["props"]["value"]
-#             v = el["props"]["children"][2]["props"]["children"]["props"]["value"] if len(el["props"]["children"])==4 else None
-#             parent = k
-#
-#             config_dict[k] = [v] if v else []
-#         elif el["props"]["className"] == "child":
-#             k = el["props"]["children"][1]["props"]["children"]["props"]["value"]
-#             v = el["props"]["children"][2]["props"]["children"]["props"]["value"]
-#             if not recurse:
-#                 config_dict[k] = v
-#             else:
-#                 assert parent is not None
-#                 child = {}
-#                 child[k] = v
-#                 config_dict[parent].append(child)
-#
-#     return config_dict
+# @app.callback(
+#     Output("confirm_save_modal", "is_open"),
+#     [Input("save_btn", "n_clicks"), Input("confirm_save_btn", "n_clicks")],
+#     State("confirm_save_modal", "is_open"),
+#     prevent_initial_call=True
+# )
+# def toggle_confirm_modal(n1, n2, is_open):
+#     if n2:
+#         return False
 
 @app.callback(
     Output("modal", "is_open"),
@@ -181,16 +179,6 @@ def layout(config_name=None):
 def toggle_modal(n1, n2, n3, is_open):
     if n1 or n3:
         return not is_open
-
-
-def reader(pipe, queue):
-    try:
-        with pipe:
-            for line in iter(pipe.readline, b''):
-                queue.put((pipe, line))
-    finally:
-        queue.put(None)
-
 
 
 @app.long_callback(

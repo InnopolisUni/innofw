@@ -9,7 +9,7 @@ function buildCreationButton(){
 
 function buildInputField(classname){
     let inputDiv = document.createElement("div");
-    inputDiv.className="col";
+    inputDiv.className= classname.replace(" form-control", "")+"_col"+" col";
     let inputField = document.createElement("input");
     inputField.className = classname;
     inputField.type = "text";
@@ -54,6 +54,7 @@ function deleteParameterRow(button){
                     if (uniter.children.length===1){
                         uniter.children[0].className = "child row";
                         uniter.replaceWith(uniter.children[0])
+                        // TODO: recover valuefield_col here
                     }
                 }
             }
@@ -144,7 +145,7 @@ function addParameterRow(button){
             saveCol.className="col-auto";
             // saveCol.style.width = "auto";
             let saveButton = document.createElement("button");
-            saveButton.className="save_btn me-1 btn btn-primary";
+            saveButton.className="modal_save_btn me-1 btn btn-primary";
             saveCol.appendChild(saveButton);
             saveButton.textContent = "Save";
             let closeCol = document.createElement("div");
@@ -182,6 +183,8 @@ function addParameterRow(button){
 
             if (button.parentNode.parentNode.className === "child row"){
                 button.parentNode.parentNode.className = "parent row"
+                let valuefield_col = button.parentNode.parentNode.getElementsByClassName("valuefield_col")[0];
+                valuefield_col.remove();
 
                 let uniterRow = document.createElement("div");
                 uniterRow.className="uniter row";
@@ -189,6 +192,7 @@ function addParameterRow(button){
 
                 uniterRow.appendChild(row);
                 let parent = button.parentNode.parentNode;
+
                 parent.replaceWith(uniterRow);
             }
 
@@ -251,8 +255,14 @@ function parseHtmlToDict(html_array){
              dict[parent] = [];
          }
          if (html_array[i].className==="child row"){
-             let k = html_array[i].getElementsByClassName("keyfield")[0].value;
-             let v = html_array[i].getElementsByClassName("valuefield")[0].value;
+             let element = html_array[i].cloneNode(true);
+             let modalWindow = element.getElementsByClassName("modalEditor");
+             if(modalWindow.length>0){
+                 modalWindow[0].remove();
+             }
+
+             let k = element.getElementsByClassName("keyfield")[0].value;
+             let v = element.getElementsByClassName("valuefield")[0].value;
 
              if (parent != null){
                  let new_dict = {};
@@ -312,7 +322,12 @@ function saveConfig(button){
    .then(response => response.json())
    .then(response => {
        console.log(JSON.stringify(response));
-       location.href = location.protocol+"//"+location.host;})
+       // location.href = location.protocol+"//"+location.host;
+       let confirmSaveModal = document.getElementById("confirm_save_modal");
+       confirmSaveModal.style.display = "block";
+       confirmSaveModal.getElementsByClassName("modal-body")[0].textContent = "Configuration " + config_name + " is saved";
+
+   })
     }
 }
 
@@ -471,8 +486,6 @@ function openModalWindowOnEditButtonClick(button){
         i++;
     }
 
-
-
     fetch(location.protocol+"//"+location.host+'/get_config?config_name=' + fileName)
     .then(res => res.json())
     .then(out => {
@@ -561,6 +574,14 @@ function set_callbacks(){
 
         let duplicate_btn = document.getElementById("duplicate_btn");
         duplicate_btn.onclick = function(){change_config_name_and_url()};
+
+        let confirm_save_btn = document.getElementById("confirm_save_btn");
+        confirm_save_btn.onclick = function (){
+            document.getElementById("confirm_save_modal").style.display = "none";
+            let modalEditors = document.getElementsByClassName("modalEditor");
+            for(let i=0; i<modalEditors.length; i++){
+                modalEditors[i].style.display = "none";
+            }};
 }
 
 

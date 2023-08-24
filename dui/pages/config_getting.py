@@ -1,22 +1,24 @@
 import os
 import dash
-from dash import html, dcc, callback, Input, Output
 from pathlib import Path
-import yaml
 import dash_bootstrap_components as dbc
-import urllib.parse
-import flask
-from flask import request, Flask, redirect
-# app = Flask(__name__)
+from flask import request, Flask
+app = Flask(__name__)
 import yaml
 import json
 
 configs_path = Path(os.path.join("..", "config"))
 flaskapp = dash.get_app().server
 
-@flaskapp.route("/get_config", methods=['GET'])
+# DO NOT DELETE THIS COMMENTED PIECE OF CODE IT IS NEEDED, BECAUSE WITHOUT IT THIS PAGE IS NOT LOADED ON START
+# AND FLASK WON'T LISTEN TO THE URL
+# dash.register_page(__name__,  path_template="/None")
+
+
+@flaskapp.route("/get_config", methods = ["GET"])
 def get_config():
-    request_body = request.args.get('config_name')+".yaml"
+    request_body = request.args.get('config_name')
+    request_body += ".yaml" if not request_body.endswith(".yaml") else ""
     exp_path = configs_path / request_body
     data = ""
     if exp_path.exists():
@@ -28,7 +30,7 @@ def get_config():
                     data = simplify_dict(data)
             except yaml.YAMLError as exc:
                 print("ERROR:", exc)
-    return json.dumps({'success':True, 'configuration_parameters': data}), 200, {'ContentType':'application/json'}
+    return json.dumps({'success': True, 'configuration_parameters': data}), 200, {'ContentType':'application/json'}
 
 
 def parse_config_from_html(config_parameters, recurse=False):

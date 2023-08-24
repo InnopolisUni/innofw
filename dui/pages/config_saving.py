@@ -1,16 +1,19 @@
 import os
 import dash
 from pathlib import Path
-import flask
-from flask import request, Flask, redirect
+from flask import request
 import yaml
 import json
 
 configs_path = Path(os.path.join("..", "config"))
 flaskapp = dash.get_app().server
 
+# DO NOT DELETE THIS COMMENTED PIECE OF CODE IT IS NEEDED, BECAUSE WITHOUT IT THIS PAGE IS NOT LOADED ON START
+# AND FLASK WON'T LISTEN TO THE URL
+# dash.register_page(__name__,  path_template="/None")
 
-@flaskapp.route("/save_config" , methods = ['GET', 'POST'])
+
+@flaskapp.route("/save_config", methods = ['GET', 'POST'])
 def layout():
     request_body = request.json
     with open(configs_path / request_body["config_name"], "w+") as stream:

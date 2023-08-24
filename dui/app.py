@@ -8,7 +8,6 @@ import diskcache
 cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheLongCallbackManager(cache)
 
-
 app = dash.Dash(__name__,
                 long_callback_manager=long_callback_manager,
                 use_pages=True,
@@ -28,7 +27,7 @@ def layout():
                                    className="self-align-right")]),
                  html.Span(className="border-bottom")],
 
-                style={"margin-top": 10, "margin-bottom": 10}),
+                style={"margin-top": 10, "margin-bottom": 10, "margin-right": 5}),
 
         dash.page_container])
     return lout

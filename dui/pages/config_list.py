@@ -35,6 +35,13 @@ def layout():
 
     config_list = dbc.Container([
 
+        dbc.Row([dbc.Col([html.H4("Experiment Configurator", style={"height": 40})]),
+                 dbc.Col([html.Div(html.Img(src=dash.get_asset_url('_innofw_.svg'), style={"height": 40, "width": 60}),
+                                   className="self-align-right")]),
+                 html.Span(className="border-bottom")],
+
+                style={"margin-top": 10, "margin-bottom": 10}),
+
 
         dbc.Row([
         html.Div(id="parent", style={"width": 300}, children=[
