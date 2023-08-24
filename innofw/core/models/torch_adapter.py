@@ -79,7 +79,11 @@ class TorchAdapter(BaseModelAdapter):
     ):
         super().__init__(model, log_dir, TorchCheckpointHandler())
         self.metrics = callbacks or []
-        self.callbacks = []
+        self.callbacks = [
+            LearningRateMonitor(
+                logging_interval="epoch",
+            ),
+        ]
 
         self.set_checkpoint_save(weights_path, weights_freq, project, experiment)
         if stop_param:
@@ -171,9 +175,6 @@ class TorchAdapter(BaseModelAdapter):
     def set_stop_params(self, stop_param):
         self.callbacks.append(
             EarlyStopping(monitor="val_loss", patience=15, mode="min", min_delta=0.1),
-            LearningRateMonitor(
-                logging_interval="epoch",
-            ),
         )
 
     def set_checkpoint_save(self, weights_path, weights_freq, project, experiment):
