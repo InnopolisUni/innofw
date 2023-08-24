@@ -57,5 +57,5 @@ class FocalLoss(_Loss):
         output = output.view(output.shape[0], -1)
         target = target.reshape(target.shape[0], -1)
         return self._get_loss_value(
-            output, target, self._get_weights(target)
+            output, target, self._get_weights(target.float())
         ).mean()
