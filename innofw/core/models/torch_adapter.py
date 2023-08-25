@@ -8,6 +8,7 @@ import torch
 from pytorch_lightning.callbacks import EarlyStopping
 from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import TensorBoardLogger
 
 # local modules
 from .base import BaseModelAdapter
@@ -81,11 +82,8 @@ class TorchAdapter(BaseModelAdapter):
     ):
         super().__init__(model, log_dir, TorchCheckpointHandler())
         self.metrics = callbacks or []
-        # self.callbacks = []
-        # if logger is not None and logger != {}:
-        #     self.callbacks.append(
-        #         LearningRateMonitor(logging_interval="epoch")
-        #     )
+        if logger is None or logger == {}:
+            logger = TensorBoardLogger(save_dir=self.log_dir)
         self.callbacks = [
             LearningRateMonitor(
                 logging_interval="epoch",
@@ -133,7 +131,6 @@ class TorchAdapter(BaseModelAdapter):
             check_val_every_n_epoch=1,
             logger=objects["logger"],
         )
-
         if callable(objects["trainer_cfg"]):
             self.trainer = objects["trainer_cfg"](
                 **vars(arguments),

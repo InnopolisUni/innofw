@@ -30,9 +30,7 @@ class BaseLightningModule(pl.LightningModule):
     def _setup_metrics(self):
         try:
             self.metrics = {
-                i["_target_"]
-                .split(".")[-1]: hydra.utils.instantiate(i)
-                .to(self.device)
+                i["_target_"].split(".")[-1]: hydra.utils.instantiate(i).to(self.device)
                 for i in self.metrics_cfg
             }
         except AttributeError:
@@ -62,24 +60,14 @@ class BaseLightningModule(pl.LightningModule):
             return [optim]
         else:
             # instantiate scheduler from configurations
-            try:
-                if isinstance(self.optimizer_cfg, DictConfig):
-                    scheduler = hydra.utils.instantiate(
-                        self.scheduler_cfg, optim
-                    )
-                else:
-                    scheduler = self.scheduler_cfg(optim)
-                if isinstance(
-                    scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau
-                ):
-                    return {
-                        "optimizer": optim,
-                        "lr_scheduler": scheduler,
-                        "monitor": self.metric_to_track,
-                    }
-                return [optim], [scheduler]
-            except Exception as e:
-                logging.warning(
-                    f"Unable to instantiate lr scheduler, running without scheduler. Error is: {e}"
-                )
-                # raise NotImplementedError()
+            if isinstance(self.optimizer_cfg, DictConfig):
+                scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
+            else:
+                scheduler = self.scheduler_cfg(optim)
+            if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                return {
+                    "optimizer": optim,
+                    "lr_scheduler": scheduler,
+                    "monitor": self.metric_to_track,
+                }
+            return [optim], [scheduler]
