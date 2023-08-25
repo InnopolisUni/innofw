@@ -195,7 +195,7 @@ qm9_datamodule_cfg_w_target = DictConfig(
 
 tiff_datamodule_cfg_w_target = DictConfig(
     {
-        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
         "train": {
             "source": str(
                 get_test_folder_path()
