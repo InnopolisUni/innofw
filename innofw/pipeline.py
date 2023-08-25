@@ -34,11 +34,11 @@ from innofw.utils import get_project_root
 
 
 def run_pipeline(
-        cfg: DictConfig,
-        train=True,
-        test=False,
-        predict=False,
-        log_root: Optional[Path] = None,
+    cfg: DictConfig,
+    train=True,
+    test=False,
+    predict=False,
+    log_root: Optional[Path] = None,
 ) -> float:
     logging.info(
         "To disable command line prompts. Set env variable NO_CLI=True; For linux: `export NO_CLI=True`; For Windows: `set NO_CLI=True`"
@@ -96,7 +96,7 @@ def run_pipeline(
 
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
-    schedulers = get_obj(cfg, "schedulers", task, framework, _recursive_=False)
+    schedulers = get_optimizer(cfg, "schedulers", task, framework)
     try:
         datamodule = get_datamodule_concat(
             cfg._dataset_dict,
