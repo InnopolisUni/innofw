@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - override /models: detection/yolov5
-  - override /datasets: detection_lep
+  - override /datasets: detection/detection_lep
   - override /initializations: random
 
 
@@ -11,6 +11,5 @@ random_seed: 42
 epochs: 1
 batch_size: 2
 weights_freq: 1
-
 
 # ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/lep_yolov5.pt

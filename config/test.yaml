@@ -13,20 +13,21 @@ defaults:
   - loggings: auto
   - callbacks: auto
   - initializations:
-  - experiments: ???
+  - experiments: 
   - clear_ml: disabled
   - override hydra/job_logging: custom
 
-project: ???
-task: ???
+project: 
+task: 
 seed:
 epochs:
 batch_size:
 weights_path:
 weights_freq:
 ckpt_path:
+experiment_name:
 
-accelerator: cpu
+accelerator: gpu
 #devices: 1
 #gpus: 1
 

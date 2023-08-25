@@ -21,16 +21,12 @@ models_config_path = config_path / "models"
 datasets_config_path = config_path / "datasets"
 experiments_config_path = config_path / "experiments"
 
-models_config_files = [[item] for item in models_config_path.iterdir()]
+models_config_files = [[item] for item in models_config_path.rglob("*.yaml")]
 datasets_config_files = []
-experiment_config_files = [
-    [item] for item in experiments_config_path.iterdir()
-]
+experiment_config_files = [[item] for item in experiments_config_path.rglob("*.yaml")]
 
 for item in datasets_config_path.iterdir():
-    if not any(
-        [i in str(item) for i in {"_infer", "tmqm", "qm9", "brain", "lung"}]
-    ):
+    if not any([i in str(item) for i in {"_infer", "tmqm", "qm9", "brain", "lung"}]):
         datasets_config_files.append([item])
 
 

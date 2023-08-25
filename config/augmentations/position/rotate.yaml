@@ -1,0 +1,6 @@
+rotate:
+  _target_: albumentations.Rotate
+  limit: 
+    - 90 
+  p: 0.5
+  always_apply: False

@@ -186,7 +186,7 @@ click==8.0.4 ; python_version >= "3.8" and python_version < "3.10" \
 cligj==0.7.2 ; python_version >= "3.8" and python_version < "3.10" \
     --hash=sha256:a4bc13d623356b373c2c27c53dbd9c68cae5d526270bfa71f6c6fa69669c6b27 \
     --hash=sha256:c1ca117dbce1fe20a5809dc96f01e1c2840f6dcc939b3ddbb1111bf330ba82df
-colorama==0.4.6 ; python_version >= "3.8" and python_version < "3.10" and platform_system == "Windows" or python_version >= "3.8" and python_version < "3.10" and sys_platform == "win32" \
+colorama==0.4.6 ; python_version >= "3.8" and python_version < "3.10" and (platform_system == "Windows" or sys_platform == "win32") \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
 commonmark==0.9.1 ; python_version >= "3.8" and python_version < "3.10" \
@@ -1183,9 +1183,6 @@ python-dotenv==0.20.0 ; python_version >= "3.8" and python_version < "3.10" \
 pytorch-lightning==1.7.7 ; python_version >= "3.8" and python_version < "3.10" \
     --hash=sha256:27c2dd01a18db2415168e3fa3775ccb5a1fa1e2961a50439ad9365507fe9d4ae \
     --hash=sha256:4438b8284d7f7fdb06cf3566a7b5b6f102ac8971cf7bb6d3f1b1de64628241f3
-pytorch-toolbelt==0.5.2 ; python_version >= "3.8" and python_version < "3.10" \
-    --hash=sha256:5b4a5d5075df5ac5c10ffd0884321c54bba149aade2a5fc12ece5f7eb82bf6df \
-    --hash=sha256:5d779ff1bc242b16342bf043694fe80dc4e65578bc4dc1e929701fa88e086bab
 pytz-deprecation-shim==0.1.0.post0 ; python_version >= "3.8" and python_version < "3.10" \
     --hash=sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6 \
     --hash=sha256:af097bae1b616dde5c5744441e2ddc69e74dfdcb0c263129610d85b87445a59d

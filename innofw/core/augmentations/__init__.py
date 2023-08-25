@@ -48,8 +48,7 @@ def register_augmentations_adapter(name):
             raise ValueError("Name %s already registered!" % name)
         if not issubclass(cls, BaseAugmentationAdapter):
             raise ValueError(
-                "Class %s is not a subclass of %s"
-                % (cls, BaseAugmentationAdapter)
+                "Class %s is not a subclass of %s" % (cls, BaseAugmentationAdapter)
             )
         __AUG_ADAP_DICT__[name] = cls
         return cls
@@ -60,9 +59,7 @@ def register_augmentations_adapter(name):
 for file in os.listdir(os.path.dirname(__file__)):
     if file.endswith(".py") and not file.startswith("_"):
         module_name = file[: file.find(".py")]
-        module = importlib.import_module(
-            "innofw.core.augmentations." + module_name
-        )
+        module = importlib.import_module("innofw.core.augmentations." + module_name)
 
 
 class Augmentation(nn.Module):
@@ -81,9 +78,7 @@ class Augmentation(nn.Module):
 
     def __init__(self, augmentations):
         super().__init__()
-        self.augs = (
-            None if augmentations is None else get_augs_adapter(augmentations)
-        )
+        self.augs = None if augmentations is None else get_augs_adapter(augmentations)
 
     def forward(self, x, y=None):
         if self.augs is None:

@@ -1,0 +1,37 @@
+# @package _global_
+defaults:
+  - override /models: classification/resnet.yaml
+  - override /datasets: classification/classification_ucmerced.yaml
+  - override /augmentations_train: linear-roads-bin-seg
+  - override /augmentations_val: linear-roads-bin-seg
+  - override /augmentations_test: none
+  - override /losses: log_loss
+  - override /optimizers: adam
+  - override /trainer: auto
+  #- override /loggers: wandb
+  - override /callbacks: none
+
+models:
+  _target_: innofw.core.models.torch.architectures.classification.Resnet34
+  num_classes: 21
+  name: ucmerced_classification
+  description: resnet classification model trained on ucmerced dataset
+  ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/testing/satellite-classification.ckpt
+
+
+project: "ucmerced_classification"
+task: "image-classification"
+random_seed: 42
+original_work_dir: ${hydra:runtime.cwd}
+weights_freq: 1
+batch_size: 256
+epochs: 30
+accelerator: gpu
+
+# wandb:
+#  enable: False
+#  entity: sadjava
+#  project: ucmerced
+#  group: 200423_just_testing_wandb
+#  job_type: training
+

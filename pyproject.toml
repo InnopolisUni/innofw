@@ -41,6 +41,7 @@ lovely-tensors = "^0.1.14"
 lovely-numpy = "^0.2.8"
 wandb = "^0.13.9"
 aeronet = "^0.0.18"
+ultralytics = "^8.0.124"
 
 [tool.poetry.dev-dependencies]
 mock = "^4.0.3"

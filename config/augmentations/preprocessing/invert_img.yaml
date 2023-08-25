@@ -1,0 +1,3 @@
+invert_img:
+  _target_: albumentations.InvertImg
+  p: 0.5

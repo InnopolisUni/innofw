@@ -1,35 +1,36 @@
 # standard library
-import logging.config
+import logging
+from uuid import uuid4
 from pathlib import Path
 from typing import Optional
-from uuid import uuid4
-
-import hydra
-from lovely_numpy import lo
-from omegaconf import DictConfig
-from pytorch_lightning import seed_everything
-
-from innofw import InnoModel
-from innofw.constants import SegDataKeys
-from innofw.constants import Stages
-from innofw.utils import get_project_root
-from innofw.utils.defaults import default_model_for_datamodule
-from innofw.utils.framework import get_augmentations
-from innofw.utils.framework import get_callbacks
-from innofw.utils.framework import get_ckpt_path
-from innofw.utils.framework import get_datamodule
-from innofw.utils.framework import get_losses
-from innofw.utils.framework import get_model
-from innofw.utils.framework import get_obj
-from innofw.utils.framework import get_optimizer
-from innofw.utils.framework import map_model_to_framework
-from innofw.utils.getters import get_a_learner
-from innofw.utils.getters import get_log_dir
-from innofw.utils.getters import get_trainer_cfg
-from innofw.utils.print_config import print_config_tree
+import logging.config
 
 # third party packages
+from pytorch_lightning import seed_everything
+from hydra.core.hydra_config import HydraConfig
+from omegaconf import OmegaConf, DictConfig
+import hydra
+from lovely_numpy import lo
+
 # local modules
+from innofw.utils.framework import (
+    get_callbacks,
+    get_optimizer,
+    get_ckpt_path,
+    get_datamodule_concat,
+    get_datamodule,
+    get_losses,
+    get_model,
+    get_obj,
+    get_augmentations,
+    map_model_to_framework,
+)
+from innofw.constants import SegDataKeys, Stages, Frameworks
+from innofw import InnoModel
+from innofw.utils.getters import get_trainer_cfg, get_log_dir, get_a_learner
+from innofw.utils.print_config import print_config_tree
+from innofw.utils.defaults import default_model_for_datamodule
+from innofw.utils import get_project_root
 
 
 def run_pipeline(
@@ -96,25 +97,37 @@ def run_pipeline(
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
     schedulers = get_obj(cfg, "schedulers", task, framework, _recursive_=False)
-    datamodule = get_datamodule(
-        cfg.datasets,
-        framework,
-        task=task,
-        stage=data_stage,
-        augmentations=augmentations,
-        batch_size=cfg.get("batch_size"),
-    )
+    try:
+        datamodule = get_datamodule_concat(
+            cfg._dataset_dict,
+            framework,
+            task=task,
+            stage=data_stage,
+            augmentations=augmentations,
+            batch_size=cfg.get("batch_size"),
+        )
+        print("using concatenated datamodule")
+    except:
+        datamodule = get_datamodule(
+            cfg.datasets,
+            framework,
+            task=task,
+            stage=data_stage,
+            augmentations=augmentations,
+            batch_size=cfg.get("batch_size"),
+            random_state=cfg.get("random_seed"),
+        )
+        print("using standart datamodule")
+
+    datamodule.setup_train_test_val()
+
     losses = get_losses(cfg, task, framework)
     callbacks = get_callbacks(
-        cfg,
-        task,
-        framework,
-        metrics=metrics,
-        losses=losses,
-        datamodule=datamodule,
+        cfg, task, framework, metrics=metrics, losses=losses, datamodule=datamodule
     )
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
+
     logger = hydra.utils.instantiate(cfg.get("loggers"))
 
     # wrap the model
@@ -134,6 +147,7 @@ def run_pipeline(
         "weights_path": cfg.get("weights_path"),
         "weights_freq": cfg.get("weights_freq"),
         "logger": logger,
+        "random_state": cfg.get("random_seed"),
     }
     inno_model = InnoModel(**model_params)
     result = None
@@ -157,10 +171,6 @@ def run_pipeline(
         stage_to_func[Stages.train] = a_learner.run
 
     try:
-        # print sample data
-        datamodule.setup_train_test_val()
-        train_dl = datamodule.train_dataloader()
-        val_dl = datamodule.val_dataloader()
         print(
             "train sample stats"
         )  # todo: refactor(through logging; make it optional and make it general, I think such method should be in the datamodule's class)
@@ -172,12 +182,11 @@ def run_pipeline(
         """
         logging.config.fileConfig(get_project_root() / "logging.conf")
         LOGGER = logging.getLogger(__name__)
-
-        LOGGER.info(lo(next(iter(train_dl))[SegDataKeys.image]))
-        LOGGER.info(lo(next(iter(train_dl))[SegDataKeys.label]))
+        LOGGER.info(lo(next(iter(datamodule.train_dataloader))[SegDataKeys.image]))
+        LOGGER.info(lo(next(iter(datamodule.train_dataloader))[SegDataKeys.label]))
         LOGGER.info("val sample stats")
-        LOGGER.info(lo(next(iter(val_dl))[SegDataKeys.image]))
-        LOGGER.info(lo(next(iter(val_dl))[SegDataKeys.label]))
+        LOGGER.info(lo(next(iter(datamodule.val_dataloader))[SegDataKeys.image]))
+        LOGGER.info(lo(next(iter(datamodule.val_dataloader))[SegDataKeys.label]))
     except:
         pass
 

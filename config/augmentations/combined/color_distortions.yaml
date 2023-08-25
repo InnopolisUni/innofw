@@ -1,3 +1,4 @@
+color_distortions:
     - _target_: albumentations.OneOf
       p: 0.3
       transforms:
@@ -11,3 +12,4 @@
               - -0.05
               - 0.05
           contrast_limit: 0.5
+          

@@ -100,18 +100,22 @@ class DrugprotDataModule(BaseLightningDataModule):
         )
         self.train_dataset = splits["train"]
         self.val_dataset = splits["test"]
-
         self.collator = DataCollatorWithPaddingAndTruncation(
             max_length=512,
             sequence_keys=["input_ids", "labels"],
         )
         logging.info(self.train_dataset_raw)
+        
+        self.train_dataset = self.train_dataset.with_format("pt")
+        self.val_dataset = self.val_dataset.with_format("pt")
+        self.test_dataset = self.test_dataset.with_format("pt")
 
     def setup_infer(self):
         self.predict_dataset_raw = datasets.load_from_disk(self.predict_source)
 
         if isinstance(self.predict_dataset_raw, datasets.DatasetDict):
             self.predict_dataset_raw = self.predict_dataset_raw["test"]
+            self.predict_dataset_raw = self.predict_dataset_raw.with_format("pt")
 
         self.collator = DataCollatorWithPaddingAndTruncation(
             max_length=512,
@@ -121,7 +125,7 @@ class DrugprotDataModule(BaseLightningDataModule):
 
     def train_dataloader(self):
         train_dataloader = DataLoader(
-            self.train_dataset.with_format("pt"),
+            self.train_dataset,
             batch_size=self.batch_size,
             collate_fn=self.collator,
             num_workers=self.num_workers,
@@ -131,7 +135,7 @@ class DrugprotDataModule(BaseLightningDataModule):
 
     def val_dataloader(self):
         val_dataloader = DataLoader(
-            self.val_dataset.with_format("pt"),
+            self.val_dataset,
             batch_size=self.batch_size,
             collate_fn=self.collator,
             num_workers=self.num_workers,
@@ -140,7 +144,7 @@ class DrugprotDataModule(BaseLightningDataModule):
 
     def test_dataloader(self):
         test_dataloader = DataLoader(
-            self.test_dataset.with_format("pt"),
+            self.test_dataset,
             batch_size=self.batch_size,
             collate_fn=self.collator,
             num_workers=self.num_workers,
@@ -149,7 +153,7 @@ class DrugprotDataModule(BaseLightningDataModule):
 
     def predict_dataloader(self):
         test_dataloader = DataLoader(
-            self.predict_dataset_raw.with_format("pt"),
+            self.predict_dataset_raw,
             batch_size=self.batch_size,
             collate_fn=self.collator,
             num_workers=self.num_workers,
@@ -210,9 +214,7 @@ class DataCollatorWithPaddingAndTruncation:
         for key in self.sequence_keys:
             for batch_index, instance in enumerate(data):
                 current_len = min(max_len, len(instance[key]))
-                result[key][batch_index, :current_len] = instance[key][
-                    :current_len
-                ]
+                result[key][batch_index, :current_len] =  torch.tensor(instance[key][:current_len], dtype=torch.long)
 
         rest_keys = next(iter(data)).keys() - self.sequence_keys
         for key in rest_keys:
