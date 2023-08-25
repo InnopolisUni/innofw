@@ -45,8 +45,7 @@ def register_optimizers_adapter(name):
             raise ValueError("Name %s already registered!" % name)
         if not issubclass(cls, BaseOptimizerAdapter):
             raise ValueError(
-                "Class %s is not a subclass of %s"
-                % (cls, BaseOptimizerAdapter)
+                "Class %s is not a subclass of %s" % (cls, BaseOptimizerAdapter)
             )
         __OPTIM_ADAP_DICT__[name] = cls
         return cls
@@ -57,9 +56,7 @@ def register_optimizers_adapter(name):
 for file in os.listdir(os.path.dirname(__file__)):
     if file.endswith(".py") and not file.startswith("_"):
         module_name = file[: file.find(".py")]
-        module = importlib.import_module(
-            "innofw.core.optimizers." + module_name
-        )
+        module = importlib.import_module("innofw.core.optimizers." + module_name)
 
 
 class Optimizer(TorchOptim):
