@@ -1,9 +1,3 @@
-task:
-  - all
-
-implementations:
-  torch:
-    StepLR:
-      function:
-        _target_: torch.optim.lr_scheduler.ExponentialLR
-        gamma: .9
+description: StepLR
+_target_: torch.optim.lr_scheduler.ExponentialLR
+gamma: .9
