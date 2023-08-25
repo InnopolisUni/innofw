@@ -34,11 +34,11 @@ from innofw.utils import get_project_root
 
 
 def run_pipeline(
-    cfg: DictConfig,
-    train=True,
-    test=False,
-    predict=False,
-    log_root: Optional[Path] = None,
+        cfg: DictConfig,
+        train=True,
+        test=False,
+        predict=False,
+        log_root: Optional[Path] = None,
 ) -> float:
     logging.info(
         "To disable command line prompts. Set env variable NO_CLI=True; For linux: `export NO_CLI=True`; For Windows: `set NO_CLI=True`"
@@ -117,7 +117,7 @@ def run_pipeline(
             batch_size=cfg.get("batch_size"),
             random_state=cfg.get("random_seed"),
         )
-        print("using standart datamodule")
+        print("using standard datamodule")
 
     datamodule.setup_train_test_val()
 
@@ -128,6 +128,9 @@ def run_pipeline(
 
     log_dir = get_log_dir(project, stage, experiment_name, log_root=log_root)
 
+    # todo: water erosion
+    # model
+    #
     logger = hydra.utils.instantiate(cfg.get("loggers"))
 
     # wrap the model
