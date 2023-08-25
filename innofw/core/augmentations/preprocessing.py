@@ -20,6 +20,26 @@ def default_preprocessing(img, divisor=255):
     return img_copy
 
 
+
+class StandardizeNDVI(ImageOnlyTransform):
+    """
+        ndvi to make images from -1 to 1 -> 0 to 1
+    """
+
+    def apply(self, img, **kwargs):
+        return standardize_ndvi(img)
+
+    def get_transform_init_args_names(self):
+        return ()
+    
+
+def standardize_ndvi(img):
+    """
+        from -1 to 1 -> 0 to 1
+    """
+    img = (img + 1 ) /2
+    return img
+
 class ToFloatWClip(ImageOnlyTransform):
     """
     dividing by max_value and clipping in range [0, 1]
