@@ -1,10 +1,4 @@
-task:
-  - all
-
-implementations:
-  torch:
-    StepLR:
-      function:
-        _target_: torch.optim.lr_scheduler.StepLR
-        step_size: 30
-        gamma: 0.1
+description: StepLR
+_target_: torch.optim.lr_scheduler.StepLR
+step_size: 5
+gamma: 0.5
