@@ -1,0 +1,14 @@
+name: Segmentation
+description: Wing Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    WingLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.WingLoss
+        width: 5
+        curvature: 0.5
+        reduction: "mean"
