@@ -1,11 +1,10 @@
-def dummy_func(epoch):
-    print("here")
-    print(1 / 0)
-    return (epoch * 0.01) + 0.05
-
-
 def func():
     return lambda epoch: epoch // 30
 
 
+def func2():
+    return lambda epoch: 0.95**epoch
+
+
 lambda1 = func
+lambda2 = func2
