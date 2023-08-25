@@ -1,0 +1,27 @@
+# @package _global_
+defaults:
+  - override /models: text-vae/hier_vae.py
+  - override /datasets: chembl_33_smiles
+  - override /losses: simple_vae
+
+
+project: chem-vae
+task: text-vae
+random_seed: 42
+accelerator: gpu
+devices: 1
+batch_size: 128
+epochs: 1
+num_workers: 0
+
+trainer:
+  limit_train_batches: 10
+
+datasets:
+  work_mode: vae
+
+models:
+  encoder:
+    in_dim: 439383  # len(alphabet) * max(len_mols)
+  decoder:
+    out_dimension: 343  # len(alphabet)

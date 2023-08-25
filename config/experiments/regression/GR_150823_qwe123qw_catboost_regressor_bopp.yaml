@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: bopp
+  - override /callbacks: regression
+
+
+project: "bopp"
+task: "table-regression"
+random_seed: 42

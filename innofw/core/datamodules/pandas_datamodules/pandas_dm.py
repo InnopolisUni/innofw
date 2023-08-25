@@ -2,6 +2,8 @@
 import logging
 from pathlib import Path
 from typing import Optional
+from typing import Sequence
+from typing import Union
 
 import pandas as pd
 
@@ -69,13 +71,21 @@ class PandasDataModule(BasePandasDataModule):
         except Exception as err:
             raise FileNotFoundError(f"Could not read csv file: {err}")
 
-    def _get_x_n_y(self, dataset, target_col):
+    @staticmethod
+    def _get_x_n_y(
+        dataset: pd.DataFrame, target_col: Union[str, Sequence[str]]
+    ):
+        if isinstance(target_col, str):
+            target_col = [target_col]
+        if len(target_col) == 1:
+            dataset.dropna(subset=target_col, inplace=True)
+            dataset.reset_index(inplace=True)
         result = {}
         if target_col is None:
             result["x"] = dataset
             result["y"] = None
         else:
-            result["x"] = dataset.loc[:, dataset.columns != self.target_col]
+            result["x"] = dataset.drop(columns=target_col)
             result["y"] = dataset[target_col]
         return result
 
@@ -227,7 +237,9 @@ class ClusteringPandasDataModule(BasePandasDataModule):
 
     def setup_train_test_val(self):
         # try:
-        if isinstance(self.train_dataset, str) or isinstance(self.train_dataset, Path):
+        if isinstance(self.train_dataset, str) or isinstance(
+            self.train_dataset, Path
+        ):
             self.train_dataset = pd.read_csv(self.train_dataset)
             self.test_dataset = pd.read_csv(self.test_dataset)
         # except Exception as err:

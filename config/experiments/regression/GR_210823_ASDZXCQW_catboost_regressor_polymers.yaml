@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: polymers
+  - override /callbacks: regression
+
+
+project: "polymers"
+task: "table-regression"
+random_seed: 42
+
+models:
+  loss_function: MultiRMSEWithMissingValues

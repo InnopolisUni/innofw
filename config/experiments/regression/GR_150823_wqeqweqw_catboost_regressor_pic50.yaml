@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: mcl1_pic50
+  - override /callbacks: regression
+
+
+project: "mcl1_pic50"
+task: "qsar-regression"
+random_seed: 42

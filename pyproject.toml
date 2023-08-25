@@ -8,7 +8,7 @@ authors = ["Kazybek Askarbek <k.askarbek@innopolis.university>"]
 python = ">=3.8,<3.10"
 python-dotenv = "^0.20.0"
 
-torch = "~1.12.0"
+torch = "~1.11.0"
 
 tqdm = "^4.64.0"
 h5py = "^3.7.0"
@@ -24,8 +24,6 @@ pydantic = "^1.9.1"
 minio = "^7.1.10"
 patool = "^1.12"
 catboost = "^1.0.6"
-rdkit-pypi = "^2022.3.4"
-deepchem = "^2.6.1"
 pydicom = "^2.3.0"
 urlpath = "^1.2.0"
 transformers = "^4.21.2"
@@ -42,6 +40,7 @@ lovely-numpy = "^0.2.8"
 wandb = "^0.13.9"
 aeronet = "^0.0.18"
 ultralytics = "^8.0.124"
+rdkit = "^2023.3.2"
 
 [tool.poetry.dev-dependencies]
 mock = "^4.0.3"
@@ -59,7 +58,7 @@ clearml = ["clearml"]
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.21.2"
-
+ 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

@@ -4,6 +4,7 @@ from os import cpu_count
 from pathlib import Path
 from typing import List
 from typing import Optional
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -72,7 +73,7 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         train,
         test,
         smiles_col: str,
-        target_col,
+        target_col: Optional[str] = None,
         infer=None,
         val_size: float = 0.2,
         batch_size: int = 32,
@@ -107,30 +108,45 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         train_smiles = train_csv[self.smiles_col].values
         test_smiles = test_csv[self.smiles_col].values
 
-        train_targets = train_csv[self.target_col].values
-        test_targets = test_csv[self.target_col].values
+        train_targets, test_targets = None, None
+        if self.target_col is not None:
+            train_targets = train_csv[self.target_col].values
+            test_targets = test_csv[self.target_col].values
 
         train_selfies = self.smiles2selfies(train_smiles)
         test_selfies = self.smiles2selfies(test_smiles)
 
-        train_selfies, train_targets = zip(
-            *filter(
-                lambda x: x[0] is not None, zip(train_selfies, train_targets)
+        if train_targets is not None:
+            train_selfies, train_targets = zip(
+                *filter(
+                    lambda x: x[0] is not None,
+                    zip(train_selfies, train_targets),
+                )
             )
-        )
-        test_selfies, test_targets = zip(
-            *filter(
-                lambda x: x[0] is not None, zip(test_selfies, test_targets)
+        else:
+            train_selfies = list(
+                filter(lambda x: x is not None, train_selfies)
             )
-        )
+
+        if test_targets is not None:
+            test_selfies, test_targets = zip(
+                *filter(
+                    lambda x: x[0] is not None, zip(test_selfies, test_targets)
+                )
+            )
+        else:
+            test_selfies = list(filter(lambda x: x is not None, test_selfies))
 
         selfies_dataset = np.concatenate((train_selfies, test_selfies))
 
         alphabet = sf.get_alphabet_from_selfies(selfies_dataset)
         alphabet.add("[nop]")  # [nop] is a special padding symbol
+        alphabet.add(".")
         self.alphabet = list(sorted(alphabet))
 
+        print("Alphabet length:", len(self.alphabet), sep="\t")
         self.pad_to_len = max(sf.len_selfies(s) for s in selfies_dataset)
+        print("Max SELFIES length:", self.pad_to_len, sep="\t")
         self.symbol_to_idx = {s: i for i, s in enumerate(alphabet)}
         self.idx_to_symbol = {i: s for i, s in enumerate(alphabet)}
 
@@ -305,14 +321,14 @@ class SelfiesDataset(Dataset):
         This is why we can call self.selfies[index], because self refers to an instance of our class.
     """
 
-    def __init__(self, selfies, targets) -> None:
-        assert len(selfies) == len(targets)
-
+    def __init__(self, selfies, targets: Optional[Sequence]) -> None:
         self.selfies = selfies
         self.targets = targets
 
     def __getitem__(self, index):
-        return self.selfies[index], self.targets[index]
+        if self.targets is None:
+            return {"selfies": self.selfies[index]}
+        return {"selfies": self.selfies[index], "targets": self.targets[index]}
 
     def __len__(self):
         return len(self.selfies)
@@ -339,14 +355,21 @@ class SelfiesCollator:
         self.vocab_stoi = vocab_stoi
         self.pad_to_len = pad_to_len
 
-    def __call__(self, data):
-        selfies_batch, labels_batch = zip(*data)
-        hot_batch = []
-        for selfies in selfies_batch:
-            one_hot = sf.selfies_to_encoding(
-                selfies, self.vocab_stoi, self.pad_to_len, enc_type="one_hot"
-            )
-            hot_batch.append(one_hot)
-        return torch.tensor(
-            np.asarray(hot_batch), dtype=torch.float
-        ), torch.tensor(labels_batch, dtype=torch.float)
+    def __call__(self, batch):
+        selfies_batch = [d["selfies"] for d in batch]
+        if batch[0].get("targets") is None:
+            hot_batch = []
+            for selfies in selfies_batch:
+                one_hot = sf.selfies_to_encoding(
+                    selfies,
+                    self.vocab_stoi,
+                    self.pad_to_len,
+                    enc_type="one_hot",
+                )
+                hot_batch.append(one_hot)
+            return torch.tensor(np.asarray(hot_batch), dtype=torch.float), None
+        else:
+            labels_batch = [d["targets"] for d in batch]
+            return torch.tensor(
+                np.asarray(hot_batch), dtype=torch.float
+            ), torch.tensor(labels_batch, dtype=torch.float)

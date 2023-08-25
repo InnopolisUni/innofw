@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: qm7
+  - override /callbacks: regression
+
+
+project: "qm7"
+task: "table-regression"
+random_seed: 42

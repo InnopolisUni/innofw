@@ -1,0 +1,19 @@
+task:
+  - table-regression
+
+name: bopp
+description: Bopp films
+
+markup_info: Информация о разметке
+date_time: 21.07.2022
+
+_target_: innofw.core.datamodules.pandas_datamodules.PandasDataModule
+
+
+train:
+ source: ./data/bopp/train/train.csv
+test:
+ source: ./data/bopp/test/test.csv
+
+val_size: 0.2
+target_col: turbidity

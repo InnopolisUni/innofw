@@ -1,0 +1,20 @@
+task:
+  - qsar-regression
+  - text-vae-forward
+  - text-vae
+
+name: chembl_33_smiles
+description: "Link: https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_33/"
+
+markup_info: Информация о разметке
+date_time: 09.06.2023
+
+_target_: innofw.core.datamodules.lightning_datamodules.QsarSelfiesDataModule
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/chembl_33_smiles/train.zip
+  target: ./data/chembl_33/train/
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/chembl_33_smiles/test.zip
+  target: ./data/chembl_33/test/
+smiles_col: SMILES
+target_col: 

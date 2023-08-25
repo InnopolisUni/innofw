@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: pipes
+  - override /callbacks: regression
+
+
+project: "pipes"
+task: "table-regression"
+random_seed: 42

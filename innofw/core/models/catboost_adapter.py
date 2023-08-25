@@ -2,6 +2,7 @@
 import importlib
 import logging
 
+import numpy as np
 from catboost import CatBoost
 from catboost import Pool
 from torch.utils.tensorboard import SummaryWriter
@@ -79,15 +80,23 @@ class CatBoostAdapter(BaseModelAdapter):
         cat_features = x.select_dtypes(include=["object"]).columns.tolist()
         test_pool = Pool(x, y, cat_features=cat_features)
         results = {}
-        y_pred = self.model.predict(test_pool)
-        if y_pred.ndim == 2:
+        y_pred: np.ndarray = self.model.predict(test_pool)
+        if y_pred.ndim == 1:
+            y_pred = y_pred[:, None]
+        if (
+            self.model._init_params.get("loss_function")
+            == "RMSEWithUncertainty"
+        ):
             y_pred = y_pred[:, 0]
 
         for metric in self.metrics:
-            score = metric["func"](y_pred, y, **metric["args"])
+            for i, column in enumerate(y.columns):
+                y_true = y[column].dropna()
+                score = metric["func"](
+                    y_true, y_pred[y_true.index, i], **metric["args"]
+                )
 
-            # name = get_func_name(metric)
-            results[metric["func"].__name__] = score
+                results[f'{metric["func"].__name__}__{column}'] = score
         self.log_results(results)
         return results
 

@@ -1,0 +1,25 @@
+task:
+  - table-regression
+
+name: bitumen
+description: bitumen properties
+
+markup_info: Информация о разметке
+date_time: 21.07.2022
+
+_target_: innofw.core.datamodules.pandas_datamodules.PandasDataModule
+
+
+train:
+ source: ./data/bitumen/train/train.csv
+test:
+ source: ./data/bitumen/test/test.csv
+
+val_size: 0.2
+target_col: 
+  - "Время окисления, ч"
+  - "Расход воздуха, мл/сек"
+  - "Минимальная температура окисления, °С"
+  - "Максимальная температура окисления, °С"
+  - "Количество гудрона, л"
+  - "Температура воздуха, °С"

@@ -39,7 +39,9 @@ def setup_clear_ml(cfg):
         from clearml import Task
 
         task = Task.init(
-            project_name=cfg["project"], task_name=cfg["experiment_name"]
+            project_name=cfg["project"],
+            task_name=cfg["experiment_name"],
+            output_uri=clear_ml_cfg.get("output_uri"),
         )
         setup_agent(task, clear_ml_cfg)
         global TASK

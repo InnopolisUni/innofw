@@ -13,8 +13,8 @@ defaults:
   - loggings: auto
   - callbacks: auto
   - initializations:
-  - experiments: 
   - clear_ml: disabled
+  - experiments: 
   - override hydra/job_logging: custom
 
 project: 
