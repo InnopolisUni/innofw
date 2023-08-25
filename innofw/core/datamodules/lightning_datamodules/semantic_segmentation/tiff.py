@@ -39,8 +39,8 @@ class SegmentationDM(BaseLightningDataModule):
     @validate_arguments
     def __init__(
         self,
-        train,
-        test,
+        train=None,
+        test=None,
         infer=None,
         img_foldername: str = "images",
         label_foldername: str = "masks",
@@ -63,9 +63,9 @@ class SegmentationDM(BaseLightningDataModule):
         super().__init__(
             train=train,
             test=test,
+            infer=infer,
             batch_size=batch_size,
             num_workers=num_workers,
-            infer=infer,
             stage=stage,
             *args,
             **kwargs,
@@ -103,6 +103,7 @@ class SegmentationDM(BaseLightningDataModule):
         self.shuffle = shuffle
         self.random_seed = 42
         self.with_caching = with_caching
+        self.samplers = {"train": None, "val": None, "test": None, 'predict': None}
 
         self.img_foldername = img_foldername
         self.label_foldername = label_foldername
@@ -135,6 +136,28 @@ class SegmentationDM(BaseLightningDataModule):
         # btw: It is not recommended to assign state here(ref: https://pytorch-lightning.readthedocs.io/en/stable/data/datamodule.html)
 
     # todo: add datamodule checkpointing
+    def setup_infer(self):
+        img_path = self.predict_source / "images"
+        label_path = self.predict_source / "masks"
+
+        images = get_samples(img_path)
+        masks = get_samples(label_path)
+
+        train_images, val_images, train_masks, val_masks = train_test_split(
+            images,
+            masks,
+            test_size=self.val_size,
+            random_state=self.random_seed,
+        )
+        logger = logging.getLogger(__file__)
+        logger.warning("using val transforms instead of test. fix it")
+        self.predict_ds = SegmentationDataset(
+            val_images,
+            val_masks,
+            transform=self.val_transform,
+            channels=self.channels,
+            with_caching=self.with_caching,
+        )
 
     def setup_train_test_val(self, **kwargs):
         self.img_path = self.train_source / self.img_foldername  # images
@@ -160,7 +183,6 @@ class SegmentationDM(BaseLightningDataModule):
                 images = filter_samples(images, self.filtered_files)
                 masks = filter_samples(masks, self.filtered_files)
 
-            self.samplers = {"train": None, "val": None, "test": None}
         else:
             images = [
                 self.img_path / img_name for img_name in self.weights["file_names"]
@@ -264,7 +286,7 @@ class SegmentationDM(BaseLightningDataModule):
         return self.stage_dataloader(self.test_ds, "test")
 
     def predict_dataloader(self):
-        return self.stage_dataloader(self.predict_source, "predict")
+        return self.stage_dataloader(self.predict_ds, "predict")
 
 
 # if __name__ == "__main__":

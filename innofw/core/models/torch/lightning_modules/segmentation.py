@@ -34,8 +34,8 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
     def __init__(
         self,
         model,
-        losses,
-        optimizer_cfg,
+        losses=None,
+        optimizer_cfg=None,
         scheduler_cfg=None,
         threshold=0.5,
         *args: Any,
@@ -87,8 +87,8 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         self.val_metrics = metrics.clone(prefix="val_")
         self.test_metrics = metrics.clone(prefix="test_")
 
-        assert self.losses is not None
-        assert self.optimizer_cfg is not None
+        # assert self.losses is not None
+        # assert self.optimizer_cfg is not None
 
     # def forward(self, batch: torch.Tensor):
     #     return (self.model(batch) > self.threshold).to(torch.uint8)
@@ -100,7 +100,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
     def forward(self, batch: torch.Tensor) -> torch.Tensor:
         """Predict and output probabilities"""
-        out = self.model(batch)
+        out = (torch.sigmoid(self.model(batch)) > 0.5).to(torch.int8)
         return out
 
     def log_losses(
@@ -134,7 +134,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
         # todo: check that model is in mode no autograd
         raster, label = batch[SegDataKeys.image], batch[SegDataKeys.label]
 
-        predictions = self.forward(raster)
+        predictions = self.predict_proba(raster)
         # if (
         #     predictions.max() > 1 or predictions.min() < 0
         # ):  # todo: should be configurable via cfg file
@@ -173,6 +173,9 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
 
     def test_step(self, batch, *args, **kwargs) -> Optional[STEP_OUTPUT]:
         return self.stage_step("test", batch)
+
+    def predict_step(self, batch, *args, **kwargs) -> Optional[STEP_OUTPUT]:
+        return self.stage_step("predict", batch)
 
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])

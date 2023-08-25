@@ -1,0 +1,55 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /models: deeplabv3plus
+  - override /datasets: semantic-segmentation/linear-road-bin-seg-oftp/210323-tile-2048-no-reprojection
+  - override /loggers: wandb
+  - override /trainer: normal_run
+  - override /losses: semantic-segmentation/dice
+  - override /optimizers: adam
+  - override /schedulers: cosine_annealing
+  - override /augmentations_train: linear-roads-bin-seg
+  - override /augmentations_val: linear-roads-bin-seg
+  - override /wandb: qb
+  # - override /metrics: basic
+  # - override /callbacks: basic
+  # - override /checkpoints:
+
+datasets:
+  batch_size: 2
+  num_workers: 8
+  # todo: add random seed
+
+# stages:
+#   - train 
+
+optimizers:
+  lr: 3e-4
+
+schedulers:
+  T_0: 30  # Number of iterations for the first restart.  60
+  T_mult: 1
+  eta_min: 1e-6  # 1e-5
+  last_epoch: -1
+
+# # losses:
+# #   from_logits: True
+
+models:
+  in_channels: 3
+  classes: 1
+  encoder_name: mobileone_s4
+  encoder_depth: 5
+  decoder_channels: 512
+  encoder_weights: #  imagenet
+
+wandb:
+  job_type: train
+
+project: linear-roads-bin-sem-seg
+task: image-segmentation
+random_seed: 42
+accelerator: gpu
+devices: 1
+batch_size: 2
+num_workers: 32
