@@ -1,6 +1,6 @@
-from innofw.core.augmentations.preprocessing import StandardizeNDVI
-
 import numpy as np
+
+from innofw.core.augmentations.preprocessing import StandardizeNDVI
 
 
 def test_standardize_ndvi():
