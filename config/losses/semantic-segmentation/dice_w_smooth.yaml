@@ -11,7 +11,7 @@ implementations:
         _target_: pytorch_toolbelt.losses.DiceLoss
         mode: binary
         from_logits: True
-        smooth: 0.0
+        smooth: 0.1
         eps: 1e-7
 
         # classes: None

@@ -1,0 +1,11 @@
+name: Segmentation
+description: Binary Soft F1 Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    BinarySoftF1Loss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.BinarySoftF1Loss
