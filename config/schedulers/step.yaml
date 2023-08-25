@@ -4,7 +4,7 @@ task:
 implementations:
   torch:
     StepLR:
-      object:
+      function:
         _target_: torch.optim.lr_scheduler.StepLR
         step_size: 30
         gamma: 0.1
