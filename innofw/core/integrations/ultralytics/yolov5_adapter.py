@@ -10,11 +10,11 @@ from yolov5 import train as yolov5_train
 from yolov5 import val as yolov5_val
 
 from ..base_integration_models import BaseIntegrationModel
-from .datamodule import YOLOV5DataModuleAdapter
-from .losses import YOLOV5LossesBaseAdapter
-from .optimizers import YOLOV5OptimizerBaseAdapter
-from .schedulers import YOLOV5SchedulerBaseAdapter
-from .trainer import YOLOV5TrainerBaseAdapter
+from .datamodule import UltralyticsDataModuleAdapter
+from .losses import UltralyticsLossesBaseAdapter
+from .optimizers import UltralyticsOptimizerBaseAdapter
+from .schedulers import UltralyticsSchedulerBaseAdapter
+from .trainer import UltralyticsTrainerBaseAdapter
 from innofw.constants import Frameworks
 from innofw.core.models import BaseModelAdapter
 from innofw.core.models import register_models_adapter
@@ -100,7 +100,7 @@ class YOLOV5Adapter(BaseModelAdapter):
     ):
         super().__init__(model, log_dir)
 
-        trainer = YOLOV5TrainerBaseAdapter().adapt(trainer_cfg)
+        trainer = UltralyticsTrainerBaseAdapter().adapt(trainer_cfg)
         self.device, self.epochs = trainer["device"], trainer["epochs"]
         self.log_dir = Path(log_dir)
 
@@ -116,7 +116,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             "sync_bn": False,
             "cos_lr": False,
             "image_weights": False,
-            "noplots": True,
+            "noplots": False,
             "noautoanchor": False,
             "noval": False,
             "nosave": False,
@@ -151,7 +151,7 @@ class YOLOV5Adapter(BaseModelAdapter):
 
         self.hyp = {
             "lr0": 0.01,
-            "lrf": 0.1,
+            "lrf": 0.01,
             "momentum": 0.937,
             "weight_decay": 0.0005,
             "warmup_epochs": 3.0,
@@ -180,15 +180,15 @@ class YOLOV5Adapter(BaseModelAdapter):
             "copy_paste": 0.0,
         }
 
-        optimizers = YOLOV5OptimizerBaseAdapter().adapt(optimizers_cfg)
+        optimizers = UltralyticsOptimizerBaseAdapter().adapt(optimizers_cfg)
         self.opt = {**self.opt, **optimizers["opt"]}
         self.hyp = {**self.hyp, **optimizers["hyp"]}
 
-        schedulers = YOLOV5SchedulerBaseAdapter().adapt(schedulers_cfg)
+        schedulers = UltralyticsSchedulerBaseAdapter().adapt(schedulers_cfg)
         self.opt = {**self.opt, **schedulers["opt"]}
         self.hyp = {**self.hyp, **schedulers["hyp"]}
 
-        losses = YOLOV5LossesBaseAdapter().adapt(losses)
+        losses = UltralyticsLossesBaseAdapter().adapt(losses)
         self.opt = {**self.opt, **losses["opt"]}
         self.hyp = {**self.hyp, **losses["hyp"]}
         # try:
@@ -213,7 +213,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             # print(e)
             # logging.info(f"{e}")
 
-    def train(self, data: YOLOV5DataModuleAdapter, ckpt_path=None):
+    def train(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
 
         if ckpt_path is None:
@@ -300,7 +300,7 @@ class YOLOV5Adapter(BaseModelAdapter):
     def _yolov5_predict(self):
         return yolov5_detect
 
-    def predict(self, data: YOLOV5DataModuleAdapter, ckpt_path=None):
+    def predict(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
 
         ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
@@ -318,18 +318,19 @@ class YOLOV5Adapter(BaseModelAdapter):
             name=self.opt["name"],
         )
 
-        if str(data.infer_source).startswith("rts") or Path(data.infer_source).is_file():
+        if (
+            str(data.infer_source).startswith("rts")
+            or Path(data.infer_source).is_file()
+        ):
             params.update(source=data.infer_source)
         else:
-            params.update(
-                source=Path(data.infer_source) / "images", data=data.data
-            )
+            params.update(source=Path(data.infer_source) / "images", data=data.data)
 
         self._yolov5_predict.run(**params)
 
         self.update_checkpoints_path()
 
-    def test(self, data: YOLOV5DataModuleAdapter, ckpt_path=None):
+    def test(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
 
         ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
@@ -343,6 +344,7 @@ class YOLOV5Adapter(BaseModelAdapter):
             batch_size=data.batch_size,
             device=self.device,
             weights=ckpt_path,
+            task="test",
         )
 
         self.update_checkpoints_path()

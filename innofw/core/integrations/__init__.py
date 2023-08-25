@@ -1,5 +1,5 @@
 from .base_adapter import BaseAdapter
-from .ultralytics.datamodule import YOLOV5DataModuleAdapter as YOLOv5DataModule
-from .ultralytics.yolov5_adapter import YOLOv5Model as YOLOv5
-
-# from .base_wrapper_adapter import BaseWrapperAdapter
+from .ultralytics.datamodule import (
+    UltralyticsDataModuleAdapter as UltralyticsDataModule,
+)
+from .ultralytics.ultralytics_adapter import UltralyticsAdapter as YOLOv5

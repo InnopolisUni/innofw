@@ -12,20 +12,20 @@ lep_datamodule_cfg_w_target = DictConfig(
         "description": "object detection dataset of lep",
         "markup_info": "Информация о разметке",
         "date_time": "01.07.2076",
-        "_target_": "innofw.core.integrations.YOLOv5DataModule",
+        "_target_": "innofw.core.integrations.UltralyticsDataModule",
         "train": {
             "source": str(
-                get_test_folder_path() / "data/images/detection/lep/train"
+                get_test_folder_path() / "data/images/detection/lep/images/train"
             )
         },
         "test": {
             "source": str(
-                get_test_folder_path() / "data/images/detection/lep/test"
+                get_test_folder_path() / "data/images/detection/lep/images/test"
             )
         },
         "infer": {
             "source": str(
-                get_test_folder_path() / "data/images/detection/lep/infer"
+                get_test_folder_path() / "data/images/detection/lep/images/infer"
             )
         },
         "num_workers": 8,
@@ -96,15 +96,9 @@ wheat_datamodule_cfg_w_target = DictConfig(
         "date_time": "01.07.2076",
         "_target_": "innofw.core.datamodules.lightning_datamodules.detection_coco.CocoLightningDataModule",
         "train": {
-            "source": str(
-                get_test_folder_path() / "data/images/detection/wheat"
-            )
+            "source": str(get_test_folder_path() / "data/images/detection/wheat")
         },
-        "test": {
-            "source": str(
-                get_test_folder_path() / "data/images/detection/wheat"
-            )
-        },
+        "test": {"source": str(get_test_folder_path() / "data/images/detection/wheat")},
         "num_workers": 8,
     }
 )
@@ -118,14 +112,10 @@ dicom_datamodule_cfg_w_target = DictConfig(
         "date_time": "01.07.2076",
         "_target_": "innofw.core.datamodules.lightning_datamodules.detection_coco.DicomCocoLightningDataModule",
         "train": {
-            "source": str(
-                get_test_folder_path() / "data/images/detection/stroke/test/"
-            )
+            "source": str(get_test_folder_path() / "data/images/detection/stroke/test/")
         },
         "test": {
-            "source": str(
-                get_test_folder_path() / "data/images/detection/stroke/test/"
-            )
+            "source": str(get_test_folder_path() / "data/images/detection/stroke/test/")
         },
         "num_workers": 1,
     }
@@ -141,8 +131,7 @@ arable_segmentation_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule",
         "train": {
             "source": str(
-                get_test_folder_path()
-                / "data/images/segmentation/arable/train"
+                get_test_folder_path() / "data/images/segmentation/arable/train"
             )
         },
         "test": {
@@ -190,14 +179,12 @@ qm9_datamodule_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.pandas_datamodules.QsarDataModule",
         "train": {
             "source": str(
-                get_test_folder_path()
-                / "data/tabular/molecular/smiles/qm9/train"
+                get_test_folder_path() / "data/tabular/molecular/smiles/qm9/train"
             )
         },
         "test": {
             "source": str(
-                get_test_folder_path()
-                / "data/tabular/molecular/smiles/qm9/train"
+                get_test_folder_path() / "data/tabular/molecular/smiles/qm9/train"
             )
         },
         "smiles_col": "smiles",
@@ -208,7 +195,7 @@ qm9_datamodule_cfg_w_target = DictConfig(
 
 tiff_datamodule_cfg_w_target = DictConfig(
     {
-        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
         "train": {
             "source": str(
                 get_test_folder_path()

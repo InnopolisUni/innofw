@@ -1,5 +1,0 @@
-to_float:
-  _target_: albumentations.ToFloat
-  max_value: 255
-  always_apply: True
-  p: 1.0

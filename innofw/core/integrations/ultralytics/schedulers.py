@@ -1,21 +1,17 @@
 from ..base_adapter import BaseAdapter
 
 
-class YOLOV5SchedulerBaseAdapter(BaseAdapter):
-    """Class defines adapter interface to conform to YOLOv5 scheduler specifications
+class UltralyticsSchedulerBaseAdapter(BaseAdapter):
+    """Class defines adapter interface to conform to Ultralytics scheduler specifications
 
-    Methods
-    -------
-    adapt(scheduler: DictConfig) -> dict
-        converts the scheduler configuration into YOLOv5 suitable format
+        Methods
+        -------
+        adapt(scheduler: DictConfig) -> dict
+            converts the scheduler configuration into Ultralytics suitable format
     """
-
     def __init__(self):
         self.opt = {}
-        self.hyp = {
-            "lr0": 1e-2,
-            "lrf": 1e-1,
-        }
+        self.hyp = {}
 
     def adapt(self, scheduler) -> dict:
         return {"opt": self.opt, "hyp": self.hyp}

@@ -1,9 +1,13 @@
 defaults:
-    - preprocessing:
-        - standard_images
-    - combined:
-        - none
-    - position:
-        - random_resized_crop
-    - color:
-    - postprocessing:
+  - /augmentations/combined:
+      - none
+  - /augmentations/position:
+      - random_resized_crop
+      - flip
+      - rotate90
+      - transpose
+      - grid_distortion
+  - /augmentations/color:
+      - random_gamma
+      - blur
+  - /augmentations/postprocessing:

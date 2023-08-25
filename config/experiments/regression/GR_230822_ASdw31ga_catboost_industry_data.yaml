@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: regression/regression_industry_data
+  - override /callbacks: regression
+
+
+project: "industry_data"
+task: "table-regression"
+random_seed: 42
+#ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/catboost_industry_data.cbm

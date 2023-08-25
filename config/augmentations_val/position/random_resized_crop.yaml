@@ -1,8 +1,0 @@
-random_crop:
-  _target_: albumentations.RandomResizedCrop
-  height: 1600  # 1024
-  width: 1600
-  scale:
-    - 0.5
-    - 0.9
-  p: 1.0

@@ -1,0 +1,39 @@
+# wandb sweep config
+program: train.py
+method: bayes
+metric:
+  name: val_MulticlassJaccardIndex
+  goal: maximize
+
+name: param_tuning_deeplabv3plus
+project: uw_madison
+
+parameters:
+
+  experiments:
+    value: "KG_260423_inwrg21_deeplab_uwmadison.yaml"
+
+  augmentations_train:
+    values: [none, 'position/random_horizontal_flip.yaml']
+
+  batch_size:
+    values: [ 64, 128, 256 ]
+
+  models.encoder_name:
+    values: ['resnet34', 'resnet50', 'resnet101']
+
+  optimizers:
+    values: ['lion.yaml', 'adam.yaml']
+
+  optimizers.lr:
+    min: 0.0035
+    max: 0.0070
+
+  epochs:
+    values: [15, 20]
+
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}

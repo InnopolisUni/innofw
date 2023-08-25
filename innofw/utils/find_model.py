@@ -11,7 +11,7 @@ def find_suitable_model(name):
         "unet++": "segmentation_models_pytorch.UnetPlusPlus",
         "deeplabv3": "segmentation_models_pytorch.DeepLabV3",
         "deeplabv3+": "segmentation_models_pytorch.DeepLabV3Plus",
-        "yolov5": "innofw.core.integrations.YOLOv5",
+        "yolov5": "ultralytics.YOLO",
         "yolov3": None,
         "SegFormer": "innofw.core.models.torch.architectures.segmentation.SegFormer",
         "FasterRcnnModel": "innofw.core.models.torch.architectures.detection.faster_rcnn.FasterRcnnModel",

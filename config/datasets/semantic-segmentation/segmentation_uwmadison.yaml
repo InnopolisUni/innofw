@@ -1,0 +1,15 @@
+_target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DirSegmentationLightningDataModule
+date_time: 14.05.2022
+description: gastrointestinal organs segmentations dataset
+markup_info: segmentation masks
+name: UW-Madison dataset
+task:
+  - multiclass-image-segmentation
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/uw_madison_organs/test.zip
+  target: ./data/organs/test
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/uw_madison_organs/train.zip
+  target: ./data/organs/train
+

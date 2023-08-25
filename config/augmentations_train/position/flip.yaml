@@ -1,4 +1,0 @@
-flip:
-  _target_: albumentations.Flip
-  p: 0.5
-  always_apply: False

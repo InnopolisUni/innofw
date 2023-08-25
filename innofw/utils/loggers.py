@@ -32,10 +32,10 @@ def setup_wandb(cfg):
 
         run = wandb.init(
             entity=wandb_cfg.entity,
-            # group=wandb_cfg.group,
-            project=cfg.get("project"),
-            config=cfg_container,  # type: ignore
-            name=run_name,
+            group=None if "group" not in wandb_cfg else wandb_cfg.group,
+            project=wandb_cfg.project,
+            config=cfg_container,
+            tags=[] if "tags" not in wandb_cfg else wandb_cfg.tags,
         )
 
         # os.environ["WANDB_DIR"] = str(run_save_path)
