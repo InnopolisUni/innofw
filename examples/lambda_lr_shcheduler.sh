@@ -1,1 +1,1 @@
-python train.py experiments=semantic-segmentation/KA_230922_sdgh32lk_deeplab schedulers=lambda
+python train.py experiments=semantic-segmentation/KA_230922_sdgh32lk_deeplab schedulers=lambda epochs=100 optimizers.lr=100

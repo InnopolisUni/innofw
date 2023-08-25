@@ -1,1 +1,1 @@
-python train.py experiments=semantic-segmentation/KA_230922_sdgh32lk_deeplab schedulers=multistep
+python train.py experiments=semantic-segmentation/KA_230922_sdgh32lk_deeplab schedulers=multistep optimizers.lr=20 epochs=50
