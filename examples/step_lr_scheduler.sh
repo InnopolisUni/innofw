@@ -1,1 +1,1 @@
-python train.py experiments=semantic-segmentation/KA_230922_sdgh32lk_deeplab schedulers=step optimizers.lr=20 epochs=18
+python train.py experiments=semantic-segmentation/arable-bin-seg-ndvi/fields/baseline schedulers=step epochs=18 optimizers.lr=0.001
