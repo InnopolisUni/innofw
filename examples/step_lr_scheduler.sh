@@ -1,0 +1,1 @@
+python train.py experiments=semantic-segmentation/arable-bin-seg-ndvi/fields/baseline schedulers=step epochs=18 optimizers.lr=0.001

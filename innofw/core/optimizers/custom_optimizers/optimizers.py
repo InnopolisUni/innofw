@@ -37,9 +37,7 @@ class ADAM(Optimizer):
     def __init__(self, *args, **kwargs):
         super().__init__(optimizer=None)
         self.optim = Adam(*args, **kwargs)
-        self.defaults = {
-            "betas": (0.9, 0.999)
-        }
+
 
 class LION(Optimizer):  # [1]
     """
@@ -57,13 +55,9 @@ class LION(Optimizer):  # [1]
             if not 0.0 <= lr:
                 raise ValueError("Invalid learning rate: {}".format(lr))
             if not 0.0 <= b1 < 1.0:
-                raise ValueError(
-                    "Invalid beta parameter at index 0: {}".format(b1)
-                )
+                raise ValueError("Invalid beta parameter at index 0: {}".format(b1))
             if not 0.0 <= b2 < 1.0:
-                raise ValueError(
-                    "Invalid beta parameter at index 1: {}".format(b2)
-                )
+                raise ValueError("Invalid beta parameter at index 1: {}".format(b2))
             defaults = dict(lr=lr, b1=b1, b2=b2, wd=wd)
             super().__init__(params, defaults)
 

@@ -96,7 +96,7 @@ def run_pipeline(
 
     metrics = get_obj(cfg, "metrics", task, framework)
     optimizers = get_optimizer(cfg, "optimizers", task, framework)
-    schedulers = get_obj(cfg, "schedulers", task, framework)
+    schedulers = get_optimizer(cfg, "schedulers", task, framework)
     try:
         datamodule = get_datamodule_concat(
             cfg._dataset_dict,
