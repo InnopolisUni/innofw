@@ -137,12 +137,12 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         Input folder structure is as follows:
         images/
             train/
-
+            validation/
             test/
 
         labels/
             train/
-
+            validation/
             test/
 
 
