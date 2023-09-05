@@ -15,8 +15,8 @@ defaults:
   - initializations:
   - wandb: default
   - loggers: none
-  - experiments:  # order matters
   - clear_ml: disabled
+  - experiments:  # order matters
   - override hydra/job_logging: disabled
 #  - override hydra/job_logging: custom
 
