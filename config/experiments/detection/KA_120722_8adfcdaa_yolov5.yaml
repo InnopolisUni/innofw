@@ -2,7 +2,7 @@
 defaults:
   - override /models: detection/yolov5
   - override /datasets: detection/detection_lep
-  - override /metrics: detection
+  # - override /metrics: detection
   - override /optimizers: sgd
 
 project: "lep"
