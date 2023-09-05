@@ -1,1 +1,1 @@
-python train.py experiments=detection/IM_040822_rbe23lls_anomaly_detection_timeseries_lstm
+python train.py experiments=anomaly-detection/IM_040822_rbe23lls_anomaly_detection_timeseries_lstm
