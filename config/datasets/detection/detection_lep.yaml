@@ -7,19 +7,20 @@ description: Набор данных содержит видео облетов 
 markup_info: Набор данных содержит разметку bounding box, под формат детекции столбов ЛЭП.
 date_time: 18.07.2022
 
-#_target_: innofw.core.datamodules.lightning_datamodules.detection.YOLOv5DataModule
-_target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
-
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
 
 train:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/train.zip
-  target: ./data/lep/train
+  source: /mnt/nvmestorage/qb/repos/exp/2100723/innofw/data/proper_lep/images/train
+  # source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/train.zip
+  # target: ./data/lep/train
 test:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
-  target: ./data/lep/test
+  source: /mnt/nvmestorage/qb/repos/exp/2100723/innofw/data/proper_lep/images/test
+  # source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
+  # target: ./data/lep/test
 infer:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
-  target: ./data/lep/infer
+  source: /mnt/nvmestorage/qb/repos/exp/2100723/innofw/data/proper_lep/images/infer
+  # source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
+  # target: ./data/lep/infer
 
 
 num_workers: 8

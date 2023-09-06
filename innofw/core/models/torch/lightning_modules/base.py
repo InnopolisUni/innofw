@@ -56,14 +56,14 @@ class BaseLightningModule(pl.LightningModule):
         else:
             optim = self.optimizer_cfg(params=params)
 
-        if self.scheduler_cfg is None:
+        if self.scheduler_cfg is None or self.scheduler_cfg is {}:
             return [optim]
         else:
             # instantiate scheduler from configurations
-            if isinstance(self.optimizer_cfg, DictConfig):
+            if isinstance(self.scheduler_cfg, DictConfig):
                 scheduler = hydra.utils.instantiate(self.scheduler_cfg, optim)
             else:
-                scheduler = self.scheduler_cfg(optim)
+                scheduler = self.scheduler_cfg(optimizer=optim)
             if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
                 return {
                     "optimizer": optim,
