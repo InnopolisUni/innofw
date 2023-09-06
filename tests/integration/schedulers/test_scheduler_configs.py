@@ -3,6 +3,7 @@ from pathlib import Path
 
 import hydra
 import pytest
+import yaml
 from omegaconf import DictConfig
 from segmentation_models_pytorch import Unet
 
@@ -27,7 +28,6 @@ config_files = list(
 config_files = [[i] for i in config_files]
 
 
-# test that validates correctness of every scheduler inside the schedulers config folder
 @pytest.mark.parametrize(["scheduler_cfg"], config_files)
 def test_scheduler_configs(scheduler_cfg, tmp_path):
     cfg = DictConfig(

@@ -111,6 +111,9 @@ class TorchAdapter(BaseModelAdapter):
         }
         framework = "torch"
         for key, value in objects.items():
+            if key == "schedulers_cfg":
+                continue
+
             if not value:
                 objects[key] = get_default(key, framework, task)
 
