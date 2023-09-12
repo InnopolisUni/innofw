@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - override /models: detection/yolov5
-  - override /datasets: detection/detection_lep
+  - override /datasets: detection/lep
 
 
 project: "lep"
