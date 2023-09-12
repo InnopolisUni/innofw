@@ -72,12 +72,12 @@ class BaseDataModule(ABC):
             **kwargs:
         """
         if stage != Stages.predict:
-            self.train = self._get_data(train)
-            self.test = self._get_data(test)
+            self.train, _ = self._get_data(train)
+            self.test, _ = self._get_data(test)
         else:
             self.train = None
             self.test = None
-        self.infer = self._get_data(infer)
+        self.infer, self.infer_file = self._get_data(infer)
         self.stage = stage
 
     def setup(self, stage: Stages = None, *args, **kwargs):
@@ -124,9 +124,7 @@ class BaseDataModule(ABC):
         elif stage is Stages.predict:
             return self.predict_dataloader()
         else:
-            raise ValueError(
-                "Wrong stage passed use on of following:", list(Stages)
-            )
+            raise ValueError("Wrong stage passed use on of following:", list(Stages))
 
     @abstractmethod
     def train_dataloader(self):
@@ -144,10 +142,10 @@ class BaseDataModule(ABC):
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         pass
 
-    def _get_data(self, path: Dict[str, str]) -> Optional[Union[str, Path]]:
+    def _get_data(self, path: Dict[str, str]):  #  -> Optional[Union[str, Path]]
         """Function to get the path to the data"""
         if path is None:
-            return None
+            return None, None
 
         for name in [
             "source",
@@ -158,17 +156,17 @@ class BaseDataModule(ABC):
         source = path["source"]
 
         if source is None:
-            return None
+            return None, None
 
         if source.startswith("$"):
             source = os.getenv(source[1:])
 
         if source.startswith("rts"):
-            return source
+            return source, None
 
         # source is not a link then return it
         if not urlparse(source).netloc:
-            return get_abs_path(source)
+            return get_abs_path(source), None
 
         if "target" not in path:
             target = get_default_data_save_dir()
@@ -179,7 +177,7 @@ class BaseDataModule(ABC):
                 target = get_abs_path(target)
 
         # process a link
-        return download_archive(file_url=source, dst_path=target)
+        return download_archive(file_url=source, dst_path=target), source
 
     def upload_dataset2s3(
         self,
