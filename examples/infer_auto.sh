@@ -1,0 +1,1 @@
+python infer.py experiments=detection/KA_120923_sa47f1v6_yolov5_auto_infer

@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection/wares_sort
+  - override /optimizers: sgd
+
+project: "auto"
+task: "image-detection"
+random_seed: 42
+epochs: 2
+batch_size: 2
+weights_freq: 1
+accelerator: gpu
