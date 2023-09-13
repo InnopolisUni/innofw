@@ -6,8 +6,8 @@ import pandas as pd
 from innofw.constants import Stages
 from innofw.core.datamodules.pandas_datamodules.pandas_dm import PandasDataModule
 
-class LungDescriptionDecisionPandasDataModule(PandasDataModule):
 
+class LungDescriptionDecisionPandasDataModule(PandasDataModule):
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         df = self.get_stage_dataloader(stage)["x"]
         df = pd.DataFrame(df)

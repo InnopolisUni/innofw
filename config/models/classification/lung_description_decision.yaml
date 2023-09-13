@@ -5,6 +5,9 @@ _target_: sklearn.pipeline.Pipeline
 steps:
   - - "vectorizer"
     - _target_: sklearn.feature_extraction.text.TfidfVectorizer
+      max_df: 1000
+      stop_words:
+        - russian
       min_df: 10
   - - "classifier"
     - _target_: sklearn.linear_model.LogisticRegression
