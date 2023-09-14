@@ -1,13 +1,12 @@
 #
 import logging
-import os
 
 import pytest
-import hydra
 import yaml
-from omegaconf import DictConfig
-from hydra import compose, initialize
+from hydra import compose
+from hydra import initialize
 from hydra.core.global_hydra import GlobalHydra
+from omegaconf import DictConfig
 
 from innofw.constants import Frameworks
 from innofw.utils import get_project_root
@@ -96,7 +95,10 @@ def test_datasets(dataset_config_file, tmp_path):
 
 @pytest.mark.parametrize(["experiment_config_file"], experiment_config_files)
 def test_experiments(experiment_config_file):
-    experiment_config_path = '/'.join(str(experiment_config_file).split('/')[7:])
+    relative_path_start = str(experiment_config_file).split('/').index('experiments') + 1
+    experiment_config_path = "/".join(
+        str(experiment_config_file).split("/")[relative_path_start:]
+    )
     GlobalHydra.instance().clear()
     with initialize(config_path="../../../config", job_name="test_app"):
         cfg = compose(
@@ -104,7 +106,7 @@ def test_experiments(experiment_config_file):
             overrides=[f"experiments={experiment_config_path}"],
             return_hydra_config=True,
         )
-    
+
     get_experiment(cfg)
 
 
