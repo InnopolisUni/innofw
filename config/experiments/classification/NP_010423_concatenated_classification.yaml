@@ -2,7 +2,7 @@
 defaults:
   - /datasets@_dataset_dict.classification_mnist1: classification/classification_mnist
   - /datasets@_dataset_dict.classification_mnist2: classification/classification_mnist
-  - override /models: resnet.yaml
+  - override /models: classification/resnet.yaml
   - override /augmentations_train: none #classification.yaml
   - override /augmentations_val: none
   - override /augmentations_test: none

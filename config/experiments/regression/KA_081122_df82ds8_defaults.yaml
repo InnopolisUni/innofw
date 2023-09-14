@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /datasets: regression_house_prices
+  - override /datasets: regression/regression_house_prices
 
 project: "check_defaults"
 task: "table-regression"

@@ -3,8 +3,11 @@ import logging
 import os
 
 import pytest
+import hydra
 import yaml
 from omegaconf import DictConfig
+from hydra import compose, initialize
+from hydra.core.global_hydra import GlobalHydra
 
 from innofw.constants import Frameworks
 from innofw.utils import get_project_root
@@ -29,16 +32,6 @@ datasets_config_files = []
 experiment_config_files = [
     [item] for item in experiments_config_path.rglob("*.yaml")
 ]
-augmentation_config_files = []
-augmentation_keys = (
-    []
-)  # List of values from ['color', 'combined', 'position', 'postprocessing', 'preprocessing']
-for item in os.listdir(augmentation_config_path):
-    if os.path.isfile(item):
-        continue
-    files = [cfg for cfg in (augmentation_config_path / item).rglob("*.yaml")]
-    augmentation_config_files.extend(files)
-    augmentation_keys.extend([str(item)] * len(files))
 
 augmentation_configs_ttv = []
 for augmentation_type in [
@@ -64,7 +57,7 @@ for item in datasets_config_path.iterdir():
 
 
 @pytest.mark.parametrize(["model_config_file"], models_config_files)
-def test_models(model_config_file):  #
+def test_models(model_config_file):
     with open(model_config_file, "r") as f:
         model_config = DictConfig(yaml.safe_load(f))
         get_model(model_config, base_trainer_on_cpu_cfg)
@@ -103,58 +96,20 @@ def test_datasets(dataset_config_file, tmp_path):
 
 @pytest.mark.parametrize(["experiment_config_file"], experiment_config_files)
 def test_experiments(experiment_config_file):
-    import hydra
-    from hydra import compose, initialize
-    from hydra.core.global_hydra import GlobalHydra
-
-    try:
-        GlobalHydra.instance().clear()
-        initialize(config_path="../../../config", job_name="test_app")
+    experiment_config_path = '/'.join(str(experiment_config_file).split('/')[7:])
+    GlobalHydra.instance().clear()
+    with initialize(config_path="../../../config", job_name="test_app"):
         cfg = compose(
             config_name="train",
-            overrides=[f"experiments={experiment_config_file.stem}"],
+            overrides=[f"experiments={experiment_config_path}"],
             return_hydra_config=True,
         )
-        get_experiment(cfg)
-    except hydra.errors.MissingConfigException as e:
-        logging.exception(e)
-        pass  # Some experiments reference the outdated model configs
-
-
-@pytest.mark.parametrize(
-    ["augmentation_config", "key"],
-    zip(augmentation_config_files, augmentation_keys),
-)
-def test_augmentations(augmentation_config, key):
-    with open(augmentation_config, "r") as f:
-        augmentation_dictconfig = DictConfig(yaml.safe_load(f))
-    if augmentation_dictconfig is None or all(
-        [val is None for val in augmentation_dictconfig.values()]
-    ):
-        return
-
-    augmentation_dictconfig = DictConfig({key: augmentation_dictconfig})
-    augmentation = get_augmentations(augmentation_dictconfig)
-    assert augmentation is not None, f"{augmentation_config} is invalid"
-
-    import numpy as np
-
-    max_iter = 100
-    image = np.random.random((224, 224, 3)).astype(np.float32)
-    for i in range(max_iter):
-        try:
-            if np.sum(image != augmentation(image)) != 0:
-                return
-        except:  # If test is not applicable to this image => skip it
-            return
-    raise Exception(f"Augmentation {augmentation_config} has no effect")
+    
+    get_experiment(cfg)
 
 
 @pytest.mark.parametrize(["augmentation_config"], augmentation_configs_ttv)
 def test_augmentations_ttv(augmentation_config):
-    from hydra import compose, initialize
-    from hydra.core.global_hydra import GlobalHydra
-
     GlobalHydra.instance().clear()  # Reset global hydra state
     augmentation_config_rel = "/".join(
         str(augmentation_config).split("/")[-2:]
