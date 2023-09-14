@@ -37,35 +37,6 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
     task = ["image-detection"]
     framework = [Frameworks.ultralytics]
 
-    def predict_dataloader(self):
-        pass
-
-    def setup_infer(self):  # todo: fix this to make it proper yolo folder structure
-        if (
-            type(self.infer_source) == str
-            and self.infer_source.startswith("rts")
-            or Path(self.infer_source).is_file()
-        ):
-            return
-        # root_dir
-        self.infer_source = Path(self.infer_source)
-        root_path = self.infer_source.parent
-
-        self.data = str(root_path / "data.yaml")
-
-        with open(self.data, "w+") as file:
-            file.write(f"nc: {self.num_classes}\n")
-            file.write(f"names: {self.names}\n")
-
-    def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        pass
-
-    def train_dataloader(self):
-        pass
-
-    def test_dataloader(self):
-        pass
-
     def __init__(
         self,
         train: Optional[str],
@@ -118,8 +89,6 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             #     self.infer_source = Path(str(self.infer_source)[:-7])
 
         self.batch_size = batch_size
-        # super().__init__(train, test, batch_size, num_workers)
-
         self.imgsz: int = image_size
         self.workers: int = num_workers
         self.val_size = val_size
@@ -127,10 +96,6 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         self.names = names
         self.random_state = random_state
         self.augmentations = augmentations
-
-        # folder_name = self.train_dataset.stem
-
-        # labels_path = Path(self.train_dataset).parent.parent / "labels"
 
     def setup_train_test_val(self, **kwargs):
         """
@@ -149,7 +114,20 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         Method will divide train folder's contents into train and val folders
         """
         # root_dir
+        # self.train_source -> folder with images
+        self.train_source = (
+            self.train_source
+            if self.train_source.name == "train"
+            else self.train_source / "train"
+        )
+        self.test_source = (
+            self.test_source
+            if self.test_source.name == "test"
+            else self.test_source / "test"
+        )
+
         root_path = self.train_source.parent.parent
+
         # new data folder
         new_data_path = root_path / "innofw_split_data"
         new_data_path.mkdir(exist_ok=True, parents=True)
@@ -161,9 +139,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
 
         # split images and labels
         train_img_path = self.train_source
-        train_lbl_path = (
-            self.train_source.parent.parent / "labels" / self.train_source.name
-        )
+        train_lbl_path = self.train_source.parent.parent / "labels" / "train"
 
         # get all files from train folder
         img_files = list(train_img_path.iterdir())
@@ -226,3 +202,39 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
 
             file.write(f"nc: {self.num_classes}\n")
             file.write(f"names: {self.names}\n")
+
+    def setup_infer(self):
+        if (
+            type(self.infer_source) == str
+            and self.infer_source.startswith("rts")
+            or Path(self.infer_source).is_file()
+        ):
+            return
+        # root_dir
+        self.infer_source = Path(self.infer_source)
+        if self.infer_file:
+            self.infer_source = (
+                self.infer_source
+                if self.infer_source.name == Path(self.infer_file).stem
+                else self.infer_source / Path(self.infer_file).stem
+            )
+
+        root_path = self.infer_source.parent
+
+        self.data = str(root_path / "data.yaml")
+
+        with open(self.data, "w+") as file:
+            file.write(f"nc: {self.num_classes}\n")
+            file.write(f"names: {self.names}\n")
+
+    def predict_dataloader(self):
+        pass
+
+    def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
+        pass
+
+    def train_dataloader(self):
+        pass
+
+    def test_dataloader(self):
+        pass

@@ -14,10 +14,10 @@ check_gpu_and_torch_compatibility()
 
 dotenv.load_dotenv(override=True)
 
+from innofw.utils.loggers import setup_clear_ml, setup_wandb
 
-@hydra.main(
-    config_path="config/", config_name="infer.yaml", version_base="1.2"
-)
+
+@hydra.main(config_path="config/", config_name="infer.yaml", version_base="1.2")
 def main(config):
     # Imports can be nested inside @hydra.main to optimize tab completion
     # https://github.com/facebookresearch/hydra/issues/934

@@ -173,11 +173,12 @@ class UltralyticsAdapter(BaseModelAdapter):
     def predict(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
 
-        ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-            ckpt_path, inplace=False, dst_path=None
-        )
+        if ckpt_path:
+            ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
+                ckpt_path, inplace=False, dst_path=None
+            )
 
-        self.model._load(ckpt_path)
+            self.model._load(ckpt_path)
 
         params = dict(
             conf=0.25,
@@ -185,14 +186,11 @@ class UltralyticsAdapter(BaseModelAdapter):
             save=True,
             device=self.device,
             augment=False,
+            project=str(self.log_dir.parent),
+            name=str(self.log_dir.name),
         )
-        if str(data.infer_source).startswith("rts"):
-            params.update(source=data.infer_source)
-        else:
-            params.update(source=data.infer_source / "images")
-
+        params.update(source=str(data.infer_source))
         self.model.predict(**params)
-
         self.update_checkpoints_path()
 
     def test(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):

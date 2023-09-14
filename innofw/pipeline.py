@@ -119,7 +119,10 @@ def run_pipeline(
         )
         print("using standard datamodule")
 
-    datamodule.setup_train_test_val()
+    if predict:
+        datamodule.setup_infer()
+    else:
+        datamodule.setup_train_test_val()
 
     losses = get_losses(cfg, task, framework)
     callbacks = get_callbacks(
