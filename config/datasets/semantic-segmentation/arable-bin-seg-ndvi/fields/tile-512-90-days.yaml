@@ -1,9 +1,11 @@
 _target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM
 train:
-  source: /mnt/nvmestorage/qb/repos/exp/2100723/innofw/data/arable-ndvi/train
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/arable_ndvi/train.zip
+  target: data/arable_ndvi/train/
 
 test:
-  source: /mnt/nvmestorage/qb/repos/exp/2100723/innofw/data/arable-ndvi/test
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/arable_ndvi/test.zip
+  target: data/arable_ndvi/test/
 
 img_foldername: img
 label_foldername: gt

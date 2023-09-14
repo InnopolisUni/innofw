@@ -18,7 +18,8 @@ def layout():
     request_body = request.json
     with open(configs_path / request_body["config_name"], "w+") as stream:
         try:
-            yaml.dump(request_body["html"], stream, allow_unicode=True,  default_flow_style=False)
+            s = "# @package _global_\n" + yaml.dump(request_body["html"], allow_unicode=True, default_flow_style=False)
+            stream.write(s)
         except yaml.YAMLError as exc:
             print("ERROR:", exc)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}

@@ -1,10 +1,10 @@
 # @package _global_
 defaults:
   - override /models: detection/yolov5
-  - override /datasets: detection/lep
+  - override /datasets: detection/air_data
   - override /optimizers: sgd
 
-project: "lep"
+project: "air_data"
 task: "image-detection"
 random_seed: 42
 epochs: 2
