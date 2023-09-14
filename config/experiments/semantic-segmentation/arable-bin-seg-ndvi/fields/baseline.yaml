@@ -24,7 +24,7 @@ models:
 project: arable-bound-bin-seg-ndvi-4ch-60days
 task: image-segmentation
 random_seed: 42
-accelerator: gpu
+accelerator: cpu
 devices: 1
 batch_size: 4
 num_workers: 8
