@@ -1,0 +1,1 @@
+python infer.py experiments=detection/KA_120923_fad49tg_yolov5_sort_infer

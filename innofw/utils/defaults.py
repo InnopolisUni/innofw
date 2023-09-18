@@ -32,9 +32,13 @@ from innofw.core.models.torch.lightning_modules.segmentation import (
 from innofw.core.models.torch.lightning_modules.segmentation import (
     SemanticSegmentationLightningModule,
 )
+from innofw.utils import get_logger
 from innofw.utils.find_model import find_suitable_model
 
 # local modules
+
+
+logger = get_logger(__file__)
 
 
 def default_model_for_datamodule(task, datamodule):
@@ -53,6 +57,23 @@ def default_model_for_datamodule(task, datamodule):
 
 
 def get_default(obj_name: str, framework: str, task: str):
+    default_scheduler_cfg = OmegaConf.create(
+        {
+            "task": ["all"],
+            "implementations": {
+                "torch": {
+                    "StepLR": {
+                        "object": {
+                            "_target_": "torch.optim.lr_scheduler.ConstantLR",
+                            "factor": 1,
+                            "total_iters": 100,
+                        }
+                    }
+                }
+            },
+        }
+    )
+
     defaults = {
         "torch": {
             "image-segmentation": {
@@ -109,21 +130,6 @@ def get_default(obj_name: str, framework: str, task: str):
                     }
                 ),
             },
-            # "image-detection": {
-            #     "lightning_module": ObjectDetectionLightningModule,
-            #     "trainer_cfg": OmegaConf.create(
-            #         {"_target_": "pytorch_lightning.Trainer", "max_epochs": 100}
-            #     ),
-            #     "optimizers_cfg": OmegaConf.create(
-            #         {
-            #             "_target_": "torch.optim.SGD",
-            #             "lr": 1e-2,
-            #             "weight_decay": 5e-4,
-            #             "momentum": 0.9,
-            #         }
-            #     ),
-            #     "callbacks": [],
-            # },
             "image-classification": {
                 "lightning_module": ClassificationLightningModule,
                 "losses": torch.nn.NLLLoss(),
@@ -182,11 +188,14 @@ def get_default(obj_name: str, framework: str, task: str):
         }
     }
     try:
-        obj = defaults[framework][task][obj_name]
+        if framework == "torch" and obj_name == "schedulers_cfg":
+            logger.warning("using default scheduler")
+            obj = default_scheduler_cfg
+        else:
+            obj = defaults[framework][task][obj_name]
+
         if isinstance(obj, DictConfig):
-            return lambda *args, **kwargs: hydra.utils.instantiate(
-                obj, *args, **kwargs
-            )
+            return lambda *args, **kwargs: hydra.utils.instantiate(obj, *args, **kwargs)
         else:
             return obj
     except Exception as e:

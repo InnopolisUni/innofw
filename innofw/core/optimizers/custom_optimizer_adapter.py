@@ -38,3 +38,11 @@ class CustomAdapter(BaseOptimizerAdapter):
 
     def zero_grad(self):
         self.optimizer.zero_grad()
+
+    @property
+    def params(self):  # iterable
+        return self.optimizer.params
+
+    @property
+    def defaults(self) -> dict:
+        return self.optimizer.defaults

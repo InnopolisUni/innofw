@@ -1,0 +1,13 @@
+name: Segmentation
+description: Balanced BCE with logits Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    BalancedBCEWithLogitsLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.BalancedBCEWithLogitsLoss
+        gamma: 1.0
+        reduction: mean

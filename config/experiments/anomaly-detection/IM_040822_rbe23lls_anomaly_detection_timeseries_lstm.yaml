@@ -3,7 +3,7 @@ defaults:
   - override /models: anomaly-detection/lstm_autoencoder.yaml
   - override /datasets: anomaly_detection_timeseries_ecg.yaml
   - override /losses: l1.yaml
-
+  - override /schedulers: cosine_annealing
 
 project: "ecg"
 task: "anomaly-detection-timeseries"

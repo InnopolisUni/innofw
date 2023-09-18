@@ -1,4 +1,4 @@
-_target_: innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule  # todo:
+_target_: innofw.core.datamodules.lightning_datamodules.HDF5LightningDataModule  # todo:
 train:
   source: /mnt/nvmestorage/qb/data_n_weights/landslides-bin-seg-s2/210223/processed/train
 

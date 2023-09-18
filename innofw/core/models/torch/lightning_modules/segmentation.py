@@ -112,7 +112,11 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
             # for loss_name in loss_dict:
             if masks.shape[-1] == 1:
                 masks = logits.squeeze(-1)
-            ls_mask = loss(logits, masks)
+            try:
+                ls_mask = loss(logits, masks)
+            except RuntimeError:
+                ls_mask = loss(logits, masks[:, 0, ...])
+
             total_loss += weight * ls_mask
 
             self.log(
@@ -143,9 +147,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
             output["loss"] = loss
 
         if stage != "predict":
-            metrics = self.compute_metrics(
-                stage, predictions, label
-            )  # todo: uncomment
+            metrics = self.compute_metrics(stage, predictions, label)  # todo: uncomment
             self.log_metrics(stage, metrics)
 
         return output
