@@ -1,4 +1,4 @@
-_target_: innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule  # todo:
+_target_: innofw.core.datamodules.lightning_datamodules.HDF5LightningDataModule
 train:
   source: /mnt/nvmestorage/qb/data_n_weights/water_erosion/220223/processed/train/
 

@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - _self_
-  - override /models: semantic-segmentationdeeplabv3plus
+  - override /models: semantic-segmentation/deeplabv3plus
   - override /datasets: semantic-segmentation/linear-road-bin-seg-oftp/tile-2048-original
   # - override /metrics: basic
   # - override /loggers: wandb

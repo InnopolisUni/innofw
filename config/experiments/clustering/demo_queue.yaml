@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+- override /models: clustering/kmeans
+- override /datasets: clustering/clustering_credit_cards
+- override /callbacks: clustering
+- override /clear_ml: test_queue
+project: credit_cards
+random_seed: '42'
+task: table-clustering

@@ -3,12 +3,13 @@ defaults:
   - override /models: semantic-segmentation/deeplabv3plus.yaml
   - override /datasets: semantic-segmentation/segmentation_arable
   - override /optimizers: adam.yaml
-  - override /losses: segmentation_losses
-  - override /augmentations_train: none #segmentation_satellite_imagery  # _inference
-  - override /augmentations_val: none
-  - override /augmentations_test: none
+  - override /losses: semantic-segmentation/dice.yaml
+  - override /augmentations_train: arable_sentinel2
+  - override /augmentations_val: arable_sentinel2
+  - override /augmentations_test: arable_sentinel2
   - override /initializations: he
   - override /callbacks: segmentation
+  - override /schedulers: lambda
 
 project: "segmentation"
 task: "image-segmentation"

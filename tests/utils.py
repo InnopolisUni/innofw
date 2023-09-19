@@ -13,6 +13,10 @@ def get_test_weights_folder_path() -> Path:
     return get_test_folder_path() / "weights"
 
 
+def get_project_config_folder_path() -> Path:
+    return get_test_folder_path().parent / "config"
+
+
 def get_test_config_folder_path() -> Path:
     return get_test_folder_path() / "fixtures/config"
 

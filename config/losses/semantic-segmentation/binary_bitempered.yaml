@@ -1,0 +1,14 @@
+name: Segmentation
+description: Binary Bi-Tempered Logistic Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    BinaryBiTemperedLogisticLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.BinaryBiTemperedLogisticLoss
+        t1: 1
+        t2: 1
+        smoothing: 0.1

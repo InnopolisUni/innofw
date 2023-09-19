@@ -1,0 +1,11 @@
+name: Segmentation
+description: Log Cosh Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    LogCoshLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.LogCoshLoss

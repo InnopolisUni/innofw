@@ -1,0 +1,8 @@
+defaults:
+    - /augmentations/preprocessing:
+      - sentinel2
+    - /augmentations/combined:
+        - none
+    - /augmentations/position:
+    - /augmentations/color:
+    - /augmentations/postprocessing:

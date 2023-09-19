@@ -1,0 +1,15 @@
+defaults:
+    - /augmentations/preprocessing:
+    - /augmentations/combined:
+        - none
+    - /augmentations/position:
+        - random_resized_crop
+    - /augmentations/color:
+    - /augmentations/postprocessing:
+
+
+augmentations:
+    position:
+        random_crop:
+            height: 224
+            width: 224
