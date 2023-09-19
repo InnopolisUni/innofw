@@ -2,16 +2,16 @@
 defaults:
   - _self_
   - override /datasets: semantic-segmentation/arable-bin-seg-ndvi/fields/tile-512-90-days
-  - override /augmentations_train: arable-ndvi-strong
-  - override /augmentations_val: arable-ndvi-strong
-  - override /models: semantic-segmentation/deeplabv3plus
+  - override /augmentations_train: arable-ndvi-min
+  - override /augmentations_val: arable-ndvi-min
+  - override /models: semantic-segmentation/unet
   - override /losses: semantic-segmentation/dice
   - override /optimizers: adam
   - override /schedulers: cosine_annealing
   - override /loggers:
 
 datasets:
-  num_workers: 32
+  num_workers: 4
 
 models:
   in_channels: 3

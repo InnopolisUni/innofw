@@ -1,1 +1,1 @@
-python train.py experiments=semantic-segmentation/arable-bin-seg-ndvi/fields/baseline schedulers=multistep optimizers.lr=0.001 epochs=50
+python train.py experiments=semantic-segmentation/arable-bin-seg-ndvi/fields/baseline schedulers=multistep optimizers.lr=0.001 epochs=20 +trainer.overfit_batches=1
