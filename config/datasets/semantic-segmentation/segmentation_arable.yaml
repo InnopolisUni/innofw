@@ -1,5 +1,5 @@
-task:
-  - image-segmentation
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.hdf5.HDF5LightningDataModule
+task: "image-segmentation"
 
 name: test dataset
 description: dataset for running training in hdf5 format

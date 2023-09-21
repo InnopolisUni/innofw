@@ -16,8 +16,8 @@ datasets:
 models:
   in_channels: 3
   classes: 1
+  activation: sigmoid
   encoder_name: resnet50
-  encoder_weights: imagenet
 
 
 project: arable-bound-bin-seg-ndvi-4ch-60days

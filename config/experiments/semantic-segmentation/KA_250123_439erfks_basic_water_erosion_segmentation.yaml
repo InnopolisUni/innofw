@@ -4,7 +4,7 @@ defaults:
   - override /datasets: semantic-segmentation/segmentation_arable_full.yaml
   - override /optimizers: adam.yaml
   - override /losses: segmentation_losses # triple_segmentation_loss
-  - override /augmentations: segmentation_satellite_imagery
+  # - override /augmentations:  segmentation_satellite_imagery
   # - override /initializations: he
   - override /callbacks: segmentation_2
   # - override /wandb: qb
@@ -24,8 +24,6 @@ models:
 
 accelerator: gpu
 devices: 1
-gpus:  
-  - 1  # use second gpu
 
 
 wandb:
