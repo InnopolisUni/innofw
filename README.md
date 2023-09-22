@@ -1,6 +1,8 @@
 [![Documentation Status](https://readthedocs.org/projects/innofw/badge/?version=latest)](https://innofw.readthedocs.io/en/latest/?badge=latest)
 
 
+<!-- some minor change -->
+
 # What is InnoFW?
 
 InnoFW is a configuration-based machine learning framework that helps people to get started with development of machine learning solutions. InnoFW is easy to pickup and play. And easy to master.
