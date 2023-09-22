@@ -65,6 +65,7 @@ class AnomalyDetectionTimeSeriesLightningModule(BaseLightningModule):
         seq_pred = self.forward(x[0])
         loss = self.calc_losses(x[0], seq_pred)
         self.log_metrics("val", x[0], seq_pred)
+        self.log("val_loss", loss, on_step=False, on_epoch=True)
         return {"val_loss": loss}
 
     def predict_step(self, batch, batch_idx, **kwargs):
