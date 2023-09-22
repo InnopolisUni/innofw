@@ -1,7 +1,6 @@
 [![Documentation Status](https://readthedocs.org/projects/innofw/badge/?version=latest)](https://innofw.readthedocs.io/en/latest/?badge=latest)
 
 
-<!-- some minor change -->
 
 # What is InnoFW?
 
