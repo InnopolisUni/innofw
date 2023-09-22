@@ -12,8 +12,8 @@ _target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleA
 train:
 test:
 infer: 
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/air_data/infer.zip
-  target: ./data/air_data_s3/
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/air_data/train.zip
+  target: ./data/air_data/
 
 num_workers: 8
 
