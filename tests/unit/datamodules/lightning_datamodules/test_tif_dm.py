@@ -2,7 +2,7 @@ import pytest
 
 from innofw.constants import Frameworks
 from innofw.constants import Stages
-from innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm import (
+from innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff import (
     SegmentationDM,
 )
 from innofw.utils.framework import get_datamodule

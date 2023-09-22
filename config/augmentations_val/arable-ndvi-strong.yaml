@@ -1,0 +1,31 @@
+defaults:
+    - /augmentations/preprocessing:
+    - /augmentations/combined:
+        - none
+    - /augmentations/position:
+        - random_resized_crop
+        - flip
+        - rotate90
+        - transpose
+        - grid_distortion
+    - /augmentations/color:
+        - random_gamma
+        - blur
+    - /augmentations/postprocessing:
+
+
+augmentations:
+    position:
+        flip:
+            p: 0.75
+        rotate90:
+            p: 0.75
+        transpose:
+            p: 0.75
+        grid_distortion:
+            p: 0.75
+    color:
+        random_gamma:
+            p: 0.75
+        blur:
+            p: 0.75

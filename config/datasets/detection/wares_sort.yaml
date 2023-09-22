@@ -1,0 +1,28 @@
+task:
+  - image-detection
+
+name: sort_data
+description: Набор данных содержит видео облетов c дронов над территорией линии электропередач
+
+markup_info: Набор данных содержит разметку bounding box, под формат детекции столбов ЛЭП.
+date_time: 18.07.2022
+
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+
+train:
+test:
+infer: 
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/wares_sort/train.zip
+  target: ./data/wares_sort/
+
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 600
+num_classes: 4
+names:
+  - lep_1
+  - lep_2
+  - lep_3
+  - lep_4

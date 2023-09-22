@@ -7,10 +7,6 @@ from innofw.constants import Frameworks
 from innofw.utils.framework import get_obj
 from innofw.utils.framework import get_optimizer
 
-# local
-
-# local
-
 
 def test_scheduler_creation():
     cfg = DictConfig(

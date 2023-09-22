@@ -7,8 +7,7 @@ description: Набор данных содержит фото гнилых и �
 markup_info: Набор данных содержит разметку bounding box, под формат детекции гнилых фруктов.
 date_time: 19.07.2022
 
-#_target_: innofw.core.datamodules.lightning_datamodules.YOLOv5DataModule
-_target_: innofw.core.integrations.ultralytics.datamodule.YOLOV5DataModuleAdapter
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
 
 train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/detection_rotten_fruits/train.zip

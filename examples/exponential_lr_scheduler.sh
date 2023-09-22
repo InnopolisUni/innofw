@@ -1,0 +1,1 @@
+python train.py experiments=semantic-segmentation/arable-bin-seg-ndvi/fields/baseline schedulers=exponential epochs=10 optimizers.lr=0.001 +trainer.overfit_batches=1

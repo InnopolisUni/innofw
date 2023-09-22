@@ -12,6 +12,7 @@ from pydantic import validate_arguments
 from pydantic.types import DirectoryPath
 from urlpath import URL
 import hydra
+from omegaconf.errors import ConfigKeyError
 
 from innofw.constants import S3Credentials
 from innofw.constants import S3FileTags
@@ -63,12 +64,12 @@ def upload_dataset(
     if access_key is None or secret_key is None:
         credentials = get_s3_credentials()
     else:
-        credentials = S3Credentials(
-            ACCESS_KEY=access_key, SECRET_KEY=secret_key
-        )
+        credentials = S3Credentials(ACCESS_KEY=access_key, SECRET_KEY=secret_key)
     with hydra.initialize(config_path="../../config", version_base="1.2"):
-        config = hydra.compose(config_name="train.yaml", overrides=[f"datasets={dataset_config_path}"])
-    
+        config = hydra.compose(
+            config_name="train.yaml", overrides=[f"datasets={dataset_config_path}"]
+        )
+
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
 
@@ -76,7 +77,10 @@ def upload_dataset(
             dst_filename = tmpdir / f"{folder}"
             file_path = Path(str(dst_filename) + ".zip")
 
-            folder_path = config.datasets.get(folder)["target"]
+            try:
+                folder_path = config.datasets.get(folder)["target"]
+            except ConfigKeyError:
+                folder_path = config.datasets.get(folder)["source"]
 
             shutil.make_archive(str(dst_filename), "zip", Path(folder_path))
 
@@ -85,9 +89,7 @@ def upload_dataset(
             tags = {S3FileTags.hash_value.value: compute_file_hash(file_path)}
             # upload file to s3
             url = URL(remote_save_path).anchor
-            upload_url = S3Handler(
-                url=url, credentials=credentials
-            ).upload_file(
+            upload_url = S3Handler(url=url, credentials=credentials).upload_file(
                 src_path=file_path,
                 dst_path=remote_save_path,
                 tags=tags,

@@ -1,0 +1,19 @@
+task:
+  - all
+
+implementations:
+  torch:
+    StepLR:
+      function:
+        _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+        mode: min
+        factor: 0.1
+        patience: 10
+        threshold: 0.0001
+        threshold_mode: rel
+        cooldown: 0
+        min_lr: 0
+        eps: 1e-8
+        verbose: False
+
+# this requires some configuration in pl_module

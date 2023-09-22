@@ -1,0 +1,9 @@
+description: MultiStep
+_target_: torch.optim.lr_scheduler.MultiStepLR
+milestones:
+  - 5
+  - 15
+  - 30
+gamma: 0.4
+last_epoch: -1
+verbose: False

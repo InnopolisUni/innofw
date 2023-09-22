@@ -1,4 +1,4 @@
-_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM
 # ${.root}
 train:
   source: /mnt/nvmestorage/qb/data_n_weights/linear-road-bin-seg-oftp/301122/processed/070123-167folders-2048/
