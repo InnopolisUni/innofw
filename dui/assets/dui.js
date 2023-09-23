@@ -263,6 +263,9 @@ function parseHtmlToDict(html_array){
 
              let k = element.getElementsByClassName("keyfield")[0].value;
              let v = element.getElementsByClassName("valuefield")[0].value;
+             if (!isNaN(Number(v))){
+                 v = Number(v);
+             }
 
              if (parent != null){
                  let new_dict = {};
