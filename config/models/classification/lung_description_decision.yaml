@@ -1,5 +1,5 @@
-name: notlinear_regression
-description: linear regression model
+name: lung_description_decision
+description: model for classification lung pathology according to description
 
 _target_: sklearn.pipeline.Pipeline
 steps:
