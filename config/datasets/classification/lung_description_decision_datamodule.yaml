@@ -1,0 +1,20 @@
+task:
+  - text-classification
+
+name: noname
+description: "Набор данных для классификации патологии легких по тексту"
+
+markup_info: Набор данных содержит описание легких
+date_time: 13.09.2023
+
+_target_: innofw.core.datamodules.pandas_datamodules.lung_description_decision_datamodule.LungDescriptionDecisionPandasDataModule
+target_col: decision
+
+train:
+  source: ./data/ainur/infer/labels.csv
+test:
+  source: ./data/ainur/infer/labels.csv
+infer:
+  source: ./data/ainur/infer/labels.csv
+
+
