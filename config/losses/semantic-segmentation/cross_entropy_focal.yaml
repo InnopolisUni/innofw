@@ -1,0 +1,14 @@
+name: Segmentation
+description: Cross Entropy Focal loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    CrossEntropyFocalLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.CrossEntropyFocalLoss
+        gamma: 2.0
+        reduction: mean
+        # activation:

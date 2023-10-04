@@ -1,0 +1,22 @@
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/arable_ndvi/train.zip
+  target: data/arable_ndvi/train/
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/arable_ndvi/test.zip
+  target: data/arable_ndvi/test/
+
+img_foldername: img
+label_foldername: gt
+
+num_workers: 32
+batch_size: 16
+channels: 3
+
+
+name: Arable_NDVI
+task: image-segmentation
+description: Binary semantic segmentation dataset with arable images NDVI
+markup_info: some
+date_time: 010923

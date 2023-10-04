@@ -1,0 +1,15 @@
+name: Segmentation
+description: Focal Cosine Loss
+task:
+  - image-segmentation
+
+implementations:
+  torch:
+    FocalCosineLoss:
+      weight: 1.0
+      object:
+        _target_: pytorch_toolbelt.losses.FocalCosineLoss
+        alpha: 1
+        gamma: 2
+        xent: 0.1
+        reduction: mean

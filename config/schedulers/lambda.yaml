@@ -1,0 +1,4 @@
+description: LambdaLR
+_target_: torch.optim.lr_scheduler.LambdaLR
+lr_lambda:
+  _target_: innofw.core.schedulers.lambdas.lambda2

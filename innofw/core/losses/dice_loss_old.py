@@ -129,7 +129,7 @@ class DiceLoss(_Loss):
         self.alpha = alpha
 
     def forward(self, output, target):
-        d1 = self.fscore(output, target)
+        d1 = self.fscore(output.squeeze(), target.squeeze())
         # default behaviour:
         #         d0 = torch.tensor([1])
         #         w1, w0 = 1, 0

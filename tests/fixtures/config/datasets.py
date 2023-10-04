@@ -128,7 +128,7 @@ arable_segmentation_cfg_w_target = DictConfig(
         "description": "something",
         "markup_info": "something",
         "date_time": "04.08.2022",
-        "_target_": "innofw.core.datamodules.lightning_datamodules.segmentation_hdf5_dm.HDF5LightningDataModule",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.HDF5LightningDataModule",
         "train": {
             "source": str(
                 get_test_folder_path() / "data/images/segmentation/arable/train"
@@ -195,7 +195,7 @@ qm9_datamodule_cfg_w_target = DictConfig(
 
 tiff_datamodule_cfg_w_target = DictConfig(
     {
-        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff_dm.SegmentationDM",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
         "train": {
             "source": str(
                 get_test_folder_path()

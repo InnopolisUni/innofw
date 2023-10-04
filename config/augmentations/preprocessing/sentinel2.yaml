@@ -1,0 +1,5 @@
+divide_by_10000:
+  _target_: innofw.core.augmentations.preprocessing.ToFloatWClip
+  max_value: 10000
+  p: 1.0
+  always_apply: True

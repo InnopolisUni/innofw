@@ -1,0 +1,4 @@
+description: Base optimizer suitable for most of the tasks
+_target_: innofw.core.optimizers.custom_optimizers.optimizers.ADAM
+lr: 3e-4
+weight_decay: 0.0001
