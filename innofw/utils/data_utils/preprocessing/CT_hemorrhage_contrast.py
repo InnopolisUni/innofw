@@ -15,20 +15,18 @@ def get_id(img_dicom):
 
 def get_metadata_from_dicom(img_dicom):
     metadata = {
-        "window_center": 50,#img_dicom.WindowCenter,
-        "window_width": 200,#img_dicom.WindowWidth,
-        "intercept": -1024,#img_dicom.RescaleIntercept,
-        "slope": 1.0,#img_dicom.RescaleSlope,
+        "window_center": 50,
+        "window_width": 200,
+        "intercept": -1024,
+        "slope": 1.0,
     }
-    #print(metadata)
     return {k: get_first_of_dicom_field_as_int(v) for k, v in metadata.items()}
 
 def window_image(img, window_center, window_width, intercept, slope):
     img = img * slope + intercept
     img_min = window_center - window_width // 2
     img_max = window_center + window_width // 2
-    img[img < img_min] = img_min
-    img[img > img_max] = img_max
+    img = numpy.clip(img, min_val, max_val)
     return img 
 
 def resize(img, new_w, new_h):
@@ -43,7 +41,6 @@ def normalize_minmax(img):
     return (img - mi) / (ma - mi)
 
 def prepare_image(img_dicom):
-    #img_dicom = pydicom.read_file(img_path)
     img_id = get_id(img_dicom)
     metadata = get_metadata_from_dicom(img_dicom)
     img = window_image(img_dicom.pixel_array, **metadata)
@@ -55,6 +52,6 @@ if __name__ == "__main__":
     try:
          id, windowed = prepare_image(sys.argv[1])
          windowed =  np.array(windowed)
-         cv2.imwrite(sys.argv[2]+"/"+id, windowed)
-    except:
-         pass
+         cv2.imwrite(sys.argv[2]+"/"+id.split("/")[-1], windowed)
+    except Exception as err:
+        logging.error(err)
