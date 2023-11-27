@@ -32,22 +32,26 @@ def setup_wandb(cfg):
 
 
 def setup_clear_ml(cfg):
-    if "clear_ml" not in cfg:
-        return
+    config = cfg.copy()
     clear_ml_cfg = cfg.get("clear_ml")
     if clear_ml_cfg and clear_ml_cfg.get("enable"):
         from clearml import Task
 
+        experiment_name = cfg["experiment_name"]
         task = Task.init(
-            project_name=cfg["project"], task_name=cfg["experiment_name"]
+            project_name=cfg["project"], task_name=experiment_name
         )
-        setup_agent(task, clear_ml_cfg)
+        setup_agent(task, clear_ml_cfg, cfg["experiment_name"])
         global TASK
         TASK = task
         task.connect(OmegaConf.to_container(cfg, resolve=True))
         return task
 
 
-def setup_agent(task, cfg):
+def setup_agent(task, cfg, experiment_name):
     if cfg["queue"]:
-        task.execute_remotely(queue_name=cfg["queue"])
+        if experiment_name:
+            task.set_base_docker(
+                docker_setup_bash_script=f"export CLEARML_EXPERIMENT_NAME={experiment_name}",
+            )
+        task.execute_remotely(queue_name=cfg["queue"], exit_process=True)
