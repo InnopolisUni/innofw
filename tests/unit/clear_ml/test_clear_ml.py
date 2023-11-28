@@ -42,6 +42,9 @@ class Task:
     def connect(self, *args, **kwargs):
         return True
 
+    def set_base_docker(self, *args, **kwargs):
+        return True
+
 
 def test_clear_ml_task_creation(mocker):
     mocker.patch("clearml.Task.init", return_value=Task().init())
