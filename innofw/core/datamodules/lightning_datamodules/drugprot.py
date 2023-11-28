@@ -84,8 +84,8 @@ class DrugprotDataModule(BaseLightningDataModule):
         self.random_seed = random_seed
 
     def setup_train_test_val(self, **kwargs) -> None:
-        self.train_dataset_raw = datasets.load_from_disk(self.train_source)
-        self.test_dataset_raw = datasets.load_from_disk(self.test_source)
+        self.train_dataset_raw = datasets.load_from_disk(str(self.train_source))
+        self.test_dataset_raw = datasets.load_from_disk(str(self.test_source))
 
         if isinstance(self.train_dataset_raw, datasets.DatasetDict):
             self.train_dataset_raw = self.train_dataset_raw["train"]
@@ -111,7 +111,7 @@ class DrugprotDataModule(BaseLightningDataModule):
         self.test_dataset = self.test_dataset.with_format("pt")
 
     def setup_infer(self):
-        self.predict_dataset_raw = datasets.load_from_disk(self.predict_source)
+        self.predict_dataset_raw = datasets.load_from_disk(str(self.predict_source))
 
         if isinstance(self.predict_dataset_raw, datasets.DatasetDict):
             self.predict_dataset_raw = self.predict_dataset_raw["test"]
