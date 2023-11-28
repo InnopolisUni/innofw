@@ -1,0 +1,14 @@
+name: lung_description_decision
+description: model for classification lung pathology according to description
+
+_target_: sklearn.pipeline.Pipeline
+steps:
+  - - "vectorizer"
+    - _target_: sklearn.feature_extraction.text.TfidfVectorizer
+      max_df: 1000
+      stop_words:
+        - russian
+      min_df: 10
+  - - "classifier"
+    - _target_: sklearn.linear_model.LogisticRegression
+      multi_class: 'multinomial'

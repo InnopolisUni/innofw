@@ -1,0 +1,1 @@
+python infer.py experiments=semantic-segmentation/SK_180822_qmciwj41_unet_brain 'ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/segmentation_unet_brain.pt'

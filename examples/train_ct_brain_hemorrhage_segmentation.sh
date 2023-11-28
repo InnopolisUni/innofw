@@ -1,0 +1,1 @@
+python train.py experiments=semantic-segmentation/SK_180822_qmciwj41_unet_brain.yaml

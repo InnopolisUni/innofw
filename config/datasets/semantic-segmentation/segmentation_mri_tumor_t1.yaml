@@ -1,0 +1,18 @@
+_target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DicomDirSegmentationLightningDataModule
+date_time: 30.09.2022
+description: mri segmentation dataset
+markup_info: segmentation masks
+name: tumor segmentation
+task:
+  - image-segmentation
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tumor_t1/test.zip
+  target: ./data/tumor_t1/test
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tumor_t1/train.zip
+  target: ./data/tumor_t1/train
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/tumor_t1/infer.zip
+  target: ./data/tumor_t1/infer

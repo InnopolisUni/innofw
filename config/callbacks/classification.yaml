@@ -5,6 +5,23 @@ requirements:
     - xgboost
     - sklearn
 
+
+task:
+  - image-classification
+  - table-classification
+
+implementations:
+  sklearn:
+    type: functions  # classes should be instantiated right away, but functions should be instantiated only during call
+    functions:
+      accuracy:
+        _target_: segmentation_models_pytorch.metrics.accuracy
+      precision:
+        _target_: segmentation_models_pytorch.metrics.precision
+      recall:
+        _target_: segmentation_models_pytorch.metrics.recall
+
+
 objects:
   xgboost:
     accuracy:

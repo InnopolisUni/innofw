@@ -1,0 +1,15 @@
+requirements:
+  task:
+    - table-classification
+  framework:
+    - xgboost
+    - sklearn
+
+task:
+  - image-classification
+  - table-classification
+
+implementations:
+  sklearn:
+    accuracy:
+      _target_: sklearn.metrics.accuracy_score
