@@ -43,8 +43,8 @@ class Task:
 
 
 def test_clear_ml_task_creation(mocker):
-    mocker.patch("clearml.Task.init", return_value=Task().init)
-    mocker.patch("clearml.Task.connect", return_value=Task().connect)
+    mocker.patch("clearml.Task.init", return_value=Task().init())
+    mocker.patch("clearml.Task.connect", return_value=Task().connect())
     cfg = {
         "clear_ml": {"enable": True, "task": "test", "queue": None},
         "project": "test",
@@ -61,7 +61,7 @@ def test_clear_ml_task_creation(mocker):
 
 def test_clear_ml_agent_execution(mocker):
     mocker.patch("clearml.Task.init", return_value=Task().init())
-    mocker.patch("clearml.Task.connect", return_value=Task().connect)
+    mocker.patch("clearml.Task.connect", return_value=Task().connect())
     cfg = {
         "clear_ml": {"enable": True, "task": "test", "queue": None},
         "project": "test",
