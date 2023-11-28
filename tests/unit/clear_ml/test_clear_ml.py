@@ -1,4 +1,5 @@
 import pytest
+from omegaconf import OmegaConf
 
 clear_ml = pytest.importorskip("clearml")
 from dataclasses import dataclass
@@ -50,7 +51,7 @@ def test_clear_ml_task_creation(mocker):
         "project": "test",
         "experiment_name": "test",
     }
-
+    cfg = OmegaConf.create(cfg)
     task = setup_clear_ml(cfg)
     assert task is not None
 
@@ -67,7 +68,7 @@ def test_clear_ml_agent_execution(mocker):
         "project": "test",
         "experiment_name": "test",
     }
-
+    cfg = OmegaConf.create(cfg)
     cfg["clear_ml"]["queue"] = "no_queue"
     task = setup_clear_ml(cfg)
     assert task is not None
