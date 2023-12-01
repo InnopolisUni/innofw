@@ -27,7 +27,9 @@ from innofw.utils.loggers import setup_clear_ml, setup_wandb
 dotenv.load_dotenv(override=True)
 
 
-@hydra.main(config_path="config/", config_name="train.yaml", version_base="1.2")
+@hydra.main(
+    config_path="config/", config_name="train.yaml", version_base="1.2"
+)
 def main(config) -> float:
     # Imports can be nested inside @hydra.main to optimize tab completion
     # https://github.com/facebookresearch/hydra/issues/934
@@ -48,6 +50,10 @@ def main(config) -> float:
 
 
 if __name__ == "__main__":
+    if os.environ.get("CLEARML_EXPERIMENT_NAME") is not None:
+        sys.argv.append(
+            f"experiments={os.environ.get('CLEARML_EXPERIMENT_NAME')}"
+        )
     sys.argv.append("hydra.run.dir=./logs")
     sys.argv.append("hydra.job.chdir=True")
     main()
