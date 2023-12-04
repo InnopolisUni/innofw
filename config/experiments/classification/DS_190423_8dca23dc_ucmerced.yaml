@@ -22,7 +22,7 @@ models:
 project: "ucmerced_classification"
 task: "image-classification"
 random_seed: 42
-original_work_dir: ${hydra:runtime.cwd}
+# original_work_dir: ${hydra:runtime.cwd}
 weights_freq: 1
 batch_size: 256
 epochs: 30

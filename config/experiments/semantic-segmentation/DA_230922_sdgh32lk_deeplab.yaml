@@ -18,6 +18,6 @@ weights_freq: 1
 batch_size: 16
 epochs: 50
 accelerator: gpu
-gpus: [2]
+devices: 2
 models:
   in_channels: 4
