@@ -7,7 +7,7 @@ description: Набор данных содержит РГ снимки легк
 markup_info: Набор данных содержит разметку bounding box легких и патологий.
 date_time: 18.07.2022
 
-_target_: innofw.core.datamodules.lightning_datamodules.detection.YOLOv5DataModule
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
 
 train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/lungs_detection/train.zip
