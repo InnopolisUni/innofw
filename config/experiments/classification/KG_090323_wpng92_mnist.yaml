@@ -2,25 +2,19 @@
 defaults:
   - override /models: classification/resnet.yaml
   - override /datasets: classification/classification_mnist.yaml
-  - override /augmentations_train: none
+  - override /augmentations_train: none #classification.yaml
   - override /augmentations_val: none
   - override /augmentations_test: none
   - override /losses: log_loss.yaml
-  - override /optimizers: lion
-#  - override /callbacks: classification.yaml
-
+  - override /optimizers: adam
+  - override /schedulers:
 
 project: "mnist_classification"
 task: "image-classification"
 random_seed: 42
-# original_work_dir: ${hydra:runtime.cwd}
-weights_freq: 1
-batch_size: 32
-stop_param: 1
-epochs: 10
-
-#wandb:
-#  enable: True
-#  project: mnist
-#  group: 160323_just_testing_wandb
-#  job_type: training
+batch_size: 128
+epochs: 5
+accelerator: "gpu"
+devices: 2
+num_workers: 1
+weights_freq: 7
