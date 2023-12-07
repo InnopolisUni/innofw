@@ -143,7 +143,7 @@ def get_augmentations(cfg):
         return isinstance(aug, A.Compose) or isinstance(
             aug, A.core.transforms_interface.BasicTransform
         )
-    cfg = cfg['augmentations']
+    cfg = cfg.get('augmentations', cfg) if cfg is not None else cfg
     for key in keys:
         try:
             for v in cfg[key].values():
