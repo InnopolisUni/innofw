@@ -19,7 +19,7 @@ export NO_CLI=True
 INITIAL_PROCESSES=$(sudo lsof nohup.out | wc -l) && echo $INITIAL_PROCESSES
 
 
-nohup time sudo -E env "PATH=$PATH" python train.py experiments=one-shot-learning/IM_190722_vwer3f23_oneshotlearning.yaml &
+nohup time sudo -E env "PATH=$PATH" python train.py experiments=regression/KA_130722_9f7134db_linear_regression.yaml &
 PID=$!
 echo "Saving cpu+ram info and nvidia-smi to cpu_log + mem_log and nvidiasmi_log"
 echo $PID
