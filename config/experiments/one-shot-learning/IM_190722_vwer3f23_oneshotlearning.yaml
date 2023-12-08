@@ -12,4 +12,7 @@ project: "faces"
 task: "one-shot-learning"
 random_seed: 42
 weights_freq: 1
-epochs: 20
+epochs: 50
+accelerator: "gpu"
+devices: 1
+batch_size: 64

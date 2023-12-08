@@ -8,7 +8,7 @@ defaults:
       - random_horizontal_flip
     - /augmentations/color:
     - /augmentations/postprocessing:
-      - to_tensor
+      - to_tensor_torchvision
       - normalize
 # task:
 #   - one-shot-learning
