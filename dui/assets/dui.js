@@ -268,9 +268,14 @@ function parseHtmlToDict(html_array){
              }
 
              if (parent != null){
-                 let new_dict = {};
-                 new_dict[k] = v;
-                 dict[parent].push(new_dict);
+                 if (isNaN(Number(k))) {
+                     let new_dict = {};
+                     new_dict[k] = v;
+                     dict[parent].push(new_dict);
+                 }
+                 else{
+                     dict[parent].push(v);
+                 }
              }
              else{
                 dict[k] = v;
@@ -508,7 +513,10 @@ function openModalWindowOnEditButtonClick(button){
 
         let nameOfConfig = document.createElement("h3");
         nameOfConfig.className = "modal_config_name";
-        const text = document.createTextNode(fileName+".yaml");
+        // if (!fileName.endsWith(".yaml")){
+        //     fileName = fileName + ".yaml"
+        // }
+        const text = document.createTextNode(fileName);
         nameOfConfig.appendChild(text);
         modal_content.insertBefore(nameOfConfig, modal_content.children[0])
 
