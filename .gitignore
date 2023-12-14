@@ -115,6 +115,8 @@ logs
 !/.pytest_cache/
 #data
 *.cache
+**cache*
+.DS_Store
 
 data/
 !tests/data/

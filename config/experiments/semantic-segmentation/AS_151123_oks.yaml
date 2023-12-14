@@ -1,0 +1,65 @@
+# @package _global_
+defaults:
+  - _self_
+  - override /models: semantic-segmentation/deeplabv3plus
+  - override /datasets: semantic-segmentation/oks_151123
+  # - override /metrics: basic
+  - override /loggers: wandb
+  # - override /callbacks: basic
+  # - override /trainers: basic_on_gpu_0
+  - override /losses: semantic-segmentation/dice
+  - override /optimizers: adam
+  # - override /schedulers: cosine_annealing_warm_restarts
+  # - override /checkpoints:
+  - override /augmentations_train: linear-roads-bin-seg
+  # - override /augmentations_val: linear-roads-bin-seg
+  # - override /preprocessing: standard_images
+  #  - override /wandb: default
+
+datasets:
+  batch_size: 20
+  num_workers: 42
+  # todo: add random seed
+
+# stages:
+#   - train
+
+# optimizers:
+#   lr: 3e-5
+
+# schedulers:
+#   T_0: 30  # Number of iterations for the first restart.  60
+#   T_mult: 1
+#   eta_min: 1e-6  # 1e-5
+#   last_epoch: -1
+
+# # losses:
+# #   from_logits: True
+
+models:
+  in_channels: 3
+  classes: 1
+  encoder_name: resnet101
+  encoder_depth: 5
+  decoder_channels: 256
+  encoder_weights: #  imagenet
+
+# # trainers:
+
+#wandb:
+#  enable: True
+#  entity: solarina
+#  project: testing  # city-road-bin-seg
+#  group: testing_loss_road_bin_seg  # 270123_experiments_2048_w_weighted_sampling
+#  job_type: training
+
+#   # notes:
+#   # name:
+project: oks
+task: image-segmentation
+random_seed: 42
+accelerator: gpu
+devices: 1
+batch_size: 20
+num_workers: 42
+epochs: 40
