@@ -16,7 +16,7 @@ accelerator: gpu
 random_seed: 42
 epochs: 50
 batch_size: 64
-original_work_dir: ${hydra:runtime.cwd}
+# original_work_dir: ${hydra:runtime.cwd}
 weights_freq: 1
 override hydra/job_logging: stdout
 metrics:

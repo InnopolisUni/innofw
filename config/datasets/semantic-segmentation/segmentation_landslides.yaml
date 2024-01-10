@@ -1,3 +1,4 @@
+_target_: innofw.core.datamodules.lightning_datamodules.HDF5LightningDataModule
 task:
   - image-segmentation
 

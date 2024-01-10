@@ -1,3 +1,4 @@
+_target_: innofw.core.datamodules.pandas_datamodules.RegressionPandasDataModule
 target_col: Index
 train:
   source: tests/data/tabular/bmi/bmi_prep.csv
