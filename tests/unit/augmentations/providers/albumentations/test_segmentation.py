@@ -1,8 +1,10 @@
 import albumentations as A
 import numpy as np
+import pytest
+from hydra.core.global_hydra import GlobalHydra
 
 from innofw.core.augmentations import Augmentation
-from innofw.utils.config import read_cfg
+from innofw.utils.config import read_cfg, read_cfg_2_dict
 from innofw.utils.framework import get_augmentations
 
 
@@ -20,15 +22,17 @@ def test_albumentations():
     aug = Augmentation(albumenatations_transform)
     assert aug is not None
 
-
+# @pytest.mark.skip(reason="some problems with config")
 def test_stages():
+    GlobalHydra.instance().clear()
     cfg = read_cfg(
+        
         overrides=[
             "augmentations_train=linear-roads-bin-seg",
-            "experiments=regression/KA_130722_9f7134db_linear_regression",
-        ]
-    )
-    aug = get_augmentations(cfg["augmentations_train"]["augmentations"])
+            "experiments=semantic-segmentation/linear-roads-bin-seg/KA_160223_39ek249_linear_roads", #regression/KA_130722_9f7134db_linear_regression
+        ])
+
+    aug = get_augmentations(cfg.get("augmentations_train"))
     img = np.random.randint(0, 255, (3, 64, 64))
 
     aug_img = Augmentation(aug)(img)
