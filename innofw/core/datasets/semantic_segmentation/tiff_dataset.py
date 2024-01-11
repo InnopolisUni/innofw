@@ -109,11 +109,11 @@ class SegmentationDataset(Dataset):
                 # out = self.transform(image=image, mask=mask)
                 # image, mask = out["image"], out["mask"]
                 image, mask = self.transform(image, mask)
-
-        try:
-            image = np.moveaxis(image, 2, 0)  # todo: refactor
-        except:
-            pass
+        else:
+            try:
+                image = np.moveaxis(image, 2, 0) 
+            except:
+                pass
         try:
             image = image.astype(np.float32)  # todo: refactor
         except:
