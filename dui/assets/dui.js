@@ -268,9 +268,14 @@ function parseHtmlToDict(html_array){
              }
 
              if (parent != null){
-                 let new_dict = {};
-                 new_dict[k] = v;
-                 dict[parent].push(new_dict);
+                 if (isNaN(Number(k))) {
+                     let new_dict = {};
+                     new_dict[k] = v;
+                     dict[parent].push(new_dict);
+                 }
+                 else{
+                     dict[parent].push(v);
+                 }
              }
              else{
                 dict[k] = v;
@@ -508,7 +513,7 @@ function openModalWindowOnEditButtonClick(button){
 
         let nameOfConfig = document.createElement("h3");
         nameOfConfig.className = "modal_config_name";
-        const text = document.createTextNode(fileName+".yaml");
+        const text = document.createTextNode(fileName);
         nameOfConfig.appendChild(text);
         modal_content.insertBefore(nameOfConfig, modal_content.children[0])
 
@@ -536,7 +541,9 @@ function modals(){
 
 function change_config_name_and_url(){
     let config_name = document.getElementById("config_name");
-    config_name.value = "duplicate " + config_name.value;
+    const parts = config_name.value.split('.');
+
+    config_name.value = parts[0] + "_duplicate.yaml";
     history.pushState(null, 'FeaturePoints Login', location.protocol+"//"+location.host+"/config/"+config_name.value);
 }
 

@@ -7,6 +7,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
 # C extensions
 *.so
 
@@ -115,6 +116,8 @@ logs
 !/.pytest_cache/
 #data
 *.cache
+**cache*
+.DS_Store
 
 data/
 !tests/data/

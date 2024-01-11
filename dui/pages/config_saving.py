@@ -18,7 +18,11 @@ def layout():
     request_body = request.json
     with open(configs_path / request_body["config_name"], "w+") as stream:
         try:
-            s = "# @package _global_\n" + yaml.dump(request_body["html"], allow_unicode=True, default_flow_style=False)
+            if "experiments/" in configs_path:
+                s = "# @package _global_\n" + yaml.dump(request_body["html"], allow_unicode=True,
+                                                        default_flow_style=False)
+            else:
+                s =  yaml.dump(request_body["html"], allow_unicode=True, default_flow_style=False)
             stream.write(s)
         except yaml.YAMLError as exc:
             print("ERROR:", exc)
