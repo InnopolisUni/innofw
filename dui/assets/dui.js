@@ -252,7 +252,13 @@ function parseHtmlToDict(html_array){
          }
          if (html_array[i].className==="parent row"){
              parent = html_array[i].getElementsByClassName("keyfield")[0].value;
-             dict[parent] = [];
+             // if (parent === "default"){
+             //     dict[parent] = [];
+             // }
+             // else{
+             //     dict[parent] = {};
+             // }
+
          }
          if (html_array[i].className==="child row"){
              let element = html_array[i].cloneNode(true);
@@ -269,13 +275,30 @@ function parseHtmlToDict(html_array){
 
              if (parent != null){
                  if (isNaN(Number(k))) {
-                     let new_dict = {};
-                     new_dict[k] = v;
-                     dict[parent].push(new_dict);
+
+                     if (parent === "defaults"){
+                         if (!(parent in dict)){
+                         dict[parent] = [];
+                         }
+                         let new_dict = {};
+                         new_dict[k] = v;
+                         dict[parent].push(new_dict);
+                     }
+                     else{
+                         if (!(parent in dict)){
+                         dict[parent] = {};
+                         }
+                         dict[parent][k] = v;
+                     }
                  }
                  else{
+                     if (!(parent in dict)){
+                         dict[parent] = [];
+                     }
                      dict[parent].push(v);
                  }
+
+
              }
              else{
                 dict[k] = v;

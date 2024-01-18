@@ -138,8 +138,8 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        train_img_path = self.train_source
-        train_lbl_path = self.train_source.parent.parent / "labels" / "train"
+        train_img_path = self.train_source / "images" / "train"
+        train_lbl_path = self.train_source / "labels" / "train"
 
         # get all files from train folder
         img_files = list(train_img_path.iterdir())

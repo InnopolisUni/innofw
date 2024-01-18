@@ -1,0 +1,12 @@
+# @package _global_
+accelerator: gpu
+batch_size: 32
+defaults:
+- override /datasets: detection/detection_siz.yaml
+- override /models: detection/yolov5.yaml
+devices: 1
+epochs: 3
+project: siz
+random_seed: 43
+task: image-detection
+weights_freq: 1
