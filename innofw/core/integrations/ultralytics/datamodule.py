@@ -72,12 +72,12 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         if self.train:
             self.train_source = Path(self.train)
             # # In this datamodule, the train source should be the folder train itself not the folder "train/images"
-            # if str(self.train_source).endswith("images"):
-            #     self.train_source = Path(str(self.train_source)[:-7])
+            if str(self.train_source).endswith("images") or str(self.train_source).endswith("labels"):
+                self.train_source = Path(str(self.train_source)[:-7])
         if self.test:
             self.test_source = Path(self.test)
-            # if str(self.test_source).endswith("images"):
-            #     self.test_source = Path(str(self.test_source)[:-7])
+            if str(self.test_source).endswith("images") or str(self.test_source).endswith("labels"):
+                self.test_source = Path(str(self.test_source)[:-7])
 
         if self.infer:
             self.infer_source = (
@@ -85,8 +85,8 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
                 if not (type(self.infer) == str and self.infer.startswith("rts"))
                 else self.infer
             )
-            # if str(self.infer_source).endswith("images"):
-            #     self.infer_source = Path(str(self.infer_source)[:-7])
+            if str(self.infer_source).endswith("images") or str(self.infer_source).endswith("labels"):
+                self.infer_source = Path(str(self.infer_source)[:-7])
 
         self.batch_size = batch_size
         self.imgsz: int = image_size

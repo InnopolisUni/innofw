@@ -1,15 +1,11 @@
 # @package _global_
-defaults:
-  - override /models: detection/yolov5
-  - override /datasets: detection/lep
-  - override /initializations: random
-
-
-project: "lep"
-task: "image-detection"
-random_seed: 42
-epochs: 1
 batch_size: 2
+defaults:
+- override /models: detection/yolov5
+- override /datasets: detection_lep.yaml
+- override /initializations: random
+epochs: 1
+project: lep
+random_seed: 42
+task: image-detection
 weights_freq: 1
-
-# ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/lep_yolov5.pt
