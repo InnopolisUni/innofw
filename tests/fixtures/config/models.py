@@ -24,6 +24,14 @@ resnet_cfg_w_target = DictConfig(
     }
 )
 
+resnet_binary_cfg_w_target = DictConfig(
+    {
+        "name": "resnet18",
+        "description": "model from torchvision",
+        "num_classes": 2,
+    }
+)
+
 # case: xgboost regressor
 xgbregressor_cfg_w_target = DictConfig(
     {"name": "xgboost_regressor", "description": "something", "_target_": ""}

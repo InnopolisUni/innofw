@@ -54,10 +54,10 @@ def test_datasets(dataset_config_file, tmp_path):
             logging.info(dataset_config)
 
             dm = None
-
+            task = dataset_config['task'][0]
             for framework in Frameworks:
                 try:
-                    dm = get_datamodule(dataset_config, framework)
+                    dm = get_datamodule(dataset_config, framework, task)
                     break
                 except Exception as e:
                     logging.exception(e)
