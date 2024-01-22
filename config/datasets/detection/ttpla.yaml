@@ -1,0 +1,34 @@
+task:
+  - image-detection
+
+name: TTPLA dataset
+description: Aerial images dataset on transmission towers and power lines
+markup_info: https://github.com/r3ab/ttpla_dataset?tab=readme-ov-file
+date_time: 19.11.2022
+
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/TTPLA/train.zip
+  target: /tmp/TTPLA/train/
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/TTPLA/test.zip
+  target: /tmp/TTPLA/test/
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/TTPLA/test.zip
+  target: /tmp/TTPLA/test/
+
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 3840
+num_classes: 5
+names:
+  - cable
+  - tower_lattice
+  - tower_tucohy
+  - tower_wooden
+  - void
