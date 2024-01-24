@@ -344,15 +344,15 @@ stroke_segmentation_datamodule_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule",
         "train": {
             "source": str(
-                get_test_folder_path() /"data/train"),
+                get_test_folder_path() /"data/images/detection/stroke/test"),
         },
         "test": {
             "source": str(
-                get_test_folder_path() /"data/test"),
+                get_test_folder_path() /"data/images/detection/stroke/test"),
         },
         "infer": {
             "source": str(
-                get_test_folder_path() /"data/infer"),
+                get_test_folder_path() /"data/images/detection/stroke/test"),
         },
         "val_size": 0.2,
     }

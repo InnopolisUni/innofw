@@ -28,7 +28,7 @@ from tests.fixtures.config import optimizers as fixt_optimizers
 from tests.fixtures.config import trainers as fixt_trainers
 from tests.fixtures.config import schedulers as fixt_schedulers
 
-
+# Segmentation
 class SegDummyDataset(Dataset):
     def __init__(self, num_samples):
         self.num_samples = num_samples

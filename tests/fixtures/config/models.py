@@ -92,3 +92,43 @@ catboost_with_uncertainty_cfg_w_target = DictConfig(
         "posterior_sampling": "true",
     }
 )
+
+# case: vae for seq2seq modeling
+
+text_vae_cfg_w_target = DictConfig(
+    {
+        "name": "chem-vae",
+        "description": "vae for seq2seq modeling",
+        "_target_": "innofw.core.models.torch.architectures.autoencoders.vae.VAE",
+        "encoder": {
+            "_target_": "innofw.core.models.torch.architectures.autoencoders.vae.Encoder",
+            "in_dim": 609, # len(alphabet) * max(len_mols)
+            "hidden_dim": 128,
+            "enc_out_dim": 128,
+        },  
+        "decoder": {
+            "_target_": "innofw.core.models.torch.architectures.autoencoders.vae.GRUDecoder",
+            "latent_dimension": 128,
+            "gru_stack_size": 3,
+            "gru_neurons_num": 128,
+            "out_dimension": 29,  # len(alphabet)
+        }
+        
+    }
+)
+
+biobert_cfg_w_target = DictConfig(
+    {
+        "name": "biobert-ner",
+        "description": "bert for token classification biobert-base-cased-v1.2",
+        "_target_": "innofw.core.models.torch.architectures.token_classification.biobert_ner.BiobertNer",
+        "model":{
+            "_target_": "transformers.BertForTokenClassification.from_pretrained",
+            "pretrained_model_name_or_path": "dmis-lab/biobert-base-cased-v1.2"
+            },
+        "tokenizer":{
+            "_target_": "transformers.BertTokenizerFast.from_pretrained",
+            "pretrained_model_name_or_path": "dmis-lab/biobert-base-cased-v1.2"
+            }
+    }
+)
