@@ -294,8 +294,9 @@ class DicomDirSegmentationLightningDataModule(
         logging.info(f"Saved results to: {dst_path}")
 
     def setup_infer(self):
-        if isinstance(self.predict_dataset, self.dataset):
-            return self.predict_dataset
+        # if isinstance(self.predict_dataset, self.dataset):
+        #     return self.predict_dataset
+        self.predict_dataset = self.infer
         self.dicoms = str(self.predict_dataset)
         png_path = os.path.join(self.dicoms, "png")
         if not os.path.exists(png_path):
@@ -306,4 +307,5 @@ class DicomDirSegmentationLightningDataModule(
                 os.path.join(self.dicoms, dicom),
                 os.path.join(png_path, dicom.replace("dcm", "png")),
             )
-        self.predict_dataset = self.dataset(png_path, self.test_aug, True)
+        # from IPython import embed; embed()
+        self.predict_dataset = self.dataset(png_path, self.aug, True)

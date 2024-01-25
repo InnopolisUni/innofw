@@ -227,6 +227,7 @@ class MinioInterface:
             return False
 
     def should_download_file(self, src_path, dst_path) -> bool:
+        return False
         if not dst_path.exists():
             # file does not exist; download it
             return True

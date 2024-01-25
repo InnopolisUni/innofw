@@ -61,6 +61,7 @@ def run_pipeline(
     data_stage = Stages.predict if predict else Stages.train
     trainer_cfg = get_trainer_cfg(cfg)
     task = cfg.get("task")
+
     # Model
     if "models" in cfg:
         model = get_model(cfg.models, trainer_cfg)
@@ -119,12 +120,15 @@ def run_pipeline(
         )
         print("using standard datamodule")
 
+
+
     if predict:
         datamodule.setup_infer()
     else:
         datamodule.setup_train_test_val()
 
-    losses = get_losses(cfg, task, framework)
+    # losses = get_losses(cfg, task, framework)
+    losses = []
     callbacks = get_callbacks(
         cfg, task, framework, metrics=metrics, losses=losses, datamodule=datamodule
     )
@@ -155,6 +159,7 @@ def run_pipeline(
         "logger": logger,
         "random_state": cfg.get("random_seed"),
     }
+
     inno_model = InnoModel(**model_params)
     result = None
 

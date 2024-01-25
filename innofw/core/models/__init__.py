@@ -77,6 +77,7 @@ class InnoModel(nn.Module):
 
     def __init__(self, model, *args, **kwargs):
         super().__init__()
+        # from IPython import embed; embed()
         self.model = get_model_adapter(model, *args, **kwargs)
 
     def forward(self, x):
