@@ -36,7 +36,7 @@ class ImageFolderInferDataset(Dataset):
         if Path(self.image_dir).is_dir():
             image_name = self.image_names[index]
             image = cv2.imread(
-                Path(self.image_dir, image_name), cv2.IMREAD_COLOR
+                str(Path(self.image_dir, image_name)), cv2.IMREAD_COLOR
             )
         else:
             image = cv2.imread(self.image_dir, cv2.IMREAD_COLOR)
