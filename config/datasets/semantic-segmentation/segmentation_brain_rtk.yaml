@@ -1,5 +1,4 @@
-#_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DicomDirSegmentationLightningDataModule
-_target_: innofw.core.datamodules.lightning_datamodules.detection_coco.DicomCocoDataModule
+_target_: innofw.core.datamodules.lightning_datamodules.detection_coco.DicomCocoDataModuleRTK
 date_time: 30.09.2022
 description: stroke segmentation dataset
 markup_info: segmentation masks
@@ -15,4 +14,4 @@ train:
   target: ./data/stroke/train
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/infer.zip
-  target: /home/ainur/data/rtk/1.2.643.5.1.13.13.12.2.77.8252.06000710020011090113150209031410/
+  target: "/home/ainur/data/rtk/sct/mini_257f05f5-3f910d40-883d1516-ffae528b-f9ce8645/"
