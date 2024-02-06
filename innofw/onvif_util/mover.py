@@ -280,29 +280,6 @@ class CameraControl:
         return None
 
 
-def pan_right(ptz_cam):
-    ptz_cam.relative_move(0.5, 0.0, 0.0)  ## ( Pan, Tilt, Zoom )
-
-
-def pan_left(ptz_cam):
-    ptz_cam.relative_move(-0.5, 0.0, 0.0)  ## ( Pan, Tilt, Zoom )
-
-
-def zoom_in(ptz_cam):
-    ptz_cam.relative_move(0.0, 0.0, 0.5)  ## ( Pan, Tilt, Zoom )
-
-
-def zoom_out(ptz_cam):
-    ptz_cam.relative_move(0.0, 0.0, -0.5)  ## ( Pan, Tilt, Zoom )
-
-
-def tilt_up(ptz_cam):
-    ptz_cam.relative_move(0.0, 0.5, 0.0)  ## ( Pan, Tilt, Zoom )
-
-
-def tilt_down(ptz_cam):
-    ptz_cam.relative_move(0.0, -0.5, 0.0)  ## ( Pan, Tilt, Zoom )
-
 
 def move(ip, user: Optional[str], password: Optional[str], move_type):
     """
@@ -322,17 +299,17 @@ def move(ip, user: Optional[str], password: Optional[str], move_type):
     ptz_cam = CameraControl(ip, user, password)
 
     if move_type == "zoom_in":
-        zoom_in(ptz_cam)
+        ptz_cam.relative_move(0.0, 0.0, 0.5)
     elif move_type == "zoom_out":
-        zoom_out(ptz_cam)
+        ptz_cam.relative_move(0.0, 0.0, -0.5)
     elif move_type == "pan_left":
-        pan_left(ptz_cam)
+        ptz_cam.relative_move(-0.5, 0.0, 0.0)
     elif move_type == "pan_right":
-        pan_right(ptz_cam)
+        ptz_cam.relative_move(0.5, 0.0, 0.0)
     elif move_type == "tilt_up":
-        tilt_up(ptz_cam)
+        ptz_cam.relative_move(0.0, 0.5, 0.0)
     elif move_type == "tilt_down":
-        tilt_down(ptz_cam)
+        ptz_cam.relative_move(0.0, -0.5, 0.0)
 
 
 if __name__ == "__main__":
