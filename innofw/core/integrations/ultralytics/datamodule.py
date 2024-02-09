@@ -3,6 +3,7 @@ import pathlib
 from pathlib import Path
 from typing import List, Optional
 import shutil
+import glob
 
 # third party libraries
 from sklearn.model_selection import train_test_split
@@ -212,12 +213,16 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             return
         # root_dir
         self.infer_source = Path(self.infer_source)
-        if self.infer_file:
-            self.infer_source = (
-                self.infer_source
-                if self.infer_source.name == Path(self.infer_file).stem
-                else self.infer_source / Path(self.infer_file).stem
-            )
+        # if self.infer_file:
+        #     self.infer_source = (
+        #         self.infer_source
+        #         if self.infer_source.name == Path(self.infer_file).stem
+        #         else self.infer_source / Path(self.infer_file).stem
+        #     )
+        for path in self.infer_source.rglob("*"):
+            if path.is_file() and path.suffix not in [".txt", ".yaml", ".zip"]:
+                self.infer_source = Path(path).parent
+                break
 
         root_path = self.infer_source.parent
 

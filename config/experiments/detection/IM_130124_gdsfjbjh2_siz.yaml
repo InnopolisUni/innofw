@@ -1,6 +1,7 @@
 # @package _global_
 accelerator: gpu
 batch_size: 32
+ckpt_path: /home/qazybek/pmi_tatneft/innofw/dui/logs/something/20240122-093931/weights/best.pt
 defaults:
 - override /datasets: detection/detection_siz.yaml
 - override /models: detection/yolov5.yaml
