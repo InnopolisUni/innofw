@@ -142,7 +142,32 @@ arable_segmentation_cfg_w_target = DictConfig(
         "channels_num": 4,
     }
 )
-
+forest_segmentation_cfg_w_target = DictConfig(
+    {
+        "task": ["image-segmentation"],
+        "name": "arable",
+        "description": "something",
+        "markup_info": "something",
+        "date_time": "07.02.2024",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/train"
+            )
+        },
+        "val": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/test"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/test"
+            )
+        },
+        "channels_num": 3,
+    }
+)
 faces_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["image-classification"],

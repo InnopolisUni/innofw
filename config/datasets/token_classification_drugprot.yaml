@@ -1,4 +1,4 @@
-task:
+task: 
   - text-ner
 
 name: Drugprot
