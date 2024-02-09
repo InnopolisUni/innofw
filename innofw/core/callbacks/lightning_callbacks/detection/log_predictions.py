@@ -1,15 +1,8 @@
-#
 from abc import ABC
 from typing import Any
 
 import numpy as np
 from pytorch_lightning.callbacks import Callback
-
-#
-
-
-#
-
 
 class BaseLogPredictionsCallback(Callback, ABC):
     pass
@@ -24,11 +17,8 @@ class BaseLogPredictionsCallback(Callback, ABC):
 # class LogScalarTensorboard(Callback):
 #     pass
 
-
-# from pytorch_lightning.
 import cv2
 import random
-
 
 def plot_one_box(x, image, color=None, label=None, line_thickness=None):
     """
@@ -111,19 +101,12 @@ class LogPredictionsDetectionCallback(BaseLogPredictionsCallback):
         img = np.moveaxis(img, -1, 0)
         tensorboard.add_image("image with labels", img, batch_idx)
 
-
 class LogPredictionsSegmentationCallback(BaseLogPredictionsCallback):
     pass
-
-
 class BaseLogMetricsCallback(Callback):
     pass
-
-
 class LogMetricsDetectionCallback(BaseLogMetricsCallback):
     pass
-
-
 class LogMetricsSegmentationCallback(BaseLogMetricsCallback):
     pass
 

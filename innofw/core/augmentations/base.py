@@ -32,10 +32,10 @@ class BaseAugmentationAdapter(ABC, nn.Module):
         self.transforms = transforms
 
     @abstractmethod
-    def forward(self, x):
+    def forward(self, x): # pragma: no cover
         pass
 
     @staticmethod
     @abstractmethod
-    def is_suitable_input(transform) -> bool:
+    def is_suitable_input(transform) -> bool: # pragma: no cover
         pass
