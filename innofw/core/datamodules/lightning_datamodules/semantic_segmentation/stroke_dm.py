@@ -276,6 +276,7 @@ class DicomDirSegmentationLightningDataModule(
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         dicoms = []
         sc_names = []
+        from IPython import embed; embed()
         shutil.rmtree(os.path.join(self.dicoms, "png"), ignore_errors=True)
         for i in os.listdir(self.dicoms):
             if i.endswith(".dcm"):
@@ -307,5 +308,5 @@ class DicomDirSegmentationLightningDataModule(
                 os.path.join(self.dicoms, dicom),
                 os.path.join(png_path, dicom.replace("dcm", "png")),
             )
-        # from IPython import embed; embed()
         self.predict_dataset = self.dataset(png_path, self.aug, True)
+        from IPython import embed; embed()

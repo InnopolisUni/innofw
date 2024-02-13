@@ -1,4 +1,3 @@
-#_target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DicomDirSegmentationLightningDataModule
 _target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DicomDirSegmentationLightningDataModule
 date_time: 30.09.2022
 description: stroke segmentation dataset
@@ -13,7 +12,6 @@ test:
 train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/train.zip
   target: ./data/stroke/train
-
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/infer.zip
   target: ./data/stroke/infer
