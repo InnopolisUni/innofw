@@ -5,7 +5,6 @@ def test_divide_by_255():
     transf = DivideBy255()
 
     image = np.ones((64, 64, 3)) * 255
-    print(np.min(image), np.max(image))
     res_image = transf.apply(image)
     init_args = transf.get_transform_init_args_names()
 
