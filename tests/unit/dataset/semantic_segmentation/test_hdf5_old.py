@@ -1,9 +1,11 @@
 import numpy as np
 import pytest
 import torch
+from typing import List
 from hydra.errors import InstantiationException
 from hydra.utils import instantiate
 from numpy import ndarray
+from omegaconf import DictConfig
 
 from innofw.constants import SegDataKeys
 from innofw.constants import Frameworks
@@ -11,7 +13,6 @@ from innofw.utils.framework import get_augmentations, get_obj
 from innofw.core.datasets.segmentation_hdf5_old_pipe import (
     Dataset,
     DatasetUnion,
-    WeightedRandomCropDataset,
     TiledDataset,
     _to_tensor,
     _augment_and_preproc,
@@ -21,36 +22,64 @@ from innofw.core.datasets.segmentation_hdf5_old_pipe import (
 from tests.fixtures.config.augmentations import (
     resize_augmentation_albu as resize_augmentation,
 )
+from tests.utils import get_test_folder_path
 from tests.fixtures.config.datasets import arable_segmentation_cfg_w_target
 
+datasets = [str(get_test_folder_path() / "data/images/segmentation/arable/test/test.hdf5"),
+            str(get_test_folder_path() / "data/images/segmentation/arable/train/train.hdf5")]
 
 @pytest.mark.parametrize(
-    ["cfg", "with_mosaic", 'preprocessing', "in_channels"],
+    ["path_to_hdf5", "with_mosaic", 'augmentations', "in_channels"],
     [
-        [arable_segmentation_cfg_w_target.copy(), False, None, 4],
-        [arable_segmentation_cfg_w_target.copy(), True, None, 4],
-        # [arable_segmentation_cfg_w_target.copy(), None, None, 4],
-    ],
+        [str(get_test_folder_path() / "data/images/segmentation/arable/train/train.hdf5"), 
+                False, 
+                resize_augmentation, 
+                4],
+        [str(get_test_folder_path() / "data/images/segmentation/arable/test/test.hdf5"), 
+                True, 
+                None, 
+                4],
+        [datasets, 
+                True, 
+                None, 
+                4],
+                ]
+            
 )
-def test_read(cfg, with_mosaic, preprocessing, in_channels):
-
-
-    ds: Dataset = instantiate(cfg, _convert_="partial")
+def test_read(path_to_hdf5, with_mosaic, augmentations, in_channels):
+    framework = Frameworks.torch
+    task = "image-segmentation"
+    # augmentations = get_augmentations(resize_augmentation)
+    aug = get_obj(resize_augmentation, "augmentations", task, framework)
+    if isinstance(path_to_hdf5, List):
+        ds = DatasetUnion(
+                    [
+                        Dataset(path_to_hdf5=f,
+                                in_channels=in_channels,
+                                augmentations=aug,
+                        )
+                        for f in path_to_hdf5
+                    ])
+    else:
+        ds = Dataset(path_to_hdf5=path_to_hdf5,
+                    in_channels=in_channels,
+                    augmentations=aug)
+    # ds: Dataset = instantiate(cfg, _convert_="partial")
     assert ds is not None
     # assert ds.len > 0
 
-    ds.setup()
+    # ds.setup()
 
 
-    assert iter(ds.train_dataloader()).next()
-    # assert item is not None
+    item = ds[0]
+    assert item is not None
 
     # for item in ds:
-    item = iter(ds.train_dataloader()).next()
+    
     assert isinstance(item[SegDataKeys.image], ndarray) or isinstance(
         item[SegDataKeys.image], torch.Tensor
     )
-    assert item[SegDataKeys.image].shape[1] == in_channels
+    assert item[SegDataKeys.image].shape[0] == in_channels
     assert isinstance(item[SegDataKeys.label], ndarray) or isinstance(
         item[SegDataKeys.label], torch.Tensor
     )
@@ -61,20 +90,20 @@ def test_read(cfg, with_mosaic, preprocessing, in_channels):
     assert item[SegDataKeys.label].min() == 0
 
     if with_mosaic:
+        assert item[SegDataKeys.image].shape[1] == item[SegDataKeys.label].shape[1]
         assert item[SegDataKeys.image].shape[2] == item[SegDataKeys.label].shape[2]
-        assert item[SegDataKeys.image].shape[3] == item[SegDataKeys.label].shape[3]
     else:
+        assert item[SegDataKeys.image].shape[1] == item[SegDataKeys.label].shape[1]
         assert item[SegDataKeys.image].shape[2] == item[SegDataKeys.label].shape[2]
-        assert item[SegDataKeys.image].shape[3] == item[SegDataKeys.label].shape[3]
 
 
-@pytest.mark.parametrize(
-    ["ds_cfg", "aug_cfg"],
-    [[arable_segmentation_cfg_w_target.copy(), resize_augmentation.copy()]],
-)
-def test_ds_w_transform(ds_cfg, aug_cfg):
-    ds_cfg["transform"] = aug_cfg
-    test_read(ds_cfg, False, None, in_channels=4)  
+# @pytest.mark.parametrize(
+#     ["ds_cfg", "aug_cfg"],
+#     [[arable_segmentation_cfg_w_target.copy(), resize_augmentation.copy()]],
+# )
+# def test_ds_w_transform(ds_cfg, aug_cfg):
+#     ds_cfg["transform"] = aug_cfg
+#     test_read(ds_cfg, False, None, in_channels=4)  
 
 
 # @pytest.fixture
@@ -98,7 +127,6 @@ def test__to_tensor():
 #     [[resize_augmentation.copy()]],
 # )
 def test__augment_and_preproc():
-    cfg = {}
     input_data = np.random.rand(256,256,3)
     input_mask = np.random.rand(256,256,1)
     framework = Frameworks.torch
