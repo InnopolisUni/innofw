@@ -1,0 +1,9 @@
+defaults:
+  - /augmentations/preprocessing:
+      - standard_images
+  - /augmentations/combined:
+      - none
+  - /augmentations/position:
+      - none
+  - /augmentations/color:
+  - /augmentations/postprocessing:
