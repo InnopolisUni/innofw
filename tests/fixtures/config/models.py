@@ -83,6 +83,14 @@ catboost_cfg_w_target = DictConfig(
     }
 )
 
+baselearner_cfg_w_target = DictConfig(
+    {
+        "name": "base_active_learner",
+        "description": "Base regression model",
+        "_target_": "sklearn.linear_model.LinearRegression",
+    }
+)
+
 catboost_with_uncertainty_cfg_w_target = DictConfig(
     {
         "name": "catboost + data uncertainty",
