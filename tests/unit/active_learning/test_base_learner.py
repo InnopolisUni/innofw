@@ -1,3 +1,5 @@
+import pytest
+
 from innofw.constants import Frameworks
 from innofw.core.models.sklearn_adapter import SklearnAdapter
 from innofw.core.active_learning.learners import BaseActiveLearner
