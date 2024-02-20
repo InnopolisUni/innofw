@@ -18,7 +18,7 @@ def layout():
     request_body = request.json
     with open(configs_path / request_body["config_name"], "w+") as stream:
         try:
-            if "experiments/" in configs_path:
+            if "experiments/" in str(request_body["config_name"]):
                 s = "# @package _global_\n" + yaml.dump(request_body["html"], allow_unicode=True,
                                                         default_flow_style=False)
             else:

@@ -1,30 +1,24 @@
-# @package _global_
-defaults:
-  - override /models: semantic-segmentation/deeplabv3plus
-  - override /datasets: semantic-segmentation/oks_151123
-  - override /loggers: wandb
-  - override /losses: semantic-segmentation/dice
-  - override /optimizers: adam
-  - override /augmentations_train: linear-roads-bin-seg
-
-datasets:
-  batch_size: 20
-  num_workers: 42
-
-
-models:
-  in_channels: 3
-  classes: 1
-  encoder_name: resnet101
-  encoder_depth: 5
-  decoder_channels: 256
-  encoder_weights:
-
-project: oks
-task: image-segmentation
-random_seed: 42
 accelerator: gpu
-devices: 1
 batch_size: 20
+datasets:
+- batch_size: 20
+- num_workers: 42
+defaults:
+- override /models: semantic-segmentation/deeplabv3plus
+- override /datasets: semantic-segmentation/oks_151123
+- override /loggers: wandb
+- override /losses: semantic-segmentation/dice
+- override /optimizers: adam
+- override /augmentations_train: linear-roads-bin-seg
+devices: 1
+epochs: 1
+models:
+- in_channels: 3
+- classes: 1
+- encoder_name: resnet101
+- encoder_depth: 5
+- decoder_channels: 256
 num_workers: 42
-epochs: 40
+project: oks
+random_seed: 42
+task: image-segmentation

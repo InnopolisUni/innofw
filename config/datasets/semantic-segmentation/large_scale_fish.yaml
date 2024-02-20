@@ -1,0 +1,15 @@
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DirSegmentationLightningDataModule
+date_time: 29.01.2024
+description: https://www.kaggle.com/datasets/crowww/a-large-scale-fish-dataset
+markup_info: binary segmentation masks
+name: Fish semantic segmentation dataset
+task:
+  - image-segmentation
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/fish/test.zip
+  target: ./data/fish/test
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/fish/train.zip
+  target: ./data/fish/train
+

@@ -17,6 +17,10 @@ test:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/detection_rotten_fruits/test.zip
   target: /tmp/rotten_fruits/test
 
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/detection_rotten_fruits/test.zip
+  target: /tmp/rotten_fruits/infer
+
 num_workers: 8
 
 val_size: 0.2

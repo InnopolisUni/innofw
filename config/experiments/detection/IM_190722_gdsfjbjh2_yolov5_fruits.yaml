@@ -1,14 +1,10 @@
 # @package _global_
-defaults:
-  - override /models: detection/yolov5
-  - override /datasets: detection/detection_rotten_fruits
-
-
-project: "rotten_fruits"
-task: "image-detection"
-random_seed: 43
-epochs: 300
 batch_size: 2
+defaults:
+- override /models: detection/yolov5
+- override /datasets: detection/detection_rotten_fruits
+epochs: 3
+project: rotten_fruits
+random_seed: 43
+task: image-detection
 weights_freq: 1
-
-ckpt_path: /tmp/chkpt

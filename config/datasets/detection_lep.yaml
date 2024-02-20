@@ -11,13 +11,13 @@ _target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleA
 
 train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/train.zip
-  target: ./data/lep/
+  target: /tmp/data/lep/train
 test:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
-  target: ./data/lep/
+  target: /tmp/data/lep/test
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
-  target: ./data/lep/
+  target: /tmp/data/lep/infer
 
 num_workers: 8
 

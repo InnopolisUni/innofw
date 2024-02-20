@@ -3,6 +3,7 @@ import pathlib
 from pathlib import Path
 from typing import List, Optional
 import shutil
+import glob
 
 # third party libraries
 from sklearn.model_selection import train_test_split
@@ -72,12 +73,12 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         if self.train:
             self.train_source = Path(self.train)
             # # In this datamodule, the train source should be the folder train itself not the folder "train/images"
-            # if str(self.train_source).endswith("images"):
-            #     self.train_source = Path(str(self.train_source)[:-7])
+            if str(self.train_source).endswith("images") or str(self.train_source).endswith("labels"):
+                self.train_source = Path(str(self.train_source)[:-7])
         if self.test:
             self.test_source = Path(self.test)
-            # if str(self.test_source).endswith("images"):
-            #     self.test_source = Path(str(self.test_source)[:-7])
+            if str(self.test_source).endswith("images") or str(self.test_source).endswith("labels"):
+                self.test_source = Path(str(self.test_source)[:-7])
 
         if self.infer:
             self.infer_source = (
@@ -85,8 +86,8 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
                 if not (type(self.infer) == str and self.infer.startswith("rts"))
                 else self.infer
             )
-            # if str(self.infer_source).endswith("images"):
-            #     self.infer_source = Path(str(self.infer_source)[:-7])
+            if str(self.infer_source).endswith("images") or str(self.infer_source).endswith("labels"):
+                self.infer_source = Path(str(self.infer_source)[:-7])
 
         self.batch_size = batch_size
         self.imgsz: int = image_size
@@ -138,8 +139,8 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        train_img_path = self.train_source
-        train_lbl_path = self.train_source.parent.parent / "labels" / "train"
+        train_img_path = self.train_source / "images" / "train"
+        train_lbl_path = self.train_source / "labels" / "train"
 
         # get all files from train folder
         img_files = list(train_img_path.iterdir())
@@ -212,12 +213,16 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             return
         # root_dir
         self.infer_source = Path(self.infer_source)
-        if self.infer_file:
-            self.infer_source = (
-                self.infer_source
-                if self.infer_source.name == Path(self.infer_file).stem
-                else self.infer_source / Path(self.infer_file).stem
-            )
+        # if self.infer_file:
+        #     self.infer_source = (
+        #         self.infer_source
+        #         if self.infer_source.name == Path(self.infer_file).stem
+        #         else self.infer_source / Path(self.infer_file).stem
+        #     )
+        for path in self.infer_source.rglob("*"):
+            if path.is_file() and path.suffix not in [".txt", ".yaml", ".zip"]:
+                self.infer_source = Path(path).parent
+                break
 
         root_path = self.infer_source.parent
 
