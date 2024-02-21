@@ -11,7 +11,7 @@ from torch.utils.data import Dataset
 
 from innofw.constants import SegDataKeys
 from innofw.core.augmentations import Augmentation
-
+from rasterio.plot import reshape_as_raster
 #
 #
 
@@ -98,6 +98,7 @@ class SegmentationDataset(Dataset):
                 mask = read_tif(self.masks[index])
 
             mask = mask.astype(np.int)  # todo: refactor
+            mask = reshape_as_raster(mask)[0]
             if mask.shape[-1] == 1:  # todo: refactor
                 mask = np.squeeze(mask, -1)
 
@@ -109,11 +110,11 @@ class SegmentationDataset(Dataset):
                 # out = self.transform(image=image, mask=mask)
                 # image, mask = out["image"], out["mask"]
                 image, mask = self.transform(image, mask)
-
-        try:
-            image = np.moveaxis(image, 2, 0)  # todo: refactor
-        except:
-            pass
+        else:
+            try:
+                image = np.moveaxis(image, 2, 0) 
+            except:
+                pass
         try:
             image = image.astype(np.float32)  # todo: refactor
         except:

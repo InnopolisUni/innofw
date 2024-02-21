@@ -252,7 +252,13 @@ function parseHtmlToDict(html_array){
          }
          if (html_array[i].className==="parent row"){
              parent = html_array[i].getElementsByClassName("keyfield")[0].value;
-             dict[parent] = [];
+             // if (parent === "default"){
+             //     dict[parent] = [];
+             // }
+             // else{
+             //     dict[parent] = {};
+             // }
+
          }
          if (html_array[i].className==="child row"){
              let element = html_array[i].cloneNode(true);
@@ -268,9 +274,31 @@ function parseHtmlToDict(html_array){
              }
 
              if (parent != null){
-                 let new_dict = {};
-                 new_dict[k] = v;
-                 dict[parent].push(new_dict);
+                 if (isNaN(Number(k))) {
+
+                     if (parent === "defaults"){
+                         if (!(parent in dict)){
+                         dict[parent] = [];
+                         }
+                         let new_dict = {};
+                         new_dict[k] = v;
+                         dict[parent].push(new_dict);
+                     }
+                     else{
+                         if (!(parent in dict)){
+                         dict[parent] = {};
+                         }
+                         dict[parent][k] = v;
+                     }
+                 }
+                 else{
+                     if (!(parent in dict)){
+                         dict[parent] = [];
+                     }
+                     dict[parent].push(v);
+                 }
+
+
              }
              else{
                 dict[k] = v;
@@ -508,7 +536,7 @@ function openModalWindowOnEditButtonClick(button){
 
         let nameOfConfig = document.createElement("h3");
         nameOfConfig.className = "modal_config_name";
-        const text = document.createTextNode(fileName+".yaml");
+        const text = document.createTextNode(fileName);
         nameOfConfig.appendChild(text);
         modal_content.insertBefore(nameOfConfig, modal_content.children[0])
 
@@ -536,7 +564,9 @@ function modals(){
 
 function change_config_name_and_url(){
     let config_name = document.getElementById("config_name");
-    config_name.value = "duplicate " + config_name.value;
+    const parts = config_name.value.split('.');
+
+    config_name.value = parts[0] + "_duplicate.yaml";
     history.pushState(null, 'FeaturePoints Login', location.protocol+"//"+location.host+"/config/"+config_name.value);
 }
 

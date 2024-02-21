@@ -33,7 +33,7 @@ def get_samples(path) -> List[Path]:  # todo: move out
 
 
 class SegmentationDM(BaseLightningDataModule):
-    task = ["image-segmentation"]
+    task = ["image-segmentation", "multiclass-image-segmentation"]
     framework = [Frameworks.torch]
 
     @validate_arguments

@@ -1,26 +1,19 @@
 # @package _global_
+batch_size: 4
 defaults:
-  - override /models: semantic-segmentation/unet
-  - override /datasets: semantic-segmentation/segmentation_arable.yaml
-  - override /optimizers: lion.yaml
-  - override /augmentations_train: none
-  - override /augmentations_val: none
-  - override /augmentations_test: none
-  - override /losses: segmentation_losses.yaml
-  - override /callbacks: segmentation_2
-
+- override /models: semantic-segmentation/unet
+- override /datasets: semantic-segmentation/segmentation_arable.yaml
+- override /optimizers: lion.yaml
+- override /augmentations_train: none
+- override /augmentations_val: none
+- override /augmentations_test: none
+- override /losses: segmentation_losses.yaml
+- override /callbacks: segmentation_2
+epochs: 5
 models:
   in_channels: 4
-project: "segmentation"
-task: "image-segmentation"
+project: segmentation
 random_seed: 42
 stop_param: 10
-epochs: 5
+task: image-segmentation
 weights_freq: 1
-batch_size: 4
-
-wandb:
-  enable: True
-  project: arable
-  group: 160323_just_testing_wandb
-  job_type: training

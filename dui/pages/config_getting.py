@@ -101,14 +101,23 @@ def decompose(configurations, recurse=False, level=0):
     except Exception as e:
         print(e, k, v)
 
-def simplify_dict(dict):
+def simplify_dict(in_dict):
     new_dict = {}
 
-    for k, v in dict.items():
+    for k, v in in_dict.items():
         if type(v) is list:
-            intermediate_dict = {key: value for element in v for key, value in element.items()}
-            intermediate_dict = simplify_dict(intermediate_dict)
-            new_dict[k] = intermediate_dict
+            intermediate_dict = {}
+            for element in v:
+                if type(element) is dict:
+                    for key, value in element.items():
+                        intermediate_dict[key] = value
+                    intermediate_dict = simplify_dict(intermediate_dict)
+                    new_dict[k] = intermediate_dict
+                else:
+                    if k not in new_dict.keys():
+                        new_dict[k] = [element]
+                    else:
+                        new_dict[k].append(element)
         else:
             new_dict[k] = v
     return new_dict

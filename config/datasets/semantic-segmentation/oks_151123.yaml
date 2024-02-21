@@ -1,0 +1,14 @@
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM
+batch_size: 12
+channels: 3
+date_time: some
+description: some
+markup_info: some
+name: oks
+num_workers: 32
+task:
+- multiclass-image-segmentation
+test:
+  source: /mnt/nvmestorage/ibragim/OKS/data/train/tiled_train_all/val
+train:
+  source: /mnt/nvmestorage/ibragim/OKS/data/train/tiled_train_all/train

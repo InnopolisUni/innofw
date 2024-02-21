@@ -1,8 +1,4 @@
-name: yolov5
-description: yolov5 by ultralytics
-
 _target_: ultralytics.YOLO
-model: yolov5mu  # n s m l x
-
-
-#--weights yolov5x.pt
+description: yolov5 by ultralytics
+model: yolov5xu
+name: yolov5

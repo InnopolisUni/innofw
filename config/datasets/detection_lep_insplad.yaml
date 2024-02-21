@@ -1,0 +1,69 @@
+task:
+  - image-detection
+
+name: lep_insplad
+description: "InsPLAD A Dataset and Benchmark for Power Line Asset Inspection in UAV Images, Link: https://github.com/andreluizbvs/InsPLAD"
+
+markup_info: Yolo detection annotations of powerline elements
+date_time: 18.11.2022
+
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/INSPLAD/train.zip
+  target: /tmp/INSPLAD/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/INSPLAD/test.zip
+  target: /tmp/INSPLAD/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/INSPLAD/test.zip
+  target: /tmp/INSPLAD/test
+
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 600
+num_classes: 18
+names:
+  - yoke
+  - suspension
+  - spacer
+  - stockbridge_damper
+  - lightning_rod_shackle
+  - lightning_rod_suspension
+  - polymer
+  - glass_insulator
+  - tower_id_plate
+  - vari_grip
+  - polymer_insulator_lower_shackle
+  - polymer_insulator_upper_shackle
+  - polymer_insulator_tower_shackle
+  - glass_insulator_big_shackle
+  - glass_insulator_small_shackle
+  - glass_insulator_tower_shackle
+  - spiral_damper
+  - sphere
+
+#  Dataset structure is as follows:
+#  images/
+#    train/
+#      *.jpg
+#    test/
+#      *.jpg
+
+#  labels/
+#    train/
+#      *.txt
+#    test/
+#      *.txt
+
+#  Note that each archive consist only corresponding folders:
+#  train.zip/
+#    images/
+#      train/
+#        *.jpg
+#    labels/
+#      train/
+#        *.txt
+#  Similar for test.zip and infer.zip

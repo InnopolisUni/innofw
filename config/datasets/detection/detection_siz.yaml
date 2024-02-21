@@ -1,0 +1,21 @@
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+channels_num: 3
+date_time: 13.01.2024
+description: Набор данных содержит фото гнилых и свежих фруктов
+image_size: 800
+infer:
+  source: /home/qazybek/SIZ_win_sum/images/test/
+markup_info: Набор данных содержит разметку bounding box, под формат детекции гнилых
+  фруктов.
+name: detection_siz
+names:
+- Person
+num_classes: 1
+num_workers: 8
+task:
+- image-detection
+test:
+  source: /home/qazybek/SIZ_win_sum
+train:
+  source: /home/qazybek/SIZ_win_sum
+val_size: 0.2
