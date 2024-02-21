@@ -61,6 +61,6 @@ def test_torch_tensor_postproceessing():
     ])
 
     aug = get_augmentations(cfg.get("augmentations_train"))
-    img = np.random.randint(0, 255, (3, 64, 64))
+    img = np.random.randint(0, 255, (64, 64, 3))
     aug_img = Augmentation(aug)(img)
     assert aug_img.shape[0] == 3 and len(aug_img.shape) == 3
