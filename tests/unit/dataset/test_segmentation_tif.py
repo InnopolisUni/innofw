@@ -6,7 +6,7 @@ from hydra.utils import instantiate
 from numpy import ndarray
 
 from innofw.constants import SegDataKeys
-from innofw.core.datasets.semantic_segmentation.tiff_dataset import (
+from innofw.core.datasets.segmentation import (
     SegmentationDataset, get_metadata
 )
 from tests.fixtures.config.augmentations import (
@@ -92,3 +92,4 @@ def test_wrong_img_mask_number(cfg):
 
     with pytest.raises(InstantiationException):
         ds: SegmentationDataset = instantiate(cfg, _convert_="partial")
+
