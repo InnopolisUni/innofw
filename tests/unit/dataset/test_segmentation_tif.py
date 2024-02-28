@@ -7,8 +7,9 @@ from numpy import ndarray
 
 from innofw.constants import SegDataKeys
 from innofw.core.datasets.segmentation import (
-    SegmentationDataset, get_metadata
+    SegmentationDataset
 )
+from innofw.core.datasets.segmentation_tif import get_metadata
 from tests.fixtures.config.augmentations import (
     bare_aug_torchvision as resize_augmentation,
 )
