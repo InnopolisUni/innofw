@@ -58,7 +58,7 @@ class DummyDataModule(LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.dataset, batch_size=self.batch_size)
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 @pytest.fixture(scope="module")
 def dummy_data_module():
     cfg = DictConfig(fixt_datasets.drugprot_datamodule_cfg_w_target)
@@ -67,7 +67,7 @@ def dummy_data_module():
     data_module.setup()  # Call the setup method to define the dataset attribute
     return data_module
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 @pytest.fixture(scope="module")
 def biobert_module() -> LightningModule:
     cfg = DictConfig(
@@ -89,7 +89,7 @@ def biobert_module() -> LightningModule:
     return module   
 
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 @pytest.fixture(scope="function")
 def biobert_module_function_scope() -> LightningModule:
     cfg = DictConfig(
@@ -110,7 +110,7 @@ def biobert_module_function_scope() -> LightningModule:
 
     return module
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 @pytest.fixture(scope="module")
 def fitted_biobert_module(
     biobert_module: LightningModule,
@@ -125,7 +125,7 @@ def fitted_biobert_module(
     )
     return biobert_module
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 @pytest.mark.skipif(
     not torch.cuda.is_available(), reason="No GPU is found on this machine"
 )
@@ -138,7 +138,7 @@ def test_training_with_gpu(
     dataloader = dummy_data_module.train_dataloader()
     trainer.fit(biobert_module_function_scope, train_dataloaders=dataloader)
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 def test_training_without_checkpoint(
     biobert_module_function_scope,
     trainer_with_temporary_directory,
@@ -148,7 +148,7 @@ def test_training_without_checkpoint(
     dataloader = dummy_data_module.train_dataloader()
     trainer.fit(biobert_module_function_scope, train_dataloaders=dataloader)
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 def test_training_with_checkpoint(
     fitted_biobert_module,
     trainer_with_temporary_directory,
@@ -168,7 +168,7 @@ def test_training_with_checkpoint(
         ckpt_path=last_checkpoint_path,
         train_dataloaders=dataloader,
     )
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 def test_testing_without_checkpoint(
     biobert_module_function_scope,
     dummy_data_module,
@@ -183,7 +183,7 @@ def test_testing_without_checkpoint(
         dataloaders=dataloader,
     )
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 def test_testing_with_checkpoint(
     biobert_module_function_scope,
     fitted_biobert_module,
@@ -218,7 +218,7 @@ def test_testing_with_checkpoint(
             last_checkpoint_test_results[0][key]
             > 0  # first_checkpoint_test_results[0][key]
         )
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 def test_predicting_without_checkpoint(
     biobert_module_function_scope,
     dummy_data_module,
@@ -230,7 +230,7 @@ def test_predicting_without_checkpoint(
         biobert_module_function_scope, dataloaders=fitted_model_dataloader
     )
 
-@pytest.mark.skip(reason="some bug")
+# @pytest.mark.skip(reason="some bug")
 def test_predicting_with_checkpoint(fitted_biobert_module, dummy_data_module):
     trainer = fitted_biobert_module.trainer
     dataloader = dummy_data_module.train_dataloader()
