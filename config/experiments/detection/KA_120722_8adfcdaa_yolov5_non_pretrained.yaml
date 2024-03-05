@@ -10,5 +10,4 @@ project: "lep"
 task: "image-detection"
 
 random_seed: 42
-task: image-detection
 weights_freq: 1
