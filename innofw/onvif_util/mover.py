@@ -48,7 +48,7 @@ class CameraControl:
         self.__cam_password = str(password)
 
         mycam = ONVIFCamera(
-            self.__cam_ip, 80, self.__cam_user, self.__cam_password
+            self.__cam_ip, 80, self.__cam_user, self.__cam_password, wsdl_dir='./innofw/onvif_util/wsdl'
         )
         logging.info("Create media service object")
         media = mycam.create_media_service()
