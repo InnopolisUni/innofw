@@ -55,9 +55,7 @@ def test_iou_batch():
             per_image=False,
             reduction=reduction,
         )
-        print(reduction, iou_loss(
-            torch.tensor([0, 0.4, 0.4]), torch.tensor([0, 0, 1])
-        ))
+
         assert iou_loss(
         torch.tensor([0, 0.4, 0.4]), torch.tensor([0, 0, 1])
         ) < 1 #pytest.approx(torch.tensor([1]), 1e-7)

@@ -17,7 +17,7 @@ def test_optimizer_creation():
     cfg = DictConfig(
         {
             "optimizers": {
-                "_target_": "torch.optim.SGD",
+                "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.SGD",
                 "lr": 1e-5,
             }
         }
@@ -37,7 +37,7 @@ def test_optimizer_creation_wrong_framework():
     cfg = DictConfig(
         {
             "optimizers": {
-                "_target_": "torch.optim.SGD",
+                "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.SGD",
                 "lr": 1e-5,
             }
         }

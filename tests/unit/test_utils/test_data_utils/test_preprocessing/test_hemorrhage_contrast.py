@@ -7,7 +7,8 @@ from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import (resize
                                                                           normalize_minmax, 
                                                                           get_metadata_from_dicom,
                                                                           get_first_of_dicom_field_as_int, 
-                                                                          prepare_image
+                                                                          prepare_image,
+                                                                          window_image
 )
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from tests.utils import get_test_folder_path
@@ -64,14 +65,35 @@ def test_metadata_int():
     for param in new_metadata.keys():
         assert isinstance(new_metadata[param], int)
 
-# def test_dicom_contrast():
-#     dicom_path = os.path.join(
-#         get_test_folder_path(), "data/images/other/dicoms/test.dcm"
-#     )
-#     img = dcmread(dicom_path)
 
-#     idx, prep_img = prepare_image(img)
+def test_prepare_image():
+    import PIL
+    dicom_path = os.path.join(
+        get_test_folder_path(), "data/images/other/dicoms/test.dcm"
+    )
+    img = dcmread(dicom_path)
 
-#     assert isinstance(prep_img.dtype, np.integer)
+    img_id, prep_img = prepare_image(img)
+    # array_img = np.array(prep_img)
+    assert isinstance(prep_img, PIL.Image.Image)
+    assert isinstance(img_id, str)
+
+
+def test_window_image():
+    dicom_path = os.path.join(
+        get_test_folder_path(), "data/images/other/dicoms/test.dcm"
+    )
+    img = dcmread(dicom_path)
+
+    window_center = 50
+    window_width = 200
+    intercept = 0
+    slope = 1
+
+    out_img = window_image(img.pixel_array, window_center, window_width, intercept, slope)
+    assert out_img is not None
+
+
+
 
     

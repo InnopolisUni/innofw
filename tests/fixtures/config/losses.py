@@ -85,3 +85,22 @@ token_class_loss_w_target = DictConfig(
         }  
     }
 )
+
+focal_loss_w_target = DictConfig(
+    {
+        "name": "Detection",
+        "description": "something",
+        "task": ["image-detection"],
+        "implementations": {
+            "torch": {
+                "BinaryFocalLoss": {
+                    "weight": 1,
+                    "object": {
+                        "_target_": "pytorch_toolbelt.losses.BinaryFocalLoss",
+                        # "mode": "binary",
+                    },
+                },
+            }
+        },
+    },
+)
