@@ -35,15 +35,15 @@ class DummyDataset(Dataset):
         self.num_samples = num_samples
 
     def __getitem__(self, index):
-        x = torch.rand(3, 224, 224)
-        y = torch.randint(0, 2, (1, 224, 224))
+        x = torch.rand(3, 32, 32)
+        y = torch.randint(0, 2, (1, 32, 32))
         return x, y
 
     def __len__(self):
         return self.num_samples
 
 class DummyDataModule(LightningDataModule):
-    def __init__(self, num_samples: int, batch_size: int = 4):
+    def __init__(self, num_samples: int, batch_size: int = 2):
         super().__init__()
         self.num_samples = num_samples
         self.batch_size = batch_size
