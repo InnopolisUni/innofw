@@ -1,6 +1,7 @@
 #
 import logging
 import os
+import shutil
 from pathlib import Path
 import pytest
 import yaml
@@ -65,8 +66,9 @@ def test_datasets(dataset_config_file, tmp_path):
             assert dm is not None
     else:
         pass
-
-        # tmp_path.rmdir()
+    for dir_name in ['data', 'logs']:
+        if os.path.exists(get_project_root() / dir_name) and os.path.isdir(get_project_root() / dir_name):
+            shutil.rmtree(get_project_root() / dir_name)
 
 
 # @pytest.mark.skip(reason="some problems with dataset downloading")
@@ -77,12 +79,12 @@ def test_experiments(experiment_config_file):
 
     GlobalHydra.instance().clear()
     initialize(config_path="../../../config", job_name="test_app")
-    
+
     experiment_file = f"{str(os.path.splitext(experiment_config_file)[0]).split('/experiments/')[-1]}"
 
     cfg = compose(
         config_name="train",
-        overrides=[f"experiments={experiment_file}"], #experiment_config_file.stem
+        overrides=[f"experiments={experiment_file}"],  # experiment_config_file.stem
         return_hydra_config=True,
     )
     get_experiment(cfg)
