@@ -1,15 +1,12 @@
 name: Docker clean
-
 on:
    schedule:
     - cron: '0 0 * * 0'
-
 jobs:
   build-on-ubuntu:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
     - name: docker ps -a
       run: docker ps -a
     - name: Build the Docker image
@@ -19,6 +16,7 @@ jobs:
     - name: Free disk space
       run: |
           sudo docker rmi $(docker image ls -aq) >/dev/null 2>&1 || true
+          sudo docker system prune --all
           sudo rm -rf \
             /opt/ghc \
             /usr/local/.ghcup \
