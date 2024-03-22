@@ -16,3 +16,12 @@ jobs:
       run: docker images
     - name: Check disk space
       run: df . -h
+    - name: Free disk space
+      run: |
+          sudo docker rmi $(docker image ls -aq) >/dev/null 2>&1 || true
+          sudo rm -rf \
+            /opt/ghc \
+            /usr/local/.ghcup \
+            /usr/lib/jvm || true
+    - name: Check disk space
+      run: df . -h
