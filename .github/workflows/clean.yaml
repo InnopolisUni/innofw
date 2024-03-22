@@ -1,10 +1,8 @@
 name: Docker clean
 
 on:
-  push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
+   schedule:
+    - cron: '0 0 * * 0'
 
 jobs:
   build-on-ubuntu:
@@ -12,6 +10,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: docker ps -a
+      run: docker ps -a
     - name: Build the Docker image
       run: docker images
     - name: Check disk space
