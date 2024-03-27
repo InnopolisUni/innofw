@@ -5,7 +5,7 @@ defaults:
   - override /datasets: semantic-segmentation/landslides-kanopus/270223-hdf5
   - override /losses: semantic-segmentation/triple_loss_old_pipe
   - override /optimizers: adam
-  - override /schedulers: custom_old_pipeline
+  - override /schedulers: cosine_annealing
   - override /augmentations_train: landslides-kanopus
   - override /augmentations_val: landslides-kanopus
   # - override /metrics: basic

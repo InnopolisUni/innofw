@@ -32,7 +32,7 @@ class MobileNetV2(nn.Module):
         super().__init__()
 
         self.num_classes = num_classes
-        self.model = models.MobileNetV2(pretrained)
+        self.model = models.mobilenet_v2(pretrained)
         self.model.fc = nn.Linear(512, num_classes)
 
     def forward(self, x):

@@ -31,4 +31,4 @@ accelerator: gpu
 #devices: 1
 gpus: 1
 
-original_work_dir: ${hydra:runtime.cwd}
+# original_work_dir: ${hydra:runtime.cwd}

@@ -200,6 +200,8 @@ class HDF5LightningDataModule(BaseLightningDataModule):
         )
 
     # test_dataloader?
+    def test_dataloader(self):
+        pass
 
     def setup_infer(self):
         if isinstance(self.predict_dataset, HDF5Dataset):

@@ -1,3 +1,5 @@
+import sys
+import pydicom
 from pydicom import dcmread
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import numpy as np
@@ -26,7 +28,7 @@ def window_image(img, window_center, window_width, intercept, slope):
     img = img * slope + intercept
     img_min = window_center - window_width // 2
     img_max = window_center + window_width // 2
-    img = numpy.clip(img, min_val, max_val)
+    img = np.clip(img, img_min, img_max)
     return img 
 
 def resize(img, new_w, new_h):
@@ -54,4 +56,4 @@ if __name__ == "__main__":
          windowed =  np.array(windowed)
          cv2.imwrite(sys.argv[2]+"/"+id.split("/")[-1], windowed)
     except Exception as err:
-        logging.error(err)
+        l.error(err)

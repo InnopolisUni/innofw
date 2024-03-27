@@ -1,13 +1,13 @@
 # @package _global_
 defaults:
   - override /models: semantic-segmentation/deeplabv3plus.yaml
-  - override /datasets: segmentation_arable_full.yaml
+  - override /datasets: semantic-segmentation/segmentation_arable_full.yaml
   - override /optimizers: adam.yaml
   - override /losses: segmentation_losses # triple_segmentation_loss
-  - override /augmentations: segmentation_satellite_imagery
+  - override /augmentations_train: none #segmentation_satellite_imagery
   # - override /initializations: he
   - override /callbacks: segmentation_2
-  - override /wandb: qb
+  - override /wandb: default
 
 optimizers:
   implementations:
@@ -24,8 +24,7 @@ models:
 
 accelerator: gpu
 devices: 1
-gpus:  
-  - 1  # use second gpu
+gpus: 1  # use second gpu
 
 
 wandb:

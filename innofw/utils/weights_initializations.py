@@ -1,8 +1,5 @@
-#
-#
 import hydra
 import torch.nn as nn
-
 
 class WeightInitializer:
     """

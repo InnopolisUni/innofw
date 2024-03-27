@@ -142,7 +142,32 @@ arable_segmentation_cfg_w_target = DictConfig(
         "channels_num": 4,
     }
 )
-
+forest_segmentation_cfg_w_target = DictConfig(
+    {
+        "task": ["image-segmentation"],
+        "name": "arable",
+        "description": "something",
+        "markup_info": "something",
+        "date_time": "07.02.2024",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/train"
+            )
+        },
+        "val": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/test"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/test"
+            )
+        },
+        "channels_num": 3,
+    }
+)
 faces_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["image-classification"],
@@ -307,4 +332,58 @@ qsar_datamodule_cfg_w_target = DictConfig(
         "smiles_col": "smiles",
         "target_col": "gap",
     }
+)
+
+anomaly_detection_timeseries_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["anomaly-detection-timeseries"],
+        "name": "ecg",
+        "description": " The original dataset for ECG5000 is a 20-hour long ECG downloaded from Physionet",
+        "markup_info": "Информация о разметке",
+        "date_time": "03.08.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.anomaly_detection_timeseries_dm.TimeSeriesLightningDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/train.zip",
+            "target": "./data/ECG/train",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip",
+            "target": "./data/ECG/test",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip",
+            "target": "./data/ECG/infer",
+        },
+        "val_size": 0.2,
+    }
+    
+)
+
+stroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["semantic_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule",
+        "train": {
+            "source": str(
+                get_test_folder_path() /"data/images/segmentation/dicom/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() /"data/images/segmentation/dicom/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() /"data/images/segmentation/dicom/test"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+    
 )

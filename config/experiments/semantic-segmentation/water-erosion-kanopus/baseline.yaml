@@ -1,11 +1,11 @@
 # @package _global_
 defaults:
   - _self_
-  - override /models: semantic-segmentationdeeplabv3plus
+  - override /models: semantic-segmentation/deeplabv3plus
   - override /datasets: semantic-segmentation/water-erosion-kanopus/220223-hdf5
   - override /losses: semantic-segmentation/triple_loss_old_pipe
   - override /optimizers: adam
-  - override /schedulers: custom_old_pipeline
+  - override /schedulers: cosine_annealing
   - override /augmentations_train: water-erosion-bin-seg
   - override /augmentations_val: water-erosion-bin-seg
   # - override /metrics: basic

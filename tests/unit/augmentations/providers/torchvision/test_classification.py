@@ -1,6 +1,7 @@
 import torchvision.transforms as T
 
 from innofw.core.augmentations import Augmentation
+from innofw.core.augmentations.torchvision_adapter import TorchvisionAdapter
 
 
 def test_torchvision():
@@ -14,3 +15,4 @@ def test_torchvision():
 
     aug = Augmentation(torchvision_transform)
     assert aug is not None
+    assert repr(aug).startswith("Torchvision: Compose(")

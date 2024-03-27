@@ -1,0 +1,15 @@
+defaults:
+    - /augmentations/preprocessing:
+        - standard_images
+    - /augmentations/combined:
+        - none
+    - /augmentations/position:
+        - flip
+        - rotate90
+        - transpose
+        - grid_distortion
+    - /augmentations/color:
+        - random_gamma
+        - blur
+    - /augmentations/postprocessing:
+        - to_tensor

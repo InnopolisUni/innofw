@@ -9,6 +9,7 @@ from xgboost import XGBClassifier
 
 from innofw.core.models.sklearn_adapter import SklearnAdapter
 from innofw.core.models.torch.architectures.segmentation.unet import UNet
+from innofw.core.models.torch.architectures.classification import MobileNetV2
 from innofw.core.models.xgboost_adapter import XGBoostAdapter
 
 
@@ -62,4 +63,9 @@ def test_models(model, wrapper, logs):
 def test_unet():
     x = torch.from_numpy(np.random.random((1, 3, 512, 512)))
     model = UNet()
+    assert model.forward(x.float()) is not None
+
+def test_mobilenet():
+    x = torch.from_numpy(np.random.random((1, 3, 512, 512)))
+    model = MobileNetV2(num_classes=2, pretrained=False)
     assert model.forward(x.float()) is not None

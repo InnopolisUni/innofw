@@ -1,3 +1,4 @@
+_target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DicomDirSegmentationLightningDataModule
 task:
   - image-segmentation
 

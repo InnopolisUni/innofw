@@ -7,4 +7,4 @@ defaults:
 project: "mcl1"
 task: "qsar-regression"
 random_seed: 42
-original_work_dir: ${hydra:runtime.cwd}
+# original_work_dir: ${hydra:runtime.cwd}

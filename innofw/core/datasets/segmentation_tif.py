@@ -6,7 +6,7 @@ import numpy as np
 import rasterio as rio
 from pydantic import FilePath
 from pydantic import validate_arguments
-from segmentation.constants import SegDataKeys
+from innofw.constants import SegDataKeys
 from torch.utils.data import Dataset
 
 #

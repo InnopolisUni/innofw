@@ -24,6 +24,14 @@ resnet_cfg_w_target = DictConfig(
     }
 )
 
+resnet_binary_cfg_w_target = DictConfig(
+    {
+        "name": "resnet18",
+        "description": "model from torchvision",
+        "num_classes": 2,
+    }
+)
+
 # case: xgboost regressor
 xgbregressor_cfg_w_target = DictConfig(
     {"name": "xgboost_regressor", "description": "something", "_target_": ""}
@@ -75,6 +83,14 @@ catboost_cfg_w_target = DictConfig(
     }
 )
 
+baselearner_cfg_w_target = DictConfig(
+    {
+        "name": "base_active_learner",
+        "description": "Base regression model",
+        "_target_": "sklearn.linear_model.LinearRegression",
+    }
+)
+
 catboost_with_uncertainty_cfg_w_target = DictConfig(
     {
         "name": "catboost + data uncertainty",
@@ -82,5 +98,45 @@ catboost_with_uncertainty_cfg_w_target = DictConfig(
         "_target_": "catboost.CatBoostRegressor",
         "loss_function": "RMSEWithUncertainty",
         "posterior_sampling": "true",
+    }
+)
+
+# case: vae for seq2seq modeling
+
+text_vae_cfg_w_target = DictConfig(
+    {
+        "name": "chem-vae",
+        "description": "vae for seq2seq modeling",
+        "_target_": "innofw.core.models.torch.architectures.autoencoders.vae.VAE",
+        "encoder": {
+            "_target_": "innofw.core.models.torch.architectures.autoencoders.vae.Encoder",
+            "in_dim": 609, # len(alphabet) * max(len_mols)
+            "hidden_dim": 128,
+            "enc_out_dim": 128,
+        },  
+        "decoder": {
+            "_target_": "innofw.core.models.torch.architectures.autoencoders.vae.GRUDecoder",
+            "latent_dimension": 128,
+            "gru_stack_size": 3,
+            "gru_neurons_num": 128,
+            "out_dimension": 29,  # len(alphabet)
+        }
+        
+    }
+)
+
+biobert_cfg_w_target = DictConfig(
+    {
+        "name": "biobert-ner",
+        "description": "bert for token classification biobert-base-cased-v1.2",
+        "_target_": "innofw.core.models.torch.architectures.token_classification.biobert_ner.BiobertNer",
+        "model":{
+            "_target_": "transformers.BertForTokenClassification.from_pretrained",
+            "pretrained_model_name_or_path": "dmis-lab/biobert-base-cased-v1.2"
+            },
+        "tokenizer":{
+            "_target_": "transformers.BertTokenizerFast.from_pretrained",
+            "pretrained_model_name_or_path": "dmis-lab/biobert-base-cased-v1.2"
+            }
     }
 )

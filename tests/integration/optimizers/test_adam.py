@@ -17,7 +17,8 @@ def test_optimizer_creation():
     cfg = DictConfig(
         {
             "optimizers": {
-                "_target_": "torch.optim.Adam",
+                # "_target_": "torch.optim.Adam",
+                "_target_": "innofw.core.optimizers.custom_optimizers.optimizers.ADAM",
                 "lr": 1e-5,
             }
         }
@@ -32,7 +33,9 @@ def test_optimizer_creation():
 
 def test_optimizer_creation_wrong_framework():
     cfg = DictConfig(
-        {"optimizers": {"_target_": "torch.optim.Adam", "lr": 1e-5}}
+        # {"optimizers": {"_target_": "torch.optim.Adam", "lr": 1e-5}}
+        {"optimizers": {"_target_": "innofw.core.optimizers.custom_optimizers.optimizers.ADAM", 
+                        "lr": 1e-5}}
     )
     task = "image-segmentation"
     framework = Frameworks.sklearn
