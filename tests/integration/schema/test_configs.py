@@ -66,9 +66,6 @@ def test_datasets(dataset_config_file, tmp_path):
             assert dm is not None
     else:
         pass
-    for dir_name in ['data', 'logs']:
-        if os.path.exists(get_project_root() / dir_name) and os.path.isdir(get_project_root() / dir_name):
-            shutil.rmtree(get_project_root() / dir_name)
 
 
 # @pytest.mark.skip(reason="some problems with dataset downloading")

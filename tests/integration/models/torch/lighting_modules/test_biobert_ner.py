@@ -28,8 +28,8 @@ class DummyDataset(Dataset):
         self.num_samples = num_samples
 
     def __getitem__(self, index):
-        x = torch.rand(3, 224, 224)
-        y = torch.randint(0, 2, (1, 224, 224))
+        x = torch.rand(3, 32, 32)
+        y = torch.randint(0, 2, (1, 32, 32))
         return x, y
 
     def __len__(self):
@@ -55,17 +55,14 @@ class DummyDataModule(LightningDataModule):
         return DataLoader(self.dataset, batch_size=self.batch_size)
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 @pytest.fixture(scope="module")
 def dummy_data_module():
     cfg = DictConfig(fixt_datasets.drugprot_datamodule_cfg_w_target)
     data_module = get_datamodule(cfg, framework=Frameworks.torch, task="text-ner")
-    # data_module = DummyDataModule(num_samples=100, batch_size=4)
     data_module.setup()  # Call the setup method to define the dataset attribute
     return data_module
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 @pytest.fixture(scope="module")
 def biobert_module() -> LightningModule:
     cfg = DictConfig(
@@ -87,7 +84,6 @@ def biobert_module() -> LightningModule:
     return module
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 @pytest.fixture(scope="function")
 def biobert_module_function_scope() -> LightningModule:
     cfg = DictConfig(
@@ -109,7 +105,6 @@ def biobert_module_function_scope() -> LightningModule:
     return module
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 @pytest.fixture(scope="module")
 def fitted_biobert_module(
         biobert_module: LightningModule,
@@ -125,7 +120,6 @@ def fitted_biobert_module(
     return biobert_module
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 @pytest.mark.skipif(
     not torch.cuda.is_available(), reason="No GPU is found on this machine"
 )
@@ -139,7 +133,6 @@ def test_training_with_gpu(
     trainer.fit(biobert_module_function_scope, train_dataloaders=dataloader)
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 def test_training_without_checkpoint(
         biobert_module_function_scope,
         trainer_with_temporary_directory,
@@ -150,7 +143,6 @@ def test_training_without_checkpoint(
     trainer.fit(biobert_module_function_scope, train_dataloaders=dataloader)
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 def test_training_with_checkpoint(
         fitted_biobert_module,
         trainer_with_temporary_directory,
@@ -172,7 +164,6 @@ def test_training_with_checkpoint(
     )
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 def test_testing_without_checkpoint(
         biobert_module_function_scope,
         dummy_data_module,
@@ -188,7 +179,6 @@ def test_testing_without_checkpoint(
     )
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 def test_testing_with_checkpoint(
         biobert_module_function_scope,
         fitted_biobert_module,
@@ -225,7 +215,6 @@ def test_testing_with_checkpoint(
         )
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 def test_predicting_without_checkpoint(
         biobert_module_function_scope,
         dummy_data_module,
@@ -238,7 +227,6 @@ def test_predicting_without_checkpoint(
     )
 
 
-@pytest.mark.skip(reason="too resource-intensive")
 def test_predicting_with_checkpoint(fitted_biobert_module, dummy_data_module):
     trainer = fitted_biobert_module.trainer
     dataloader = dummy_data_module.train_dataloader()
