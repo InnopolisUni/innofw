@@ -217,7 +217,6 @@ qm9_datamodule_cfg_w_target = DictConfig(
     }
 )
 
-
 tiff_datamodule_cfg_w_target = DictConfig(
     {
         "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
@@ -277,7 +276,6 @@ drugprot_datamodule_cfg_w_target = DictConfig(
         },
     }
 )
-
 
 faces_siamese_datamodule_cfg_w_target = DictConfig(
     {
@@ -344,19 +342,19 @@ anomaly_detection_timeseries_datamodule_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.lightning_datamodules.anomaly_detection_timeseries_dm.TimeSeriesLightningDataModule",
         "train": {
             "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/train.zip",
-            "target": "./data/ECG/train",
+            "target": "./tmp/ECG/train",
         },
         "test": {
             "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip",
-            "target": "./data/ECG/test",
+            "target": "./tmp/ECG/test",
         },
         "infer": {
             "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip",
-            "target": "./data/ECG/infer",
+            "target": "./tmp/ECG/infer",
         },
         "val_size": 0.2,
     }
-    
+
 )
 
 stroke_segmentation_datamodule_cfg_w_target = DictConfig(
@@ -369,15 +367,15 @@ stroke_segmentation_datamodule_cfg_w_target = DictConfig(
         "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule",
         "train": {
             "source": str(
-                get_test_folder_path() /"data/images/segmentation/dicom/train"),
+                get_test_folder_path() / "data/images/segmentation/dicom/train"),
         },
         "test": {
             "source": str(
-                get_test_folder_path() /"data/images/segmentation/dicom/test"),
+                get_test_folder_path() / "data/images/segmentation/dicom/test"),
         },
         "infer": {
             "source": str(
-                get_test_folder_path() /"data/images/segmentation/dicom/test"),
+                get_test_folder_path() / "data/images/segmentation/dicom/test"),
         },
         "channels_num": 3,
         "val_size": 0.2,
@@ -385,5 +383,5 @@ stroke_segmentation_datamodule_cfg_w_target = DictConfig(
         "num_workers": 1,
         "random_seed": 42,
     }
-    
+
 )

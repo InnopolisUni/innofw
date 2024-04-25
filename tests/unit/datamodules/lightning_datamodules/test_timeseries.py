@@ -1,3 +1,5 @@
+import os
+import shutil
 import pytest
 
 from innofw.constants import Frameworks
@@ -13,6 +15,8 @@ from tests.fixtures.config.datasets import anomaly_detection_timeseries_datamodu
 
 def test_smoke():
     # create a datamodule
+    os.makedirs('./tmp', exist_ok=True)
+
     fw = Frameworks.torch
     task = "anomaly-detection-timeseries"
     dm: TimeSeriesLightningDataModule = get_datamodule(
@@ -21,15 +25,22 @@ def test_smoke():
     assert dm is not None
 
     # initialize train and test datasets
-    dm.setup #(Stages.train)
+    dm.setup(Stages.train)
 
     assert dm.train is not None
     assert dm.test is not None
+    assert dm.train_dataloader() is not None
+    assert dm.test_dataloader() is not None
+    assert dm.val_dataloader is not None
+
+    dm.save_preds(preds=[0 for _ in range(10)], stage=Stages.train, dst_path='./tmp')
+    shutil.rmtree('./tmp')
 
 
 
 @pytest.mark.parametrize("stage", [Stages.train, Stages.test])
 def test_train_datamodule(stage):
+    os.makedirs('./tmp', exist_ok=True)
     # create  datamodule
     fw = Frameworks.torch
     task = "anomaly-detection-timeseries"
@@ -46,3 +57,4 @@ def test_train_datamodule(stage):
     # get dataloader by stage
     dl = dm.get_stage_dataloader(stage)
     assert dl is not None
+    shutil.rmtree('./tmp')
