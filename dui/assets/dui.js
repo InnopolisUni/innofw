@@ -587,11 +587,17 @@ function onInputFieldClick(){
 
 }
 
-$(document).ready(function () {
-    if (location.href === location.protocol+"//"+location.host+"/") {
+//$(document).ready(function () {
+    //if (location.href === location.protocol+"//"+location.host+"/") {
+    //   location.href = location.protocol+"//"+location.host+"/config_list";
+  //  }
+//});
+
+document.addEventListener('DOMContentLoaded', function() {
+   if (location.href === location.protocol+"//"+location.host+"/") {
        location.href = location.protocol+"//"+location.host+"/config_list";
     }
-});
+}, false);
 
 function set_callbacks(){
         onConfigRowClick("table", openConfig);
