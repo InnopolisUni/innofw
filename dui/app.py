@@ -11,7 +11,7 @@ long_callback_manager = DiskcacheLongCallbackManager(cache)
 app = dash.Dash(__name__,
                 long_callback_manager=long_callback_manager,
                 use_pages=True,
-                external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP, "dui.css"],
+                external_stylesheets=["bootstrap.min.css", ("icons/", "font/bootstrap-icons.css"), "dui.css"],
                 external_scripts=["dui.js",
                                     "jquery-3.3.1.slim.min.js",
                                     "popper.min.js",
