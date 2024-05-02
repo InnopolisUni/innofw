@@ -84,6 +84,10 @@ def simplify_dict(in_dict):
 
 
 def layout(config_name=None):
+
+    if config_name is None:
+        return None
+
     config_name = urllib.parse.unquote(config_name)
     exp_path = experiment_configs_path / config_name
 
