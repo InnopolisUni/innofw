@@ -618,14 +618,10 @@ function set_callbacks(){
 }
 
 
-//document.querySelector("body").onload = function() {
+document.querySelector("body").onload = function() {
 
-//    setTimeout(function () {
-//        set_callbacks();
-//    }, 1000);
-//}
+    setTimeout(function () {
+        set_callbacks();
+    }, 3000);
+}
 
-
-document.addEventListener('DOMContentLoaded', function() {
-set_callbacks();
-}, false);
