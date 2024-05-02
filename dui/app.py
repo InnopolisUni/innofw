@@ -12,10 +12,11 @@ app = dash.Dash(__name__,
                 long_callback_manager=long_callback_manager,
                 use_pages=True,
                 external_stylesheets=["bootstrap.min.css", ("icons/", "font/bootstrap-icons.css"), "dui.css"],
-                external_scripts=["dui.js",
-                                    "jquery-3.3.1.slim.min.js",
+                external_scripts=[
+				  "jquery-3.3.1.slim.min.js",
                                     "popper.min.js",
-                                    "bootstrap.min.js"])  # initialising dash app
+                                    "bootstrap.min.js",
+				  "dui.js",])  # initialising dash app
 dash.register_page(__name__,  path_template="/")
 
 
