@@ -34,7 +34,12 @@ def test_smoke():
     assert dm.val_dataloader is not None
 
     dm.save_preds(preds=[0 for _ in range(10)], stage=Stages.train, dst_path='./tmp')
-    shutil.rmtree('./tmp')
+    for i in range(3):
+        try:
+            shutil.rmtree('./tmp')
+            break
+        except:
+            pass
 
 
 
@@ -57,4 +62,9 @@ def test_train_datamodule(stage):
     # get dataloader by stage
     dl = dm.get_stage_dataloader(stage)
     assert dl is not None
-    shutil.rmtree('./tmp')
+    for i in range(3):
+        try:
+            shutil.rmtree('./tmp')
+            break
+        except:
+            pass

@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from innofw.constants import Frameworks
 from innofw.core import InnoModel
 from innofw.core.models.catboost_adapter import CatBoostAdapter
@@ -12,6 +15,7 @@ from tests.fixtures.config.trainers import base_trainer_on_cpu_cfg
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import OmegaConf, DictConfig
 import hydra
+
 
 def test_catboost_active_learner_creation():
     model = get_model(
@@ -30,10 +34,28 @@ def test_catboost_active_learner_creation():
     assert sut is not None
 
 
+def test_adapter():
+    os.makedirs('./tmp', exist_ok=True)
+    model = get_model(
+        catboost_with_uncertainty_cfg_w_target, base_trainer_on_cpu_cfg
+    )
+    adapter = CatBoostAdapter(model, './tmp')
+    assert adapter.is_suitable_model(adapter.model)
+
+    adapter.log_results({'accuracy': 0.0, 'f1': 0.0, 'precision': 0.0, 'recall': 0.0})
+    adapter.prepare_metrics(metrics=[{'_target_': 'sklearn.metrics.mean_squared_error'}])
+
+    for i in range(3):
+        try:
+            shutil.rmtree('./tmp')
+            break
+        except:
+            pass
+
 # def test_base_learner_run():
 #     model = get_model(
 #         catboost_with_uncertainty_cfg_w_target, base_trainer_on_cpu_cfg
-#     )   
+#     )
 #     #GR_230822_ASdw31ga_catboost_industry_data
 #     # /workspace/innofw/config/experiments/regression/GR_230822_ASdw31ga_catboost_industry_data.yaml
 #     # /workspace/innofw/config/train.yaml
