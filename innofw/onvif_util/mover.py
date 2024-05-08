@@ -43,37 +43,19 @@ class CameraControl:
     """
 
     def __init__(self, ip, user, password):
-        self.__cam_ip = ip
-        self.__cam_user = str(user)
-        self.__cam_password = str(password)
-
-        mycam = ONVIFCamera(
-            self.__cam_ip, 80, self.__cam_user, self.__cam_password, wsdl_dir='./innofw/onvif_util/wsdl'
-        )
-        logging.info("Create media service object")
-        media = mycam.create_media_service()
-        logging.info("Create ptz service object")
-        ptz = mycam.create_ptz_service()
-        logging.info("Get target profile")
-        media_profile = media.GetProfiles()[0]
+        self.__cam_ip, self.__cam_user, self.__cam_pass = ip, str(user), str(password)
+        self.mycam = ONVIFCamera(self.__cam_ip, 80, self.__cam_user, self.__cam_pass, wsdl_dir='./innofw/onvif_util/wsdl')
+        self.camera_media, self.camera_ptz = self.mycam.create_media_service(), self.mycam.create_ptz_service()
+        self.camera_media_profile = self.camera_media.GetProfiles()[0]
         logging.info("Camera working!")
-
-        self.mycam = mycam
-        self.camera_ptz = ptz
-        self.camera_media_profile = media_profile
-        self.camera_media = media
 
     @staticmethod
     def _map_onvif_to_vapix(value, min_onvif, max_onvif, min_vapix, max_vapix):
-        return (value - min_onvif) * (max_vapix - min_vapix) / (
-            max_onvif - min_onvif
-        ) + min_vapix
+        return (value - min_onvif) * (max_vapix - min_vapix) / (max_onvif - min_onvif) + min_vapix
 
     @staticmethod
     def _map_vapix_to_onvif(value, min_vapix, max_vapix, min_onvif, max_onvif):
-        return (value - min_vapix) * (max_onvif - min_onvif) / (
-            max_vapix - min_vapix
-        ) + min_onvif
+        return (value - min_vapix) * (max_onvif - min_onvif) / (max_vapix - min_vapix) + min_onvif
 
     def absolute_move(self, pan: float, tilt: float, zoom: float):
         """
@@ -88,11 +70,8 @@ class CameraControl:
         request = self.camera_ptz.create_type("AbsoluteMove")
         request.ProfileToken = self.camera_media_profile.token
         request.Position = {"PanTilt": {"x": pan, "y": tilt}, "Zoom": zoom}
-        resp = self.camera_ptz.AbsoluteMove(request)
-        logging.info(
-            "camera_command( aboslute_move(%f, %f, %f) )", pan, tilt, zoom
-        )
-        return resp
+        logging.info("camera_command( aboslute_move(%f, %f, %f) )", pan, tilt, zoom)
+        return self.camera_ptz.AbsoluteMove(request)
 
     def continuous_move(self, pan: float, tilt: float, zoom: float):
         """
@@ -107,11 +86,8 @@ class CameraControl:
         request = self.camera_ptz.create_type("ContinuousMove")
         request.ProfileToken = self.camera_media_profile.token
         request.Velocity = {"PanTilt": {"x": pan, "y": tilt}, "Zoom": zoom}
-        resp = self.camera_ptz.ContinuousMove(request)
-        logging.info(
-            "camera_command( continuous_move(%f, %f, %f) )", pan, tilt, zoom
-        )
-        return resp
+        logging.info("camera_command( continuous_move(%f, %f, %f) )", pan, tilt, zoom)
+        return self.camera_ptz.ContinuousMove(request)
 
     def relative_move(self, pan: float, tilt: float, zoom: float):
         """
@@ -126,11 +102,8 @@ class CameraControl:
         request = self.camera_ptz.create_type("RelativeMove")
         request.ProfileToken = self.camera_media_profile.token
         request.Translation = {"PanTilt": {"x": pan, "y": tilt}, "Zoom": zoom}
-        resp = self.camera_ptz.RelativeMove(request)
-        logging.info(
-            "camera_command( relative_move(%f, %f, %f) )", pan, tilt, zoom
-        )
-        return resp
+        logging.info("camera_command( relative_move(%f, %f, %f) )", pan, tilt, zoom)
+        return self.camera_ptz.RelativeMove(request)
 
     def stop_move(self):
         """
@@ -140,9 +113,8 @@ class CameraControl:
         """
         request = self.camera_ptz.create_type("Stop")
         request.ProfileToken = self.camera_media_profile.token
-        resp = self.camera_ptz.Stop(request)
         logging.info("camera_command( stop_move() )")
-        return resp
+        return self.camera_ptz.Stop(request)
 
     def set_home_position(self):
         """
@@ -165,9 +137,8 @@ class CameraControl:
         """
         request = self.camera_ptz.create_type("GotoHomePosition")
         request.ProfileToken = self.camera_media_profile.token
-        resp = self.camera_ptz.GotoHomePosition(request)
         logging.info("camera_command( go_home_position() )")
-        return resp
+        return self.camera_ptz.GotoHomePosition(request)
 
     def get_ptz(self):
         """
@@ -178,12 +149,8 @@ class CameraControl:
         request = self.camera_ptz.create_type("GetStatus")
         request.ProfileToken = self.camera_media_profile.token
         ptz_status = self.camera_ptz.GetStatus(request)
-        pan = ptz_status.Position.PanTilt.x
-        tilt = ptz_status.Position.PanTilt.y
-        zoom = ptz_status.Position.Zoom.x
-        ptz_list = (pan, tilt, zoom)
         logging.info("camera_command( get_ptz() )")
-        return ptz_list
+        return (ptz_status.Position.PanTilt.x, ptz_status.Position.PanTilt.y, ptz_status.Position.Zoom.x)
 
     def set_preset(self, preset_name: str):
         """
@@ -195,21 +162,14 @@ class CameraControl:
         """
         presets = CameraControl.get_preset_complete(self)
         request = self.camera_ptz.create_type("SetPreset")
-        request.ProfileToken = self.camera_media_profile.token
-        request.PresetName = preset_name
+        request.ProfileToken, request.PresetName = self.camera_media_profile.token, preset_name
         logging.info("camera_command( set_preset%s) )", preset_name)
-
         for i, _ in enumerate(presets):
             if str(presets[i].Name) == preset_name:
-                logging.warning(
-                    "Preset ('%s') not created. Preset already exists!",
-                    preset_name,
-                )
+                logging.warning("Preset ('%s') not created. Preset already exists!",preset_name,)
                 return None
-
-        ptz_set_preset = self.camera_ptz.SetPreset(request)
         logging.info("Preset ('%s') created!", preset_name)
-        return ptz_set_preset
+        return self.camera_ptz.SetPreset(request)
 
     def get_preset(self):
         """
@@ -219,7 +179,6 @@ class CameraControl:
         """
         ptz_get_presets = CameraControl.get_preset_complete(self)
         logging.info("camera_command( get_preset() )")
-
         presets = []
         for i, _ in enumerate(ptz_get_presets):
             presets.append((i, ptz_get_presets[i].Name))
@@ -233,8 +192,7 @@ class CameraControl:
         """
         request = self.camera_ptz.create_type("GetPresets")
         request.ProfileToken = self.camera_media_profile.token
-        ptz_get_presets = self.camera_ptz.GetPresets(request)
-        return ptz_get_presets
+        return self.camera_ptz.GetPresets(request)
 
     def remove_preset(self, preset_name: str):
         """
@@ -247,15 +205,12 @@ class CameraControl:
         presets = CameraControl.get_preset_complete(self)
         request = self.camera_ptz.create_type("RemovePreset")
         request.ProfileToken = self.camera_media_profile.token
-        logging.info("camera_command( remove_preset(%s) )", preset_name)
         for i, _ in enumerate(presets):
             if str(presets[i].Name) == preset_name:
                 request.PresetToken = presets[i].token
-                ptz_remove_preset = self.camera_ptz.RemovePreset(request)
                 logging.info("Preset ('%s') removed!", preset_name)
-                return ptz_remove_preset
+                return self.camera_ptz.RemovePreset(request)
         logging.warning("Preset ('%s') not found!", preset_name)
-        return None
 
     def go_to_preset(self, preset_position: str):
         """
@@ -268,17 +223,13 @@ class CameraControl:
         presets = CameraControl.get_preset_complete(self)
         request = self.camera_ptz.create_type("GotoPreset")
         request.ProfileToken = self.camera_media_profile.token
-        logging.info("camera_command( go_to_preset(%s) )", preset_position)
         for i, _ in enumerate(presets):
             str1 = str(presets[i].Name)
             if str1 == preset_position:
                 request.PresetToken = presets[i].token
-                resp = self.camera_ptz.GotoPreset(request)
                 logging.info("Goes to ('%s')", preset_position)
-                return resp
+                return self.camera_ptz.GotoPreset(request)
         logging.warning("Preset ('%s') not found!", preset_position)
-        return None
-
 
 
 def move(ip, user: Optional[str], password: Optional[str], move_type):
@@ -291,25 +242,10 @@ def move(ip, user: Optional[str], password: Optional[str], move_type):
         password (str):
         move_type (str): Supported moves are:  zoom_in, zoom_out, pan_left, pan_right, tilt_up, tilt_down
     """
-    logging.basicConfig(
-        filename="teste-onvif.log", filemode="w", level=logging.DEBUG
-    )
-    logging.info("Started")
-
+    logging.basicConfig(filename="teste-onvif.log", filemode="w", level=logging.DEBUG)
     ptz_cam = CameraControl(ip, user, password)
-
-    if move_type == "zoom_in":
-        ptz_cam.relative_move(0.0, 0.0, 0.5)
-    elif move_type == "zoom_out":
-        ptz_cam.relative_move(0.0, 0.0, -0.5)
-    elif move_type == "pan_left":
-        ptz_cam.relative_move(-0.5, 0.0, 0.0)
-    elif move_type == "pan_right":
-        ptz_cam.relative_move(0.5, 0.0, 0.0)
-    elif move_type == "tilt_up":
-        ptz_cam.relative_move(0.0, 0.5, 0.0)
-    elif move_type == "tilt_down":
-        ptz_cam.relative_move(0.0, -0.5, 0.0)
+    mvs = {"zoom_in": [0.0, 0.0, 0.5], "zoom_out":[0.0, 0.0, -0.5], "pan_left": [-0.5, 0.0, 0.0], "pan_right": [0.5, 0.0, 0.0], "tilt_up":[0.0, 0.5, 0.0], "tilt_down": [0.0, -0.5, 0.0]}
+    ptz_cam.relative_move(*mvs[move_type])
 
 
 if __name__ == "__main__":
