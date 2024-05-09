@@ -6,9 +6,7 @@ import numpy as np
 import pandas as pd
 
 from innofw.constants import Stages
-from innofw.core.datamodules.pandas_datamodules.pandas_dm import (
-    PandasDataModule,
-)
+from innofw.core.datamodules.pandas_datamodules.pandas_dm import PandasDataModule
 
 TEXT_DATA_COLUMN_NAME = "SR"
 
@@ -32,8 +30,7 @@ class LungDescriptionDecisionPandasDataModule(PandasDataModule):
         :param stage:
         :param dst_path:
         """
-        df = self.get_stage_dataloader(stage)["x"]
-        df = pd.DataFrame(df)
+        df = pd.DataFrame(self.get_stage_dataloader(stage)["x"])
         if self.target_col is None:
             df["y"] = preds
         else:
@@ -46,10 +43,4 @@ class LungDescriptionDecisionPandasDataModule(PandasDataModule):
         logging.info(f"Saved results to: {dst_filepath}")
 
     def _get_x_n_y(self, dataset, target_col):
-        result = {}
-        result["x"] = dataset[TEXT_DATA_COLUMN_NAME]
-        if target_col is None:
-            result["y"] = None
-        else:
-            result["y"] = dataset[target_col].str.strip()
-        return result
+        return {"x": dataset[TEXT_DATA_COLUMN_NAME], "y": None if target_col is None else dataset[target_col].str.strip()}

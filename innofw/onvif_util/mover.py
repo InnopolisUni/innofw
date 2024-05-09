@@ -224,8 +224,7 @@ class CameraControl:
         request = self.camera_ptz.create_type("GotoPreset")
         request.ProfileToken = self.camera_media_profile.token
         for i, _ in enumerate(presets):
-            str1 = str(presets[i].Name)
-            if str1 == preset_position:
+            if str(presets[i].Name) == preset_position:
                 request.PresetToken = presets[i].token
                 logging.info("Goes to ('%s')", preset_position)
                 return self.camera_ptz.GotoPreset(request)

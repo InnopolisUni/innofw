@@ -71,32 +71,13 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
         *args,
         **kwargs,
     ):
-        super().__init__(
-            train=train,
-            test=test,
-            batch_size=batch_size,
-            num_workers=num_workers,
-            infer=infer,
-            stage=stage,
-            *args,
-            **kwargs,
-        )
+        super().__init__(train=train,test=test,batch_size=batch_size,num_workers=num_workers,infer=infer,stage=stage,*args,**kwargs,)
+        self.aug, self.channels_num, self.val_size, self.random_seed = augmentations, channels_num, val_size, random_seed
 
-        self.aug = augmentations
-        self.channels_num = channels_num
-        self.val_size = val_size
-        self.random_seed = random_seed
 
     def setup_train_test_val(self, **kwargs):
-        train_aug = self.get_aug(self.aug, "train")
-        test_aug = self.get_aug(self.aug, "test")
-        val_aug = self.get_aug(self.aug, "val")
-
-        train_val = SegmentationDataset(
-            os.path.join(self.train_source, "image"),
-            os.path.join(self.train_source, "label"),
-            train_aug,
-        )
+        train_aug, test_aug, val_aug = self.get_aug(self.aug, "train"), self.get_aug(self.aug, "test"), self.get_aug(self.aug, "val")
+        train_val = SegmentationDataset(os.path.join(self.train_source, "image"),os.path.join(self.train_source, "label"),train_aug,)
         val_size = int(len(train_val) * float(self.val_size))
         self.train_dataset, self.val_dataset = torch.utils.data.random_split(
             train_val, [len(train_val) - val_size, val_size]
@@ -120,31 +101,21 @@ class StrokeSegmentationDatamodule(DirSegmentationLightningDataModule):
     dataset = ImageFolderInferDataset
 
     def setup_train_test_val(self, **kwargs):
-        train_aug = self.get_aug(self.aug, "train")
-        test_aug = self.get_aug(self.aug, "test")
-        val_aug = self.get_aug(self.aug, "val")
+        train_aug, test_aug, val_aug = self.get_aug(self.aug, "train"), self.get_aug(self.aug, "test"), self.get_aug(self.aug, "val")
 
-        train_val = StrokeSegmentationDataset(
-            os.path.join(self.train_source, "image"),
-            os.path.join(self.train_source, "label"),
-            train_aug,
-        )
+        train_val = StrokeSegmentationDataset(os.path.join(self.train_source, "image"),os.path.join(self.train_source, "label"),train_aug)
         val_size = int(len(train_val) * float(self.val_size))
         self.train_dataset, self.val_dataset = torch.utils.data.random_split(
-            train_val, [len(train_val) - val_size, val_size]
-        )
+            train_val, [len(train_val) - val_size, val_size])
 
         setattr(self.val_dataset, "transform", val_aug)
         self.test_dataset = StrokeSegmentationDataset(
             os.path.join(self.test_source, "image"),
             os.path.join(self.test_source, "label"),
-            test_aug,
-        )
+            test_aug,)
 
     def save_preds(self, preds, stage: Stages, dst_path: Path):
-        pred = [p for pp in preds for p in pp]
-        masks = []
-        jpgs = []
+        pred, masks, jpgs = [p for pp in preds for p in pp], [], []
 
         if Path(self.predict_source).is_dir():
             for i in Path(self.predict_source).iterdir():
@@ -154,16 +125,13 @@ class StrokeSegmentationDatamodule(DirSegmentationLightningDataModule):
             jpgs.append(self.predict_source)
 
         for i, m in enumerate(pred):
-            mask = m.clone()
-            mask = mask[0]
+            mask = m.clone()[0]
             mask[mask < 0.1] = 0
             mask[mask != 0] = 1
             mask = mask.type(torch.FloatTensor)
             path = Path(dst_path, "img" + str(i) + ".png")
 
-            img = cv2.imread(str(jpgs[i]))
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            img = torch.from_numpy(img)
+            img = torch.from_numpy(cv2.cvtColor(cv2.imread(str(jpgs[i])), cv2.COLOR_RGB2GRAY))
             img = torch.div(img, 255)
             img[mask != 0] = 1
             img = img.type(torch.FloatTensor)
@@ -230,34 +198,20 @@ class DicomDirSegmentationLightningDataModule(
 
     """
 
+    def prepare_png_dirs(self, dicom_path, png_path):
+        shutil.rmtree(png_path, ignore_errors=True)
+        os.makedirs(png_path)
+        for dicom in os.listdir(dicom_path):
+            dicom_to_img(os.path.join(dicom_path, dicom), os.path.join(png_path, dicom.replace("dcm", "png")))
+
     def setup_train_test_val(self, **kwargs):
-        train_aug = self.get_aug(self.aug, "train")
-        self.test_aug = self.get_aug(self.aug, "test")
-        val_aug = self.get_aug(self.aug, "val")
+        train_aug, self.test_aug, val_aug = self.get_aug(self.aug, "train"), self.get_aug(self.aug, "test"), self.get_aug(self.aug, "val")
 
-        dicom_train_path = os.path.join(self.train_source, "images")
-        png_train_path = os.path.join(self.train_source, "png")
-        shutil.rmtree(png_train_path, ignore_errors=True)
-        os.makedirs(png_train_path)
-        for dicom in os.listdir(dicom_train_path):
-            dicom_to_img(
-                os.path.join(dicom_train_path, dicom),
-                os.path.join(png_train_path, dicom.replace("dcm", "png")),
-            )
-
-        dicom_test_path = os.path.join(self.test_source, "images")
-        png_test_path = os.path.join(self.test_source, "png")
-
-        shutil.rmtree(png_test_path, ignore_errors=True)
-        os.makedirs(png_test_path)
-        for dicom in os.listdir(dicom_test_path):
-            dicom_to_img(
-                os.path.join(dicom_test_path, dicom),
-                os.path.join(png_test_path, dicom.replace("dcm", "png")),
-            )
+        self.prepare_png_dirs(os.path.join(self.train_source, "images"), os.path.join(self.train_source, "png"))
+        self.prepare_png_dirs(os.path.join(self.test_source, "images"), os.path.join(self.test_source, "png"))
 
         train_val = SegmentationDataset(
-            png_train_path,
+            os.path.join(self.train_source, "png"),
             os.path.join(self.train_source, "labels"),
             train_aug,
         )
@@ -268,14 +222,13 @@ class DicomDirSegmentationLightningDataModule(
         # Set validatoin augmentations for val
         setattr(self.val_dataset, "transform", val_aug)
         self.test_dataset = SegmentationDataset(
-            png_test_path,
+            os.path.join(self.test_source, "png"),
             os.path.join(self.test_source, "labels"),
             self.test_aug,
         )
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        dicoms = []
-        sc_names = []
+        dicoms,sc_names  = [], []
         shutil.rmtree(os.path.join(self.dicoms, "png"), ignore_errors=True)
         for i in os.listdir(self.dicoms):
             if i.endswith(".dcm"):
