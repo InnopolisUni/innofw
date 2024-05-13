@@ -15,7 +15,7 @@ def get_camera_info(ip, port, user: Optional[str], password: Optional[str]):
     resp_, resp = mycam.devicemgmt.GetDeviceInformation(), mycam.devicemgmt.GetNetworkInterfaces()
 
     # запрашиваем и выводим информацию о сетевых интерфейсах
-    print(f'{ip}, {port}, "U:{user}, "P: {password} \n{str(resp_)}, {str(resp)}')
+    print(f'{ip}, {port}, "U:{user}, "Resp: {str(resp_)}, {str(resp)}')
 
     # запрашиваем адрес медиа потока
     media_service = mycam.create_media_service()

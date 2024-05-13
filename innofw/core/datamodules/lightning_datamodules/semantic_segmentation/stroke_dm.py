@@ -99,6 +99,8 @@ class DirSegmentationLightningDataModule(BaseLightningDataModule):
 
 class StrokeSegmentationDatamodule(DirSegmentationLightningDataModule):
     dataset = ImageFolderInferDataset
+    task = ["image-segmentation"]
+    framework = [Frameworks.torch]
 
     def setup_train_test_val(self, **kwargs):
         train_aug, test_aug, val_aug = self.get_aug(self.aug, "train"), self.get_aug(self.aug, "test"), self.get_aug(self.aug, "val")
@@ -117,11 +119,13 @@ class StrokeSegmentationDatamodule(DirSegmentationLightningDataModule):
     def save_preds(self, preds, stage: Stages, dst_path: Path):
         pred, masks, jpgs = [p for pp in preds for p in pp], [], []
 
-        if Path(self.predict_source).is_dir():
+        if type(self.predict_source) is list:
+            jpgs = self.predict_source
+        elif Path(self.predict_source).is_dir():
             for i in Path(self.predict_source).iterdir():
                 if i.endswith(".jpg"):
                     jpgs.append(Path(self.predict_source, i))
-        else:
+        elif self.predict_source.lower().endswith("jpg"):
             jpgs.append(self.predict_source)
 
         for i, m in enumerate(pred):
@@ -197,6 +201,8 @@ class DicomDirSegmentationLightningDataModule(
         Saves inference predictions in Dicom format
 
     """
+    task = ["image-segmentation"]
+    framework = [Frameworks.torch]
 
     def prepare_png_dirs(self, dicom_path, png_path):
         shutil.rmtree(png_path, ignore_errors=True)

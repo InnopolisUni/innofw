@@ -357,14 +357,72 @@ anomaly_detection_timeseries_datamodule_cfg_w_target = DictConfig(
 
 )
 
-stroke_segmentation_datamodule_cfg_w_target = DictConfig(
+pngstroke_segmentation_datamodule_cfg_w_target = DictConfig(
     {
-        "task": ["semantic_segmentation"],
+        "task": ["image_segmentation"],
         "name": "stroke_segmentation",
         "description": "Created by AT&T Laboratories Cambridge",
         "markup_info": "Информация о разметке",
         "date_time": "19.07.2022",
         "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test/image"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+
+)
+
+dirstroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["image_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DirSegmentationLightningDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test/image"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+
+)
+
+dicomstroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["image_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DicomDirSegmentationLightningDataModule",
         "train": {
             "source": str(
                 get_test_folder_path() / "data/images/segmentation/dicom/train"),
@@ -375,7 +433,7 @@ stroke_segmentation_datamodule_cfg_w_target = DictConfig(
         },
         "infer": {
             "source": str(
-                get_test_folder_path() / "data/images/segmentation/dicom/test"),
+                get_test_folder_path() / "data/images/segmentation/dicom/test/image"),
         },
         "channels_num": 3,
         "val_size": 0.2,
