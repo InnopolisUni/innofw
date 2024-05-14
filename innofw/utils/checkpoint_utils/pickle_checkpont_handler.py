@@ -35,6 +35,7 @@ class PickleCheckpointHandler(CheckpointHandler):
         metadata: Optional[dict] = None,
         file_extension: str = ".pickle",
         create_default_folder: bool = False,
+        **kwargs
     ) -> Path:
         """Saves a serialized model object into destination path with name best.pkl
 
