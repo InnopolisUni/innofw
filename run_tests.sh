@@ -5,7 +5,7 @@ if [ $? -ne 0 ]; then
   echo ERROR
   exit 2
 fi
-coverage report -m --fail-under=50 # percents
+coverage report --fail-under=50 # percents
 if [ $? -ne 0 ]; then
         echo ERROR
         exit 2
