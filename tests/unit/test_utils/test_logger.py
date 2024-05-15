@@ -3,6 +3,7 @@ from innofw.utils.loggers import setup_wandb, setup_clear_ml
 from omegaconf import DictConfig
 
 
+@pytest.mark.skip(reason="clearml not set yet")
 def test_clearml():
     config = DictConfig({"clear_ml": {"enable": True, "queue": None},
      "experiment_name": "name", "project": "sample"})
