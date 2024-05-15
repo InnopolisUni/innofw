@@ -106,8 +106,8 @@ def get_obj(
             )
 
         obj = items[0] if len(items) == 1 else items
-    elif search_func is not None:
-        obj = search_func(task, framework, config[name], *args, **kwargs)
+    # elif search_func is not None:
+    #     obj = search_func(task, framework, config[name], *args, **kwargs)
     # else:
     #     raise ValueError("Unable to instantiate the object")
 
@@ -258,7 +258,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
         ):
             for _, cb_conf in cfg.callbacks.implementations[framework.value].items():
                 if "_target_" in cb_conf:
-                    if inspect.isclass(cb_conf["_target_"]):
+                    try:
                         try:
                             callbacks.append(
                                 hydra.utils.instantiate(
@@ -269,7 +269,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
                             callbacks.append(
                                 hydra.utils.instantiate(cb_conf, _recursive_=False)
                             )
-                    else:
+                    except:
                         callbacks.append(cb_conf)
     return callbacks
 
