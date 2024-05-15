@@ -1,5 +1,6 @@
 from innofw.utils.loggers import setup_wandb, setup_clear_ml
 
+import pytest
 from omegaconf import DictConfig
 
 
