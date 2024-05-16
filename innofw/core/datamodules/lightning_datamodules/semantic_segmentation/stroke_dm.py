@@ -1,8 +1,16 @@
+import importlib
+from pckg_util import install_and_import
+
+install_and_import("pylibjpeg", "2.0.0", packageimportname="pylibjpeg")
+install_and_import("python-gdcm", "3.0.24.1", packageimportname="gdcm")
+
+
 import logging
 import os
 import pathlib
 import shutil
 from pathlib import Path
+
 
 import cv2
 import torch
@@ -222,9 +230,7 @@ class DicomDirSegmentationLightningDataModule(
     ):
         super().__init__(train=train,test=test,batch_size=batch_size,num_workers=num_workers,infer=infer,stage=stage,*args,**kwargs,)
         self.aug, self.channels_num, self.val_size, self.random_seed = augmentations, channels_num, val_size, random_seed
-        from pckg_util import install_and_import
-        install_and_import("pylibjpeg", "2.0.0", packageimportname="pylibjpeg")
-        install_and_import("python-gdcm", "3.0.24.1", packageimportname="gdcm")
+
 
 
     def prepare_png_dirs(self, dicom_path, png_path):
