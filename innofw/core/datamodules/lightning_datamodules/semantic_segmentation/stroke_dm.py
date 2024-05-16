@@ -6,6 +6,7 @@ from pathlib import Path
 
 import cv2
 import torch
+import numpy as np
 from torchvision.utils import save_image
 
 from innofw.constants import Frameworks
@@ -204,6 +205,28 @@ class DicomDirSegmentationLightningDataModule(
     task = ["image-segmentation"]
     framework = [Frameworks.torch]
 
+    def __init__(
+        self,
+        train,
+        test,
+        infer=None,
+        augmentations=None,
+        channels_num: int = 3,
+        val_size: float = 0.2,
+        batch_size: int = 32,
+        num_workers: int = 1,
+        random_seed: int = 42,
+        stage=None,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(train=train,test=test,batch_size=batch_size,num_workers=num_workers,infer=infer,stage=stage,*args,**kwargs,)
+        self.aug, self.channels_num, self.val_size, self.random_seed = augmentations, channels_num, val_size, random_seed
+        from pckg_util import install_and_import
+        install_and_import("pylibjpeg", "2.0.0", packageimportname="pylibjpeg")
+        install_and_import("python-gdcm", "3.0.24.1", packageimportname="gdcm")
+
+
     def prepare_png_dirs(self, dicom_path, png_path):
         shutil.rmtree(png_path, ignore_errors=True)
         os.makedirs(png_path)
@@ -247,22 +270,28 @@ class DicomDirSegmentationLightningDataModule(
             mask[mask < 0.1] = 0
             mask[mask != 0] = 1
             img = dicom_to_img(dicoms[i])
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            if len(img.shape)>2:
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            # else:
+            #     img = np.expand_dims(img, axis=0)
+            #     mask = np.expand_dims(mask, axis=0)
             img[mask != 0] = 255
             img_to_dicom(img, dicoms[i], os.path.join(dst_path, sc_names[i]))
         logging.info(f"Saved results to: {dst_path}")
 
     def setup_infer(self):
-        if isinstance(self.predict_dataset, self.dataset):
-            return self.predict_dataset
-        self.dicoms = str(self.predict_dataset)
-        png_path = os.path.join(self.dicoms, "png")
-        if not os.path.exists(png_path):
-            os.makedirs(png_path)
-        dicoms = [f for f in os.listdir(self.dicoms) if "dcm" in f]
-        for dicom in dicoms:
-            dicom_to_img(
-                os.path.join(self.dicoms, dicom),
-                os.path.join(png_path, dicom.replace("dcm", "png")),
-            )
-        self.predict_dataset = self.dataset(png_path, self.test_aug, True)
+        try:
+            if isinstance(self.predict_dataset, self.dataset):
+                return self.predict_dataset
+        except:
+            self.dicoms = str(self.predict_source)
+            png_path = os.path.join(self.dicoms, "png")
+            if not os.path.exists(png_path):
+                os.makedirs(png_path)
+            dicoms = [f for f in os.listdir(self.dicoms) if "dcm" in f]
+            for dicom in dicoms:
+                dicom_to_img(
+                    os.path.join(self.dicoms, dicom),
+                    os.path.join(png_path, dicom.replace("dcm", "png")),
+                )
+            self.predict_dataset = self.dataset(png_path, self.test_aug, True)

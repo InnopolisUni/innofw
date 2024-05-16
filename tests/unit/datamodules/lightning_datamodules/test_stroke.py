@@ -98,26 +98,26 @@ def test_StrokeSegmentationDatamodule_AND_StrokeSegmentationDataset_AND_setup_tr
     assert len(dm.train_dataset) != 0
 
 
-# def test_DicomDirSegmentationLightningDataModule_AND_setup_train_test_val_AND_save_preds_AND_setup_infer():
-#     fw = Frameworks.torch
-#     task = "image-segmentation"
-#     dm: StrokeSegmentationDatamodule = get_datamodule(
-#         dicomstroke_segmentation_datamodule_cfg_w_target, fw, task=task
-#     )
-#     assert dm is not None
-#
-#     # initialize train and test datasets
-#     dm.setup()
-#     dm.setup_infer()
-#
-#     el = dm.train_dataset[0]
-#     test_el = dm.test_dataset[0]
-#     dm.save_preds([test_el[SegDataKeys.label].data], Stages.test, Path("/tmp"))
-#
-#     assert dm.channels_num is not None
-#     assert dm.val_size is not None
-#     assert dm.random_seed is not None
-#     assert dm.train is not None
-#     assert dm.test is not None
-#     assert el is not None
-#     assert len(dm.train_dataset) != 0
+def test_DicomDirSegmentationLightningDataModule_AND_setup_train_test_val_AND_save_preds_AND_setup_infer():
+    fw = Frameworks.torch
+    task = "image-segmentation"
+    dm: StrokeSegmentationDatamodule = get_datamodule(
+        dicomstroke_segmentation_datamodule_cfg_w_target, fw, task=task
+    )
+    assert dm is not None
+
+    # initialize train and test datasets
+    dm.setup()
+    dm.setup_infer()
+
+    el = dm.train_dataset[0]
+    test_el = dm.test_dataset[0]
+    dm.save_preds([test_el[SegDataKeys.label].data], Stages.test, Path("/tmp"))
+
+    assert dm.channels_num is not None
+    assert dm.val_size is not None
+    assert dm.random_seed is not None
+    assert dm.train is not None
+    assert dm.test is not None
+    assert el is not None
+    assert len(dm.train_dataset) != 0
