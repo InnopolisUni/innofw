@@ -433,7 +433,7 @@ dicomstroke_segmentation_datamodule_cfg_w_target = DictConfig(
         },
         "infer": {
             "source": str(
-                get_test_folder_path() / "data/images/segmentation/dicom/test/image"),
+                get_test_folder_path() / "data/images/segmentation/dicom/test/images"),
         },
         "channels_num": 3,
         "val_size": 0.2,
