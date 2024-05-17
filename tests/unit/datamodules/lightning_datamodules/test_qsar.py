@@ -31,8 +31,8 @@ def test_smoke():
         assert item is not None
 
 
-@pytest.mark.parametrize("stage", [Stages.train, Stages.test])
-def test_train_datamodule(stage):
+
+def test_train_datamodule():
     # create a qsar datamodule
     fw = Frameworks.torch
     task = "text-vae"
@@ -42,8 +42,19 @@ def test_train_datamodule(stage):
     assert dm is not None
 
     # initialize train and test datasets
-    dm.setup(stage)
+    dm.setup()
 
     # get dataloader by stage
-    dl = dm.get_stage_dataloader(stage)
-    assert dl is not None
+    dltr = dm.get_stage_dataloader(Stages.train)
+    dlte = dm.get_stage_dataloader(Stages.test)
+
+    dlval = dm.val_dataloader()
+
+    dm.setup_infer()
+    dlinf = dm.get_stage_dataloader(Stages.predict)
+
+    assert dltr is not None
+    assert dlte is not None
+    assert dlinf is not None
+    assert dlval is not None
+
