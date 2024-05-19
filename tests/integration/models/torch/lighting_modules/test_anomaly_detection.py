@@ -14,6 +14,7 @@ from tests.fixtures.config import losses as fixt_losses
 from tests.fixtures.config import models as fixt_models
 from tests.fixtures.config import optimizers as fixt_optimizers
 from tests.fixtures.config import trainers as fixt_trainers
+from tests.fixtures.config import schedulers as fixt_schedulers
 
 
 def test_anomaly_detection():
@@ -27,9 +28,10 @@ def test_anomaly_detection():
     model = get_model(cfg.models, cfg.trainer)
     losses = get_losses(cfg, "anomaly-detection-timeseries", Frameworks.torch)
     optimizer_cfg = DictConfig(fixt_optimizers.adam_optim_w_target)
+    scheduler_cfg = DictConfig(fixt_schedulers.linear_w_target)
 
     module = AnomalyDetectionTimeSeriesLightningModule(
-        model=model, losses=losses, optimizer_cfg=optimizer_cfg
+        model=model, losses=losses, optimizer_cfg=optimizer_cfg, scheduler_cfg=scheduler_cfg
     )
 
     assert module is not None
