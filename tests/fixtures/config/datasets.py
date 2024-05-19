@@ -87,6 +87,54 @@ house_prices_datamodule_cfg_w_target = DictConfig(
     }
 )
 
+regrhouse_prices_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["table-regression"],
+        "name": "house prices",
+        "description": "",
+        "markup_info": "",
+        "date_time": "01.07.2022",
+        "_target_": "innofw.core.datamodules.pandas_datamodules.RegressionPandasDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/train/train.csv"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/test/test.csv"
+            )
+        },
+        "target_col": "price",
+    }
+)
+
+clusthouse_prices_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["table-clustering"],
+        "name": "house prices",
+        "description": "",
+        "markup_info": "",
+        "date_time": "01.07.2022",
+        "_target_": "innofw.core.datamodules.pandas_datamodules.ClusteringPandasDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/train/train.csv"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/test/test.csv"
+            )
+        },
+        "target_col": "price",
+    }
+)
+
 wheat_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["image-detection"],
