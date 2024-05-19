@@ -149,3 +149,13 @@ biobert_cfg_w_target = DictConfig(
         }
     }
 )
+
+lstm_autoencoder_w_target = DictConfig(
+    {
+        "name": "lstm autoencoder",
+        "description": "lstm autoencoder",
+        "_target_": "innofw.core.models.torch.architectures.autoencoders.timeseries_lstm.RecurrentAutoencoder",
+        "seq_len": 140,
+        "n_features": 1
+    }
+)

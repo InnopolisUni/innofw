@@ -1,6 +1,5 @@
 from omegaconf import DictConfig
 
-
 jaccard_loss_w_target = DictConfig(
     {
         "name": "Segmentation",
@@ -63,25 +62,25 @@ vae_loss_w_target = DictConfig(
         "description": "something",
         "task": ["text-vae", "text-vae-forward", "text-vae-reverse"],
         "implementations": {
-            "torch":{
-                "mse":{
+            "torch": {
+                "mse": {
                     "weight": 1.0,
-                    "object":{
+                    "object": {
                         "_target_": "torch.nn.MSELoss"}
-                        },
+                },
                 "target_loss": {
                     "weight": 1.0,
                     "object": {
                         "_target_": "torch.nn.MSELoss"
-                    }     
+                    }
                 },
                 "kld": {
                     "weight": 0.1,
                     "object": {
                         "_target_": "innofw.core.losses.kld.KLD"
-                    }         
-                }
                     }
+                }
+            }
         }
     }
 )
@@ -93,15 +92,15 @@ token_class_loss_w_target = DictConfig(
         "task": ["text-ner"],
         "implementations": {
             "torch": {
-                "FocalLoss":{
+                "FocalLoss": {
                     "weight": 1,
                     "object": {
                         "_target_": "innofw.core.losses.focal_loss.FocalLoss",
                         "gamma": 2
                     }
                 }
-            }           
-        }  
+            }
+        }
     }
 )
 
@@ -122,4 +121,23 @@ focal_loss_w_target = DictConfig(
             }
         },
     },
+)
+
+l1_loss_w_target = DictConfig(
+    {
+        "name": "L1 loss",
+        "description": "L1 loss",
+        "task": ["anomaly-detection-timeseries"],
+        "implementations": {
+            "torch": {
+                "L1Loss": {
+                    "weight": 1,
+                    "reduction": "sum",
+                    "object": {
+                        "_target_": "torch.nn.L1Loss"
+                    }
+                }
+            }
+        }
+    }
 )
