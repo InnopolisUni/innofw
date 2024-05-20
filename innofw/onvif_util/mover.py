@@ -42,11 +42,12 @@ class CameraControl:
         Operation to go to a saved preset position.
     """
 
-    def __init__(self, ip, user, password):
-        self.__cam_ip, self.__cam_user, self.__cam_pass = ip, str(user), str(password)
-        self.mycam = ONVIFCamera(self.__cam_ip, 80, self.__cam_user, self.__cam_pass, wsdl_dir='./innofw/onvif_util/wsdl')
-        self.camera_media, self.camera_ptz = self.mycam.create_media_service(), self.mycam.create_ptz_service()
-        self.camera_media_profile = self.camera_media.GetProfiles()[0]
+    def __init__(self, cam, camera_media, camera_ptz):
+        # self.__cam_ip, self.__cam_user, self.__cam_pass = ip, str(user), str(password)
+        self.mycam = cam
+        self.camera_media, self.camera_ptz = camera_media, camera_ptz
+        self.camera_media_profile = self.camera_media.GetProfiles()
+        self.camera_media_profile = self.camera_media_profile[0]
         logging.info("Camera working!")
 
     @staticmethod
@@ -242,7 +243,9 @@ def move(ip, user: Optional[str], password: Optional[str], move_type):
         move_type (str): Supported moves are:  zoom_in, zoom_out, pan_left, pan_right, tilt_up, tilt_down
     """
     logging.basicConfig(filename="teste-onvif.log", filemode="w", level=logging.DEBUG)
-    ptz_cam = CameraControl(ip, user, password)
+    cam = ONVIFCamera(ip, 80, str(user), str(password), wsdl_dir='./innofw/onvif_util/wsdl')
+    camera_media, camera_ptz = cam.create_media_service(), cam.create_ptz_service()
+    ptz_cam = CameraControl(cam, camera_media, camera_ptz)
     mvs = {"zoom_in": [0.0, 0.0, 0.5], "zoom_out":[0.0, 0.0, -0.5], "pan_left": [-0.5, 0.0, 0.0], "pan_right": [0.5, 0.0, 0.0], "tilt_up":[0.0, 0.5, 0.0], "tilt_down": [0.0, -0.5, 0.0]}
     ptz_cam.relative_move(*mvs[move_type])
 
