@@ -1,8 +1,6 @@
+# @package _global_
 accelerator: gpu
 batch_size: 20
-datasets:
-- batch_size: 20
-- num_workers: 42
 defaults:
 - override /models: semantic-segmentation/deeplabv3plus
 - override /datasets: semantic-segmentation/oks_151123
@@ -13,11 +11,11 @@ defaults:
 devices: 1
 epochs: 1
 models:
-- in_channels: 3
-- classes: 1
-- encoder_name: resnet101
-- encoder_depth: 5
-- decoder_channels: 256
+  in_channels: 3
+  classes: 1
+  encoder_name: resnet101
+  encoder_depth: 5
+  decoder_channels: 256
 num_workers: 42
 project: oks
 random_seed: 42

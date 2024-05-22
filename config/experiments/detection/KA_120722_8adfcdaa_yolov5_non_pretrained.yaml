@@ -2,11 +2,12 @@
 batch_size: 2
 ckpt_path: /home/qazybek/pmi_tatneft/innofw/dui/logs/something/20240122-082640/weights/best.pt
 defaults:
-- override /models: detection/yolov5
-- override /datasets: detection_lep.yaml
-- override /initializations: random
-epochs: 5
-project: lep
+  - override /models: detection/yolov5
+  - override /datasets: detection_lep
+  - override /initializations: random
+
+project: "lep"
+task: "image-detection"
+
 random_seed: 42
-task: image-detection
 weights_freq: 1

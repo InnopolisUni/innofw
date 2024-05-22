@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import pytest
 from omegaconf import OmegaConf
 
@@ -5,6 +8,7 @@ clear_ml = pytest.importorskip("clearml")
 from dataclasses import dataclass
 
 from innofw.utils.loggers import setup_clear_ml
+from innofw.utils import get_project_root
 
 
 @dataclass
@@ -74,4 +78,8 @@ def test_clear_ml_agent_execution(mocker):
     cfg = OmegaConf.create(cfg)
     cfg["clear_ml"]["queue"] = "no_queue"
     task = setup_clear_ml(cfg)
+
+    for dir_name in ['data', 'logs']:
+        if os.path.exists(get_project_root() / dir_name) and os.path.isdir(get_project_root() / dir_name):
+            shutil.rmtree(get_project_root() / dir_name)
     assert task is not None

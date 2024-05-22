@@ -122,3 +122,16 @@ def run_checkpoint_handler_tests_w_schema_validation(file_path):
 
     with pytest.raises(ValidationError):
         add_metadata2model(file_path, wrong_metadata, check_schema=True)
+
+
+def test_wrong_model_saving():
+    handler = TorchCheckpointHandler()
+    with pytest.raises(Exception):
+        handler.save_ckpt(None, "./tmp")
+
+
+def test_ckpt_conversion(tmp_path: Path):
+    checkpoint_handler = PickleCheckpointHandler()
+    save_path = checkpoint_handler.save_ckpt(sklearn_reg_model, tmp_path)
+    run_checkpoint_handler_tests_w_schema_validation(save_path)
+    checkpoint_handler.convert_to_regular_ckpt(save_path, save_path, inplace=False)

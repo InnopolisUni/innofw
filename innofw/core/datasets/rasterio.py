@@ -1,4 +1,3 @@
-#
 from pathlib import Path
 from typing import List
 from typing import Optional
@@ -10,9 +9,6 @@ import rasterio as rio
 from torch.utils.data import Dataset
 
 from .utils import prep_data
-
-#
-#
 
 
 class RasterioDataset(Dataset):
@@ -33,30 +29,16 @@ class RasterioDataset(Dataset):
         returns transformed image and mask
     """
 
-    def __init__(
-        self,
-        raster_files: Union[List[Path], List[str]],
-        bands_num: int,
-        mask_files: Optional[Union[List[Path], List[str]]] = None,
-        transform: Union[albu.Compose, None] = None,
-    ):
-        # assert len(raster_files) == len(
-        #     mask_files
-        # ), "Number of rasters and masks should be the same"
+    def __init__(self, raster_files: Union[List[Path], List[str]], bands_num: int, mask_files: Optional[Union[List[Path], List[str]]] = None,transform: Union[albu.Compose, None] = None,):
+        self.raster_files, self.mask_files, self.bands_num, self.transform = raster_files, mask_files, bands_num, transform
 
-        self.raster_files = raster_files
-        self.mask_files = mask_files
-        self.bands_num = bands_num
-        self.transform = transform
 
     def __len__(self):
         return len(self.raster_files)
 
     def __getitem__(self, idx):
         with rio.open(self.raster_files[idx], "r") as raster_file:
-            bands = [raster_file.read(i) for i in range(1, self.bands_num + 1)]
-
-            image = np.dstack(bands)
+            image = np.dstack([raster_file.read(i) for i in range(1, self.bands_num + 1)])
 
         if self.mask_files is not None:
             with rio.open(self.mask_files[idx], "r") as mask_file:

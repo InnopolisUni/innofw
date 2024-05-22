@@ -35,11 +35,14 @@ def get_s3_credentials() -> Optional[S3Credentials]:
     except Exception as e:
         pass
 
-    # ask user
-    if access_key is None:
-        access_key: str = input("Provide S3 Access Key:")
-    if secret_key is None:
-        secret_key: str = input("Provide S3 Secret Key:")
+    try:
+        # ask user
+        if access_key is None:
+            access_key: str = input("Provide S3 Access Key:")
+        if secret_key is None:
+            secret_key: str = input("Provide S3 Secret Key:")
+    except:
+        pass
 
     try:
         return S3Credentials(ACCESS_KEY=access_key, SECRET_KEY=secret_key)

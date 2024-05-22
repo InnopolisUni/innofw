@@ -1,1 +1,1 @@
-python3 /innofw/utils/data_utils/preprocessing/CT_hemorrhage_contrast.py
+python3 ./innofw/utils/data_utils/preprocessing/CT_hemorrhage_contrast.py

@@ -199,9 +199,7 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
             collate_fn=self.collator,
         )
 
-    def save_preds(
-        self, preds: List[torch.Tensor], stage: Stages, dst_path: Path
-    ):
+    def save_preds(self, preds: List[torch.Tensor], stage: Stages, dst_path: Path):
         if self.work_mode is WorkMode.VAE:
             unrolled_preds: List[List[int]] = [
                 pred.argmax(dim=1).tolist()
@@ -261,9 +259,7 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
     def decode(self, batch_list: List[List[int]]):
         decoded_smiles = []
         for seq in batch_list:
-            selfies = sf.encoding_to_selfies(
-                seq, self.idx_to_symbol, enc_type="label"
-            )
+            selfies = sf.encoding_to_selfies(seq, self.idx_to_symbol, enc_type="label")
             decoded_smiles.append(sf.decoder(selfies))
         return decoded_smiles
 
@@ -276,14 +272,7 @@ class QsarSelfiesDataModule(BaseLightningDataModule):
         return selfies
 
     def smiles2selfies(self, smiles: List[str]):
-        selfies_dataset = process_map(
-            self.try_selfies,
-            smiles,
-            desc="Converting smiles to selfies...",
-            chunksize=len(smiles) // cpu_count(),
-        )
-
-        return selfies_dataset
+        return process_map(self.try_selfies,smiles,desc="Converting smiles to selfies...",chunksize=len(smiles) // cpu_count())
 
 
 class SelfiesDataset(Dataset):
@@ -307,7 +296,6 @@ class SelfiesDataset(Dataset):
 
     def __init__(self, selfies, targets) -> None:
         assert len(selfies) == len(targets)
-
         self.selfies = selfies
         self.targets = targets
 

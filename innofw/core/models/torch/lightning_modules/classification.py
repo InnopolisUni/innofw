@@ -79,9 +79,13 @@ class ClassificationLightningModule(BaseLightningModule):
 
     def validation_step(self, batch, batch_idx):
         return self.stage_step("val", batch)
+    
+    def test_step(self, batch, batch_idx):
+        return self.stage_step("test", batch)
 
     def predict_step(self, batch, batch_idx, **kwargs):
-        outputs = self.forward(batch.float())
+        input_tensor, _ = batch
+        outputs = self.forward(input_tensor.float())
         outputs = torch.argmax(outputs, 1)
         return outputs
     
@@ -91,9 +95,9 @@ class ClassificationLightningModule(BaseLightningModule):
         image, label = batch
 
         predictions = self.forward(image.float())
-        
+
         if stage in ["train", "val"]:
-            loss = self.losses(predictions, label)
+            loss = self.calc_losses(predictions, label)
             self.log(f"{stage}_loss", loss, on_step=False, on_epoch=True)
             output["loss"] = loss
         if stage != "predict":
@@ -102,6 +106,19 @@ class ClassificationLightningModule(BaseLightningModule):
             )
             self.log_metrics(stage, metrics)
         return output
+
+    def calc_losses(self, label, pred) -> torch.FloatTensor:
+        """Function to compute losses"""
+        total_loss = 0.0
+        if isinstance(self.losses, list):
+            for loss_name, weight, loss in self.losses:
+                # for loss_name in loss_dict:
+                ls_mask = loss(label, pred)
+                total_loss += weight * ls_mask
+        else:
+            total_loss = self.losses(label, pred)
+
+        return total_loss
 
     def log_metrics(self, stage, metrics_res):
         for key, value in metrics_res.items():

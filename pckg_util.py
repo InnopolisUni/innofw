@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 
-def install_and_import(package, version="", params="", link=""):
+def install_and_import(package, version="", params="", link="", packageimportname=""):
     try:
         if importlib.metadata.version(package) != version:
             raise ImportError
@@ -30,7 +30,10 @@ def install_and_import(package, version="", params="", link=""):
             [sys.executable, "-m", "pip", *installation_cmd_list]
         )
     finally:
-        globals()[package] = importlib.import_module(package)
+        if packageimportname is None:
+            globals()[package] = importlib.import_module(package)
+        else:
+            globals()[packageimportname] = importlib.import_module(packageimportname)
 
 
 def execute_bash_command(cmd):

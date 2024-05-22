@@ -1,5 +1,5 @@
-train: /mnt/nvmestorage/qb/repos/exp/pvl/innofw/tests/data/images/detection/lep/innofw_split_data/images/train
-val: /mnt/nvmestorage/qb/repos/exp/pvl/innofw/tests/data/images/detection/lep/innofw_split_data/images/val
-test: /mnt/nvmestorage/qb/repos/exp/pvl/innofw/tests/data/images/detection/lep/images/test
+train: /home/ailab_user/lada/innofw_test/innofw/tests/data/images/detection/lep/innofw_split_data/images/train
+val: /home/ailab_user/lada/innofw_test/innofw/tests/data/images/detection/lep/innofw_split_data/images/val
+test: /home/ailab_user/lada/innofw_test/innofw/tests/data/images/detection/lep/images/test
 nc: 4
 names: ['lep_1', 'lep_2', 'lep_3', 'lep_4']
