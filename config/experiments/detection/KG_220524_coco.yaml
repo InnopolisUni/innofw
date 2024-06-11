@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+- override /datasets: detection/coco_pose_recognition.yaml
+- override /models: detection/yolo8_pose.yaml
+
+# devices: 1
+epochs: 3
+accelerator: gpu
+batch_size: 32
+project: coco_pose_recognition
+random_seed: 0
+task: image-detection
+weights_freq: 1
+
+
+wandb:
+  enable: True
+  project: coco_pose_recognition
+  entity: "k-galliamov"
+  group: none
+  job_type: training
