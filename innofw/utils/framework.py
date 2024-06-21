@@ -20,6 +20,7 @@ from innofw.constants import DefaultFolders
 from innofw.core.datamodules.lightning_datamodules.concatenated_datamodule import (
     ConcatenatedLightningDatamodule,
 )
+from innofw.core.integrations.mmdetection.model_adapter import BaseMmdetModel
 
 
 def map_model_to_framework(model):
@@ -40,6 +41,8 @@ def map_model_to_framework(model):
         return Frameworks.catboost
     elif isinstance(model, YOLO):
         return Frameworks.ultralytics
+    elif isinstance(model, BaseMmdetModel):
+        return Frameworks.mmdetection
     else:
         raise NotImplementedError(f"Framework is not supported. {model}")
 

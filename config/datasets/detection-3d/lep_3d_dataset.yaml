@@ -1,0 +1,19 @@
+task:
+  - 3d-detection
+
+name: lep_3d
+description: Набор данных содержит видео облетов c дронов над территорией линии электропередач
+
+markup_info: Набор данных содержит разметку bounding box, под формат детекции столбов ЛЭП.
+date_time: 10.06.2024
+
+_target_: innofw.core.integrations.mmdetection.datamodule.Mmdetection3DDataModuleAdapter
+
+data:
+  source: /home/karim/workdir/innofw/data/lep3d # machine .79
+  target: /home/karim/workdir/innofw/data/lep3d
+
+num_workers: 8
+
+val_size: 0.2
+num_classes: 4
