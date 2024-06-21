@@ -21,7 +21,8 @@ from innofw.constants import Frameworks, Stages
 from innofw.core.datamodules.base import BaseDataModule
 
 ItemInfo = namedtuple('ItemInfo', ['img_path', 'name'])
-
+target_maxes = np.array([[69.12, 39.68, 1]])
+target_mins = np.array([[0, -39.68, -3]])
 
 class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
     """
@@ -163,7 +164,9 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                 pcd_slide, trans_vec = self.centerize_ptc(pcd_slide)
 
             intensity = np.zeros((pcd_slide.shape[0], 1), dtype=np.float32)
-            pcd_slide = np.clip(pcd_slide, [[0, -39.68, -3]], [[69.12, 39.68, 1]])  # TODO: rewrite
+            pcd_mins = np.array(self.state['point_cloud_range'][:3])
+            pcd_maxes = np.array(self.state['point_cloud_range'][3:])
+            pcd_slide = (pcd_slide - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
             pcd_slide = np.hstack((pcd_slide, intensity))
             pcd_slide.astype(np.float32).tofile(osp.join(self.state['save_path'], bin_filename))
             ptc_info['lidar_points']['lidar_path'] = bin_filename.split('/')[-1]
@@ -196,10 +199,9 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                     self.state["selectedClasses"].index(objects2class[fig['objectKey']]))
             ptc_info['instances']['gt_bboxes_3d'] = np.array(ptc_info['instances']['gt_bboxes_3d'],
                                                              dtype=np.float32)
-            ptc_info['instances']['gt_bboxes_3d'][:, :3] = np.clip(ptc_info['instances']['gt_bboxes_3d'][:, :3],
-                                                                   [[0, -39.68, -3]], [[69.12, 39.68, 1]])
-            ptc_info['instances']['gt_bboxes_3d'][:, 3:6] = np.clip(ptc_info['instances']['gt_bboxes_3d'][:, 3:6],
-                                                                    [[0, -39.68, -3]], [[69.12, 39.68, 1]])
+            ptc_info['instances']['gt_bboxes_3d'][:, :3] = (ptc_info['instances']['gt_bboxes_3d'][:, :3] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
+            ptc_info['instances']['gt_bboxes_3d'][:, 3:6] = (ptc_info['instances']['gt_bboxes_3d'][:, 3:6] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
+
 
             ptc_info['instances']['gt_labels_3d'] = np.array(ptc_info['instances']['gt_labels_3d'],
                                                              dtype=np.int32)
@@ -242,7 +244,7 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                                                            annotations)
 
         os.makedirs(osp.join(osp.dirname(save_path), 'labels'), exist_ok=True)
-        all_gt_names = set()  # TODO: this should go to the files of mmdet together with PCR and stuff
+        all_gt_names = set()
         for ann in annotations:
             name = ann['lidar_points']['lidar_path'][:-4]
             bboxes = ann['instances']['gt_bboxes_3d']
@@ -359,6 +361,6 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
 
 
 if __name__ == '__main__':
-    t = Mmdetection3DDataModuleAdapter(train={'source': '/home/karim/workdir/innofw/data/lep3d'}, test=None, infer=None,
+    t = Mmdetection3DDataModuleAdapter(data={'source': '/home/karim/workdir/innofw/data/lep3d'},
                                        num_classes=4)
-    t.setup_train_test_sval()
+    t.setup_train_test_val()
