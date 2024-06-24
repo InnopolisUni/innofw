@@ -257,7 +257,7 @@ function addParameterRow(button){
                 conf.insertBefore(row, modalEndwagon);
             }
 
-            set_callbacks();
+            set_editionpg_callbacks();
 }
 
 function onSaveConfigButtonClick(callback) {
@@ -465,7 +465,7 @@ function addEditionButtonOnOverridePresence(keyfield){
         }
     }
 
-    set_callbacks();
+    set_editionpg_callbacks();
 
 }
 
@@ -592,7 +592,7 @@ function openModalWindowOnEditButtonClick(button){
         modal_content.insertBefore(nameOfConfig, modal_content.children[0])
 
         modal.style.display = "block";
-        set_callbacks();
+        set_editionpg_callbacks();
     })
     .catch(err => { throw err });
 
@@ -650,8 +650,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }, false);
 
-function set_callbacks(){
-        onConfigRowClick("table", openConfig);
+function set_mainpg_callbacks(){
+    onConfigRowClick("table", openConfig);
+}
+
+function set_editionpg_callbacks(){
+
         onDeleteParameterRowClick(deleteParameterRow);
         onAddParameterRowClick(addParameterRow);
         onSaveConfigButtonClick(saveConfig);
@@ -684,11 +688,40 @@ function set_callbacks(){
 
 }
 
+function waitForElm(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+}
 
 document.querySelector("body").onload = function() {
+    if(window.location.href.includes("/config_list"))
+    {
+        waitForElm("#table").then((elm) => {
+            set_mainpg_callbacks()
+        });
+    }
 
-    setTimeout(function () {
-        set_callbacks();
-    }, 3000);
+    if(window.location.href.includes("/config/"))
+    {
+        waitForElm("#configuration_parameters").then((elm) => {
+            set_editionpg_callbacks()
+        });
+    }
 }
 
