@@ -1,3 +1,42 @@
+let tooltipDict = {
+    "task": "Тип решаемой задачи. Например: image-segmentation, image-detection, image-classification и тд",
+    "random_seed": "Зерно случайности, необходимо для вопроизводимости экспериментов при прочих равных параметрах",
+    "weights_freq": "Периодичность сохранения полученных в ходе обучения весов модели выраженная в эпохах.",
+    "project": "Название проекта/эксперимента",
+    "batch_size": "Количество экземпляров из набора данных для прохождения одной своместной итерации обучения",
+    "defaults": "Переопределение через override конфигурационных файлов параметров models, datasets и тд",
+    "epochs": "Количество эпох обучения",
+    "accelerator": "Техническое средство для обучения. Например: CPU/GPU",
+    "gpus": "Количество видеокарт, которые можно использовать",
+    "in_channels": "Количество входных каналов в модель. Например для RGB изображения - 3",
+    "devices": "Номера видеокарт, которые можно использовать",
+
+    "models": "Расширение или изменение параметров модели",
+    "datasets": "Расширение или изменение параметров наборов данных",
+    "optimizers": "Расширение или изменение параметров оптимизатора",
+    "losses": "Расширение или изменение параметров функции потерь",
+    "augmentations_train": "Расширение или изменение параметров приращения данных в процессе тренировки",
+    "augmentations_val": "Расширение или изменение параметров приращения данных в процессе валидации",
+    "augmentations_test": "Расширение или изменение параметров приращения данных в процессе тестирования",
+    "initializations": "Расширение или изменение параметров инициализации весов моделей",
+    "metrics": "Расширение или изменение параметров метрик",
+    "wandb": "Расширение или изменение параметров интерфейса для оценки эксперимента Weights and biases",
+    "trainers": "",
+
+    "override /models": "Переопределение вложенного конфигурационного файла параметров модели",
+    "override /datasets": "Переопределение вложенного конфигурационного файла параметров наборов данных",
+    "override /optimizers": "Переопределение вложенного конфигурационного файла параметров оптимизатора",
+    "override /losses": "Переопределение вложенного конфигурационного файла параметров функции потерь",
+    "override /augmentations_train": "Переопределение вложенного конфигурационного файла параметров приращения данных в процессе тренировки",
+    "override /augmentations_val": "Переопределение вложенного конфигурационного файла параметров приращения данных в процессе валидации",
+    "override /augmentations_test": "Переопределение вложенного конфигурационного файла параметров приращения данных в процессе тестирования",
+    "override /initializations": "Переопределение вложенного конфигурационного файла параметров инициализации весов моделей",
+    "override /metrics": "Переопределение вложенного конфигурационного файла параметров метрик",
+    "override /wandb": "Переопределение вложенного конфигурационного файла параметров интерфейса для оценки эксперимента Weights and biases",
+    "override /trainers": "",
+
+};
+
 function buildCreationButton(){
     let createButtonDiv = document.createElement("div");
     createButtonDiv.className="col-auto";
@@ -11,10 +50,16 @@ function buildInputField(classname){
     let inputDiv = document.createElement("div");
     inputDiv.className= classname.replace(" form-control", "")+"_col"+" col";
     let inputField = document.createElement("input");
-    inputField.className = classname;
+    inputField.className = classname.replace("tooltip", "");
     inputField.type = "text";
     inputField.step = "any";
     inputDiv.appendChild(inputField);
+
+    if (classname.includes("tooltip")){
+        let inputTooltip = document.createElement("span");
+        inputTooltip.className = "tooltiptext";
+        inputDiv.appendChild(inputTooltip);
+    }
     return inputDiv;
 }
 
@@ -166,7 +211,8 @@ function addParameterRow(button){
             let createButtonDiv = buildCreationButton();
             row.appendChild(createButtonDiv);
 
-            let inputKeyDiv = buildInputField("keyfield form-control");
+            let inputKeyDiv = buildInputField("tooltip keyfield form-control");
+
             inputKeyDiv.children[0].setAttribute("list", "parameters");
             row.appendChild(inputKeyDiv);
 
@@ -373,6 +419,11 @@ function onKeyFieldChange(callback) {
                 };
             }(keyFields[i]);
         }
+}
+
+function changeSpan(keyfield){
+    let tooltiptext = keyfield.parentNode.getElementsByClassName("tooltiptext")[0];
+    tooltiptext.textContent = tooltipDict[keyfield.value];
 }
 
 function addEditionButtonOnOverridePresence(keyfield){
@@ -605,6 +656,7 @@ function set_callbacks(){
         onAddParameterRowClick(addParameterRow);
         onSaveConfigButtonClick(saveConfig);
         onKeyFieldChange(addEditionButtonOnOverridePresence);
+        onKeyFieldChange(changeSpan);
 
         onEditButtonClick(openModalWindowOnEditButtonClick);
         onInputFieldClick();
@@ -621,6 +673,15 @@ function set_callbacks(){
             for(let i=0; i<modalEditors.length; i++){
                 modalEditors[i].style.display = "none";
             }};
+
+
+        let keyfields = document.getElementsByClassName("keyfield");
+        for(let i=0; i<keyfields.length; i++){
+            let tooltiptext = keyfields[i].parentNode.getElementsByClassName("tooltiptext")[0];
+            tooltiptext.textContent = tooltipDict[keyfields[i].value];
+        };
+
+
 }
 
 

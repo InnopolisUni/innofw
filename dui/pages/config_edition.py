@@ -32,7 +32,8 @@ def decompose(configurations, recurse=False, level=0):
                         ]),
 
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text", list="parameters"), className="keyfield_col"),
+                        dbc.Col([dbc.Input(className="keyfield", value=k, type="text", list="parameters"),
+                                 html.Span(className="tooltiptext")], className="tooltip keyfield_col"),
                         dbc.Col(dbc.Input(className="valuefield", value=v, type="text"), className="valuefield_col"),
                         dbc.Col(dbc.Button(className="bi bi-pencil", outline=True, color="secondary"), width="auto") if "override /" in k else dbc.Col(width="auto"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
@@ -47,7 +48,8 @@ def decompose(configurations, recurse=False, level=0):
                 dbc.Row([
                     dbc.Row([
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text")),
+                        dbc.Col([dbc.Input(className="keyfield", value=k, type="text", list="parameters"),
+                                 html.Span(className="tooltiptext")], className="tooltip keyfield_col"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
                     ], style={"margin-left": 100*level}, className="parent"),
                       *children
@@ -105,6 +107,16 @@ def layout(config_name=None):
             data = simplify_dict(data)
             configurations_html = decompose(data)
             html_components.extend(configurations_html)
+    else:
+        with open(experiment_configs_path / "empty_template.yaml", "r") as yamlfile:
+            data = yaml.load(yamlfile, Loader=yaml.FullLoader)
+            yamlfile.close()
+
+        if data:
+            data = simplify_dict(data)
+            configurations_html = decompose(data)
+            html_components.extend(configurations_html)
+
 
     html_components.append(dbc.Row([
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle endwagon", outline=True, color="primary"), width="auto"),
