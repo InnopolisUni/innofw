@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - override /models: classification/lung_description_decision.yaml
+  - override /datasets: classification/lung_description_decision_datamodule.yaml
+  - override /callbacks: lung_description_decision
+
+project: "lung_description_decision"
+task: "table-classification"
