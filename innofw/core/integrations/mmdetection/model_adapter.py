@@ -99,7 +99,7 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         logging.info('Training')
         devices = [] if self.device == 'cpu' else self.devices
         os.system(
-            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "CUDA_VISIBLE_DEVICES={devices}" python tools/train.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
+            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/train.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
         self.rollback_configs()
 
     def test(self, data, ckpt_path=None):
@@ -107,17 +107,19 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         logging.info('Testing')
         devices = [] if self.device == 'cpu' else self.devices
         os.system(
-            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
+            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
         self.rollback_configs()
 
 
 def setup_mmdetection():
-    if os.path.exists('../../mmdetection3d'):
-        os.environ['MMDET_FOR_INNOFW'] = os.path.join(Path(os.getcwd()).parent.parent, 'mmdetection3d')
+    logging.info('mmdetection-3d found')
+    if os.path.exists('../mmdetection3d'):
+        os.environ['MMDET_FOR_INNOFW'] = os.path.join(Path(os.getcwd()).parent, 'mmdetection3d')
     if 'MMDET_FOR_INNOFW' not in os.environ:
+        logging.info("Cloning mmdetection-3d")
         os.system(
             "cd .. && git clone https://github.com/BarzaH/mmdetection3d.git && cd mmdetection3d && git checkout innofw_mod")
-        os.environ['MMDET_FOR_INNOFW'] = os.path.join(Path(os.getcwd()).parent.parent, 'mmdetection3d')
-    logging.info(os.environ['MMDET_FOR_INNOFW'])
+        os.environ['MMDET_FOR_INNOFW'] = os.path.join(Path(os.getcwd()).parent, 'mmdetection3d')
+    logging.info("mmdetection-3d path " + os.environ['MMDET_FOR_INNOFW'])
 
     return os.environ['MMDET_FOR_INNOFW']
