@@ -5,9 +5,6 @@ from typing import Optional
 
 import torch
 import yaml
-from yolov5 import detect as yolov5_detect
-from yolov5 import train as yolov5_train
-from yolov5 import val as yolov5_val
 
 from ..base_integration_models import BaseIntegrationModel
 from innofw.constants import Frameworks
@@ -50,6 +47,8 @@ class Mmdetection3DDataModel(BaseModelAdapter):
             **kwargs,
     ):
         super().__init__(model, log_dir)
+        self.optimizer = map_optimizer_to_mmdet_optim(kwargs['optimizers_cfg']['_target_'].split('.')[-1].lower())
+        self.optim_lr = kwargs['optimizers_cfg']['lr']
         self.device, self.epochs = trainer_cfg["accelerator"], trainer_cfg["max_epochs"]
         self.devices = trainer_cfg.get('devices', [])
         self.log_dir = Path(log_dir)
@@ -66,13 +65,14 @@ class Mmdetection3DDataModel(BaseModelAdapter):
             self.data_draft = d.read()
         with open(self.data_path, 'w') as d:
             print(self.data_draft.replace('DATA_ROOT', processed_data_path), file=d)
-        # logging.info(self.data_draft.replace('DATA_ROOT', processed_data_path))
 
         with open(self.train_path, 'r') as tr:
             self.train_draft = tr.read()
         with open(self.train_path, 'w') as tr:
-            print(self.train_draft.replace('MAX_EPOCHS', str(self.epochs)), file=tr)
-        # logging.info(self.train_draft.replace('MAX_EPOCHS', str(self.epochs)))
+            code = self.train_draft.replace('MAX_EPOCHS', str(self.epochs))
+            code = code.replace('OPTIM_TYPE', self.optimizer)
+            code = code.replace('OPTIM_LR', str(self.optim_lr))
+            print(code, file=tr)
 
     def rollback_configs(self):
         with open(self.data_path, 'w') as d:
@@ -123,3 +123,6 @@ def setup_mmdetection():
     logging.info("mmdetection-3d path " + os.environ['MMDET_FOR_INNOFW'])
 
     return os.environ['MMDET_FOR_INNOFW']
+
+def map_optimizer_to_mmdet_optim(optim_name):
+    return {'adam': 'Adam', 'adamw': 'AdamW', 'sgd': 'SGD'}[optim_name]

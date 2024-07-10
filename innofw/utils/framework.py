@@ -200,7 +200,7 @@ def get_optimizer(
 
         # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = (
-            framework is Frameworks.torch or framework is Frameworks.ultralytics
+            framework is Frameworks.torch or framework is Frameworks.ultralytics or framework is Frameworks.mmdetection
         )
         if framework_consistent:
             items = dict()
