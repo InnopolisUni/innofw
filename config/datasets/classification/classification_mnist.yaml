@@ -20,3 +20,5 @@ test:
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/mnist/infer.zip
   target: ./data/mnist/infer
+
+stratify: True
