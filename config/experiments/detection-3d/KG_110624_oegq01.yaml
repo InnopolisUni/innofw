@@ -7,7 +7,7 @@ defaults:
 project: "lep_3d_det"
 task: "3d-detection"
 random_seed: 42
-epochs: 2
+epochs: 10
 batch_size: 2
 weights_freq: 1
 accelerator: gpu
