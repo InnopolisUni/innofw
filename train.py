@@ -13,7 +13,7 @@ from omegaconf import OmegaConf
 
 from pckg_util import check_gpu_and_torch_compatibility
 
-check_gpu_and_torch_compatibility()
+# check_gpu_and_torch_compatibility()
 # os.environ["WANDB_DISABLED"] = "true"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 

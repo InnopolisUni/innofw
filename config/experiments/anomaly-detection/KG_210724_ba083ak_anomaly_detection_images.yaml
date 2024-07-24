@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - override /models: anomaly-detection/cae
+  - override /datasets: anomaly_detection_images
+  - override /optimizers: adam
+  - override /augmentations_train: none
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: mse
+
+
+project: "anomaly-detection-mvtec"
+task: "anomaly-detection-images"
+random_seed: 0
+epochs: 3
+batch_size: 8
+accelerator: cpu # gpu
