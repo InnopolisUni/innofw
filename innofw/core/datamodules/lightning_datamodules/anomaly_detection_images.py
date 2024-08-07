@@ -44,7 +44,7 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
             test,
             infer=None,
             batch_size: int = 2,
-            val_size: float = 0.2,
+            val_size: float = 0.5,
             num_workers: int = 1,
             augmentations=None,
             stage=None,
@@ -58,8 +58,10 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
 
     def setup_train_test_val(self, **kwargs):
-        self.train_dataset = AnomaliesDataset(self.train_source, self.aug, add_labels=False)
-        self.test_dataset = AnomaliesDataset(self.test_source, add_labels=True)
+        self.train_dataset = AnomaliesDataset(self.train_source, self.get_aug(self.aug, 'train'),
+                                              add_labels=False)
+        self.test_dataset = AnomaliesDataset(self.test_source, self.get_aug(self.aug, 'test'),
+                                             add_labels=True)
 
         # divide into train, val, test - val is a part of test since train does not have anomalies
         n = len(self.test_dataset)
@@ -101,7 +103,7 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
         return test_dataloader
 
     def setup_infer(self):
-        self.predict_dataset = AnomaliesDataset(self.predict_source)
+        self.predict_dataset = AnomaliesDataset(self.predict_source, self.aug)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         dst_path = pathlib.Path(dst_path)

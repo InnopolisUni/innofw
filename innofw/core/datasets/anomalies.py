@@ -26,11 +26,11 @@ class AnomaliesDataset(Dataset):
     """
 
     def __init__(self, data_path, augmentations, add_labels=False):
-        self.images = list(Path(data_path + '/images').iterdir())
+        self.images = list(Path(str(data_path) + '/images').iterdir())
         self.add_labels = add_labels
         self.augmentations = augmentations
         if self.add_labels:
-            self.labels = list(Path(data_path + '/labels').iterdir())
+            self.labels = list(Path(str(data_path) + '/labels').iterdir())
 
     def __len__(self):
         return len(self.images)
@@ -39,11 +39,12 @@ class AnomaliesDataset(Dataset):
         imagePath = self.images[idx]
         image = cv2.imread(str(imagePath))
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
+        image = torch.from_numpy(image).float()
+        image = torch.div(image, 255)
         if not self.add_labels:
-            return image
+            return self.augmentations(image) if self.augmentations is not None else image
         mask = cv2.imread(str(self.labels[idx]), 0)
-        image, mask = self.augmentations(image, mask)
-        mask = mask[None, :]
+        if self.augmentations is not None:
+            image, mask = self.augmentations(image=image, mask=mask)
 
         return image, mask

@@ -14,4 +14,11 @@ task: "anomaly-detection-images"
 random_seed: 0
 epochs: 3
 batch_size: 8
-accelerator: cpu # gpu
+accelerator: gpu
+
+wandb:
+  enable: True
+  project: anomaly_detect_mvtec
+  entity: "k-galliamov"
+  group: none
+  job_type: training

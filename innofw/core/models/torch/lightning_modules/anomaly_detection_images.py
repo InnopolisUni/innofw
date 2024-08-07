@@ -72,7 +72,7 @@ class AnomalyDetectionImagesLightningModule(BaseLightningModule):
         loss = self.loss_fn(x, x_rec)
         metrics = self.compute_metrics('train', x_rec, x)
         self.log_metrics('train', metrics)
-        self.log("loss", loss, on_step=False, on_epoch=True)
+        self.log("train_loss", loss, on_step=False, on_epoch=True)
         return {"loss": loss}
 
     def validation_step(self, batch, batch_idx):
@@ -82,7 +82,7 @@ class AnomalyDetectionImagesLightningModule(BaseLightningModule):
         mask = self.compute_anomaly_mask(x)
         metrics = self.compute_metrics('val', mask, y)
         self.log_metrics('val', metrics)
-        self.log("loss", loss, on_step=False, on_epoch=True)
+        self.log("val_loss", loss, on_step=False, on_epoch=True)
         return {"loss": loss}
 
     def test_step(self, x, batch_idx):
@@ -91,7 +91,7 @@ class AnomalyDetectionImagesLightningModule(BaseLightningModule):
         mask = self.compute_anomaly_mask(x)
         metrics = self.compute_metrics('val', mask, y)
         self.log_metrics('val', metrics)
-        self.log("loss", loss, on_step=False, on_epoch=True)
+        self.log("test_loss", loss, on_step=False, on_epoch=True)
         return {"loss": loss}
 
     def predict_step(self, x, batch_idx, **kwargs):
