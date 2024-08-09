@@ -47,7 +47,8 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
 
     def __init__(
             self,
-            data: Optional[str],
+            train: Optional[str],
+            test: Optional[str],
             num_classes: int,
             val_size: float = 0.2,
             stage=False,
@@ -55,7 +56,7 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
             *args,
             **kwargs,
     ):
-        super().__init__(train=data, test=data, infer=data, stage=stage, *args, **kwargs)
+        super().__init__(train=train, test=test, infer=test, stage=stage, *args, **kwargs)
         if self.train:
             self.train_source = Path(self.train)
         if self.test:
