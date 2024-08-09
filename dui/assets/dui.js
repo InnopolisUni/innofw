@@ -10,6 +10,7 @@ let tooltipDict = {
     "gpus": "Количество видеокарт, которые можно использовать",
     "in_channels": "Количество входных каналов в модель. Например для RGB изображения - 3",
     "devices": "Номера видеокарт, которые можно использовать",
+    "learning_rate": "Скорость обучения модели",
 
     "models": "Расширение или изменение параметров модели",
     "datasets": "Расширение или изменение параметров наборов данных",
@@ -638,12 +639,6 @@ function onInputFieldClick(){
 
 }
 
-//$(document).ready(function () {
-    //if (location.href === location.protocol+"//"+location.host+"/") {
-    //   location.href = location.protocol+"//"+location.host+"/config_list";
-  //  }
-//});
-
 document.addEventListener('DOMContentLoaded', function() {
    if (location.href === location.protocol+"//"+location.host+"/") {
        location.href = location.protocol+"//"+location.host+"/config_list";
@@ -680,9 +675,9 @@ function set_editionpg_callbacks(){
 
 
         let keyfields = document.getElementsByClassName("keyfield");
-        for(let i=0; i<keyfields.length; i++){
-            let tooltiptext = keyfields[i].parentNode.getElementsByClassName("tooltiptext")[0];
-            tooltiptext.textContent = tooltipDict[keyfields[i].value];
+        for(let k of keyfields){
+            let tooltiptext = k.parentNode.getElementsByClassName("tooltiptext")[0];
+            tooltiptext.textContent = tooltipDict[k.value];
         };
 
 

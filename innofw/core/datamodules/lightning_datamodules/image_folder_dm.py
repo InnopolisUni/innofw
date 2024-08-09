@@ -84,9 +84,7 @@ class ImageLightningDataModule(BaseLightningDataModule):
         # divide into train, val, test
         n = len(train_dataset)
         train_size = int(n * (1 - self.val_size))
-        self.train_dataset, self.val_dataset = random_split(
-            train_dataset, [train_size, n - train_size]
-        )
+
 
         # stratify
         if self.stratify:
@@ -109,8 +107,8 @@ class ImageLightningDataModule(BaseLightningDataModule):
             all_train = Counter(train_dataset.targets).values()
             coefsall_train = [i/len(train_dataset.targets) for i in all_train]
 
-            self.train_dataset = strat_train
-            self.val_dataset = strat_val
+            self.train_dataset = first_set_inputs
+            self.val_dataset = second_set_inputs
 
             print(f'''Coefficients of classes:\n 
             all dataset - {coefsall_train}\n
@@ -118,7 +116,9 @@ class ImageLightningDataModule(BaseLightningDataModule):
             stratified val split - {coefsstrat_val}\n 
             random train split - {coefsrandom_train}\n 
             random val split - {coefsrandom_val}\n ''')
-
+        else:
+            self.train_dataset, self.val_dataset = random_split(
+                train_dataset, [train_size, n - train_size])
         # Set validatoin augmentations for val
         setattr(self.val_dataset.dataset, "transform", val_aug)
 

@@ -127,9 +127,16 @@ def layout(config_name=None):
                                     children=[
                                         dash.html.Datalist(children=[
                                               dash.html.Option("batch_size"),
-                                              dash.html.Option("epoch"),
+                                              dash.html.Option("epochs"),
                                             dash.html.Option("learning_rate"),
                                             dash.html.Option("random_seed"),
+                                            dash.html.Option("task"),
+                                            dash.html.Option("weights_freq"),
+                                            dash.html.Option("project"),
+                                            dash.html.Option("defaults"),
+                                            dash.html.Option("accelerator"),
+                                            dash.html.Option("gpus"),
+                                            dash.html.Option("devices"),
                                                 ],
                                                     id="parameters")]))
 
@@ -148,6 +155,7 @@ def layout(config_name=None):
         dbc.Col(dbc.Button("Duplicate", id="duplicate_btn", color="info", className="me-1 duplicate_btn", n_clicks=0)),
 
         dbc.Col(dbc.Button("Start Training", id="strain_btn", color="success", className="me-2", n_clicks=0)),
+        dbc.Col(dbc.Button("Start Inference", id="sinfer_btn", color="dark", className="me-2", n_clicks=0)),
 
         dbc.Row(html.Div(className="modal-content", children=[
              dbc.ModalHeader(dbc.ModalTitle("Saving")),
@@ -253,4 +261,49 @@ def on_strain_btn_button_click(set_progress, n, config_name):
         return out
 
 
+# @app.long_callback(
+#     Output("analytics-output", "children"),
+#     Input("sinfer_btn", "n_clicks"),
+#     Input("config_name", "value"),
+#
+#     progress=[Output("analytics-output", "children")],
+#     prevent_initial_call=True
+# )
+# def on_sinfer_btn_button_click(set_progress, n, config_name):
+#
+#     if n > 0:
+#         run_env = os.environ.copy()
+#         run_env["NO_CLI"] = "True"
+#         run_env["PYTHONPATH"] = ".."
+#
+#         cmd = [sys.executable, "../infer.py", f"experiments={config_name}"]
+#
+#         text_output = []
+#         err_output = []
+#         out = html.Div(id="process_output")
+#
+#         with open("infer.out", "w") as subprocess_out:
+#             with open("infer.err", "w") as subprocess_err:
+#                 with subprocess.Popen(cmd, stdout=subprocess_out, stderr=subprocess_err, env=run_env) as process:
+#                     with open("infer.out", "r") as subprocess_outin:
+#                         with open("infer.err", "r") as subprocess_errin:
+#
+#                             while True:
+#                                 out_text = subprocess_outin.read()
+#                                 out_err = subprocess_errin.read()
+#
+#                                 if out_err:
+#                                     err_output.append(html.P(out_err))
+#
+#                                 if not out_text and process.poll() is None:
+#                                     time.sleep(0.5)
+#                                     continue
+#
+#                                 text_output.append(html.P(out_text))
+#
+#                                 out = dbc.Row(id="process_output", children=[dbc.Col(text_output), dbc.Col(err_output)])
+#                                 set_progress(out)
+#                                 if out_text == '' and process.poll() != None:
+#                                     break
+#         return out
 
