@@ -60,6 +60,8 @@ class ImageLightningDataModule(BaseLightningDataModule):
         self.val_size = val_size
         if "stratify" in kwargs.keys():
             self.stratify = kwargs["stratify"]
+        else:
+            self.stratify = False
 
     def setup_train_test_val(self, **kwargs):
         train_aug = self.get_aug(self.aug, "train")
