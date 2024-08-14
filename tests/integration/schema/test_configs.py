@@ -74,7 +74,7 @@ def test_experiments(experiment_config_file):
     from hydra import compose, initialize
     from hydra.core.global_hydra import GlobalHydra
 
-    if "example" in experiment_config_file:
+    if "example" in str(experiment_config_file):
         GlobalHydra.instance().clear()
         initialize(config_path="../../../config", job_name="test_app")
 
