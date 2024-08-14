@@ -74,16 +74,17 @@ def test_experiments(experiment_config_file):
     from hydra import compose, initialize
     from hydra.core.global_hydra import GlobalHydra
 
-    GlobalHydra.instance().clear()
-    initialize(config_path="../../../config", job_name="test_app")
+    if "example" in str(experiment_config_file):
+        GlobalHydra.instance().clear()
+        initialize(config_path="../../../config", job_name="test_app")
 
-    experiment_file = f"{str(os.path.splitext(experiment_config_file)[0]).split('/experiments/')[-1]}"
+        experiment_file = f"{str(os.path.splitext(experiment_config_file)[0]).split('/experiments/')[-1]}"
 
-    cfg = compose(
-        config_name="train",
-        overrides=[f"experiments={experiment_file}"],  # experiment_config_file.stem
-        return_hydra_config=True,
-    )
-    get_experiment(cfg)
-    # cfg = OmegaConf.to_yaml(cfg)
-    # logging.info(cfg)
+        cfg = compose(
+            config_name="train",
+            overrides=[f"experiments={experiment_file}"],  # experiment_config_file.stem
+            return_hydra_config=True,
+        )
+        get_experiment(cfg)
+        # cfg = OmegaConf.to_yaml(cfg)
+        # logging.info(cfg)

@@ -1,3 +1,43 @@
+let tooltipDict = {
+    "task": "Тип решаемой задачи. Например: image-segmentation, image-detection, image-classification и тд",
+    "random_seed": "Зерно случайности, необходимо для вопроизводимости экспериментов при прочих равных параметрах",
+    "weights_freq": "Периодичность сохранения полученных в ходе обучения весов модели выраженная в эпохах.",
+    "project": "Название проекта/эксперимента",
+    "batch_size": "Количество экземпляров из набора данных для прохождения одной своместной итерации обучения",
+    "defaults": "Переопределение через override конфигурационных файлов параметров models, datasets и тд",
+    "epochs": "Количество эпох обучения",
+    "accelerator": "Техническое средство для обучения. Например: CPU/GPU",
+    "gpus": "Количество видеокарт, которые можно использовать",
+    "in_channels": "Количество входных каналов в модель. Например для RGB изображения - 3",
+    "devices": "Номера видеокарт, которые можно использовать",
+    "learning_rate": "Скорость обучения модели",
+
+    "models": "Расширение или изменение параметров модели",
+    "datasets": "Расширение или изменение параметров наборов данных",
+    "optimizers": "Расширение или изменение параметров оптимизатора",
+    "losses": "Расширение или изменение параметров функции потерь",
+    "augmentations_train": "Расширение или изменение параметров приращения данных в процессе тренировки",
+    "augmentations_val": "Расширение или изменение параметров приращения данных в процессе валидации",
+    "augmentations_test": "Расширение или изменение параметров приращения данных в процессе тестирования",
+    "initializations": "Расширение или изменение параметров инициализации весов моделей",
+    "metrics": "Расширение или изменение параметров метрик",
+    "wandb": "Расширение или изменение параметров интерфейса для оценки эксперимента Weights and biases",
+    "trainers": "",
+
+    "override /models": "Переопределение вложенного конфигурационного файла параметров модели",
+    "override /datasets": "Переопределение вложенного конфигурационного файла параметров наборов данных",
+    "override /optimizers": "Переопределение вложенного конфигурационного файла параметров оптимизатора",
+    "override /losses": "Переопределение вложенного конфигурационного файла параметров функции потерь",
+    "override /augmentations_train": "Переопределение вложенного конфигурационного файла параметров приращения данных в процессе тренировки",
+    "override /augmentations_val": "Переопределение вложенного конфигурационного файла параметров приращения данных в процессе валидации",
+    "override /augmentations_test": "Переопределение вложенного конфигурационного файла параметров приращения данных в процессе тестирования",
+    "override /initializations": "Переопределение вложенного конфигурационного файла параметров инициализации весов моделей",
+    "override /metrics": "Переопределение вложенного конфигурационного файла параметров метрик",
+    "override /wandb": "Переопределение вложенного конфигурационного файла параметров интерфейса для оценки эксперимента Weights and biases",
+    "override /trainers": "",
+
+};
+
 function buildCreationButton(){
     let createButtonDiv = document.createElement("div");
     createButtonDiv.className="col-auto";
@@ -11,10 +51,16 @@ function buildInputField(classname){
     let inputDiv = document.createElement("div");
     inputDiv.className= classname.replace(" form-control", "")+"_col"+" col";
     let inputField = document.createElement("input");
-    inputField.className = classname;
+    inputField.className = classname.replace("tooltip", "");
     inputField.type = "text";
     inputField.step = "any";
     inputDiv.appendChild(inputField);
+
+    if (classname.includes("tooltip")){
+        let inputTooltip = document.createElement("span");
+        inputTooltip.className = "tooltiptext";
+        inputDiv.appendChild(inputTooltip);
+    }
     return inputDiv;
 }
 
@@ -166,7 +212,8 @@ function addParameterRow(button){
             let createButtonDiv = buildCreationButton();
             row.appendChild(createButtonDiv);
 
-            let inputKeyDiv = buildInputField("keyfield form-control");
+            let inputKeyDiv = buildInputField("tooltip keyfield form-control");
+
             inputKeyDiv.children[0].setAttribute("list", "parameters");
             row.appendChild(inputKeyDiv);
 
@@ -211,7 +258,7 @@ function addParameterRow(button){
                 conf.insertBefore(row, modalEndwagon);
             }
 
-            set_callbacks();
+            set_editionpg_callbacks();
 }
 
 function onSaveConfigButtonClick(callback) {
@@ -375,6 +422,11 @@ function onKeyFieldChange(callback) {
         }
 }
 
+function changeSpan(keyfield){
+    let tooltiptext = keyfield.parentNode.getElementsByClassName("tooltiptext")[0];
+    tooltiptext.textContent = tooltipDict[keyfield.value];
+}
+
 function addEditionButtonOnOverridePresence(keyfield){
     let row = keyfield.parentNode.parentNode;
     let content = keyfield.value;
@@ -414,7 +466,7 @@ function addEditionButtonOnOverridePresence(keyfield){
         }
     }
 
-    set_callbacks();
+    set_editionpg_callbacks();
 
 }
 
@@ -541,7 +593,7 @@ function openModalWindowOnEditButtonClick(button){
         modal_content.insertBefore(nameOfConfig, modal_content.children[0])
 
         modal.style.display = "block";
-        set_callbacks();
+        set_editionpg_callbacks();
     })
     .catch(err => { throw err });
 
@@ -587,18 +639,23 @@ function onInputFieldClick(){
 
 }
 
-$(document).ready(function () {
-    if (location.href === location.protocol+"//"+location.host+"/") {
+document.addEventListener('DOMContentLoaded', function() {
+   if (location.href === location.protocol+"//"+location.host+"/") {
        location.href = location.protocol+"//"+location.host+"/config_list";
     }
-});
+}, false);
 
-function set_callbacks(){
-        onConfigRowClick("table", openConfig);
+function set_mainpg_callbacks(){
+    onConfigRowClick("table", openConfig);
+}
+
+function set_editionpg_callbacks(){
+
         onDeleteParameterRowClick(deleteParameterRow);
         onAddParameterRowClick(addParameterRow);
         onSaveConfigButtonClick(saveConfig);
         onKeyFieldChange(addEditionButtonOnOverridePresence);
+        onKeyFieldChange(changeSpan);
 
         onEditButtonClick(openModalWindowOnEditButtonClick);
         onInputFieldClick();
@@ -615,12 +672,51 @@ function set_callbacks(){
             for(let i=0; i<modalEditors.length; i++){
                 modalEditors[i].style.display = "none";
             }};
+
+
+        let keyfields = document.getElementsByClassName("keyfield");
+        for(let k of keyfields){
+            let tooltiptext = k.parentNode.getElementsByClassName("tooltiptext")[0];
+            tooltiptext.textContent = tooltipDict[k.value];
+        };
+
+
 }
 
+function waitForElm(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+}
 
 document.querySelector("body").onload = function() {
+    if(window.location.href.includes("/config_list"))
+    {
+        waitForElm("#table").then((elm) => {
+            set_mainpg_callbacks()
+        });
+    }
 
-    setTimeout(function () {
-        set_callbacks();
-    }, 1000);
+    if(window.location.href.includes("/config/"))
+    {
+        waitForElm("#configuration_parameters").then((elm) => {
+            set_editionpg_callbacks()
+        });
+    }
 }
+

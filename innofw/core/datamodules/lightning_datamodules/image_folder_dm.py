@@ -12,6 +12,7 @@ from innofw.constants import Stages
 from innofw.core.datamodules.lightning_datamodules.base import (
     BaseLightningDataModule,
 )
+from innofw.core.datasets.utils import stratified_split
 
 #
 #
@@ -57,6 +58,10 @@ class ImageLightningDataModule(BaseLightningDataModule):
         )
         self.aug = augmentations
         self.val_size = val_size
+        if "stratify" in kwargs.keys():
+            self.stratify = kwargs["stratify"]
+        else:
+            self.stratify = False
 
     def setup_train_test_val(self, **kwargs):
         train_aug = self.get_aug(self.aug, "train")
@@ -72,17 +77,48 @@ class ImageLightningDataModule(BaseLightningDataModule):
             )
         else:
             train_dataset = ImageFolder(
-            str(self.train_source), transform=train_aug
-        )
+            str(self.train_source), transform=train_aug)
         self.test_dataset = ImageFolder(
             str(self.train_source), transform=test_aug
         )
         # divide into train, val, test
         n = len(train_dataset)
         train_size = int(n * (1 - self.val_size))
-        self.train_dataset, self.val_dataset = random_split(
-            train_dataset, [train_size, n - train_size]
-        )
+
+
+        # stratify
+        if self.stratify:
+            first_set_inputs, first_set_labels, second_set_inputs, second_set_labels = stratified_split(train_dataset,
+                                                                                                    train_dataset.targets,
+                                                                                                    1 - self.val_size)
+            from collections import Counter
+            strat_train = Counter(first_set_labels).values()
+            coefsstrat_train = [i/len(first_set_labels) for i in strat_train]
+
+            strat_val = Counter(second_set_labels).values()
+            coefsstrat_val = [i/len(second_set_labels) for i in strat_val]
+
+            random_train = Counter([self.train_dataset.dataset.targets[i] for i in self.train_dataset.indices]).values()
+            coefsrandom_train = [i/len(self.train_dataset.indices) for i in random_train]
+
+            random_val = Counter([self.val_dataset.dataset.targets[i] for i in self.val_dataset.indices]).values()
+            coefsrandom_val = [i/len(self.val_dataset.indices) for i in random_val]
+
+            all_train = Counter(train_dataset.targets).values()
+            coefsall_train = [i/len(train_dataset.targets) for i in all_train]
+
+            self.train_dataset = first_set_inputs
+            self.val_dataset = second_set_inputs
+
+            print(f'''Coefficients of classes:\n 
+            all dataset - {coefsall_train}\n
+            stratified train split - {coefsstrat_train}\n 
+            stratified val split - {coefsstrat_val}\n 
+            random train split - {coefsrandom_train}\n 
+            random val split - {coefsrandom_val}\n ''')
+        else:
+            self.train_dataset, self.val_dataset = random_split(
+                train_dataset, [train_size, n - train_size])
         # Set validatoin augmentations for val
         setattr(self.val_dataset.dataset, "transform", val_aug)
 
