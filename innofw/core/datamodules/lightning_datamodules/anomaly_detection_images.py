@@ -70,30 +70,6 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
             self.test_dataset, [test_size, n - test_size]
         )
 
-    def train_dataloader(self):
-        train_dataloader = torch.utils.data.DataLoader(
-            self.train_dataset,
-            batch_size=self.batch_size,
-            num_workers=self.num_workers,
-        )
-        return train_dataloader
-
-    def val_dataloader(self):
-        val_dataloader = torch.utils.data.DataLoader(
-            self.val_dataset,
-            batch_size=self.batch_size,
-            num_workers=self.num_workers,
-        )
-        return val_dataloader
-
-    def test_dataloader(self):
-        test_dataloader = torch.utils.data.DataLoader(
-            self.test_dataset,
-            batch_size=self.batch_size,
-            num_workers=self.num_workers,
-        )
-        return test_dataloader
-
     def predict_dataloader(self):
         test_dataloader = torch.utils.data.DataLoader(
             self.predict_dataset,
