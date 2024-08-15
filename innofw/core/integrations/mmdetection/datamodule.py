@@ -1,9 +1,10 @@
 # standard libraries
 import json
+import logging
 import os
 import os.path as osp
-import pickle as pkl
 import pathlib
+import pickle as pkl
 import random
 from abc import ABC
 from collections import namedtuple
@@ -14,8 +15,6 @@ import numpy as np
 import open3d as o3d
 from tqdm import tqdm
 
-import logging
-
 # local modules
 from innofw.constants import Frameworks, Stages
 from innofw.core.datamodules.base import BaseDataModule
@@ -23,6 +22,7 @@ from innofw.core.datamodules.base import BaseDataModule
 ItemInfo = namedtuple('ItemInfo', ['img_path', 'name'])
 target_maxes = np.array([[136.7853946685791, 135.2938232421875, 45.29965019226074]])
 target_mins = np.array([[-136.7853946685791, -135.2938232421875, -45.29965019226074]])
+
 
 class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
     """
@@ -71,7 +71,7 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
         self.train_set = None
         self.val_set = None
         self.state = {
-            'data_path': self.train_source or self.test_source or self.infer_source,
+            'data_path': self.train_source.parent or self.test_source.parent or self.infer_source.parent,
             'save_path': None,
             'train_size': 0.9,
             'center_coords': [True, True, True],  # x, y, z
@@ -167,7 +167,8 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
             intensity = np.zeros((pcd_slide.shape[0], 1), dtype=np.float32)
             pcd_mins = np.array(self.state['point_cloud_range'][:3])
             pcd_maxes = np.array(self.state['point_cloud_range'][3:])
-            pcd_slide = (pcd_slide - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
+            pcd_slide = (pcd_slide - pcd_mins) / (pcd_maxes - pcd_mins) * (
+                        target_maxes - target_mins) + target_mins
             pcd_slide = np.hstack((pcd_slide, intensity))
             pcd_slide.astype(np.float32).tofile(osp.join(self.state['save_path'], bin_filename))
             ptc_info['lidar_points']['lidar_path'] = bin_filename.split('/')[-1]
@@ -200,9 +201,14 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                     self.state["selectedClasses"].index(objects2class[fig['objectKey']]))
             ptc_info['instances']['gt_bboxes_3d'] = np.array(ptc_info['instances']['gt_bboxes_3d'],
                                                              dtype=np.float32)
-            ptc_info['instances']['gt_bboxes_3d'][:, :3] = (ptc_info['instances']['gt_bboxes_3d'][:, :3] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
-            ptc_info['instances']['gt_bboxes_3d'][:, 3:6] = (ptc_info['instances']['gt_bboxes_3d'][:, 3:6] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
-
+            ptc_info['instances']['gt_bboxes_3d'][:, :3] = (ptc_info['instances']['gt_bboxes_3d'][:,
+                                                            :3] - pcd_mins) / (
+                                                                       pcd_maxes - pcd_mins) * (
+                                                                       target_maxes - target_mins) + target_mins
+            ptc_info['instances']['gt_bboxes_3d'][:, 3:6] = (ptc_info['instances']['gt_bboxes_3d'][
+                                                             :, 3:6] - pcd_mins) / (
+                                                                        pcd_maxes - pcd_mins) * (
+                                                                        target_maxes - target_mins) + target_mins
 
             ptc_info['instances']['gt_labels_3d'] = np.array(ptc_info['instances']['gt_labels_3d'],
                                                              dtype=np.int32)
@@ -261,8 +267,9 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
             for ann in annotations:
                 print(ann['lidar_points']['lidar_path'][:-4], file=f)
 
-        annotations = {'metainfo': {'categories': {cat: label for cat, label in enumerate(all_gt_names)}},
-                       'data_list': annotations}
+        annotations = {
+            'metainfo': {'categories': {cat: label for cat, label in enumerate(all_gt_names)}},
+            'data_list': annotations}
         with open(save_path, 'wb') as f:
             pkl.dump(annotations, f)
 
@@ -333,9 +340,11 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                 pcr = self.state["point_cloud_range"]
         self.state['point_cloud_range'] = pcr
 
-        self.save_set_to_annotation(osp.join(self.state['save_path'], 'custom_infos_train.pkl'), self.train_set,
+        self.save_set_to_annotation(osp.join(self.state['save_path'], 'custom_infos_train.pkl'),
+                                    self.train_set,
                                     sboxes, 'train')
-        self.save_set_to_annotation(osp.join(self.state['save_path'], 'custom_infos_val.pkl'), self.val_set,
+        self.save_set_to_annotation(osp.join(self.state['save_path'], 'custom_infos_val.pkl'),
+                                    self.val_set,
                                     sboxes, 'val')
 
         logging.info('Finished data preparation')

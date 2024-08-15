@@ -104,10 +104,14 @@ class Mmdetection3DDataModel(BaseModelAdapter):
 
     def test(self, data, ckpt_path=None):
         data.setup()
+        self.update_configs(os.path.abspath(data.state['save_path']))
         logging.info('Testing')
         devices = [] if self.device == 'cpu' else self.devices
-        os.system(
-            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
+        try:
+            os.system(
+                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path}')
+        except:
+            logging.info('Failed')
         self.rollback_configs()
 
 
