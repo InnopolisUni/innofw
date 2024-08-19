@@ -1,8 +1,11 @@
+import os
 import logging
 import pathlib
 
 import pandas as pd
 import torch
+import cv2
+import numpy as np
 from torch.utils.data import random_split
 
 from innofw.constants import Frameworks
@@ -79,11 +82,18 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
         return test_dataloader
 
     def setup_infer(self):
-        self.predict_dataset = AnomaliesDataset(self.predict_source, self.aug)
+        self.predict_dataset = AnomaliesDataset(self.predict_source, self.get_aug(self.aug, 'test'))
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        dst_path = pathlib.Path(dst_path)
-        df = pd.DataFrame(list(preds), columns=["prediction"])
-        dst_filepath = dst_path / "prediction.csv"
-        df.to_csv(dst_filepath)
-        logging.info(f"Saved results to: {dst_filepath}")
+        out_file_path = dst_path / "results"
+        os.mkdir(out_file_path)
+        n = 0
+        for preds_batch in preds:
+            for i, pred in enumerate(preds_batch):
+                pred = pred.numpy() * 255  # shape - (1024, 1024)
+                if pred.dtype != np.uint8:
+                    pred = pred.astype(np.uint8)
+                filename = out_file_path / f"out_{n}.png"
+                n += 1
+                cv2.imwrite(filename, pred)
+        logging.info(f"Saved result to: {out_file_path}")

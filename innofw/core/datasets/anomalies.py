@@ -45,6 +45,5 @@ class AnomaliesDataset(Dataset):
             return self.augmentations(image) if self.augmentations is not None else image
         mask = cv2.imread(str(self.labels[idx]), 0)
         if self.augmentations is not None:
-            image, mask = self.augmentations(image=image, mask=mask)
-
+            image, mask = self.augmentations(image, mask)
         return image, mask

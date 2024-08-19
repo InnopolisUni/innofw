@@ -5,6 +5,7 @@ from torchmetrics import MetricCollection
 from torchmetrics.classification import BinaryJaccardIndex, BinaryF1Score, BinaryPrecision, \
     BinaryRecall
 from torchmetrics.regression import MeanAbsoluteError, MeanSquaredError
+from lovely_numpy import lo
 
 from innofw.core.models.torch.lightning_modules.base import BaseLightningModule
 
@@ -77,20 +78,23 @@ class AnomalyDetectionImagesLightningModule(BaseLightningModule):
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
+        y = y.bool()
         x_rec = self.forward(x)
         loss = self.loss_fn(x, x_rec)
         mask = self.compute_anomaly_mask(x)
         metrics = self.compute_metrics('val', mask, y)
         self.log_metrics('val', metrics)
+        print(mask.float().mean(), y.float().mean())
         self.log("val_loss", loss, on_step=False, on_epoch=True)
         return {"loss": loss}
 
-    def test_step(self, x, batch_idx):
+    def test_step(self, batch, batch_idx):
+        x, y = batch
         x_rec = self.forward(x)
         loss = self.loss_fn(x, x_rec)
         mask = self.compute_anomaly_mask(x)
-        metrics = self.compute_metrics('val', mask, y)
-        self.log_metrics('val', metrics)
+        metrics = self.compute_metrics('test', mask, y)
+        self.log_metrics('test', metrics)
         self.log("test_loss", loss, on_step=False, on_epoch=True)
         return {"loss": loss}
 
