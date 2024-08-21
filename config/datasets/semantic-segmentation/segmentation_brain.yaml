@@ -1,4 +1,4 @@
-_target_: innofw.core.datamodules.lightning_datamodules.segmentation_dir.DicomDirSegmentationLightningDataModule
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DicomDirSegmentationLightningDataModule
 date_time: 30.09.2022
 description: stroke segmentation dataset
 markup_info: segmentation masks

@@ -300,4 +300,4 @@ class DicomDirSegmentationLightningDataModule(
                     os.path.join(self.dicoms, dicom),
                     os.path.join(png_path, dicom.replace("dcm", "png")),
                 )
-            self.predict_dataset = self.dataset(png_path, self.test_aug, True)
+            self.predict_dataset = self.dataset(png_path, self.get_aug(self.aug, "test"), True)
