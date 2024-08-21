@@ -9,7 +9,7 @@ defaults:
 models:
   in_channels: 1
 project: "segmentation"
-task: "image-segmentation-complexing"
+task: "image-segmentation"
 random_seed: 42
 stop_param: 10
 epochs: 300
