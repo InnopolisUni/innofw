@@ -17,6 +17,9 @@ test:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/test.zip
   target: /home/karim/workdir/innofw/data/lep3d
 
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/test.zip
+  target: /home/karim/workdir/innofw/data/lep3d
 
 num_workers: 8
 

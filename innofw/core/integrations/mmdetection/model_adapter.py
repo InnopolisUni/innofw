@@ -102,14 +102,24 @@ class Mmdetection3DDataModel(BaseModelAdapter):
             f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/train.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
         self.rollback_configs()
 
-    def test(self, data, ckpt_path=None):
+    def test(self, data, ckpt_path=None, flags=''):
         data.setup()
         self.update_configs(os.path.abspath(data.state['save_path']))
-        logging.info('Testing')
         devices = [] if self.device == 'cpu' else self.devices
         try:
             os.system(
-                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path}')
+                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path} {flags}')
+        except:
+            logging.info('Failed')
+        self.rollback_configs()
+
+    def predict(self, data, ckpt_path=None):
+        data.setup()
+        self.update_configs(os.path.abspath(data.state['save_path']))
+        devices = [] if self.device == 'cpu' else self.devices
+        try:
+            os.system(
+                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/infer.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path} {data.state["save_path"]}/points {self.log_dir}')
         except:
             logging.info('Failed')
         self.rollback_configs()
