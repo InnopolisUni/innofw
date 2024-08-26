@@ -1,6 +1,6 @@
 # standard libraries
 import logging
-
+import os
 import yaml
 from pathlib import Path
 from typing import Optional
@@ -146,10 +146,13 @@ class UltralyticsAdapter(BaseModelAdapter):
 
     def train(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
+        name = str(self.log_dir).replace(str(self.log_dir.parents[2]) + os.sep, "")
+        self.opt.update(
+            project="train",
+            name=name,)
 
         if ckpt_path is None:
             self.opt.update(
-                project="something",
                 device=self.device,
                 epochs=self.epochs,
                 imgsz=data.imgsz,
@@ -165,8 +168,8 @@ class UltralyticsAdapter(BaseModelAdapter):
                 )
                 self.opt.update(resume=str(ckpt_path))
                 self.model.train(**self.opt, **self.hyp)
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
         self.update_checkpoints_path()
 
