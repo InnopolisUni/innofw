@@ -178,7 +178,7 @@ class UltralyticsAdapter(BaseModelAdapter):
                 ckpt_path, inplace=False, dst_path=None
             )
 
-            self.model._load(ckpt_path)
+            self.model._load(str(ckpt_path))
 
         params = dict(
             conf=0.25,
@@ -190,6 +190,7 @@ class UltralyticsAdapter(BaseModelAdapter):
             name=str(self.log_dir.name),
         )
         params.update(source=str(data.infer_source))
+        params.update(exist_ok=True)
         self.model.predict(**params)
         self.update_checkpoints_path()
 
