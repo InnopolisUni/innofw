@@ -99,7 +99,7 @@ class AnomalyDetectionImagesLightningModule(BaseLightningModule):
         return {"loss": loss}
 
     def predict_step(self, x, batch_idx, **kwargs):
-        return self.compute_anomaly_mask(x)
+        return (x, self.compute_anomaly_mask(x))
 
     def compute_anomaly_mask(self, x):
         x_rec = self.forward(x)  # (B, C, W, H)

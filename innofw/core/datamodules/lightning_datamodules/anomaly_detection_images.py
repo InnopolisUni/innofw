@@ -84,16 +84,23 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
     def setup_infer(self):
         self.predict_dataset = AnomaliesDataset(self.predict_source, self.get_aug(self.aug, 'test'))
 
-    def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
+    def save_preds(self, out_batches, stage: Stages, dst_path: pathlib.Path):
         out_file_path = dst_path / "results"
         os.mkdir(out_file_path)
         n = 0
-        for preds_batch in preds:
-            for i, pred in enumerate(preds_batch):
+        for batch in out_batches:
+            for img, pred in zip(batch[0], batch[1]):
+                img = img.cpu().numpy()
                 pred = pred.numpy() * 255  # shape - (1024, 1024)
                 if pred.dtype != np.uint8:
                     pred = pred.astype(np.uint8)
                 filename = out_file_path / f"out_{n}.png"
                 n += 1
                 cv2.imwrite(filename, pred)
+                mask_vis = np.zeros_like(img)
+                mask_vis[1, :, :] = pred / 255
+                mask_vis = mask_vis
+                img_with_mask = (img * 255 * 0.75 + mask_vis * 255 * 0.25).astype(np.uint8).transpose((1, 2, 0))
+                img_with_mask = cv2.cvtColor(img_with_mask, cv2.COLOR_BGR2RGB)
+                cv2.imwrite(str(filename).replace('out_', 'vis_'), img_with_mask)
         logging.info(f"Saved result to: {out_file_path}")
