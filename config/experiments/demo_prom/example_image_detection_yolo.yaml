@@ -7,7 +7,6 @@ defaults:
 - override /datasets: detection/detection_rotten_fruits
 device: 0
 epochs: 10
-gpus: 1
 project: rotten_fruits
 random_seed: 43
 task: image-detection
