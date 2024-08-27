@@ -118,7 +118,7 @@ class TorchCheckpointHandler(CheckpointHandler):
     def load_model(self, model, ckpt_path: Path) -> torch.nn.Module:
         """Function returns model with loaded weights"""
         if model is None:
-            return get_state_dict(self.load_ckpt(ckpt_path))
+            return get_state_dict(self.load_ckpt(str(ckpt_path)))
 
         model.load_state_dict(super().load_model(model, ckpt_path))
         return model

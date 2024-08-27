@@ -326,6 +326,7 @@ class YOLOV5Adapter(BaseModelAdapter):
         else:
             params.update(source=Path(data.infer_source) / "images", data=data.data)
 
+        params.update(exist_ok=True)
         self._yolov5_predict.run(**params)
 
         self.update_checkpoints_path()

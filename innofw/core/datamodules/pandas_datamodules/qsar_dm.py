@@ -72,8 +72,12 @@ class QsarDataModule(BasePandasDataModule):
 
         if self.train is None:
             self.train_dataset = self._get_data(train)
+            if isinstance(self.train_dataset, tuple):
+                self.train_dataset = self.train_dataset[0]
         if self.test is None:
             self.test_dataset = self._get_data(test)
+            if isinstance(self.test_dataset, tuple):
+                self.test_dataset = self.test_dataset[0]
         self.setup(stage)
 
     def setup_train_test_val(self):

@@ -4,14 +4,22 @@ from dash import html
 
 from dash.long_callback import DiskcacheLongCallbackManager
 import diskcache
+import os
 
 
-lout = dbc.Container([
-        dbc.Row([dbc.Col([html.H4("Experiment Configurator", style={"height": 40})]),
+
+try:
+    env_key = "UI_TITLE"
+    title = os.environ[env_key]
+except Exception as e:
+    print(f"No ui title, using default")
+    title = "Experiment Configurator"
+
+layout = dbc.Container([
+        dbc.Row([dbc.Col([html.H4(title, style={"height": 40})]),
                  html.Span(className="border-bottom")],
                 style={"margin-top": 10, "margin-bottom": 10, "margin-right": 5}),
         dash.page_container])
-
 
 if __name__ == '__main__':
     cache = diskcache.Cache("./cache")
@@ -28,5 +36,5 @@ if __name__ == '__main__':
                                       "bootstrap.min.js",
                                       "dui.js"])  # initialising dash app
 
-    dash.register_page("inintial", path_template="/", layout=lout)
-    app.run_server()
+    dash.register_page("inintial", path_template="/", layout=layout)
+    app.run_server(host='0.0.0.0')

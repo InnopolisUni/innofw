@@ -1,6 +1,6 @@
 # standard libraries
 import logging
-
+import os
 import yaml
 from pathlib import Path
 from typing import Optional
@@ -146,27 +146,31 @@ class UltralyticsAdapter(BaseModelAdapter):
 
     def train(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
+        name = str(self.log_dir).replace(str(self.log_dir.parents[2]) + os.sep, "")
+        self.opt.update(
+            project="train",
+            name=name,)
 
-        if ckpt_path is None:
-            self.opt.update(
-                project="something",
-                device=self.device,
-                epochs=self.epochs,
-                imgsz=data.imgsz,
-                data=data.data,
-                workers=data.workers,
-                batch=data.batch_size,
-            )
-            self.model.train(**self.opt, **self.hyp)
-        else:
+        if ckpt_path is not None:
             try:
                 ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-                    ckpt_path, inplace=False, dst_path=None
+                    ckpt_path, inplace=False, dst_path=None, set_epoch=0
                 )
                 self.opt.update(resume=str(ckpt_path))
-                self.model.train(**self.opt, **self.hyp)
-            except:
-                pass
+                self.model.ckpt["epoch"] = 0
+                self.model.ckpt_path = ckpt_path
+            except Exception as e:
+                print(e)
+
+        self.opt.update(
+            device=self.device,
+            epochs=self.epochs,
+            imgsz=data.imgsz,
+            data=data.data,
+            workers=data.workers,
+            batch=data.batch_size,
+        )
+        self.model.train(**self.opt, **self.hyp)
 
         self.update_checkpoints_path()
 
@@ -178,7 +182,7 @@ class UltralyticsAdapter(BaseModelAdapter):
                 ckpt_path, inplace=False, dst_path=None
             )
 
-            self.model._load(ckpt_path)
+            self.model._load(str(ckpt_path))
 
         params = dict(
             conf=0.25,
@@ -190,6 +194,7 @@ class UltralyticsAdapter(BaseModelAdapter):
             name=str(self.log_dir.name),
         )
         params.update(source=str(data.infer_source))
+        params.update(exist_ok=True)
         self.model.predict(**params)
         self.update_checkpoints_path()
 

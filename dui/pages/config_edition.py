@@ -93,7 +93,14 @@ def layout(config_name=None):
     config_name = urllib.parse.unquote(config_name)
     exp_path = experiment_configs_path / config_name
 
-    html_components = [dbc.Row([dbc.Col([html.H4("Experiment Configurator", style={"height": 40})]),
+    try:
+        env_key = "UI_TITLE"
+        title = os.environ[env_key]
+    except Exception as e:
+        print(f"No ui title, using default")
+        title = "Experiment Configurator"
+
+    html_components = [dbc.Row([dbc.Col([html.H4(title, style={"height": 40})]),
                                 dbc.Col([html.Div(html.Img(src=dash.get_asset_url('_innofw_.svg'), style={"height": 40, "width": 60}),
                                    className="self-align-right")]),html.Span(className="border-bottom")],style={"margin-top": 10, "margin-bottom": 10, "margin-right": 15}),
                        html.Br(),
@@ -141,7 +148,7 @@ def layout(config_name=None):
                                                     id="parameters")]))
 
     html_components.append(html.Progress(id="progress_id", style={"visibility": "hidden"}))
-
+    html_components.append(html.Div(id='infer-analytics-output'))
 
     html_components.append(dbc.Row([
         dbc.Col(
@@ -261,49 +268,49 @@ def on_strain_btn_button_click(set_progress, n, config_name):
         return out
 
 
-# @app.long_callback(
-#     Output("analytics-output", "children"),
-#     Input("sinfer_btn", "n_clicks"),
-#     Input("config_name", "value"),
-#
-#     progress=[Output("analytics-output", "children")],
-#     prevent_initial_call=True
-# )
-# def on_sinfer_btn_button_click(set_progress, n, config_name):
-#
-#     if n > 0:
-#         run_env = os.environ.copy()
-#         run_env["NO_CLI"] = "True"
-#         run_env["PYTHONPATH"] = ".."
-#
-#         cmd = [sys.executable, "../infer.py", f"experiments={config_name}"]
-#
-#         text_output = []
-#         err_output = []
-#         out = html.Div(id="process_output")
-#
-#         with open("infer.out", "w") as subprocess_out:
-#             with open("infer.err", "w") as subprocess_err:
-#                 with subprocess.Popen(cmd, stdout=subprocess_out, stderr=subprocess_err, env=run_env) as process:
-#                     with open("infer.out", "r") as subprocess_outin:
-#                         with open("infer.err", "r") as subprocess_errin:
-#
-#                             while True:
-#                                 out_text = subprocess_outin.read()
-#                                 out_err = subprocess_errin.read()
-#
-#                                 if out_err:
-#                                     err_output.append(html.P(out_err))
-#
-#                                 if not out_text and process.poll() is None:
-#                                     time.sleep(0.5)
-#                                     continue
-#
-#                                 text_output.append(html.P(out_text))
-#
-#                                 out = dbc.Row(id="process_output", children=[dbc.Col(text_output), dbc.Col(err_output)])
-#                                 set_progress(out)
-#                                 if out_text == '' and process.poll() != None:
-#                                     break
-#         return out
+@app.long_callback(
+    Output("infer-analytics-output", "children"),
+    Input("sinfer_btn", "n_clicks"),
+    Input("config_name", "value"),
+
+    progress=[Output("infer-analytics-output", "children")],
+    prevent_initial_call=True
+)
+def on_sinfer_btn_button_click(set_progress, n, config_name):
+
+    if n > 0:
+        run_env = os.environ.copy()
+        run_env["NO_CLI"] = "True"
+        run_env["PYTHONPATH"] = ".."
+
+        cmd = [sys.executable, "../infer.py", f"experiments={config_name}"]
+
+        text_output = []
+        err_output = []
+        out = html.Div(id="infer_process_output")
+
+        with open("infer.out", "w") as subprocess_out:
+            with open("infer.err", "w") as subprocess_err:
+                with subprocess.Popen(cmd, stdout=subprocess_out, stderr=subprocess_err, env=run_env) as process:
+                    with open("infer.out", "r") as subprocess_outin:
+                        with open("infer.err", "r") as subprocess_errin:
+
+                            while True:
+                                out_text = subprocess_outin.read()
+                                out_err = subprocess_errin.read()
+
+                                if out_err:
+                                    err_output.append(html.P(out_err))
+
+                                if not out_text and process.poll() is None:
+                                    time.sleep(0.5)
+                                    continue
+
+                                text_output.append(html.P(out_text))
+
+                                out = dbc.Row(id="infer_process_output", children=[dbc.Col(text_output), dbc.Col(err_output)])
+                                set_progress(out)
+                                if out_text == '' and process.poll() != None:
+                                    break
+        return out
 
