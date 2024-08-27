@@ -11,6 +11,7 @@ let tooltipDict = {
     "gpus": "Количество видеокарт, которые можно использовать",
     "in_channels": "Количество входных каналов в модель. Например для RGB изображения - 3",
     "devices": "Номера видеокарт, которые можно использовать",
+    "device": "Номера видеокарт, которые можно использовать(YOLO)",
     "learning_rate": "Скорость обучения модели",
 
     "models": "Расширение или изменение параметров модели",
@@ -422,10 +423,17 @@ function onKeyFieldChange(callback) {
             }(keyFields[i]);
         }
 }
-
+function processKeyFieldChange(keyfield){
+    changeSpan(keyfield);
+    addEditionButtonOnOverridePresence(keyfield);
+}
 function changeSpan(keyfield){
-    let tooltiptext = keyfield.parentNode.getElementsByClassName("tooltiptext")[0];
-    tooltiptext.textContent = tooltipDict[keyfield.value];
+    try{
+        let tooltiptext = keyfield.parentNode.getElementsByClassName("tooltiptext")[0];
+        tooltiptext.textContent = tooltipDict[keyfield.value];
+    }catch (e){
+        console.log(e)
+    }
 }
 
 function addEditionButtonOnOverridePresence(keyfield){
@@ -655,8 +663,8 @@ function set_editionpg_callbacks(){
         onDeleteParameterRowClick(deleteParameterRow);
         onAddParameterRowClick(addParameterRow);
         onSaveConfigButtonClick(saveConfig);
-        onKeyFieldChange(addEditionButtonOnOverridePresence);
-        onKeyFieldChange(changeSpan);
+
+        onKeyFieldChange(processKeyFieldChange);
 
         onEditButtonClick(openModalWindowOnEditButtonClick);
         onInputFieldClick();
@@ -677,8 +685,13 @@ function set_editionpg_callbacks(){
 
         let keyfields = document.getElementsByClassName("keyfield");
         for(let k of keyfields){
-            let tooltiptext = k.parentNode.getElementsByClassName("tooltiptext")[0];
-            tooltiptext.textContent = tooltipDict[k.value];
+            try {
+                let tooltiptext = k.parentNode.getElementsByClassName("tooltiptext")[0];
+                tooltiptext.textContent = tooltipDict[k.value];
+            }
+            catch (e){
+                console.log(e)
+            }
         };
 
 

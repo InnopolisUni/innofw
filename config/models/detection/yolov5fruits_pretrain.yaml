@@ -1,0 +1,4 @@
+_target_: ultralytics.YOLO
+description: yolov5 by ultralytics
+model: /home/qazybek/restart/innofw/dui/logs/train/rotten_fruits/example_image_detection_yolo.yaml/20240826-203849/checkpoints/best.pt
+name: yolov5

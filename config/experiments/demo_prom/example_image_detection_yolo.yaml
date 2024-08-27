@@ -1,12 +1,13 @@
 # @package _global_
 accelerator: gpu
 batch_size: 16
-ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/prom/fruits/new_baseline.pt
+ckpt_path: /home/qazybek/restart/innofw/dui/logs/train/rotten_fruits/example_image_detection_yolo.yaml/20240826-203849/checkpoints/best.pt
 defaults:
-- override /models: detection/yolov5
+- override /models: detection/yolov5fruits_pretrain
 - override /datasets: detection/detection_rotten_fruits
-epochs: 100
-gpus: 3
+device: 0
+epochs: 10
+gpus: 1
 project: rotten_fruits
 random_seed: 43
 task: image-detection
