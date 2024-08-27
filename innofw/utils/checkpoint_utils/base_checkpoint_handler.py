@@ -85,9 +85,12 @@ class CheckpointHandler(ABC):
         ckpt_path: Path,
         dst_path: Optional[Path] = None,
         inplace: bool = True,
+        set_epoch: int = -1
     ) -> Path:
         model = self.load_model(None, ckpt_path)
-
+        if set_epoch != -1:
+            if "epoch" in model.keys():
+                model["epoch"] = set_epoch
         if inplace:
             tmp_path = Path(tempfile.mkdtemp()) / ckpt_path.name
             self.save_ckpt(model, tmp_path, None, wrap=False)
