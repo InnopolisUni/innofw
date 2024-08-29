@@ -1,13 +1,11 @@
 FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
 
-ENV UI_TITLE="Фреймворк для Промышленности"
-ENV WANDB_DISABLED="true"
-
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install ffmpeg libsm6 libxext6  -y
-RUN apt-get install curl -y
-RUN pip3 install --upgrade pip
-# works with 1.2.2
+RUN export PYTHONPATH=. && export PATH=$PATH
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install ffmpeg libsm6 libxext6 curl iotop -y \
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN pip3 install --upgrade pip pyopenssl cryptography
 RUN /bin/bash -c 'curl -sSL https://install.python-poetry.org | python - --version 1.3.0'
 
 COPY . /code
@@ -16,13 +14,10 @@ COPY ./config/experiments/demo_prom /code/config/experiments/
 WORKDIR /code
 
 RUN /bin/bash -c '/root/.local/bin/poetry config virtualenvs.create false \
-    && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi'
+    && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi --no-cache'
 
 WORKDIR /code/dui
 
-RUN python3 -m pip install -U pyopenssl cryptography
-RUN apt-get -y install iotop
-RUN export PYTHONPATH=.
-RUN export PATH=$PATH
-
+ENV UI_TITLE="Фреймворк для Промышленности"
+ENV WANDB_DISABLED="true"
 ENTRYPOINT PYTHONUNBUFFERED=1 python3 app.py

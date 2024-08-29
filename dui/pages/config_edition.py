@@ -144,6 +144,8 @@ def layout(config_name=None):
                                             dash.html.Option("accelerator"),
                                             dash.html.Option("gpus"),
                                             dash.html.Option("devices"),
+                                            dash.html.Option("device"),
+                                            dash.html.Option("ckpt_path"),
                                                 ],
                                                     id="parameters")]))
 

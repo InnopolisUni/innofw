@@ -16,7 +16,9 @@ flaskapp = dash.get_app().server
 @flaskapp.route("/save_config", methods = ['GET', 'POST'])
 def layout():
     request_body = request.json
-    with open(configs_path / request_body["config_name"], "w+") as stream:
+    config_name = str(request_body["config_name"])
+    config_name += ".yaml" if not config_name.endswith(".yaml") else ""
+    with open(configs_path / config_name, "w+") as stream:
         try:
             if "experiments/" in str(request_body["config_name"]):
                 s = "# @package _global_\n" + yaml.dump(request_body["html"], allow_unicode=True,
