@@ -46,6 +46,15 @@ unet_cfg_w_target = DictConfig(
     }
 )
 
+unet_anomalies_cfg_w_target = DictConfig(
+    {
+        "name": "convolutional AE",
+        "description": "Base Unet segmentation model with 3 channels input",
+        "_target_": "innofw.core.models.torch.architectures.autoencoders.convolutional_ae.CAE",
+        "anomaly_threshold": 0.3
+    }
+)
+
 # case: SegFormer
 segformer_retaining = DictConfig(
     {

@@ -26,6 +26,8 @@ class AnomaliesDataset(Dataset):
     """
 
     def __init__(self, data_path, augmentations, add_labels=False):
+        if str(data_path).endswith('images'):
+            data_path = data_path.parent
         self.images = list(Path(str(data_path) + '/images').iterdir())
         self.add_labels = add_labels
         self.augmentations = augmentations
