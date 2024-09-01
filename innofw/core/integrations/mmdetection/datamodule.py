@@ -24,6 +24,7 @@ ItemInfo = namedtuple('ItemInfo', ['img_path', 'name'])
 target_maxes = np.array([[136.7853946685791, 135.2938232421875, 45.29965019226074]])
 target_mins = np.array([[-136.7853946685791, -135.2938232421875, -45.29965019226074]])
 
+
 class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
     """
     ...

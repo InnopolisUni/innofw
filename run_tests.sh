@@ -1,4 +1,8 @@
 #!/bin/bash
+python -m pip install -U openmim
+mim install mmengine
+mim install 'mmcv>=2.0.0rc4'
+mim install 'mmdet>=3.0.0'
 export PYTHONPATH=.
 python -m pytest --cov=innofw --cov-report=xml  --junitxml=out_report.xml --cov-fail-under=10 # not percents
 if [ $? -ne 0 ]; then

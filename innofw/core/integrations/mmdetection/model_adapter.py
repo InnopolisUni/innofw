@@ -126,8 +126,8 @@ class Mmdetection3DDataModel(BaseModelAdapter):
 
 
 def setup_mmdetection():
-    logging.info('mmdetection-3d found')
     if os.path.exists('../mmdetection3d'):
+        logging.info('mmdetection-3d found')
         os.environ['MMDET_FOR_INNOFW'] = os.path.join(Path(os.getcwd()).parent, 'mmdetection3d')
     if 'MMDET_FOR_INNOFW' not in os.environ:
         logging.info("Cloning mmdetection-3d")
@@ -137,6 +137,7 @@ def setup_mmdetection():
     logging.info("mmdetection-3d path " + os.environ['MMDET_FOR_INNOFW'])
 
     return os.environ['MMDET_FOR_INNOFW']
+
 
 def map_optimizer_to_mmdet_optim(optim_name):
     return {'adam': 'Adam', 'adamw': 'AdamW', 'sgd': 'SGD'}[optim_name]

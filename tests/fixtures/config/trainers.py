@@ -23,6 +23,9 @@ base_trainer_on_gpu_cfg = DictConfig(
 trainer_cfg_w_gpu_devices_1 = base_trainer_on_gpu_cfg.copy()
 trainer_cfg_w_gpu_devices_1["devices"] = 1
 
+trainer_cfg_w_gpu_devices_0 = base_trainer_on_gpu_cfg.copy()
+trainer_cfg_w_gpu_devices_0["devices"] = 0
+
 # case: accelerator = 'gpu', devices = 2  # uses two gpu devices
 trainer_cfg_w_gpu_devices_2 = base_trainer_on_gpu_cfg.copy()
 trainer_cfg_w_gpu_devices_2["devices"] = 2
