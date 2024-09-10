@@ -6,13 +6,13 @@ defaults:
   - override /augmentations_val: none
   - override /augmentations_test: none
   - override /losses: segmentation_losses.yaml
+  - override /clear_ml: enabled
 models:
   in_channels: 1
 project: "segmentation"
 task: "image-segmentation"
 random_seed: 42
-stop_param: 10
 epochs: 35
 weights_freq: 1
 batch_size: 10
-ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation_unet_brain.pt
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/med/stroke/baseline/unet_fscore94.pt
