@@ -1,0 +1,41 @@
+# @package _global_
+defaults:
+  - override /models: semantic-segmentation/deeplabv3plus.yaml
+  - override /datasets: semantic-segmentation/segmentation_uwmadison
+  - override /optimizers: adam.yaml
+  - override /augmentations_train: ../augmentations/position/random_horizontal_flip.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /callbacks: multiclass_segmentation
+  - override /losses: multiclass_segmentation_losses
+  - override /loggers: wandb
+
+models:
+  in_channels: 1
+  classes: 4
+  encoder_name: resnet34
+
+optimizers:
+  lr: 0.004313519324382217
+
+n_classes: 4
+project: "organs segmentation"
+task: "multiclass-image-segmentation"
+random_seed: 42
+weights_freq: 1
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/segmentation/uw_madison_deeplabv3plus.pickle
+
+# When tuning from the checkpoint, the number of epochs has to be set to at least
+#  the № of epoch on which the checkpoint was created + 1 (in this case, 39 + 1 = 40 would be a lower bound)
+epochs: 50
+batch_size: 128
+accelerator: gpu
+devices: 1
+override hydra/job_logging: stdout
+
+wandb:
+  enable: True
+  project: uw_madison
+  entity: "k-galliamov"
+  job_type: training
+

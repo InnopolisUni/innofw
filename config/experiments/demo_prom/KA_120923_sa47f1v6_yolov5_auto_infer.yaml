@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection/auto
+  - override /optimizers: sgd
+
+project: "auto"
+task: "image-detection"
+random_seed: 42
+epochs: 2
+batch_size: 2
+weights_freq: 1

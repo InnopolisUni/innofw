@@ -1,0 +1,12 @@
+# @package _global_
+batch_size: 32
+defaults:
+- override /models: detection/yolov5
+- override /datasets: detection_lep
+- override /optimizers: sgd
+
+epochs: 500
+project: lep
+random_seed: 42
+task: image-detection
+weights_freq: 1
