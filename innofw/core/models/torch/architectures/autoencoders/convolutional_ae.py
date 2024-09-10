@@ -6,7 +6,7 @@ from segmentation_models_pytorch import Unet
 class CAE(nn.Module):
     def __init__(self, anomaly_threshold, input_channels=3):
         super(CAE, self).__init__()
-        self.model = Unet(classes=input_channels, activation=None)
+        self.model = Unet(classes=input_channels, activation='sigmoid')
         self.anomaly_threshold = anomaly_threshold
 
     def forward(self, x):

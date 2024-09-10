@@ -12,7 +12,7 @@ defaults:
 project: "anomaly-detection-mvtec"
 task: "anomaly-detection-images"
 random_seed: 0
-epochs: 3
+epochs: 50
 batch_size: 8
 accelerator: gpu
 
