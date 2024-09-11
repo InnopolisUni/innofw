@@ -72,7 +72,7 @@ def layout():
                 selected_rows=[],
                 page_action="native",
                 page_current=0,
-                page_size=10,
+                page_size=20,
                 style_header={'backgroundColor': 'white',
                               'fontWeight': 'bold',
                               'textAlign': 'left'

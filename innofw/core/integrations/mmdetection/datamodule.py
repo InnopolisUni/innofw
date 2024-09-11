@@ -1,3 +1,6 @@
+from pckg_util import install_mmcv
+install_mmcv()
+
 # standard libraries
 import json
 import os
@@ -19,6 +22,7 @@ import logging
 # local modules
 from innofw.constants import Frameworks, Stages
 from innofw.core.datamodules.base import BaseDataModule
+
 
 ItemInfo = namedtuple('ItemInfo', ['img_path', 'name'])
 target_maxes = np.array([[136.7853946685791, 135.2938232421875, 45.29965019226074]])
