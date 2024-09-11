@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: clustering/kmeans
+  - override /datasets: clustering/clustering_credit_cards
+  - override /callbacks: clustering
+
+
+project: "credit_cards"
+task: "table-clustering"
+random_seed: 42

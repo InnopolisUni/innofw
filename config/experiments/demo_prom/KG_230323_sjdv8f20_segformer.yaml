@@ -1,18 +1,26 @@
 # @package _global_
 defaults:
-  - override /models: semantic-segmentation/unet
+  - override /models: semantic-segmentation/segformer_for_segmentation.yaml
   - override /datasets: semantic-segmentation/segmentation_brain.yaml
   - override /augmentations_train: none
+  - override /optimizers: adam.yaml
   - override /augmentations_val: none
   - override /augmentations_test: none
   - override /losses: segmentation_losses.yaml
-  - override /clear_ml: enabled
+  - override /callbacks: segmentation
+
+
 models:
-  in_channels: 1
+  num_channels: 1
+  num_labels: 1
+  retain_dim: True
 project: "segmentation"
 task: "image-segmentation"
 random_seed: 42
-epochs: 35
+stop_param: 3
+epochs: 3
 weights_freq: 1
-batch_size: 10
-ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/med/stroke/baseline/unet_fscore94.pt
+batch_size: 8
+accelerator: cpu # gpu
+#override hydra/job_logging: stdout
+

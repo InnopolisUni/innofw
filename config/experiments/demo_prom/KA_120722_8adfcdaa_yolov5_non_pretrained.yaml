@@ -1,0 +1,13 @@
+# @package _global_
+batch_size: 2
+ckpt_path: /home/qazybek/pmi_tatneft/innofw/dui/logs/something/20240122-082640/weights/best.pt
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection_lep
+  - override /initializations: random
+
+project: "lep"
+task: "image-detection"
+
+random_seed: 42
+weights_freq: 1

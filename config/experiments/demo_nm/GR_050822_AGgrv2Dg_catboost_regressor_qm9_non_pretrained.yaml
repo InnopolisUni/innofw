@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - override /initializations: random
+  - override /models: regression/catboost_regression
+  - override /datasets: qm9_2
+  - override /callbacks: regression
+  
+
+
+project: "qm9"
+task: "qsar-regression"
+random_seed: 42
+
+# ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/catboost_regression_qm9.pickle
+
+
+models:
+    learning_rate: 0.1
