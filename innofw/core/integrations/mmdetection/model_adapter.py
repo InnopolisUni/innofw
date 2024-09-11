@@ -99,7 +99,7 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         logging.info('Training')
         devices = [] if self.device == 'cpu' else self.devices
         os.system(
-            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/train.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
+            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/train.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py --work-dir={self.log_dir}')
         self.rollback_configs()
 
     def test(self, data, ckpt_path=None, flags=''):

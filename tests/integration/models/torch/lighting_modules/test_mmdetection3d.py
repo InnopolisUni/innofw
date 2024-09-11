@@ -1,3 +1,4 @@
+import os
 import shutil
 
 from omegaconf import DictConfig
@@ -23,6 +24,7 @@ def test_integration():
     assert datamodule.save_preds(None, Stages.test, '') is None
 
     optimizer_cfg = DictConfig(fixt_optimizers.adam_optim_w_target)
+    os.makedirs('./tmp/logs')
     model = Mmdetection3DDataModel(BaseMmdetModel(), './tmp/logs',
                                    fixt_trainers.trainer_cfg_w_gpu_devices_0,
                                    optimizers_cfg=optimizer_cfg)
