@@ -75,3 +75,13 @@ def check_gpu_and_torch_compatibility():
                 )
     except OSError:
         logging.info("GPU device is not available")
+
+
+def install_mmcv():
+    import torch
+    torch_version = str(torch.__version__)[:4]
+    cuda_version = str(torch.version.cuda).replace(".", "")
+    install_and_import("mmcv",
+                       version="2.1.0",
+                       params="-f",
+                       link=f"https://download.openmmlab.com/mmcv/dist/cu{cuda_version}/torch{torch_version}/index.html")

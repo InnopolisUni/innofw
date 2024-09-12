@@ -19,6 +19,7 @@ class Frameworks(Enum):
     xgboost = "xgboost"
     catboost = "catboost"
     ultralytics = "ultralytics"
+    mmdetection = "mmdetection"
     none = "none"
 
 PathLike = TypeVar(

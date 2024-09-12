@@ -1,0 +1,27 @@
+task:
+  - 3d-detection
+
+name: lep_3d
+description: Набор данных содержит видео облетов c бпла над территорией линии электропередач
+
+markup_info: Набор данных содержит разметку bounding box, под формат детекции столбов ЛЭП.
+date_time: 10.06.2024
+
+_target_: innofw.core.integrations.mmdetection.datamodule.Mmdetection3DDataModuleAdapter
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/train.zip
+  target: ./data/lep3d
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/test.zip
+  target: ./data/lep3d
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/test.zip
+  target: ./data/lep3d
+
+num_workers: 8
+
+val_size: 0.2
+num_classes: 4

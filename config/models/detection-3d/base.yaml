@@ -1,0 +1,3 @@
+_target_: innofw.core.integrations.mmdetection.model_adapter.BaseMmdetModel
+description: "base model for 3D point cloud detection"
+name: "Base 3D model"
