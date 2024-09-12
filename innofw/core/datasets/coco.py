@@ -1,9 +1,12 @@
 import os
+import json
 from pathlib import Path
 
 import cv2
 import numpy as np
 import torch
+import pydicom
+from gitdb.util import basename
 from torch.utils.data import Dataset
 
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
@@ -221,3 +224,155 @@ class WheatDataset(Dataset):
                     "Submission is not well formatted. empty boxes will be returned"
                 )
                 return np.zeros((0, 4))
+
+class DicomCocoDataset_sm(Dataset):
+    def __init__(self, *args, **kwargs):
+        """
+        Args:
+            data_dir (str): Путь к директории с DICOM файлами и COCO аннотациями.
+            transform (callable, optional): Трансформации, применяемые к изображениям и маскам.
+        """
+        data_dir = kwargs["data_dir"]
+        assert os.path.isdir(data_dir), f"Invalid path {data_dir}"
+        self.transform = kwargs.get("transform", None)
+
+        # Поиск COCO аннотаций в директории
+        self.dicom_paths = []
+
+        coco_path = None
+
+        for root, _, files in os.walk(data_dir):
+
+            for file in files:
+                basename = os.path.basename(file)
+                filename, ext = os.path.splitext(basename)
+                if ext == ".json":
+                    coco_path = os.path.join(data_dir, root, file)
+                elif ext in ["",  ".dcm"]:
+                    dicom_path = os.path.join(data_dir, root, file)
+                    self.dicom_paths += [dicom_path]
+        if not coco_path:
+            raise FileNotFoundError('COCO аннотации не найдены в директории.')
+
+        # Загрузка COCO аннотаций
+        with open(coco_path, 'r') as f:
+            self.coco = json.load(f)
+        self.categories = self.coco['categories']
+        self.images = self.coco['images']
+        self.annotations = self.coco['annotations']
+        self.image_id_to_annotations = {image['id']: [] for image in self.images}
+        for ann in self.annotations:
+            self.image_id_to_annotations[ann['image_id']].append(ann)
+
+        self.num_classes = len(self.categories)
+
+        if len(self.images) != len(self.dicom_paths):
+            new_images = []
+            for img in self.images:
+                for dicom_path in self.dicom_paths:
+                    if dicom_path.endswith(img["file_name"]):
+                            new_images += [img]
+            self.images = new_images
+
+        import re
+
+        def extract_digits(s):
+            out = re.findall(r'\d+', s)
+            out = "".join(out)
+            return int(out)
+
+        self.images.sort(key = lambda x : extract_digits(x["file_name"]))
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        image_info = self.images[idx]
+        for dicom_path in self.dicom_paths:
+            if dicom_path.endswith(image_info["file_name"]):
+                break
+        else:
+            raise FileNotFoundError('Dicom не найден.')
+        dicom = pydicom.dcmread(dicom_path)
+        image, dicom_image = preprocess_dicom(dicom)
+        # dicom_image = dicom.pixel_array
+        # dicom_image = dicom_image[..., np.newaxis]
+        # from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import apply_window_level
+        #
+        # image = apply_window_level(dicom_image)
+        #
+        # # Создание маски
+        anns = self.image_id_to_annotations[image_info['id']]
+        mask = np.zeros(( self.num_classes, image_info['height'], image_info['width']), dtype=np.uint8)
+        for ann in anns:
+            segmentation = ann['segmentation']
+            category_id = ann['category_id'] - 1  # Приведение category_id к индексу слоя
+            if isinstance(segmentation, list):  # полигональная аннотация
+                for polygon in segmentation:
+                    poly_mask = self._polygon_to_mask(polygon, image_info['height'], image_info['width'])
+                    mask[ category_id , :, :][poly_mask > 0] = 1
+
+        # # Применение трансформаций
+        # if self.transform:
+        #     transformed = self.transform(image=image, mask=mask)
+        #     image = transformed['image']
+        #     mask = transformed['mask']
+        #
+        # print(self.transform)
+        # from torch import Tensor
+        #
+        # if type(image) == Tensor:
+        #     image = image / 255
+        # if dicom_image.dtype == np.uint16:
+        #     dicom_image = []
+        #
+        image = torch.squeeze(image, 0).float()
+
+        return {"image": image, "mask": mask, "path": dicom_path, "raw_image": dicom_image}
+
+    @staticmethod
+    def _polygon_to_mask(polygon, height, width):
+        mask = np.zeros((height, width), dtype=np.uint8)
+        polygon = np.array(polygon).reshape(-1, 2)
+        rr, cc = polygon[:, 1].astype(int), polygon[:, 0].astype(int)
+        mask[rr, cc] = 1
+        return mask
+
+
+    def setup_infer(self):
+        pass
+
+    def infer_dataloader(self):
+        return self
+
+    def predict_dataloader(self):
+        return self
+
+
+from pydicom.pixel_data_handlers.util import apply_modality_lut
+from pydicom.pixel_data_handlers.util import apply_voi_lut
+
+def preprocess_dicom(dicom):
+    """Препроцессинг дайкомов."""
+    try:
+        img = apply_modality_lut(
+            apply_voi_lut(dicom.pixel_array, dicom), dicom
+        )
+    except IndexError:
+        img = apply_modality_lut(dicom.pixel_array, dicom)
+
+    image = torch.unsqueeze(torch.tensor(img), 0)
+    import torchvision
+    resize = (256,256)
+    image = torchvision.transforms.functional.resize(image, resize)
+    image = (image - image.min()) / (image.max() - image.min() + 0.00000001)
+    image = image.double()
+
+    draw_image = image.cpu().detach().numpy().copy()[0]
+    draw_image *= 255
+    draw_image = draw_image.astype(np.uint8)
+    draw_image = cv2.cvtColor(draw_image, cv2.COLOR_GRAY2RGB)
+
+    image = torch.unsqueeze(image, 0)
+
+    return image, draw_image

@@ -204,7 +204,6 @@ def run_pipeline(
 
     ckpt_path = get_ckpt_path(cfg)
     logging.info(f"Using checkpoint: {ckpt_path}")
-    from IPython import embed; embed()
     for stage in stages:
         result = stage_to_func[stage](datamodule, ckpt_path=ckpt_path)
 

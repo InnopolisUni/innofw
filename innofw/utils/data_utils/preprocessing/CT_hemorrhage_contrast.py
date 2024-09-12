@@ -1,15 +1,40 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+from pathlib import Path
+import logging
+import os
 
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import PIL
 import cv2
 import numpy as np
 import pydicom
+import matplotlib.pyplot as plt
 
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_raster
 
-DEFAULT_PATH = "/home/ainur/git/innofw/data/stroke/infer/images/1.dcm"
-DEFAULT_PATH = "/home/ainur/data/rtk/images/1.2.392.200036.9116.2.6.1.48.1214245753.1506921568.925536/001.dcm"
+# DEFAULT_PATH = "/home/ainur/data/dicom/ainur_sct_json/1.2.643.5.1.13.13.12.2.77.8252.14110807150508020609090907121401/"
+DEFAULT_PATH = None
+
+
+def output_path(default_input_path: str):
+    print("INPUT:", default_input_path)
+    default_input_path = str(default_input_path)  # in case of path-objects
+    if os.path.exists(default_input_path):
+        # assert os.path.isdir(default_input_path), "there should be a dir to a collection of DICOM"
+        if default_input_path.endswith("/"):
+            default_input_path = default_input_path[:-1]
+        *parts, last_part = default_input_path.split(os.path.sep)
+        new_path_parts = parts + [last_part + "_output"]
+        default_output_path = os.path.join(*new_path_parts)
+        os.makedirs(default_output_path, exist_ok=True)
+    else:
+        ValueError("no such path")
+    default_output_path = None
+    return default_output_path
+
+# OUTPUT_PATH = output_path(DEFAULT_PATH)yy
+OUTPUT_PATH = None
+
 
 
 def get_first_of_dicom_field_as_int(x):
@@ -57,6 +82,20 @@ def normalize_minmax(img):
     return (img - mi) / (ma - mi)
 
 
+def apply_window_level(image, window_width=350, window_level=40):
+    min_intensity = window_level - (window_width / 2)
+    max_intensity = window_level + (window_width / 2)
+
+    # Clip the image based on the window range
+    image = np.clip(image, min_intensity, max_intensity)
+
+    # Normalize the image to range [0, 255]
+    image = ((image - min_intensity) / (max_intensity - min_intensity) * 255).astype(
+        np.uint8
+    )
+    return image
+
+
 def prepare_image(img_dicom):
     img_id = get_id(img_dicom)
     metadata = get_metadata_from_dicom(img_dicom)
@@ -66,14 +105,89 @@ def prepare_image(img_dicom):
     return img_id, img
 
 
-def processing(input_path, output):
-    dicom_instance = pydicom.dcmread(input_path)
-    id_dcm, windowed = prepare_image(dicom_instance)
-    windowed = np.array(windowed)
-    windowed = dicom_to_raster(dicom_instance)
-    if output is None:
-        output = input_path[:-4] + id_dcm + ".png"
-    cv2.imwrite(output, windowed)
+def overlay_mask_on_image(image, mask, alpha=0.5):
+    """
+    Наложение маски на изображение с цветовой кодировкой для каждого класса.
+
+    Args:
+        image (np.array): Исходное изображение.
+        mask (np.array): Маска в формате (H, W, D), где D - количество классов.
+        alpha (float): Прозрачность маски.
+
+    Returns:
+        np.array: Изображение с наложенной маской.
+    """
+    # if len(image.shape) == 2 or image.shape[2] == 1:
+    #     image = np.stack([image] * 3, axis=-1)
+    # Определение цвета для каждого класса
+    colors = plt.get_cmap("tab10", mask.shape[-1])
+
+    # Создание пустого цветного изображения
+    colored_mask = np.zeros((*mask.shape[:2], 3), dtype=np.uint8)
+
+    # Наложение маски для каждого класса
+    for i in range(mask.shape[-1]):
+        colored_mask[mask[:, :, i] == 1] = np.array(colors(i)[:3]) * 255
+
+    # Наложение маски на изображение
+    overlayed_image = image.copy()
+    if (
+        image.max() <= 1.0
+    ):  # Преобразование изображения в диапазон [0, 255], если оно в диапазоне [0, 1]
+        overlayed_image = (overlayed_image * 255).astype(np.uint8)
+
+    overlayed_image = (1 - alpha) * overlayed_image + alpha * colored_mask
+    overlayed_image = overlayed_image.astype(np.uint8)
+
+    return overlayed_image
+
+
+def processing(input_path, output_folder=OUTPUT_PATH):
+    from innofw.core.datasets.coco import DicomCocoDataset_sm
+    from tqdm import tqdm
+    import cv2
+
+    dataset = DicomCocoDataset_sm(data_dir=input_path)
+    for x in (pbar := tqdm(dataset)):
+        path = x["path"]
+        mask = x["mask"]
+        image = x["image"]
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
+        os.makedirs(output_folder, exist_ok=True)
+        basename = Path(path).stem
+        contrasted_img = apply_window_level(image)
+        contrasted_image = overlay_mask_on_image(contrasted_img, mask)
+        output_path = os.path.join(output_folder, basename + ".png")
+        f, ax = plt.subplots(1, 2)
+
+        ax[0].imshow(image, cmap="Greys_r")
+        ax[1].imshow(contrasted_image)
+        plt.show()
+
+        if cv2.imwrite(output_path, contrasted_image):
+            pbar.set_description(f"saved as {output_path}")
+        else:
+            pbar.set_description(f"wrong path {output_path}")
+
+
+def other_methods_to_do_this(path, use_innofw=True):
+    """contrasted to apply_window_level
+
+    Args:
+        path:
+        use_innofw:
+
+    Returns:
+
+    """
+    dicom_instance = pydicom.dcmread(path)
+    if not use_innofw:
+        id_dcm, windowed = prepare_image(dicom_instance)
+        windowed = np.array(windowed)
+    else:
+        windowed = dicom_to_raster(dicom_instance)
+    return windowed
 
 
 def callback(arguments):
@@ -93,7 +207,7 @@ def setup_parser(parser):
     parser.add_argument(
         "-o",
         "--output",
-        default=None,
+        default=OUTPUT_PATH,
         help="path to dataset to save",
     )
 

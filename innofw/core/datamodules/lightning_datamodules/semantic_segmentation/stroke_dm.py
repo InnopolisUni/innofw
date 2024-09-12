@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import pathlib
@@ -6,6 +7,7 @@ from pathlib import Path
 
 import cv2
 import torch
+from torch.utils.data import Dataset
 from torchvision.utils import save_image
 
 from innofw.constants import Frameworks
@@ -276,7 +278,6 @@ class DicomDirSegmentationLightningDataModule(
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         dicoms = []
         sc_names = []
-        from IPython import embed; embed()
         shutil.rmtree(os.path.join(self.dicoms, "png"), ignore_errors=True)
         for i in os.listdir(self.dicoms):
             if i.endswith(".dcm"):
@@ -309,4 +310,3 @@ class DicomDirSegmentationLightningDataModule(
                 os.path.join(png_path, dicom.replace("dcm", "png")),
             )
         self.predict_dataset = self.dataset(png_path, self.aug, True)
-        from IPython import embed; embed()
