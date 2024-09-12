@@ -1,0 +1,3 @@
+defaults:
+    - /augmentations/postprocessing:
+        - to_tensor
