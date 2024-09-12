@@ -63,13 +63,13 @@ def check_gpu_and_torch_compatibility():
             if "NVIDIA A100" in output:
                 install_and_import(
                     "torch",
-                    "1.12.0+cu113",
+                    "1.11.0+cu113",
                     "-f",
                     "https://download.pytorch.org/whl/torch_stable.html",
                 )
                 install_and_import(
                     "torchvision",
-                    "0.13.0+cu113",
+                    "0.12.0+cu113",
                     "-f",
                     "https://download.pytorch.org/whl/torch_stable.html",
                 )
