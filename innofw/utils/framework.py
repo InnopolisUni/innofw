@@ -31,18 +31,18 @@ def map_model_to_framework(model):
 
     if isinstance(model, xgboost.XGBModel):
         return Frameworks.xgboost
-    elif isinstance(model, torch.nn.Module):
-        return Frameworks.torch
-    elif isinstance(model, sklearn.base.BaseEstimator):
-        return Frameworks.sklearn
-    elif isinstance(model, BaseIntegrationModel):
-        return model.framework
-    elif isinstance(model, catboost.CatBoost):
-        return Frameworks.catboost
     elif isinstance(model, YOLO):
         return Frameworks.ultralytics
     elif isinstance(model, BaseMmdetModel):
         return Frameworks.mmdetection
+    elif isinstance(model, sklearn.base.BaseEstimator):
+        return Frameworks.sklearn
+    elif isinstance(model, BaseIntegrationModel):
+        return model.framework
+    elif isinstance(model, torch.nn.Module):
+        return Frameworks.torch
+    elif isinstance(model, catboost.CatBoost):
+        return Frameworks.catboost
     else:
         raise NotImplementedError(f"Framework is not supported. {model}")
 

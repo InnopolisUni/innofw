@@ -5,11 +5,6 @@ description = ""
 authors = ["Kazybek Askarbek <k.askarbek@innopolis.university>"]
 
 [[tool.poetry.source]]
-name = "openmmlab"
-url = "https://download.openmmlab.com/mmcv/dist/cu113/torch1.12/index.html"
-priority = "supplemental"
-
-[[tool.poetry.source]]
 name = "cudatorch"
 url = "https://download.pytorch.org/whl/cu113"
 priority = "supplemental"
@@ -46,7 +41,7 @@ transformers = "^4.21.2"
 datasets = "^2.4.0"
 onvif-zeep = "^0.2.12"
 fire = "^0.4.0"
-yolov5 = "^7.0.7"
+yolov5 = "7.0.7"
 streamlit-pydantic = "^0.5.0"
 selfies = "^2.1.1"
 setuptools = "^65.4.1"
@@ -55,7 +50,7 @@ lovely-tensors = "^0.1.14"
 lovely-numpy = "^0.2.8"
 wandb = "^0.13.9"
 aeronet = "^0.0.18"
-ultralytics = "^8.0.124"
+ultralytics = "8.0.124"
 clearml = "^1.13.0"
 dash-bootstrap-components = "^1.4.1"
 dash-core-components = "^2.0.0"
@@ -71,7 +66,6 @@ open3d = "^0.18.0"
 mmengine = "^0.10.4"
 numba = "^0.58.0"
 mmdet3d = "^1.4.0"
-mmcv = {version = "2.1.0", source = "openmmlab"}
 mmdet = {git = "https://github.com/BarzaH/mmdetection"}
 
 [tool.poetry.dev-dependencies]
