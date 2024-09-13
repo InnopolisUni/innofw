@@ -4207,7 +4207,7 @@ tracking = ["mmpretrain", "motmetrics", "numpy (<1.24.0)", "scikit-learn", "seab
 type = "git"
 url = "https://github.com/BarzaH/mmdetection"
 reference = "HEAD"
-resolved_reference = "490e3d13e42393e89d02cf2e7e9c8ee0c87e3167"
+resolved_reference = "4f2d746f4460e3cb41d2df4a52e9b38b20e9d3d8"
 
 [[package]]
 name = "mmdet3d"
