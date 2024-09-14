@@ -18,11 +18,13 @@ python-dotenv = "^0.20.0"
 torch = {version = "1.11.0", source = "cudatorch"}
 torchvision = {version = "0.12.0", source = "cudatorch"}
 
+numpy = "1.21.1"
+pillow = "9.1.0"
 
 tqdm = "^4.64.0"
 h5py = "^3.7.0"
 streamlit = "^1.10.0"
-albumentations = "^1.1.0"
+albumentations = "1.1.0"
 pytorch-lightning = "1.8.0"
 xgboost = "^1.6.1"
 hydra-core = "^1.2.0"
