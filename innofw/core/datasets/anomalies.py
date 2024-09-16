@@ -38,8 +38,8 @@ class AnomaliesDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        imagePath = self.images[idx]
-        image = cv2.imread(str(imagePath))
+        image_path = self.images[idx]
+        image = cv2.imread(str(image_path))
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = torch.from_numpy(image).float()
         image = torch.div(image, 255)
