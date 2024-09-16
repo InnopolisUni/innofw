@@ -20,6 +20,7 @@ from innofw.constants import DefaultFolders
 from innofw.core.datamodules.lightning_datamodules.concatenated_datamodule import (
     ConcatenatedLightningDatamodule,
 )
+from innofw.core.integrations.mmdetection.model_adapter import BaseMmdetModel
 
 
 def map_model_to_framework(model):
@@ -30,16 +31,18 @@ def map_model_to_framework(model):
 
     if isinstance(model, xgboost.XGBModel):
         return Frameworks.xgboost
-    elif isinstance(model, torch.nn.Module):
-        return Frameworks.torch
+    elif isinstance(model, YOLO):
+        return Frameworks.ultralytics
+    elif isinstance(model, BaseMmdetModel):
+        return Frameworks.mmdetection
     elif isinstance(model, sklearn.base.BaseEstimator):
         return Frameworks.sklearn
     elif isinstance(model, BaseIntegrationModel):
         return model.framework
+    elif isinstance(model, torch.nn.Module):
+        return Frameworks.torch
     elif isinstance(model, catboost.CatBoost):
         return Frameworks.catboost
-    elif isinstance(model, YOLO):
-        return Frameworks.ultralytics
     else:
         raise NotImplementedError(f"Framework is not supported. {model}")
 
@@ -197,7 +200,7 @@ def get_optimizer(
 
         # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = (
-            framework is Frameworks.torch or framework is Frameworks.ultralytics
+            framework is Frameworks.torch or framework is Frameworks.ultralytics or framework is Frameworks.mmdetection
         )
         if framework_consistent:
             items = dict()

@@ -1,3 +1,5 @@
+import os
+
 from omegaconf import DictConfig
 
 from ..base_adapter import BaseAdapter
@@ -28,6 +30,11 @@ def get_device(trainer_cfg):
                 devices = ",".join(map(str, range(n_devices)))
 
                 result = f"{devices}"
+    try:
+        if int(result) < 2:
+            return ""
+    except:
+        pass
 
     return result
 

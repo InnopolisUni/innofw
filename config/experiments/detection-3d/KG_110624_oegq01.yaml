@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - override /models: detection-3d/base
+  - override /datasets: detection-3d/lep_3d_dataset
+  - override /optimizers: adam
+
+project: "lep_3d_det"
+task: "3d-detection"
+random_seed: 42
+epochs: 10
+batch_size: 2
+weights_freq: 1
+accelerator: gpu
+devices: 0
