@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - override /models: anomaly-detection/cae
+  - override /datasets: anomaly_detection_images
+  - override /optimizers: adam
+  - override /augmentations_train: none
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: mse
+
+
+project: "anomaly-detection-mvtec"
+task: "anomaly-detection-images"
+random_seed: 0
+epochs: 50
+batch_size: 8
+accelerator: gpu
+
+wandb:
+  enable: True
+  project: anomaly_detect_mvtec
+  entity: "k-galliamov"
+  group: none
+  job_type: training

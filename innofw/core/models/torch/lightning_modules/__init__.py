@@ -1,6 +1,7 @@
 from .anomaly_detection_timeseries import (
     AnomalyDetectionTimeSeriesLightningModule,
 )
+from .anomaly_detection_images import AnomalyDetectionImagesLightningModule
 from .biobert_ner_model import BiobertNERModel
 from .chemistry_vae import ChemistryVAEForwardLightningModule
 from .chemistry_vae import ChemistryVAELightningModule
