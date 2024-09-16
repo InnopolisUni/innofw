@@ -405,6 +405,33 @@ anomaly_detection_timeseries_datamodule_cfg_w_target = DictConfig(
 
 )
 
+anomaly_detection_images_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["anomaly-detection-images"],
+        "name": "MVTEC",
+        "description": """The MVTec anomaly detection dataset (MVTec AD)
+https://www.mvtec.com/company/research/datasets/mvtec-ad
+DOI: 10.1007/s11263-020-01400-4
+DOI: 10.1109/CVPR.2019.00982
+https://www:mvtec:com/company/research/datasets/mvtec-a""",
+        "markup_info": "Train images do not contain anomalies",
+        "date_time": "20.07.2024",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.anomaly_detection_images.ImageAnomaliesLightningDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/train.zip",
+            "target": "./tmp/MVTEC/train",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/test.zip",
+            "target": "./tmp/MVTEC/test",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/test.zip",
+            "target": "./tmp/MVTEC/infer",
+        },
+    }
+)
+
 pngstroke_segmentation_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["image_segmentation"],

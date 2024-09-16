@@ -141,3 +141,22 @@ l1_loss_w_target = DictConfig(
         }
     }
 )
+
+
+mse_loss_w_target = DictConfig(
+    {
+        "name": "MSE",
+        "description": "Mean squared error measures the average of the squares of the errors",
+        "task": ["regression", "anomaly-detection-images"],
+        "implementations": {
+            "torch": {
+                "mse": {
+                    "weight": 1,
+                    "object": {
+                        "_target_": "torch.nn.MSELoss"
+                    }
+                }
+            }
+        }
+    }
+)
