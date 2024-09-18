@@ -12,8 +12,6 @@ import matplotlib.pyplot as plt
 
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_raster
 
-# DEFAULT_PATH = "/home/ainur/data/dicom/ainur_sct_json/1.2.643.5.1.13.13.12.2.77.8252.14110807150508020609090907121401/"
-DEFAULT_PATH = None
 
 
 def output_path(default_input_path: str):
@@ -32,7 +30,6 @@ def output_path(default_input_path: str):
     default_output_path = None
     return default_output_path
 
-# OUTPUT_PATH = output_path(DEFAULT_PATH)yy
 OUTPUT_PATH = None
 
 
@@ -107,39 +104,43 @@ def prepare_image(img_dicom):
 
 def overlay_mask_on_image(image, mask, alpha=0.5):
     """
-    Наложение маски на изображение с цветовой кодировкой для каждого класса.
+    Наложение маски на изображение с цветовой кодировкой для каждого класса без изменения оригинальных цветов изображения.
 
     Args:
-        image (np.array): Исходное изображение.
-        mask (np.array): Маска в формате (H, W, D), где D - количество классов.
+        image (np.array): Исходное изображение (HxWxC).
+        mask (np.array): Маска в формате (D, H, W), где D - количество классов.
         alpha (float): Прозрачность маски.
 
     Returns:
         np.array: Изображение с наложенной маской.
     """
-    # if len(image.shape) == 2 or image.shape[2] == 1:
-    #     image = np.stack([image] * 3, axis=-1)
-    # Определение цвета для каждого класса
-    colors = plt.get_cmap("tab10", mask.shape[-1])
+    # Определение цветов для каждого класса
+    # colors = plt.cm.get_cmap('tab10', mask.shape[-1])  # Используем цветовую карту с 10 цветами
+    color = np.array([255, 0, 0])
 
-    # Создание пустого цветного изображения
-    colored_mask = np.zeros((*mask.shape[:2], 3), dtype=np.uint8)
+    # Преобразование одноцветного изображения в RGB
+    if len(image.shape) == 2 or image.shape[2] == 1:
+        image = np.stack([image] * 3, axis=-1)
+
+    # Создание цветной маски
+    colored_mask = np.any(mask > 0, axis=0)
+    shape_to = image.shape[:2]
+    colored_mask = cv2.resize(colored_mask.astype(np.uint8), shape_to, interpolation=cv2.INTER_NEAREST)
+    # colored_mask = np.zeros_like(image, dtype=np.uint8)
 
     # Наложение маски для каждого класса
-    for i in range(mask.shape[-1]):
-        colored_mask[mask[:, :, i] == 1] = np.array(colors(i)[:3]) * 255
-
-    # Наложение маски на изображение
+    # for i in range(mask.shape[-1]):
+    #     # color = np.array(colors(i)[:3]) * 255  # Выбор цвета для класса
+    #     class_mask = mask[:, :, i] > 0  # Логическая маска для текущего класса
     overlayed_image = image.copy()
-    if (
-        image.max() <= 1.0
-    ):  # Преобразование изображения в диапазон [0, 255], если оно в диапазоне [0, 1]
-        overlayed_image = (overlayed_image * 255).astype(np.uint8)
+    overlayed_image[colored_mask.astype(bool)] = color  # Применение цвета только на маске
 
-    overlayed_image = (1 - alpha) * overlayed_image + alpha * colored_mask
-    overlayed_image = overlayed_image.astype(np.uint8)
+    # Оставляем исходное изображение и добавляем цветную маску поверх с коэффициентом прозрачности
+    # mask_indices = colored_mask.sum(axis=-1) > 0  # Определяем, где находится маска
+    # overlayed_image[mask_indices] = image[mask_indices] + alpha * colored_mask[mask_indices]
 
     return overlayed_image
+
 
 
 def processing(input_path, output_folder=OUTPUT_PATH):
@@ -151,24 +152,23 @@ def processing(input_path, output_folder=OUTPUT_PATH):
     for x in (pbar := tqdm(dataset)):
         path = x["path"]
         mask = x["mask"]
-        image = x["image"]
-        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        image = x["raw_image"]
 
-        os.makedirs(output_folder, exist_ok=True)
+        # os.makedirs(output_folder, exist_ok=True)
         basename = Path(path).stem
         contrasted_img = apply_window_level(image)
         contrasted_image = overlay_mask_on_image(contrasted_img, mask)
-        output_path = os.path.join(output_folder, basename + ".png")
+        # output_path = os.path.join(output_folder, basename + ".png")
         f, ax = plt.subplots(1, 2)
 
-        ax[0].imshow(image, cmap="Greys_r")
+        ax[0].imshow(image)
         ax[1].imshow(contrasted_image)
         plt.show()
 
-        if cv2.imwrite(output_path, contrasted_image):
-            pbar.set_description(f"saved as {output_path}")
-        else:
-            pbar.set_description(f"wrong path {output_path}")
+        # if cv2.imwrite(output_path, contrasted_image):
+        #     pbar.set_description(f"saved as {output_path}")
+        # else:
+        #     pbar.set_description(f"wrong path {output_path}")
 
 
 def other_methods_to_do_this(path, use_innofw=True):
@@ -200,7 +200,6 @@ def setup_parser(parser):
     parser.add_argument(
         "-i",
         "--input",
-        default=DEFAULT_PATH,
         help="path to dataset to load, default path is %(default)s",
     )
 

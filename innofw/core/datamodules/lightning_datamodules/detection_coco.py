@@ -490,13 +490,14 @@ class DicomCocoDataModuleDetection(pl.LightningDataModule):
         def save_tensor_list_as_masks(tensor_list, prefix="mask"):
             for batch_idx, tensor_batch in enumerate(tensor_list):
                 for i in range(tensor_batch.shape[0]):
-                    tensor = tensor_batch[i].cpu().detach().numpy()
-                    output = sigmoid(tensor)
-                    output = np.max(output, axis=0)
-                    output = np.expand_dims(output, axis=0)
-                    output = output[0]
+                    output = tensor_batch[i].cpu().detach().numpy()
+                    # output = sigmoid(output)
+                    output1 = np.max(output, axis=0)
+                    output2 = np.expand_dims(output1, axis=0)
+                    output3 = output2[0]
+                    # from IPython import embed; embed()
                     path = os.path.join(dst_path, f"{prefix}_{batch_idx}_{i}.npy")
-                    np.save(path, output)
+                    np.save(path, output3)
 
 
 

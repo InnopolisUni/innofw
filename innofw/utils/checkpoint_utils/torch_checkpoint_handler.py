@@ -118,7 +118,23 @@ class TorchCheckpointHandler(CheckpointHandler):
     def load_model(self, model, ckpt_path: Path) -> torch.nn.Module:
         """Function returns model with loaded weights"""
         if model is None:
-            return get_state_dict(self.load_ckpt(ckpt_path))
+            return get_state_dict(self.load_ckpt(str(ckpt_path)))
+
+        # checkpoint = torch.load(ckpt_path)
+        #
+        # # Преобразуем ключи в соответствии с новой структурой
+        # new_state_dict = {}
+        # for key in checkpoint:
+        #     new_key = key
+        #     # Например, если модель в обёртке имеет префикс 'model.', добавляем его
+        #     if not key.startswith('model.'):
+        #         new_key = 'model.' + key
+        #     new_state_dict[new_key] = checkpoint[key]
+        #
+        # # Загружаем преобразованный state_dict
+        #
+        # model.load_state_dict(new_state_dict)
+        # torch.save(model.state_dict(),  str(ckpt_path)[:-3] + "_fixed.pt" )
 
         model.load_state_dict(super().load_model(model, ckpt_path))
         return model

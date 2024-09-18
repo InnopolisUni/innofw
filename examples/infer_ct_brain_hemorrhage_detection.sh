@@ -1,7 +1,9 @@
 export HYDRA_FULL_ERROR=1
 data_path=$1
 #ckpt_path="https://api.blackhole.ai.innopolis.university/pretrained/segmentation_unet_brain.pt"
-ckpt_path="/home/ainur/data/rtk/weights/sct_april1/1/model.pt"
+#ckpt_path="/home/ainur/data/rtk/weights/sct_april1/1/model.pt"
+ckpt_path="/home/ainur/data/rtk/weights/model_fixed.pt"
+#ckpt_path="/home/ainur/data/rtk/weights/best.pt"
 #ckpt_path="/home/ainur/git/old_innofw/pretrained/segmentation_unet_brain.pt"
 experiments="semantic-segmentation/SK_180822_qmciwj41_unet_brain_detection"
 if [ -z "$data_path" ]

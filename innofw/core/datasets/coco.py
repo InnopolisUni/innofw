@@ -287,6 +287,20 @@ class DicomCocoDataset_sm(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
+        """
+
+        Args:
+            idx: 
+
+        Returns:
+            A dictionary with keys
+             "image": image
+             "mask": mask
+             "path": dicom_path
+             "raw_image": dicom_image
+
+
+        """
         image_info = self.images[idx]
         for dicom_path in self.dicom_paths:
             if dicom_path.endswith(image_info["file_name"]):
