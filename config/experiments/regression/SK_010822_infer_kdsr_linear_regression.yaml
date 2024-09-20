@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - override /models: regression/linear_regression
-  - override /datasets: regression_house_prices
+  - override /datasets: regression/regression_house_prices
 
 project: "house_prices"
 ckpt_path:

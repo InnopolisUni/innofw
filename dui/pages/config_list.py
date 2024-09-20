@@ -32,10 +32,16 @@ def layout():
         if not p.exists():
             break
 
+    try:
+        env_key = "UI_TITLE"
+        title = os.environ[env_key]
+    except Exception as e:
+        print(f"No ui title, using default")
+        title = "Experiment Configurator"
 
     config_list = dbc.Container([
 
-        dbc.Row([dbc.Col([html.H4("Experiment Configurator", style={"height": 40})]),
+        dbc.Row([dbc.Col([html.H4(title, style={"height": 40})]),
                  dbc.Col([html.Div(html.Img(src=dash.get_asset_url('_innofw_.svg'), style={"height": 40, "width": 60}),
                                    className="self-align-right")]),
                  html.Span(className="border-bottom")],
@@ -66,7 +72,7 @@ def layout():
                 selected_rows=[],
                 page_action="native",
                 page_current=0,
-                page_size=10,
+                page_size=20,
                 style_header={'backgroundColor': 'white',
                               'fontWeight': 'bold',
                               'textAlign': 'left'

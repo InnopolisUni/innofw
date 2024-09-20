@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - override /models:
+  - override /datasets:
+  - override /optimizers:
+  - override /augmentations_train:
+  - override /augmentations_val:
+  - override /augmentations_test:
+  - override /losses:
+
+project:
+task:
+random_seed:
+stop_param:
+epochs:
+weights_freq:
+batch_size:

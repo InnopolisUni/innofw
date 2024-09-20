@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - override /models: regression/catboost_regression
+  - override /datasets: qm9
+  - override /callbacks: regression
+
+
+project: "qm9"
+task: "qsar-regression"
+random_seed: 42
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/catboost_regression_qm9.pickle

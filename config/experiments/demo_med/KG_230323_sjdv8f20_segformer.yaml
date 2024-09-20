@@ -1,0 +1,26 @@
+# @package _global_
+defaults:
+  - override /models: semantic-segmentation/segformer_for_segmentation.yaml
+  - override /datasets: semantic-segmentation/segmentation_brain.yaml
+  - override /augmentations_train: none
+  - override /optimizers: adam.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: segmentation_losses.yaml
+  - override /callbacks: segmentation
+
+
+models:
+  num_channels: 1
+  num_labels: 1
+  retain_dim: True
+project: "segmentation"
+task: "image-segmentation"
+random_seed: 42
+stop_param: 3
+epochs: 3
+weights_freq: 1
+batch_size: 8
+accelerator: cpu # gpu
+#override hydra/job_logging: stdout
+

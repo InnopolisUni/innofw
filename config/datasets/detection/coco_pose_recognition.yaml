@@ -1,0 +1,31 @@
+task:
+  - image-detection
+
+name: pose recognition dataset
+description: "COCO Pose dataset for human pose recognitoon. See more: https://cocodataset.org/#keypoints-2017"
+markup_info: There is a total of 2346 unique images, format compatible with ultralytics
+date_time: 22.05.2024
+
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/coco_pose_recognition/train.zip
+  target: ./data/coco_pose/train/
+
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/coco_pose_recognition/test.zip
+  target: ./data/coco_pose/test/
+
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/coco_pose_recognition/test.zip
+  target: ./data/coco_pose/test/
+
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 512
+num_classes: 1
+is_keypoint: True
+names:
+  - person

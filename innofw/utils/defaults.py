@@ -6,6 +6,7 @@ from omegaconf import OmegaConf
 
 from innofw.core.models.torch.lightning_modules import (
     AnomalyDetectionTimeSeriesLightningModule,
+    AnomalyDetectionImagesLightningModule
 )
 from innofw.core.models.torch.lightning_modules import BiobertNERModel
 from innofw.core.models.torch.lightning_modules import (
@@ -142,6 +143,15 @@ def get_default(obj_name: str, framework: str, task: str):
             },
             "anomaly-detection-timeseries": {
                 "lightning_module": AnomalyDetectionTimeSeriesLightningModule,
+                "trainer_cfg": OmegaConf.create(
+                    {"_target_": "pytorch_lightning.Trainer", "max_epochs": 1}
+                ),
+                "optimizers_cfg": OmegaConf.create(
+                    {"_target_": "torch.optim.Adam", "lr": 3e-2}
+                ),
+            },
+            "anomaly-detection-images": {
+                "lightning_module": AnomalyDetectionImagesLightningModule,
                 "trainer_cfg": OmegaConf.create(
                     {"_target_": "pytorch_lightning.Trainer", "max_epochs": 1}
                 ),

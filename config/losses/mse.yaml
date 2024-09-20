@@ -2,6 +2,7 @@ name: MSE
 description: Mean squared error measures the average of the squares of the errors
 task:
   - regression
+  - anomaly-detection-images
 
 implementations:
   sklearn:

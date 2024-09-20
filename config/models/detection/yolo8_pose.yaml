@@ -1,0 +1,4 @@
+_target_: ultralytics.YOLO
+description: yolov8 pose by ultralytics
+model: yolov8n-pose.pt
+name: yolov8

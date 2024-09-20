@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - override /models: one-shot-learning/one_shot_learning.yaml
+  - override /datasets: osl_faces.yaml
+  - override /augmentations_train: osl #one_shot_learning.yaml
+  - override /augmentations_val: osl
+  - override /augmentations_test: none
+  - override /losses: one_shot_learning.yaml
+
+
+project: "faces"
+task: "one-shot-learning"
+random_seed: 42
+weights_freq: 1
+epochs: 50
+accelerator: "gpu"
+devices: 1
+batch_size: 64

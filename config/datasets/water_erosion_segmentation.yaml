@@ -1,3 +1,4 @@
+_target_: innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM
 task:
   - image-segmentation
 

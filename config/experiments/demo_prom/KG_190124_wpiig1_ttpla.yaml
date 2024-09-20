@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection/ttpla
+  - override /optimizers: sgd
+
+project: "ttpla"
+task: "image-detection"
+random_seed: 42
+epochs: 20
+batch_size: 2
+weights_freq: 1
+accelerator: gpu
+devices: 1
+
+wandb:
+  enable: True
+  project: ttpla
+  entity: "k-galliamov"
+  group: none
+  job_type: training

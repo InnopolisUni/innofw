@@ -3,6 +3,8 @@ from typing import TypedDict
 
 import numpy as np
 import pandas as pd
+from abc import abstractmethod 
+
 
 
 class DataContainer(TypedDict):
@@ -34,14 +36,14 @@ class DataModuleI(Protocol):
     setup():
         returns Nothing.
     """
-
-    def test_dataloader(self) -> DataContainer:
+    @abstractmethod
+    def test_dataloader(self) -> DataContainer: # pragma: no cover
         ...
-
-    def train_dataloader(self) -> DataContainer:
+    @abstractmethod
+    def train_dataloader(self) -> DataContainer: # pragma: no cover
         ...
-
-    def setup(self) -> None:
+    @abstractmethod
+    def setup(self) -> None: # pragma: no cover
         ...
 
 

@@ -1,6 +1,7 @@
 ./data
 wandb/
 lightning_logs/
+mmdetection3d/
 *.pth
 # Byte-compiled / optimized / DLL files
 __pycache__/

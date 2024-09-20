@@ -162,8 +162,7 @@ class DrugprotDataModule(BaseLightningDataModule):
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         unrolled_preds = [pred.tolist() for batch in preds for pred in batch]
-        df = pd.DataFrame({"prediction": unrolled_preds})
-        df.to_json(Path(dst_path) / "preds.json", index=False, orient="table")
+        pd.DataFrame({"prediction": unrolled_preds}).to_json(Path(dst_path) / "preds.json", index=False, orient="table")
 
 
 class DataCollatorWithPaddingAndTruncation:
@@ -187,9 +186,7 @@ class DataCollatorWithPaddingAndTruncation:
         Collate list of dicts.
     """
 
-    def __init__(
-        self, max_length, sequence_keys=[], float_keys=[], pad_token_id=0
-    ):
+    def __init__(self, max_length, sequence_keys=[], float_keys=[], pad_token_id=0):
         self.max_length = max_length
         self.sequence_keys = set(sequence_keys)
         self.pad_token_id = pad_token_id
@@ -228,39 +225,36 @@ class DataCollatorWithPaddingAndTruncation:
         return result
 
     def __get_key_type(self, key):
-        if key in self.float_keys:
-            return torch.float32
-        else:
-            return torch.int64
+        return torch.float32 if key in self.float_keys else torch.int64
 
-    def collate_dict_of_lists(self, data):
-        any_key = next(iter(self.sequence_keys))
-        batch_size = len(data[any_key])
-        max_len = 0
-        for instance in data[any_key]:
-            max_len = max(len(instance), max_len)
-        max_len = min(max_len, self.max_length)
-        result = {
-            key: torch.full(
-                (batch_size, max_len),
-                self.pad_token_id,
-                dtype=self.__get_key_type(key),
-            )
-            for key in self.sequence_keys
-        }
-        for key in self.sequence_keys:
-            for batch_index, instance in enumerate(data[key]):
-                current_len = min(max_len, len(instance))
-                for pos_index in range(current_len):
-                    result[key][batch_index, pos_index] = instance[pos_index]
-
-        rest_keys = data.keys() - self.sequence_keys
-
-        for key in rest_keys:
-            values = data[key]
-            result[key] = torch.Tensor(values).type(self.__get_key_type(key))
-
-        return result
+    # def collate_dict_of_lists(self, data):
+    #     any_key = next(iter(self.sequence_keys))
+    #     batch_size = len(data[any_key])
+    #     max_len = 0
+    #     for instance in data[any_key]:
+    #         max_len = max(len(instance), max_len)
+    #     max_len = min(max_len, self.max_length)
+    #     result = {
+    #         key: torch.full(
+    #             (batch_size, max_len),
+    #             self.pad_token_id,
+    #             dtype=self.__get_key_type(key),
+    #         )
+    #         for key in self.sequence_keys
+    #     }
+    #     for key in self.sequence_keys:
+    #         for batch_index, instance in enumerate(data[key]):
+    #             current_len = min(max_len, len(instance))
+    #             for pos_index in range(current_len):
+    #                 result[key][batch_index, pos_index] = instance[pos_index]
+    #
+    #     rest_keys = data.keys() - self.sequence_keys
+    #
+    #     for key in rest_keys:
+    #         values = data[key]
+    #         result[key] = torch.Tensor(values).type(self.__get_key_type(key))
+    #
+    #     return result
 
 
 @dataclass
@@ -307,11 +301,7 @@ class LabelMapper:
         return len(self.__name_to_id)
 
     def __repr__(self):
-        return f"""
-LabelMapper(
-    {self.__name_to_id}
-)
-"""
+        return f"""LabelMapper({self.__name_to_id})"""
 
     def keys(self):
         return self.__name_to_id.keys()

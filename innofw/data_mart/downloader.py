@@ -78,9 +78,7 @@ def download_archive(
     downloaded_file = S3Handler(url, credentials).download_file(file_url, dst_path)
     # uncompress the file
     LOGGER.warning("might be doing redundant decompression")
-    patoolib.extract_archive(
-        str(downloaded_file), outdir=dst_path, interactive=False, verbosity=-1
-    )
+    patoolib.extract_archive(str(downloaded_file), outdir=dst_path, interactive=False, verbosity=-1)
     # downloaded_file.unlink()
 
     # __MACOSX

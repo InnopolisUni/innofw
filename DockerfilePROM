@@ -1,0 +1,23 @@
+FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
+
+RUN export PYTHONPATH=. && export PATH=$PATH
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install ffmpeg libsm6 libxext6 curl iotop -y \
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/
+RUN pip3 install --upgrade pip pyopenssl cryptography
+RUN /bin/bash -c 'curl -sSL https://install.python-poetry.org | python - --version 1.6.1'
+
+COPY . /code
+RUN rm -r /code/config/experiments/*
+COPY ./config/experiments/demo_prom /code/config/experiments/
+WORKDIR /code
+
+RUN /bin/bash -c '/root/.local/bin/poetry config virtualenvs.create false \
+    && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi --no-cache'
+
+WORKDIR /code/dui
+
+ENV UI_TITLE="Фреймворк для Промышленности"
+ENV WANDB_DISABLED="true"
+ENTRYPOINT PYTHONUNBUFFERED=1 python3 app.py

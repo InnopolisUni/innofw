@@ -32,7 +32,8 @@ def decompose(configurations, recurse=False, level=0):
                         ]),
 
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text", list="parameters"), className="keyfield_col"),
+                        dbc.Col([dbc.Input(className="keyfield", value=k, type="text", list="parameters"),
+                                 html.Span(className="tooltiptext")], className="tooltip keyfield_col"),
                         dbc.Col(dbc.Input(className="valuefield", value=v, type="text"), className="valuefield_col"),
                         dbc.Col(dbc.Button(className="bi bi-pencil", outline=True, color="secondary"), width="auto") if "override /" in k else dbc.Col(width="auto"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
@@ -47,7 +48,8 @@ def decompose(configurations, recurse=False, level=0):
                 dbc.Row([
                     dbc.Row([
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text")),
+                        dbc.Col([dbc.Input(className="keyfield", value=k, type="text", list="parameters"),
+                                 html.Span(className="tooltiptext")], className="tooltip keyfield_col"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
                     ], style={"margin-left": 100*level}, className="parent"),
                       *children
@@ -84,10 +86,21 @@ def simplify_dict(in_dict):
 
 
 def layout(config_name=None):
+
+    if config_name is None:
+        return None
+
     config_name = urllib.parse.unquote(config_name)
     exp_path = experiment_configs_path / config_name
 
-    html_components = [dbc.Row([dbc.Col([html.H4("Experiment Configurator", style={"height": 40})]),
+    try:
+        env_key = "UI_TITLE"
+        title = os.environ[env_key]
+    except Exception as e:
+        print(f"No ui title, using default")
+        title = "Experiment Configurator"
+
+    html_components = [dbc.Row([dbc.Col([html.H4(title, style={"height": 40})]),
                                 dbc.Col([html.Div(html.Img(src=dash.get_asset_url('_innofw_.svg'), style={"height": 40, "width": 60}),
                                    className="self-align-right")]),html.Span(className="border-bottom")],style={"margin-top": 10, "margin-bottom": 10, "margin-right": 15}),
                        html.Br(),
@@ -101,6 +114,16 @@ def layout(config_name=None):
             data = simplify_dict(data)
             configurations_html = decompose(data)
             html_components.extend(configurations_html)
+    else:
+        with open(experiment_configs_path / "empty_template.yaml", "r") as yamlfile:
+            data = yaml.load(yamlfile, Loader=yaml.FullLoader)
+            yamlfile.close()
+
+        if data:
+            data = simplify_dict(data)
+            configurations_html = decompose(data)
+            html_components.extend(configurations_html)
+
 
     html_components.append(dbc.Row([
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle endwagon", outline=True, color="primary"), width="auto"),
@@ -111,14 +134,23 @@ def layout(config_name=None):
                                     children=[
                                         dash.html.Datalist(children=[
                                               dash.html.Option("batch_size"),
-                                              dash.html.Option("epoch"),
+                                              dash.html.Option("epochs"),
                                             dash.html.Option("learning_rate"),
                                             dash.html.Option("random_seed"),
+                                            dash.html.Option("task"),
+                                            dash.html.Option("weights_freq"),
+                                            dash.html.Option("project"),
+                                            dash.html.Option("defaults"),
+                                            dash.html.Option("accelerator"),
+                                            dash.html.Option("gpus"),
+                                            dash.html.Option("devices"),
+                                            dash.html.Option("device"),
+                                            dash.html.Option("ckpt_path"),
                                                 ],
                                                     id="parameters")]))
 
     html_components.append(html.Progress(id="progress_id", style={"visibility": "hidden"}))
-
+    html_components.append(html.Div(id='infer-analytics-output'))
 
     html_components.append(dbc.Row([
         dbc.Col(
@@ -132,6 +164,7 @@ def layout(config_name=None):
         dbc.Col(dbc.Button("Duplicate", id="duplicate_btn", color="info", className="me-1 duplicate_btn", n_clicks=0)),
 
         dbc.Col(dbc.Button("Start Training", id="strain_btn", color="success", className="me-2", n_clicks=0)),
+        dbc.Col(dbc.Button("Start Inference", id="sinfer_btn", color="dark", className="me-2", n_clicks=0)),
 
         dbc.Row(html.Div(className="modal-content", children=[
              dbc.ModalHeader(dbc.ModalTitle("Saving")),
@@ -237,4 +270,49 @@ def on_strain_btn_button_click(set_progress, n, config_name):
         return out
 
 
+@app.long_callback(
+    Output("infer-analytics-output", "children"),
+    Input("sinfer_btn", "n_clicks"),
+    Input("config_name", "value"),
+
+    progress=[Output("infer-analytics-output", "children")],
+    prevent_initial_call=True
+)
+def on_sinfer_btn_button_click(set_progress, n, config_name):
+
+    if n > 0:
+        run_env = os.environ.copy()
+        run_env["NO_CLI"] = "True"
+        run_env["PYTHONPATH"] = ".."
+
+        cmd = [sys.executable, "../infer.py", f"experiments={config_name}"]
+
+        text_output = []
+        err_output = []
+        out = html.Div(id="infer_process_output")
+
+        with open("infer.out", "w") as subprocess_out:
+            with open("infer.err", "w") as subprocess_err:
+                with subprocess.Popen(cmd, stdout=subprocess_out, stderr=subprocess_err, env=run_env) as process:
+                    with open("infer.out", "r") as subprocess_outin:
+                        with open("infer.err", "r") as subprocess_errin:
+
+                            while True:
+                                out_text = subprocess_outin.read()
+                                out_err = subprocess_errin.read()
+
+                                if out_err:
+                                    err_output.append(html.P(out_err))
+
+                                if not out_text and process.poll() is None:
+                                    time.sleep(0.5)
+                                    continue
+
+                                text_output.append(html.P(out_text))
+
+                                out = dbc.Row(id="infer_process_output", children=[dbc.Col(text_output), dbc.Col(err_output)])
+                                set_progress(out)
+                                if out_text == '' and process.poll() != None:
+                                    break
+        return out
 

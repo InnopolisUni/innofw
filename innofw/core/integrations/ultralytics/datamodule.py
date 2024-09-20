@@ -3,6 +3,7 @@ import pathlib
 from pathlib import Path
 from typing import List, Optional
 import shutil
+import glob
 
 # third party libraries
 from sklearn.model_selection import train_test_split
@@ -38,23 +39,23 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
     framework = [Frameworks.ultralytics]
 
     def __init__(
-        self,
-        train: Optional[str],
-        # val: Optional[str],  # todo: add this
-        test: Optional[str],
-        infer: Optional[str],
-        num_workers: int,
-        image_size: int,
-        num_classes: int,
-        names: List[str],
-        batch_size: int = 4,
-        val_size: float = 0.2,
-        augmentations=None,
-        stage=False,
-        channels_num: int = 3,
-        random_state: int = 42,
-        *args,
-        **kwargs,
+            self,
+            train: Optional[str],
+            # val: Optional[str],  # todo: add this
+            test: Optional[str],
+            infer: Optional[str],
+            num_workers: int,
+            image_size: int,
+            num_classes: int,
+            names: List[str],
+            batch_size: int = 4,
+            val_size: float = 0.2,
+            augmentations=None,
+            stage=False,
+            channels_num: int = 3,
+            random_state: int = 42,
+            *args,
+            **kwargs,
     ):
         """
         Arguments:
@@ -72,12 +73,13 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         if self.train:
             self.train_source = Path(self.train)
             # # In this datamodule, the train source should be the folder train itself not the folder "train/images"
-            # if str(self.train_source).endswith("images"):
-            #     self.train_source = Path(str(self.train_source)[:-7])
+            if str(self.train_source).endswith("images") or str(self.train_source).endswith(
+                    "labels"):
+                self.train_source = Path(str(self.train_source)[:-7])
         if self.test:
             self.test_source = Path(self.test)
-            # if str(self.test_source).endswith("images"):
-            #     self.test_source = Path(str(self.test_source)[:-7])
+            if str(self.test_source).endswith("images") or str(self.test_source).endswith("labels"):
+                self.test_source = Path(str(self.test_source)[:-7])
 
         if self.infer:
             self.infer_source = (
@@ -85,8 +87,9 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
                 if not (type(self.infer) == str and self.infer.startswith("rts"))
                 else self.infer
             )
-            # if str(self.infer_source).endswith("images"):
-            #     self.infer_source = Path(str(self.infer_source)[:-7])
+            if str(self.infer_source).endswith("images") or str(self.infer_source).endswith(
+                    "labels"):
+                self.infer_source = Path(str(self.infer_source)[:-7])
 
         self.batch_size = batch_size
         self.imgsz: int = image_size
@@ -96,6 +99,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         self.names = names
         self.random_state = random_state
         self.augmentations = augmentations
+        self.is_keypoint = kwargs.get("is_keypoint", False)
 
     def setup_train_test_val(self, **kwargs):
         """
@@ -138,14 +142,14 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
         # === split train images and labels into train and val sets and move files ===
 
         # split images and labels
-        train_img_path = self.train_source
-        train_lbl_path = self.train_source.parent.parent / "labels" / "train"
+        train_img_path = self.train_source / "images" / "train"
+        train_lbl_path = self.train_source / "labels" / "train"
 
         # get all files from train folder
         img_files = list(train_img_path.iterdir())
         label_files = list(train_lbl_path.iterdir())
         assert (
-            len(label_files) == len(img_files) != 0
+                len(label_files) == len(img_files) != 0
         ), "number of images and labels should be the same"
 
         # sort the files so that the images and labels are in the same order
@@ -167,7 +171,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
 
         # Creating the images directory
         for files, folder_name in zip(
-            [train_img_files, val_img_files], ["train", "val"]
+                [train_img_files, val_img_files], ["train", "val"]
         ):
             # create a folder
             new_path = new_img_path / folder_name
@@ -179,7 +183,7 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
 
         # Creating the labels directory
         for files, folder_name in zip(
-            [train_label_files, val_label_files], ["train", "val"]
+                [train_label_files, val_label_files], ["train", "val"]
         ):
             # create a folder
             new_path = new_lbl_path / folder_name
@@ -200,24 +204,31 @@ class UltralyticsDataModuleAdapter(BaseDataModule):
             file.write(f"val: {self.val_dataset}\n")
             file.write(f"test: {self.test_dataset}\n")
 
+            if self.is_keypoint:
+                file.write(
+                    "kpt_shape: [17, 3]\nflip_idx: [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15]\n")
             file.write(f"nc: {self.num_classes}\n")
             file.write(f"names: {self.names}\n")
 
     def setup_infer(self):
         if (
-            type(self.infer_source) == str
-            and self.infer_source.startswith("rts")
-            or Path(self.infer_source).is_file()
+                type(self.infer_source) == str
+                and self.infer_source.startswith("rts")
+                or Path(self.infer_source).is_file()
         ):
             return
         # root_dir
         self.infer_source = Path(self.infer_source)
-        if self.infer_file:
-            self.infer_source = (
-                self.infer_source
-                if self.infer_source.name == Path(self.infer_file).stem
-                else self.infer_source / Path(self.infer_file).stem
-            )
+        # if self.infer_file:
+        #     self.infer_source = (
+        #         self.infer_source
+        #         if self.infer_source.name == Path(self.infer_file).stem
+        #         else self.infer_source / Path(self.infer_file).stem
+        #     )
+        for path in self.infer_source.rglob("*"):
+            if path.is_file() and path.suffix not in [".txt", ".yaml", ".zip"]:
+                self.infer_source = Path(path).parent
+                break
 
         root_path = self.infer_source.parent
 

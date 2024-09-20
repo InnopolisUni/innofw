@@ -7,7 +7,7 @@ from numpy import ndarray
 
 from innofw.constants import SegDataKeys
 from innofw.core.datasets.semantic_segmentation.tiff_dataset import (
-    SegmentationDataset,
+    SegmentationDataset, get_metadata
 )
 from tests.fixtures.config.augmentations import (
     bare_aug_torchvision as resize_augmentation,
@@ -56,6 +56,9 @@ def test_read(cfg, w_mask, size, n_channels):
             with pytest.raises(KeyError):
                 assert item[SegDataKeys.label]
 
+def test_get_metadata():
+    meta = get_metadata('tests/data/images/segmentation/forest/train/1/B02.tif')
+    assert meta is not None
 
 @pytest.mark.parametrize(
     ["ds_cfg", "aug_cfg"],

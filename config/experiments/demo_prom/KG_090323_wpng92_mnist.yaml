@@ -1,0 +1,20 @@
+# @package _global_
+defaults:
+  - override /models: classification/resnet.yaml
+  - override /datasets: classification/classification_mnist.yaml
+  - override /augmentations_train: none #classification.yaml
+  - override /augmentations_val: none
+  - override /augmentations_test: none
+  - override /losses: log_loss.yaml
+  - override /optimizers: adam
+  - override /schedulers:
+
+project: "mnist_classification"
+task: "image-classification"
+random_seed: 42
+batch_size: 128
+epochs: 5
+accelerator: "gpu"
+devices: 2
+num_workers: 1
+weights_freq: 7

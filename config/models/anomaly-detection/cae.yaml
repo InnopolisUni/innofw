@@ -1,0 +1,4 @@
+name: convolutional AE
+_target_: innofw.core.models.torch.architectures.autoencoders.convolutional_ae.CAE
+description: Base Unet segmentation model with 3 channels input
+anomaly_threshold: 0.05

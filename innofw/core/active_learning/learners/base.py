@@ -71,13 +71,13 @@ class BaseActiveLearner(ABC):
             self.active_datamodule.update_indices(most_uncertain)
 
     @abstractmethod
-    def eval_model(self, X, y):
-        pass
+    def eval_model(self, X, y): #pragma: no cover
+        ...
 
     @abstractmethod
-    def predict_model(self, X):
-        pass
+    def predict_model(self, X): #pragma: no cover
+        ...
 
     @abstractmethod
-    def obtain_most_uncertain(self):
-        pass
+    def obtain_most_uncertain(self): #pragma: no cover
+        ...

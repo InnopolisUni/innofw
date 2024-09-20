@@ -20,6 +20,7 @@ from innofw.constants import DefaultFolders
 from innofw.core.datamodules.lightning_datamodules.concatenated_datamodule import (
     ConcatenatedLightningDatamodule,
 )
+from innofw.core.integrations.mmdetection.model_adapter import BaseMmdetModel
 
 
 def map_model_to_framework(model):
@@ -30,16 +31,18 @@ def map_model_to_framework(model):
 
     if isinstance(model, xgboost.XGBModel):
         return Frameworks.xgboost
-    elif isinstance(model, torch.nn.Module):
-        return Frameworks.torch
+    elif isinstance(model, YOLO):
+        return Frameworks.ultralytics
+    elif isinstance(model, BaseMmdetModel):
+        return Frameworks.mmdetection
     elif isinstance(model, sklearn.base.BaseEstimator):
         return Frameworks.sklearn
     elif isinstance(model, BaseIntegrationModel):
         return model.framework
+    elif isinstance(model, torch.nn.Module):
+        return Frameworks.torch
     elif isinstance(model, catboost.CatBoost):
         return Frameworks.catboost
-    elif isinstance(model, YOLO):
-        return Frameworks.ultralytics
     else:
         raise NotImplementedError(f"Framework is not supported. {model}")
 
@@ -106,8 +109,8 @@ def get_obj(
             )
 
         obj = items[0] if len(items) == 1 else items
-    elif search_func is not None:
-        obj = search_func(task, framework, config[name], *args, **kwargs)
+    # elif search_func is not None:
+    #     obj = search_func(task, framework, config[name], *args, **kwargs)
     # else:
     #     raise ValueError("Unable to instantiate the object")
 
@@ -197,7 +200,7 @@ def get_optimizer(
 
         # Assume by default that torch optimizers are suitable for all tasks
         framework_consistent = (
-            framework is Frameworks.torch or framework is Frameworks.ultralytics
+            framework is Frameworks.torch or framework is Frameworks.ultralytics or framework is Frameworks.mmdetection
         )
         if framework_consistent:
             items = dict()
@@ -258,7 +261,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
         ):
             for _, cb_conf in cfg.callbacks.implementations[framework.value].items():
                 if "_target_" in cb_conf:
-                    if inspect.isclass(cb_conf["_target_"]):
+                    try:
                         try:
                             callbacks.append(
                                 hydra.utils.instantiate(
@@ -269,7 +272,7 @@ def get_callbacks(cfg, task, framework, *args, **kwargs):
                             callbacks.append(
                                 hydra.utils.instantiate(cb_conf, _recursive_=False)
                             )
-                    else:
+                    except:
                         callbacks.append(cb_conf)
     return callbacks
 

@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - override /models: detection/yolov5
+  - override /datasets: detection/detection_lungs
+
+
+project: "lungs"
+task: "image-detection"
+random_seed: 43
+epochs: 300
+batch_size: 2
+weights_freq: 1

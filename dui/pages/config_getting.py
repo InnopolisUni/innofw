@@ -1,5 +1,6 @@
 import os
 import dash
+from dash import html, dcc, Input, Output, State
 from pathlib import Path
 import dash_bootstrap_components as dbc
 from flask import request, Flask
@@ -13,6 +14,7 @@ flaskapp = dash.get_app().server
 # DO NOT DELETE THIS COMMENTED PIECE OF CODE IT IS NEEDED, BECAUSE WITHOUT IT THIS PAGE IS NOT LOADED ON START
 # AND FLASK WON'T LISTEN TO THE URL
 # dash.register_page(__name__,  path_template="/None")
+
 
 
 @flaskapp.route("/get_config", methods = ["GET"])
@@ -73,7 +75,8 @@ def decompose(configurations, recurse=False, level=0):
                     dbc.Row([
 
                             dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text")),
+                        dbc.Col([dbc.Input(className="keyfield", value=k, type="text", list="parameters"),
+                                 html.Span(className="tooltiptext")], className="tooltip keyfield_col"),
                         dbc.Col(dbc.Input(className="valuefield", value=v, type="text")),
                         dbc.Col(dbc.Button(className="bi bi-pencil", outline=True, color="secondary"), width="auto") if "override /" in k else dbc.Col(width="auto"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
@@ -88,7 +91,8 @@ def decompose(configurations, recurse=False, level=0):
                     dbc.Row([
                     dbc.Row([
                         dbc.Col(dbc.Button(className="bi bi-plus rounded-circle", outline=True, color="primary"), width="auto"),
-                        dbc.Col(dbc.Input(className="keyfield", value=k, type="text")),
+                        dbc.Col([dbc.Input(className="keyfield", value=k, type="text", list="parameters"),
+                                 html.Span(className="tooltiptext")], className="tooltip keyfield_col"),
                         dbc.Col(dbc.Button(className="bi bi-trash", outline=True, color="secondary")),
                     ], style={"margin-left": 100*level}, className="parent"),
                       *children

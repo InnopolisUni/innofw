@@ -1,0 +1,13 @@
+# @package _global_
+accelerator: gpu
+batch_size: 16
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/prom/fruits/new_baseline.pt
+defaults:
+- override /models: detection/yolov5fruits_pretrain
+- override /datasets: detection/detection_rotten_fruits
+device: 0
+epochs: 10
+project: rotten_fruits
+random_seed: 43
+task: image-detection
+weights_freq: 1

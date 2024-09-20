@@ -87,6 +87,54 @@ house_prices_datamodule_cfg_w_target = DictConfig(
     }
 )
 
+regrhouse_prices_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["table-regression"],
+        "name": "house prices",
+        "description": "",
+        "markup_info": "",
+        "date_time": "01.07.2022",
+        "_target_": "innofw.core.datamodules.pandas_datamodules.RegressionPandasDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/train/train.csv"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/test/test.csv"
+            )
+        },
+        "target_col": "price",
+    }
+)
+
+clusthouse_prices_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["table-clustering"],
+        "name": "house prices",
+        "description": "",
+        "markup_info": "",
+        "date_time": "01.07.2022",
+        "_target_": "innofw.core.datamodules.pandas_datamodules.ClusteringPandasDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/train/train.csv"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path()
+                / "data/tabular/regression/house_prices/test/test.csv"
+            )
+        },
+        "target_col": "price",
+    }
+)
+
 wheat_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["image-detection"],
@@ -142,7 +190,32 @@ arable_segmentation_cfg_w_target = DictConfig(
         "channels_num": 4,
     }
 )
-
+forest_segmentation_cfg_w_target = DictConfig(
+    {
+        "task": ["image-segmentation"],
+        "name": "arable",
+        "description": "something",
+        "markup_info": "something",
+        "date_time": "07.02.2024",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.tiff.SegmentationDM",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/train"
+            )
+        },
+        "val": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/test"
+            )
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/forest/test"
+            )
+        },
+        "channels_num": 3,
+    }
+)
 faces_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["image-classification"],
@@ -191,7 +264,6 @@ qm9_datamodule_cfg_w_target = DictConfig(
         "target_col": "gap",
     }
 )
-
 
 tiff_datamodule_cfg_w_target = DictConfig(
     {
@@ -253,7 +325,6 @@ drugprot_datamodule_cfg_w_target = DictConfig(
     }
 )
 
-
 faces_siamese_datamodule_cfg_w_target = DictConfig(
     {
         "task": ["one-shot-learning"],
@@ -307,4 +378,172 @@ qsar_datamodule_cfg_w_target = DictConfig(
         "smiles_col": "smiles",
         "target_col": "gap",
     }
+)
+
+anomaly_detection_timeseries_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["anomaly-detection-timeseries"],
+        "name": "ecg",
+        "description": " The original dataset for ECG5000 is a 20-hour long ECG downloaded from Physionet",
+        "markup_info": "Информация о разметке",
+        "date_time": "03.08.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.anomaly_detection_timeseries_dm.TimeSeriesLightningDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/train.zip",
+            "target": "./tmp/ECG/train",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip",
+            "target": "./tmp/ECG/test",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/ECG/test.zip",
+            "target": "./tmp/ECG/infer",
+        },
+        "val_size": 0.2,
+    }
+
+)
+
+anomaly_detection_images_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["anomaly-detection-images"],
+        "name": "MVTEC",
+        "description": """The MVTec anomaly detection dataset (MVTec AD)
+https://www.mvtec.com/company/research/datasets/mvtec-ad
+DOI: 10.1007/s11263-020-01400-4
+DOI: 10.1109/CVPR.2019.00982
+https://www:mvtec:com/company/research/datasets/mvtec-a""",
+        "markup_info": "Train images do not contain anomalies",
+        "date_time": "20.07.2024",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.anomaly_detection_images.ImageAnomaliesLightningDataModule",
+        "train": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/train.zip",
+            "target": "./tmp/MVTEC/train",
+        },
+        "test": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/test.zip",
+            "target": "./tmp/MVTEC/test",
+        },
+        "infer": {
+            "source": "https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/test.zip",
+            "target": "./tmp/MVTEC/infer",
+        },
+    }
+)
+
+pngstroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["image_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test/image"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+
+)
+
+dirstroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["image_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DirSegmentationLightningDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/png/test/image"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+
+)
+
+dicomstroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["image_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.DicomDirSegmentationLightningDataModule",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/dicom/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/dicom/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/dicom/test/images"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+
+)
+
+stroke_segmentation_datamodule_cfg_w_target = DictConfig(
+    {
+        "task": ["image_segmentation"],
+        "name": "stroke_segmentation",
+        "description": "Created by AT&T Laboratories Cambridge",
+        "markup_info": "Информация о разметке",
+        "date_time": "19.07.2022",
+        "_target_": "innofw.core.datamodules.lightning_datamodules.semantic_segmentation.stroke_dm.StrokeSegmentationDatamodule",
+        "train": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/dicom/train"),
+        },
+        "test": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/dicom/test"),
+        },
+        "infer": {
+            "source": str(
+                get_test_folder_path() / "data/images/segmentation/dicom/test"),
+        },
+        "channels_num": 3,
+        "val_size": 0.2,
+        "batch_size": 8,
+        "num_workers": 1,
+        "random_seed": 42,
+    }
+
 )

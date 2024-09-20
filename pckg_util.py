@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 
-def install_and_import(package, version="", params="", link=""):
+def install_and_import(package, version="", params="", link="", packageimportname=""):
     try:
         if importlib.metadata.version(package) != version:
             raise ImportError
@@ -30,7 +30,10 @@ def install_and_import(package, version="", params="", link=""):
             [sys.executable, "-m", "pip", *installation_cmd_list]
         )
     finally:
-        globals()[package] = importlib.import_module(package)
+        if packageimportname is None or packageimportname == "":
+            globals()[package] = importlib.import_module(package)
+        else:
+            globals()[packageimportname] = importlib.import_module(packageimportname)
 
 
 def execute_bash_command(cmd):
@@ -72,3 +75,13 @@ def check_gpu_and_torch_compatibility():
                 )
     except OSError:
         logging.info("GPU device is not available")
+
+
+def install_mmcv():
+    import torch
+    torch_version = str(torch.__version__)[:4]
+    cuda_version = str(torch.version.cuda).replace(".", "")
+    install_and_import("mmcv",
+                       version="2.1.0",
+                       params="-f",
+                       link=f"https://download.openmmlab.com/mmcv/dist/cu{cuda_version}/torch{torch_version}/index.html")

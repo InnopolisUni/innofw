@@ -10,7 +10,7 @@ from pydicom import dcmread
 from pydicom.pixel_data_handlers import apply_modality_lut
 from pydicom.pixel_data_handlers import apply_voi_lut
 from pydicom.uid import generate_uid
-
+import pydicom
 from innofw.utils import get_project_root
 
 
@@ -130,7 +130,7 @@ def add_image(ds: Dataset, img: np.ndarray) -> Dataset:
         ds.BitsAllocated = 8
         ds.HighBit = 7
         ds.PixelRepresentation = 0
-        ds.PixelData = np_frame.tobytes()
+        ds.PixelData = pydicom.encaps.encapsulate([np_frame.tobytes()])
     elif img.mode == "RGBA" or img.mode == "RGB":
         # RGBA (4x8-bit pixels, true colour with transparency mask)
         np_frame = np.array(img.getdata(), dtype=np.uint8)[:, :3]

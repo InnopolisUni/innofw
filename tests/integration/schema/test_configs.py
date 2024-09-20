@@ -1,6 +1,8 @@
 #
 import logging
-
+import os
+import shutil
+from pathlib import Path
 import pytest
 import yaml
 from omegaconf import DictConfig
@@ -37,47 +39,52 @@ def test_models(model_config_file):
         get_model(model_config, base_trainer_on_cpu_cfg)
 
 
-@pytest.mark.skip(reason="some problems with dataset downloading")
+# @pytest.mark.skip(reason="some problems with dataset downloading")
 @pytest.mark.parametrize(["dataset_config_file"], datasets_config_files)
 def test_datasets(dataset_config_file, tmp_path):
-    with open(dataset_config_file, "r") as f:
-        dataset_config = DictConfig(yaml.safe_load(f))
+    if os.path.isfile(dataset_config_file):
+        with open(dataset_config_file, "r") as f:
+            dataset_config = DictConfig(yaml.safe_load(f))
 
-        for stage in ["train", "test", "infer"]:
-            try:
-                dataset_config[stage]["target"] = tmp_path / stage
-            except:
-                pass
+            for stage in ["train", "test", "infer"]:
+                try:
+                    dataset_config[stage]["target"] = tmp_path / stage
+                except:
+                    pass
 
-        logging.info(dataset_config)
+            logging.info(dataset_config)
 
-        dm = None
+            dm = None
+            task = dataset_config['task'][0]
+            for framework in Frameworks:
+                try:
+                    dm = get_datamodule(dataset_config, framework, task)
+                    break
+                except Exception as e:
+                    logging.exception(e)
 
-        for framework in Frameworks:
-            try:
-                dm = get_datamodule(dataset_config, framework)
-                break
-            except Exception as e:
-                logging.exception(e)
-
-        assert dm is not None
-
-        # tmp_path.rmdir()
+            assert dm is not None
+    else:
+        pass
 
 
-@pytest.mark.skip(reason="some problems with dataset downloading")
+# @pytest.mark.skip(reason="some problems with dataset downloading")
 @pytest.mark.parametrize(["experiment_config_file"], experiment_config_files)
 def test_experiments(experiment_config_file):
     from hydra import compose, initialize
     from hydra.core.global_hydra import GlobalHydra
 
-    GlobalHydra.instance().clear()
-    initialize(config_path="../../../config", job_name="test_app")
-    cfg = compose(
-        config_name="train",
-        overrides=[f"experiments={experiment_config_file.stem}"],
-        return_hydra_config=True,
-    )
-    get_experiment(cfg)
-    # cfg = OmegaConf.to_yaml(cfg)
-    # logging.info(cfg)
+    if "example" in str(experiment_config_file):
+        GlobalHydra.instance().clear()
+        initialize(config_path="../../../config", job_name="test_app")
+
+        experiment_file = f"{str(os.path.splitext(experiment_config_file)[0]).split('/experiments/')[-1]}"
+
+        cfg = compose(
+            config_name="train",
+            overrides=[f"experiments={experiment_file}"],  # experiment_config_file.stem
+            return_hydra_config=True,
+        )
+        get_experiment(cfg)
+        # cfg = OmegaConf.to_yaml(cfg)
+        # logging.info(cfg)
