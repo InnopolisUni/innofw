@@ -110,8 +110,6 @@ class TorchAdapter(BaseModelAdapter):
             "logger": logger,
         }
         framework = "torch"
-
-        task="image-segmentation"
         for key, value in objects.items():
             if key == "schedulers_cfg":
                 continue

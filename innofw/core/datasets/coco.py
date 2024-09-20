@@ -9,7 +9,10 @@ import pydicom
 from gitdb.util import basename
 from torch.utils.data import Dataset
 
-from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img, dicom_to_raster
+from innofw.utils.data_utils.preprocessing.dicom_handler import (
+    dicom_to_img,
+    dicom_to_raster,
+)
 
 
 class CocoDataset(Dataset):
@@ -125,9 +128,7 @@ class DicomCocoDatasetInfer(Dataset):
 
     def __init__(self, dicom_dir, transforms=None):
         self.images = []
-        self.paths = [
-            os.path.join(dicom_dir, d) for d in os.listdir(dicom_dir)
-        ]
+        self.paths = [os.path.join(dicom_dir, d) for d in os.listdir(dicom_dir)]
         for dicom in self.paths:
             self.images.append(transforms(image=dicom_to_img(dicom))["image"])
 
@@ -169,9 +170,7 @@ class WheatDataset(Dataset):
         self.root_dir = Path(root_dir)
         self.image_list = annotations["image_name"].values
         self.domain_list = annotations["domain"].values
-        self.boxes = [
-            self.decodeString(item) for item in annotations["BoxesString"]
-        ]
+        self.boxes = [self.decodeString(item) for item in annotations["BoxesString"]]
         self.transforms = transforms
 
     def __len__(self):
@@ -220,30 +219,11 @@ class WheatDataset(Dataset):
                 return boxes
             except:
                 print(BoxesString)
-                print(
-                    "Submission is not well formatted. empty boxes will be returned"
-                )
+                print("Submission is not well formatted. empty boxes will be returned")
                 return np.zeros((0, 4))
 
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import torch
 
-class CustomNormalize:
-    def __call__(self, image, **kwargs):
-        # Нормализация изображения вручную
-        image = (image - image.min()) / (image.max() - image.min() + 1e-8)
-        return image
-
-# Создание пайплайна аугментаций
-transform = A.Compose([
-    A.Resize(256, 256),  # Изменение размера для изображения и маски
-    A.Lambda(image=CustomNormalize()),  # Кастомная нормализация только для изображения
-    ToTensorV2(transpose_mask=True)  # Преобразование в тензоры для изображения и маски
-])
-
-
-class DicomCocoDataset_sm(Dataset):
+class DicomCocoDataset_rtk(Dataset):
     def __init__(self, *args, **kwargs):
         """
         Args:
@@ -251,6 +231,7 @@ class DicomCocoDataset_sm(Dataset):
             transform (callable, optional): Трансформации, применяемые к изображениям и маскам.
         """
         data_dir = kwargs["data_dir"]
+        data_dir = os.path.abspath(data_dir)
         assert os.path.isdir(data_dir), f"Invalid path {data_dir}"
         self.transform = kwargs.get("transform", None)
 
@@ -258,7 +239,6 @@ class DicomCocoDataset_sm(Dataset):
         self.dicom_paths = []
 
         coco_path = None
-
         for root, _, files in os.walk(data_dir):
 
             for file in files:
@@ -266,41 +246,46 @@ class DicomCocoDataset_sm(Dataset):
                 filename, ext = os.path.splitext(basename)
                 if ext == ".json":
                     coco_path = os.path.join(data_dir, root, file)
-                elif ext in ["",  ".dcm"]:
+                elif ext in ["", ".dcm"]:
                     dicom_path = os.path.join(data_dir, root, file)
-                    self.dicom_paths += [dicom_path]
+                    if pydicom.misc.is_dicom(dicom_path):
+                        self.dicom_paths += [dicom_path]
         if not coco_path:
-            raise FileNotFoundError('COCO аннотации не найдены в директории.')
+            raise FileNotFoundError(
+                f"COCO аннотации не найдены в директории {data_dir}."
+            )
+
+        if not self.dicom_paths:
+            raise FileNotFoundError(f"Dicom не найдены в директории {data_dir}.")
 
         # Загрузка COCO аннотаций
-        with open(coco_path, 'r') as f:
+        with open(coco_path, "r") as f:
             self.coco = json.load(f)
-        self.categories = self.coco['categories']
-        self.images = self.coco['images']
-        self.annotations = self.coco['annotations']
-        self.image_id_to_annotations = {image['id']: [] for image in self.images}
-        for ann in self.annotations:
-            self.image_id_to_annotations[ann['image_id']].append(ann)
-
+        self.categories = self.coco["categories"]
+        self.annotations = self.coco["annotations"]
         self.num_classes = len(self.categories)
+
+        self.images = self.coco["images"]
+        self.image_id_to_annotations = {image["id"]: [] for image in self.images}
+        for ann in self.annotations:
+            self.image_id_to_annotations[ann["image_id"]].append(ann)
 
         if len(self.images) != len(self.dicom_paths):
             new_images = []
             for img in self.images:
                 for dicom_path in self.dicom_paths:
                     if dicom_path.endswith(img["file_name"]):
-                            new_images += [img]
+                        new_images += [img]
             self.images = new_images
 
         import re
 
         def extract_digits(s):
-            out = re.findall(r'\d+', s)
+            out = re.findall(r"\d+", s)
             out = "".join(out)
             return int(out)
 
-        self.images.sort(key = lambda x : extract_digits(x["file_name"]))
-
+        self.images.sort(key=lambda x: extract_digits(x["file_name"]))
 
     def __len__(self):
         return len(self.images)
@@ -309,7 +294,7 @@ class DicomCocoDataset_sm(Dataset):
         """
 
         Args:
-            idx: 
+            idx:
 
         Returns:
             A dictionary with keys
@@ -325,50 +310,61 @@ class DicomCocoDataset_sm(Dataset):
             if dicom_path.endswith(image_info["file_name"]):
                 break
         else:
-            raise FileNotFoundError('Dicom не найден.')
+            raise FileNotFoundError(f"Dicom {dicom_path} не найден.")
         dicom = pydicom.dcmread(dicom_path)
         image = dicom_to_raster(dicom)
 
-        # image= preprocess_dicom(dicom)
-        # from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import apply_window_level
-        #
-        # dicom_image = dicom.pixel_array
-        # dicom_image = dicom_image[..., np.newaxis]
-        # image = apply_window_level(dicom_image)
-        #
-        anns = self.image_id_to_annotations[image_info['id']]
+        anns = self.image_id_to_annotations[image_info["id"]]
         mask = self.get_mask(anns, image_info)
-
-        if self.transform is None:
-            self.transform = transform
 
         if self.transform:
             transformed = self.transform(image=image, mask=mask)
-            image = transformed['image']
-            mask = transformed['mask']
+            image = transformed["image"]
+            mask = transformed["mask"]
+
+        raw = dicom.pixel_array
+
         if type(image) == torch.Tensor:
             image = image.float()
-        return {"image": image, "mask": mask, "path": dicom_path, "raw_image": dicom.pixel_array}
+            shape = image.shape[1:]
+            add_raw = False
+        else:
+            shape = image.shape[:2]
+            add_raw = True
+
+        out = {"image": image, "mask": mask, "path": dicom_path}
+
+        if add_raw:
+            if raw.shape[:2] != shape:
+                # no need to apply all transforms
+                raw = cv2.resize(raw, shape)
+            out["raw_image"] = raw
+        return out
 
     def get_mask(self, anns, image_info):
-        mask = np.zeros((image_info['height'], image_info['width'], self.num_classes), dtype=np.uint8)
+        mask = np.zeros(
+            (image_info["height"], image_info["width"], self.num_classes),
+            dtype=np.uint8,
+        )
         for ann in anns:
-            segmentation = ann['segmentation']
-            category_id = ann['category_id'] - 1  # Приведение category_id к индексу слоя
+            segmentation = ann["segmentation"]
+            category_id = (
+                ann["category_id"] - 1
+            )  # Приведение category_id к индексу слоя
             if isinstance(segmentation, list):  # полигональная аннотация
                 for polygon in segmentation:
-                    poly_mask = self._polygon_to_mask(polygon, image_info['height'], image_info['width'])
-                    mask[:, : ,category_id][poly_mask > 0] = 1
+                    poly_mask = self._polygon_to_mask(
+                        polygon, image_info["height"], image_info["width"]
+                    )
+                    mask[:, :, category_id][poly_mask > 0] = 1
         return mask
 
     @staticmethod
     def _polygon_to_mask(polygon, height, width):
         mask = np.zeros((height, width), dtype=np.uint8)
         polygon = np.array(polygon).reshape(-1, 2)
-        rr, cc = polygon[:, 1].astype(int), polygon[:, 0].astype(int)
-        mask[rr, cc] = 1
+        mask = cv2.fillPoly(mask, [polygon.astype(int)], color=1)
         return mask
-
 
     def setup_infer(self):
         pass
@@ -378,4 +374,3 @@ class DicomCocoDataset_sm(Dataset):
 
     def predict_dataloader(self):
         return self
-

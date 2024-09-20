@@ -1,83 +1,84 @@
-
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from pathlib import Path
 import os
 
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
-from sklearn.metrics.pairwise import cosine_similarity
-from tqdm import tqdm
+import matplotlib.pyplot as plt
 import cv2
+import numpy as np
 
-from innofw.core.datasets.coco import DicomCocoDataset_sm
-from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import (
-    DEFAULT_PATH,
-    OUTPUT_PATH,
-)
+
+def overlay_mask_on_image(image, mask, alpha=0.5):
+    """
+    Наложение маски на изображение с цветовой кодировкой для каждого класса без изменения оригинальных цветов изображения.
+
+    Args:
+        image (np.array): Исходное изображение (HxWxC).
+        mask (np.array): Маска в формате (H, W, D), где D - количество классов.
+        alpha (float): Прозрачность маски.
+
+    Returns:
+        np.array: Изображение с наложенной маской.
+    """
+    color = np.array([255, 0, 0])
+
+    if len(image.shape) == 2 or image.shape[2] == 1:
+        image = np.stack([image] * 3, axis=-1)
+
+    colored_mask = np.any(mask > 0, axis=-1)
+    shape_to = image.shape[:2]
+    colored_mask = cv2.resize(
+        colored_mask.astype(np.uint8), shape_to, interpolation=cv2.INTER_NEAREST
+    )
+    overlayed_image = image.copy()
+    overlayed_image[colored_mask.astype(bool)] = (
+        overlayed_image[colored_mask.astype(bool)] * (1 - alpha) + alpha * color
+    )
+    return overlayed_image
 
 
 def calculate_metrics(raw, contrasted):
-    if len(raw.shape) ==2 or raw.shape[2] == 1:
-        raw = cv2.cvtColor(raw, cv2.COLOR_GRAY2RGB)
 
     # PSNR
     psnr = peak_signal_noise_ratio(raw, contrasted)
 
     # SSIM
-    ssim = structural_similarity(raw, contrasted, channel_axis=2)
+    ssim = structural_similarity(raw, contrasted)
 
-    # # Cosine Similarity
-    # # Преобразуем изображения в векторы
-    # image1_vector = image1.flatten().reshape(1, -1)
-    # image2_vector = image2.flatten().reshape(1, -1)
-    #
-    # # Вычисляем косинусное сходство
-    # cos_sim = cosine_similarity(image1_vector, image2_vector)[0][0]
-
-    return psnr, ssim
-
-def output_path(default_input_path: str):
-    default_input_path = str(default_input_path)  # in case of path-objects
-    if os.path.exists(default_input_path):
-        # assert os.path.isdir(default_input_path), "there should be a dir to a collection of DICOM"
-        if default_input_path.endswith("/"):
-            default_input_path = default_input_path[:-1]
-        *parts, last_part = default_input_path.split(os.path.sep)
-        new_path_parts = parts + [last_part + "_output"]
-        default_output_path = os.path.join(*new_path_parts)
-        os.makedirs(default_output_path, exist_ok=True)
-    else:
-        ValueError("no such ")
-    return default_output_path
+    return {"Peak Signal-to-Noise Ratio": psnr, "Structural Similarity Index": ssim}
 
 
-OUTPUT_PATH = output_path(DEFAULT_PATH)
+def hemorrhage_contrast_metrics(input_path: str):
+    try:
+        input_path = str(input_path)
+    except TypeError:
+        raise Exception(f"wrong path {input_path}")
 
+    assert os.path.exists(input_path), f"wrong path {input_path}"
+    files = os.listdir(input_path)
+    uniqes = [x.rsplit("_", 1)[0] for x in files]
 
-def processing(input_path, output_folder=OUTPUT_PATH):
+    for f in uniqes:
+        mask = cv2.imread(os.path.join(input_path, f + "_mask.png"), 0)
+        raw_image = np.load(os.path.join(input_path, f + "_raw.npy"))
+        image = cv2.imread(os.path.join(input_path, f + "_image.png"), 0)
+        mask = np.expand_dims(mask, 2)
+        contrasted_image_with_mask = overlay_mask_on_image(image, mask)
 
-    dataset = DicomCocoDataset_sm(data_dir=input_path)
-    for x in (pbar := tqdm(dataset)):
-        path = x["path"]
-        image = x["image"]
-        image = image[:, :, 0]
+        f, ax = plt.subplots(1, 2)
+        ax[0].imshow(raw_image, cmap="Greys_r")
+        ax[1].imshow(contrasted_image_with_mask)
 
-        os.makedirs(output_folder, exist_ok=True)
-        basename = Path(path).stem
-        output_path = os.path.join(output_folder, basename + ".png")
-        if os.path.exists(output_path):
-            image2 = cv2.imread(output_path)
-            psnr, ssim =  calculate_metrics(image, image2)
-            print(f"Calculated metrics for images {path} and {output_path}:\n"
-                  f"Peak Signal-to-Noise Ratio: {psnr}\n"
-                  f"Structural Similarity Index: {ssim}\n"
-                  )
-        else:
-            print(f"file {output_path} does not exist")
+        metrics = calculate_metrics(raw_image, image)
+        plt.suptitle("\n".join([f"{k}:{np.round(v, 2)}" for k, v in metrics.items()]))
+        plt.show()
 
 
 def callback(arguments):
     """Callback function for arguments"""
-    return processing(arguments.input, arguments.output)
+    try:
+        hemorrhage_contrast_metrics(arguments.input)
+    except KeyboardInterrupt:
+        print("You exited")
 
 
 def setup_parser(parser):
@@ -85,15 +86,10 @@ def setup_parser(parser):
     parser.add_argument(
         "-i",
         "--input",
-        default=DEFAULT_PATH,
-        help="path to dataset to load, default path is %(default)s",
-    )
-
-    parser.add_argument(
         "-o",
         "--output",
-        default=OUTPUT_PATH,
-        help="path to dataset to save",
+        required=True,
+        help="path to dataset to load, default path is %(default)s",
     )
 
 
