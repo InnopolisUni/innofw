@@ -240,12 +240,7 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
         )
 
 
-import os
-from torch.utils.data import DataLoader, random_split
-import pytorch_lightning as pl
-
-
-class DicomCocoComplexingModule(pl.LightningDataModule):
+class DicomCocoComplexingModule(BaseLightningDataModule):
     def __init__(self, train,
                  test,
                  infer=None,
@@ -268,38 +263,36 @@ class DicomCocoComplexingModule(pl.LightningDataModule):
         pass
 
     def setup_infer(self):
-
-        from albumentations import Compose
-        from albumentations.pytorch.transforms import ToTensorV2
-        from albumentations.augmentations import Normalize
-
-        self.transform = Compose([ToTensorV2()])
+        self.transform = albu.Compose([ToTensorV2()])
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
+        return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
 
     def test_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
 
     def predict_dataloader(self):
         mrt_path = self.infer["target"]['mrt']
         ct_path = self.infer["target"]['ct']
         mrt_ds = DicomCocoDataset_sm(data_dir = mrt_path, transform=self.transform)
         ct_ds = DicomCocoDataset_sm(data_dir = ct_path, transform=self.transform)
-        from torch.utils.data import ConcatDataset
-        infer_ds = ConcatDataset(mrt_ds, ct_ds)
-        return DataLoader(infer_ds, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        infer_ds =  torch.utils.data.ConcatDataset(mrt_ds, ct_ds)
+        return torch.utils.data.DataLoader(infer_ds, batch_size=self.batch_size, shuffle=False, num_workers=4)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         pass
 
 
-class DicomCocoDataModuleRTK(pl.LightningDataModule):
-    def __init__(self, train,
-                 test,
+class DicomCocoDataModuleRTK(BaseLightningDataModule):
+   
+    task = ["image-detection", "image-segmentation"]
+    dataset = DicomCocoDataset_sm
+
+    def __init__(self, train=None,
+                 test=None,
                  infer=None,
                  val_size: float = 0.2,
                  num_workers: int = 1,
@@ -309,31 +302,50 @@ class DicomCocoDataModuleRTK(pl.LightningDataModule):
                  *args,
                  **kwargs,
                  ):
-        super().__init__()
-        self.batch_size = batch_size
-        self.transform = transform
-        self.val_split = val_split
-        self.test_split = test_split
-        self.infer = infer
+        super().__init__( train,
+            test,
+            infer,
+            batch_size,
+            num_workers,
+            stage,
+            *args,
+            **kwargs,
+        )
 
     def setup(self, stage=None):
         pass
 
     def setup_infer(self):
+        if self.aug:
+            self.predict_dataset = self.dataset(data_dir = self.predict_source["target"], transforms=Augmentation(self.aug["test"]))
+        else:
+            class CustomNormalize:
+                def __call__(self, image, **kwargs):
+                    image = (image - image.min()) / (image.max() - image.min() + 1e-8)
+                    return image
+
+            transform = albu.Compose([
+                albu.Resize(256, 256),  # Изменение размера для изображения и маски
+                albu.Lambda(image=CustomNormalize()),  # Кастомная нормализация только для изображения
+                ToTensorV2(transpose_mask=True)  # Преобразование в тензоры для изображения и маски
+            ])
+            from IPython import embed; embed()
+            self.predict_dataset = self.dataset(data_dir = str(self.predict_source), transform=transform)
+
+    def setup_train_test_val(self, **kwargs):
         pass
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
+        return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def test_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def predict_dataloader(self):
-        infer_ds = DicomCocoDataset_sm(data_dir = self.infer["target"])
-        return DataLoader(infer_ds, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.predict_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         prefix = "mask"
@@ -345,26 +357,3 @@ class DicomCocoDataModuleRTK(pl.LightningDataModule):
                 output = np.transpose(output, (1, 2, 0))
                 path = os.path.join(dst_path, f"{prefix}_{batch_idx}_{i}.npy")
                 np.save(path, output)
-
-
-# Функция для сохранения тензоров в виде масок
-def save_tensor_list_as_masks3(tensor_list, prefix, dst_path):
-    for tensor_idx, tensor in enumerate(tensor_list):
-        for i in range(tensor.shape[0]):
-            t = tensor[i].numpy()
-            t = np.transpose(t, (1,2,0))
-            path = os.path.join(dst_path, f"{prefix}_{tensor_idx}_{i}.npy")
-            np.save(path, t)
-
-
-
-            # # Для каждого канала делаем пороговое преобразование для создания маски
-            # mask = tensor[i] > 0.5  # Порог можно настроить
-            # # Преобразуем маску в numpy массив и сконвертируем в 8-битный формат
-            # mask_np = (mask.numpy() * 255).astype(np.uint8)
-            #
-            # # Сохраняем каждый канал как отдельное изображение
-            # for j in range(mask_np.shape[0]):
-            #     img = Image.fromarray(mask_np[j])
-            #     path = os.path.join(dst_path, f"{prefix}_{tensor_idx}_{i}_{j}.png")
-            #     img.save(path)

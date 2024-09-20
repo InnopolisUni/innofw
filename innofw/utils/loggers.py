@@ -34,7 +34,7 @@ def setup_wandb(cfg):
 def setup_clear_ml(cfg):
     config = cfg.copy()
     clear_ml_cfg = cfg.get("clear_ml")
-    if clear_ml_cfg and clear_ml_cfg.get("enable"):
+    if clear_ml_cfg and clear_ml_cfg.get("enable") and False:
         from clearml import Task
 
         experiment_name = cfg["experiment_name"]

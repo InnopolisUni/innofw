@@ -225,24 +225,6 @@ class WheatDataset(Dataset):
                 )
                 return np.zeros((0, 4))
 
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import torch
-
-class CustomNormalize:
-    def __call__(self, image, **kwargs):
-        # Нормализация изображения вручную
-        image = (image - image.min()) / (image.max() - image.min() + 1e-8)
-        return image
-
-# Создание пайплайна аугментаций
-transform = A.Compose([
-    A.Resize(256, 256),  # Изменение размера для изображения и маски
-    A.Lambda(image=CustomNormalize()),  # Кастомная нормализация только для изображения
-    ToTensorV2(transpose_mask=True)  # Преобразование в тензоры для изображения и маски
-])
-
-
 class DicomCocoDataset_sm(Dataset):
     def __init__(self, *args, **kwargs):
         """
@@ -258,7 +240,6 @@ class DicomCocoDataset_sm(Dataset):
         self.dicom_paths = []
 
         coco_path = None
-
         for root, _, files in os.walk(data_dir):
 
             for file in files:
@@ -268,21 +249,23 @@ class DicomCocoDataset_sm(Dataset):
                     coco_path = os.path.join(data_dir, root, file)
                 elif ext in ["",  ".dcm"]:
                     dicom_path = os.path.join(data_dir, root, file)
-                    self.dicom_paths += [dicom_path]
+                    if pydicom.misc.is_dicom(dicom_path):
+                        self.dicom_paths += [dicom_path]
         if not coco_path:
-            raise FileNotFoundError('COCO аннотации не найдены в директории.')
+            raise FileNotFoundError(f'COCO аннотации не найдены в директории {data_dir}.')
 
         # Загрузка COCO аннотаций
         with open(coco_path, 'r') as f:
             self.coco = json.load(f)
         self.categories = self.coco['categories']
-        self.images = self.coco['images']
         self.annotations = self.coco['annotations']
+        self.num_classes = len(self.categories)
+
+        self.images = self.coco['images']
         self.image_id_to_annotations = {image['id']: [] for image in self.images}
         for ann in self.annotations:
             self.image_id_to_annotations[ann['image_id']].append(ann)
 
-        self.num_classes = len(self.categories)
 
         if len(self.images) != len(self.dicom_paths):
             new_images = []
@@ -335,12 +318,9 @@ class DicomCocoDataset_sm(Dataset):
         # dicom_image = dicom.pixel_array
         # dicom_image = dicom_image[..., np.newaxis]
         # image = apply_window_level(dicom_image)
-        #
+
         anns = self.image_id_to_annotations[image_info['id']]
         mask = self.get_mask(anns, image_info)
-
-        if self.transform is None:
-            self.transform = transform
 
         if self.transform:
             transformed = self.transform(image=image, mask=mask)

@@ -1,6 +1,8 @@
-import sys
-import pydicom
-from pydicom import dcmread
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+from pathlib import Path
+import logging
+import os
+
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import PIL
 import cv2
@@ -61,7 +63,8 @@ def window_image(img, window_center, window_width, intercept, slope):
     img_min = window_center - window_width // 2
     img_max = window_center + window_width // 2
     img = np.clip(img, img_min, img_max)
-    return img 
+    return img
+
 
 def resize(img, new_w, new_h):
     img = PIL.Image.fromarray(img.astype(np.int8), mode="L")
@@ -154,13 +157,13 @@ def processing(input_path, output_folder=OUTPUT_PATH):
         basename = Path(path).stem
         # contrasted_img = apply_window_level(image)
         contrasted_img = image
-        cv2.imwrite(os.path.join(output_folder, basename + ".png"), image)
+        # cv2.imwrite(os.path.join(output_folder, basename + ".png"), image)
         contrasted_image = overlay_mask_on_image(contrasted_img, mask)
         # output_path = os.path.join(output_folder, basename + ".png")
         f, ax = plt.subplots(1, 2)
 
-        # ax[0].imshow(raw_image, cmap="Greys_r")
-        # ax[1].imshow(contrasted_image)
+        ax[0].imshow(raw_image, cmap="Greys_r")
+        ax[1].imshow(contrasted_image)
         plt.show()
 
         # if cv2.imwrite(output_path, contrasted_image):
@@ -191,8 +194,38 @@ def other_methods_to_do_this(path, use_innofw=True):
 def callback(arguments):
     """Callback function for arguments"""
     try:
-         id, windowed = prepare_image(sys.argv[1])
-         windowed =  np.array(windowed)
-         cv2.imwrite(sys.argv[2]+"/"+id.split("/")[-1], windowed)
-    except Exception as err:
-        l.error(err)
+        processing(arguments.input, arguments.output)
+    except KeyboardInterrupt:
+        print("You exited")
+
+
+def setup_parser(parser):
+    """The function to setup parser arguments"""
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="path to dataset to load, default path is %(default)s",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        default=OUTPUT_PATH,
+        help="path to dataset to save",
+    )
+
+
+def main():
+    """Main module function"""
+    parser = ArgumentParser(
+        prog="hemorrhage_contrast",
+        description="A tool to contrast",
+        formatter_class=ArgumentDefaultsHelpFormatter,
+    )
+    setup_parser(parser)
+    arguments = parser.parse_args()
+    callback(arguments)
+
+
+if __name__ == "__main__":
+    main()

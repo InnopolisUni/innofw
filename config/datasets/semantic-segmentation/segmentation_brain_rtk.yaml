@@ -13,5 +13,6 @@ train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/train.zip
   target: ./data/stroke/train
 infer:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/infer.zip
+#  source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/infer.zip
+  source: "/home/ainur/data/rtk/sct/mini_257f05f5-3f910d40-883d1516-ffae528b-f9ce8645/"
   target: "/home/ainur/data/rtk/sct/mini_257f05f5-3f910d40-883d1516-ffae528b-f9ce8645/"
