@@ -254,6 +254,10 @@ class DicomCocoDataset_sm(Dataset):
         if not coco_path:
             raise FileNotFoundError(f'COCO аннотации не найдены в директории {data_dir}.')
 
+        if not self.dicom_paths:
+            raise FileNotFoundError(f'Dicom не найдены в директории {data_dir}.')
+
+
         # Загрузка COCO аннотаций
         with open(coco_path, 'r') as f:
             self.coco = json.load(f)
@@ -308,16 +312,9 @@ class DicomCocoDataset_sm(Dataset):
             if dicom_path.endswith(image_info["file_name"]):
                 break
         else:
-            raise FileNotFoundError('Dicom не найден.')
+            raise FileNotFoundError(f'Dicom {dicom_path} не найден.')
         dicom = pydicom.dcmread(dicom_path)
         image = dicom_to_raster(dicom)
-
-        # image= preprocess_dicom(dicom)
-        # from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import apply_window_level
-        #
-        # dicom_image = dicom.pixel_array
-        # dicom_image = dicom_image[..., np.newaxis]
-        # image = apply_window_level(dicom_image)
 
         anns = self.image_id_to_annotations[image_info['id']]
         mask = self.get_mask(anns, image_info)
@@ -326,9 +323,20 @@ class DicomCocoDataset_sm(Dataset):
             transformed = self.transform(image=image, mask=mask)
             image = transformed['image']
             mask = transformed['mask']
+        raw = dicom.pixel_array
+
+
+
         if type(image) == torch.Tensor:
             image = image.float()
-        return {"image": image, "mask": mask, "path": dicom_path, "raw_image": dicom.pixel_array}
+            shape = image.shape[1:]
+        else:
+            shape = image.shape[:2]
+
+        if raw.shape[:2] != shape:
+            # no need to apply all transforms
+            raw = cv2.resize(raw, shape)
+        return {"image": image, "mask": mask, "path": dicom_path, "raw_image": raw}
 
     def get_mask(self, anns, image_info):
         mask = np.zeros((image_info['height'], image_info['width'], self.num_classes), dtype=np.uint8)
@@ -346,7 +354,8 @@ class DicomCocoDataset_sm(Dataset):
         mask = np.zeros((height, width), dtype=np.uint8)
         polygon = np.array(polygon).reshape(-1, 2)
         rr, cc = polygon[:, 1].astype(int), polygon[:, 0].astype(int)
-        mask[rr, cc] = 1
+        mask =  cv2.fillPoly(mask, [polygon.astype(int)], color=1)
+        # mask[rr, cc] = 1
         return mask
 
 

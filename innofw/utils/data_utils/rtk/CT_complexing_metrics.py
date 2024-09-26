@@ -10,8 +10,6 @@ import numpy as np
 from innofw.core.datasets.coco import DicomCocoDataset_sm
 
 
-# DICOM_PATH = "/home/ainur/data/dicom/ainur_sct_json/1.2.643.5.1.13.13.12.2.77.8252.14110807150508020609090907121401/"
-# NET_OUTPUT_PATH = "/home/ainur/git/innofw/logs/infer/segmentation/semantic-segmentation/SK_180822_qmciwj41_unet_brain_detection/20240828-145231/"
 
 
 

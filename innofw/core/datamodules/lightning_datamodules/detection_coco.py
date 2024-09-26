@@ -240,9 +240,12 @@ class DicomCocoLightningDataModule(CocoLightningDataModule):
         )
 
 
-class DicomCocoComplexingModule(BaseLightningDataModule):
-    def __init__(self, train,
-                 test,
+class DicomCocoComplexingDataModule(BaseLightningDataModule):
+    task = ["image-detection", "image-segmentation"]
+    dataset = DicomCocoDataset_sm
+
+    def __init__(self, train=None,
+                 test=None,
                  infer=None,
                  val_size: float = 0.2,
                  num_workers: int = 1,
@@ -252,38 +255,84 @@ class DicomCocoComplexingModule(BaseLightningDataModule):
                  *args,
                  **kwargs,
                  ):
-        super().__init__()
-        self.batch_size = batch_size
-        self.transform = transform
-        self.val_split = val_split
-        self.test_split = test_split
-        self.infer = infer
+
+        super().__init__( train,
+                          test,
+                          infer,
+                          batch_size,
+                          num_workers,
+                          stage,
+                          *args,
+                          **kwargs,
+                          )
 
     def setup(self, stage=None):
         pass
 
+    def setup_train_test_val(self, **kwargs):
+        pass
+
+
     def setup_infer(self):
-        self.transform = albu.Compose([ToTensorV2()])
+        if self.aug:
+            transform =  Augmentation(self.aug["test"])
+        else:
+            class CustomNormalize:
+                def __call__(self, image, **kwargs):
+                    image = (image - image.min()) / (image.max() - image.min() + 1e-8)
+                    return image
+
+            transform = albu.Compose([
+                albu.Resize(256, 256),  # Изменение размера для изображения и маски
+                albu.Lambda(image=CustomNormalize()),  # Кастомная нормализация только для изображения
+                ToTensorV2(transpose_mask=True)  # Преобразование в тензоры для изображения и маски
+            ])
+        self.predict_dataset =   [self.dataset(data_dir = str(self.predict_source) , transform=transform),
+        self.dataset(data_dir=str(self.predict_source ), transform=transform)]
+        self.predict_dataset =  torch.utils.data.ConcatDataset(self.predict_dataset)
 
     def train_dataloader(self):
-        return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
+        return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
 
     def val_dataloader(self):
-        return torch.utils.data.DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def test_dataloader(self):
-        return torch.utils.data.DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        return torch.utils.data.DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def predict_dataloader(self):
-        mrt_path = self.infer["target"]['mrt']
-        ct_path = self.infer["target"]['ct']
-        mrt_ds = DicomCocoDataset_sm(data_dir = mrt_path, transform=self.transform)
-        ct_ds = DicomCocoDataset_sm(data_dir = ct_path, transform=self.transform)
-        infer_ds =  torch.utils.data.ConcatDataset(mrt_ds, ct_ds)
-        return torch.utils.data.DataLoader(infer_ds, batch_size=self.batch_size, shuffle=False, num_workers=4)
+        """shuffle should be turned off"""
+        return torch.utils.data.DataLoader(self.predict_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
-        pass
+        """ we assume that shuffle is turned off
+
+        Args:
+            preds:
+            stage:
+            dst_path:
+
+        Returns:
+
+        """
+
+        total_iter = 0
+        prefix = "mask"
+
+        for tensor_batch in preds:
+            for i in range(tensor_batch.shape[0]):
+                path = self.predict_dataset[total_iter]["path"]
+                output = tensor_batch[i].cpu().detach().numpy()
+                output = np.max(output, axis=0)
+                output = np.expand_dims(output, axis=0)
+                output = np.transpose(output, (1, 2, 0))
+                if "/ct/" in path:
+                    prefix += '_ct'
+                else:
+                    prefix += '_mrt'
+                path = os.path.join(dst_path, f"{prefix}_{total_iter}.npy")
+                np.save(path, output)
+                total_iter += 1
 
 
 class DicomCocoDataModuleRTK(BaseLightningDataModule):
@@ -317,7 +366,7 @@ class DicomCocoDataModuleRTK(BaseLightningDataModule):
 
     def setup_infer(self):
         if self.aug:
-            self.predict_dataset = self.dataset(data_dir = self.predict_source["target"], transforms=Augmentation(self.aug["test"]))
+            transform = Augmentation(self.aug["test"])
         else:
             class CustomNormalize:
                 def __call__(self, image, **kwargs):
@@ -329,8 +378,7 @@ class DicomCocoDataModuleRTK(BaseLightningDataModule):
                 albu.Lambda(image=CustomNormalize()),  # Кастомная нормализация только для изображения
                 ToTensorV2(transpose_mask=True)  # Преобразование в тензоры для изображения и маски
             ])
-            from IPython import embed; embed()
-            self.predict_dataset = self.dataset(data_dir = str(self.predict_source), transform=transform)
+        self.predict_dataset = self.dataset(data_dir = str(self.predict_source), transform=transform)
 
     def setup_train_test_val(self, **kwargs):
         pass

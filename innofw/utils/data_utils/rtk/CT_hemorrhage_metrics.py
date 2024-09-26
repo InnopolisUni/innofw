@@ -3,16 +3,13 @@ from pathlib import Path
 import os
 
 from tqdm import tqdm
+import albumentations as A
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
 from innofw.core.datasets.coco import DicomCocoDataset_sm
-
-
-from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import overlay_mask_on_image
-
-import albumentations as A
+from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import overlay_mask_on_image
 
 
 transform = A.Compose([
@@ -23,6 +20,7 @@ def processing(input_path, output_folder, task="detection"):
 
     dataset = DicomCocoDataset_sm(data_dir=input_path, transform=transform)
     outs = os.listdir(output_folder)
+    outs = [x for x in outs if x.endswith("npy")]
     outs.sort()
     for x, out in (pbar := tqdm(zip(dataset, outs))):
         image = x["image"]
@@ -36,16 +34,40 @@ def processing(input_path, output_folder, task="detection"):
             gt = overlay_mask_on_image(gt, gt_mask)
             pr = overlay_mask_on_image(pr, pr_mask)
         elif task == "detection":
-            gt = result_bbox(gt_mask, image)
-            pr = result_bbox(pr_mask, image)
+            gt = result_bbox(gt_mask, gt)
+            pr = result_bbox(pr_mask, pr)
         else:
             raise NotImplementedError(f"no suck task {task}")
 
         f, ax = plt.subplots(1, 2)
         ax[0].imshow(gt)
+        ax[0].title.set_text("Ground Truth")
         ax[1].imshow(pr)
-        plt.show()
+        ax[1].title.set_text("Predicted")
 
+        if task == "segmentation":
+
+            def compute_iou(mask1, mask2):
+                # Пересечение: пиксели, которые равны 1 в обеих масках
+                intersection = np.sum((mask1 == 1) & (mask2 == 1))
+
+                # Объединение: пиксели, которые равны 1 хотя бы в одной маске
+                union = np.sum((mask1 == 1) | (mask2 == 1))
+
+                # Вычисление IoU
+                iou = intersection / union if union > 0 else 0
+                return iou
+
+            metrics = { 'Intersection over union ': compute_iou(pr_mask, gt_mask) }
+
+
+        elif task == "detection":
+            metrics = {}
+        else:
+            raise NotImplementedError(f"no suck task {task}")
+
+
+        plt.suptitle("\n".join([f"{k}:{np.round(v, 2)}" for k, v in metrics.items()]))
         from matplotlib.patches import Patch
         patch = Patch(facecolor='red', edgecolor='r', label='pathology')
         f.legend(handles=[patch], loc='lower center')
@@ -53,16 +75,25 @@ def processing(input_path, output_folder, task="detection"):
 
 
 def result_bbox(masks, image):
+    """
+
+    Args:
+        masks:
+        image: 2d array [H, W]
+
+    Returns:
+
+    """
+    assert len(image.shape) == 2
     img = image.copy()
     boxes = mask_to_bbox(masks)
-    img = img[:, :, 0]
     img = np.stack([img] * 3, axis=2)
     img = draw_bboxes(img, boxes)
     return img
 
 
 
-def mask_to_bbox(mask: np.ndarray):
+def mask_to_bbox(mask_image: np.ndarray):
     """
     Преобразует маску в список bounding boxes для каждого класса.
 
@@ -72,10 +103,11 @@ def mask_to_bbox(mask: np.ndarray):
     Returns:
     List[List[Tuple[int, int, int, int]]]: Список списков кортежей, каждый из которых содержит координаты (x_min, y_min, x_max, y_max) для каждого объекта каждого класса.
     """
-    num_classes = mask.shape[-1]
+    num_classes = mask_image.shape[-1]
     all_bboxes = []
-    mask = mask.sum(axis=0).astype(np.uint8)
+    mask = mask_image.sum(axis=-1).astype(np.uint8)
     assert mask.shape[0]==mask.shape[1]
+    # todo 256 to config
     d =   256/ mask.shape[0]
 
 
@@ -115,7 +147,7 @@ def draw_bboxes(image, bboxes):
         x_min, y_min, x_max, y_max = bbox
 
         # Отрисовываем bounding box
-        cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color, -1)
+        cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
 
     return image
 
