@@ -8544,20 +8544,20 @@ test = ["websockets"]
 
 [[package]]
 name = "werkzeug"
-version = "3.0.4"
+version = "2.2.3"
 description = "The comprehensive WSGI web application library."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 files = [
-    {file = "werkzeug-3.0.4-py3-none-any.whl", hash = "sha256:02c9eb92b7d6c06f31a782811505d2157837cea66aaede3e217c7c27c039476c"},
-    {file = "werkzeug-3.0.4.tar.gz", hash = "sha256:34f2371506b250df4d4f84bfe7b0921e4762525762bbd936614909fe25cd7306"},
+    {file = "Werkzeug-2.2.3-py3-none-any.whl", hash = "sha256:56433961bc1f12533306c624f3be5e744389ac61d722175d543e1751285da612"},
+    {file = "Werkzeug-2.2.3.tar.gz", hash = "sha256:2e1ccc9417d4da358b9de6f174e3ac094391ea1d4fbef2d667865d819dfd0afe"},
 ]
 
 [package.dependencies]
 MarkupSafe = ">=2.1.1"
 
 [package.extras]
-watchdog = ["watchdog (>=2.3)"]
+watchdog = ["watchdog"]
 
 [[package]]
 name = "wheel"
@@ -9047,4 +9047,4 @@ dvc = ["dvc", "dvc-s3"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.10"
-content-hash = "b6855720160d9f3a2cea39230cf9b765b385062e1e7169a162849b4e8e4fba53"
+content-hash = "0461d60a68ccde49abd01fd97289ce1eaeec9a8cf9a893328ba7d6cc52f69ab9"
