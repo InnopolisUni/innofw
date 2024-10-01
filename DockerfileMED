@@ -14,7 +14,7 @@ COPY ./config/experiments/demo_med /code/config/experiments/
 WORKDIR /code
 
 RUN /bin/bash -c '/root/.local/bin/poetry config virtualenvs.create false \
-    && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi --no-cache'
+   && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi --no-cache'
 
 WORKDIR /code/dui
 

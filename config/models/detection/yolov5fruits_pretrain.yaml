@@ -1,4 +1,3 @@
 _target_: ultralytics.YOLO
 description: yolov5 by ultralytics
-model: yolov5xu
 name: yolov5
