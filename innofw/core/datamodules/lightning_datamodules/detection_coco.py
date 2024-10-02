@@ -353,6 +353,7 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
 
         """
 
+
         total_iter = 0
         for tensor_batch in preds:
             for i in range(tensor_batch.shape[0]):
@@ -378,13 +379,9 @@ class DicomCocoDataModuleRTK(DicomCocoComplexingDataModule):
 
             transform = albu.Compose(
                 [
-                    albu.Resize(256, 256),  # Изменение размера для изображения и маски
-                    albu.Lambda(
-                        image=CustomNormalize()
-                    ),  # Кастомная нормализация только для изображения
-                    ToTensorV2(
-                        transpose_mask=True
-                    ),  # Преобразование в тензоры для изображения и маски
+                    albu.Resize(256, 256),
+                    albu.Lambda(image=CustomNormalize()),
+                    ToTensorV2(transpose_mask=True),
                 ]
             )
         self.predict_dataset = self.dataset(
@@ -393,7 +390,6 @@ class DicomCocoDataModuleRTK(DicomCocoComplexingDataModule):
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):
         prefix = "mask"
-        assert False
         for batch_idx, tensor_batch in enumerate(preds):
             for i in range(tensor_batch.shape[0]):
                 output = tensor_batch[i].cpu().detach().numpy()
