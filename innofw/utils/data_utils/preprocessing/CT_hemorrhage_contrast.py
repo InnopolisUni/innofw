@@ -1,23 +1,13 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-import os
 from pathlib import Path
+import os
 
-from tensorboard.plugin_util import experiment_id
 from tqdm import tqdm
-import albumentations as A
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
-from transformers.training_args import default_logdir
 
-from innofw.core.datasets.coco import DicomCocoDataset_sm
-
-
-transform = A.Compose(
-    [
-        A.Resize(256, 256),  # Изменение размера для изображения и маски
-    ]
-)
+from innofw.core.datasets.coco import DicomCocoDataset_rtk
+from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import transform
 
 
 def hemorrhage_contrast(input_path: str, output_folder: str = None):
@@ -29,7 +19,7 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
         except TypeError:
             raise ValueError(f"Wrong path to save: {output_folder}")
 
-    dataset = DicomCocoDataset_sm(data_dir=input_path, transform=transform)
+    dataset = DicomCocoDataset_rtk(data_dir=input_path, transform=transform)
     if len(dataset) == 0:
         raise Warning(f"empty dataset with the directory {input_path}")
     else:
@@ -43,8 +33,9 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
             os.makedirs(output_folder, exist_ok=True)
 
             output_path = os.path.join(output_folder, basename + "_raw.npy")
-            if not np.save(output_path, raw_image):
-
+            try:
+                np.save(output_path, raw_image)
+            except:
                 pbar.set_description(f"wrong path {output_path}")
 
             output_path = os.path.join(output_folder, basename + "_mask.png")

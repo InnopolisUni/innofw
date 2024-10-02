@@ -1,132 +1,117 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from pathlib import Path
+from functools import partial
 import os
 
-from tqdm import tqdm
-import cv2
+from matplotlib.widgets import Button
 import matplotlib.pyplot as plt
 import numpy as np
 
-from innofw.core.datasets.coco import DicomCocoDataset_sm
+from innofw.core.datasets.coco import DicomCocoDataset_rtk
+from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import (
+    overlay_mask_on_image,
+)
+from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import transform
+
+current_index_mrt = 0
+current_index_ct = 0
 
 
+def update_images():
+    ax_left.imshow(list(left_images(current_index_mrt))[0])
+    ax_right.imshow(list(right_images(current_index_ct))[0])
+    fig.canvas.draw()
 
 
-
-def mask_to_bbox(mask: np.ndarray):
-    """
-    Преобразует маску в список bounding boxes для каждого класса.
-
-    Parameters:
-    mask (torch.Tensor): Тензор маски размером [# classes, h, w].
-
-    Returns:
-    List[List[Tuple[int, int, int, int]]]: Список списков кортежей, каждый из которых содержит координаты (x_min, y_min, x_max, y_max) для каждого объекта каждого класса.
-    """
-    num_classes = mask.shape[0]
-    all_bboxes = []
-
-    for cls in range(num_classes):
-        cls_mask = mask[cls].astype(np.uint8)  # маска для текущего класса (преобразуем к uint8 для findContours)
-
-        # Находим контуры
-        # contours, _ = cv2.findContours(cls_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contours = cv2.findContours(cls_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contours = contours[0] if len(contours) == 2 else contours[1]
-
-        bboxes = []
-        for contour in contours:
-            x_min, y_min, w, h = cv2.boundingRect(contour)
-            x_max = x_min + w
-            y_max = y_min + h
-            bboxes.append((x_min, y_min, x_max, y_max))
-
-        all_bboxes.append(bboxes)
-
-    return all_bboxes
+def next_image(event):
+    global current_index_mrt, left_max
+    current_index_mrt = (current_index_mrt + 1) % left_max
+    update_images()
 
 
+def prev_image(event):
+    global current_index_mrt, left_max
+    current_index_mrt = (current_index_mrt - 1) % left_max
+    update_images()
 
-def draw_bboxes(image, bboxes, class_names=None, colors=None):
-    """
-    Отрисовывает bounding boxes на изображении.
 
-    Parameters:
-    image (np.ndarray): Изображение, на котором нужно отрисовать bounding boxes.
-    bboxes (List[Tuple[int, int, int, int]]): Список координат bounding boxes [(x_min, y_min, x_max, y_max)] для каждого класса.
-    class_names (List[str]): Список имен классов.
-    colors (List[Tuple[int, int, int]]): Список цветов для каждого класса.
+def next_image_ct(event):
+    global current_index_ct, right_max
+    current_index_ct = (current_index_ct + 1) % right_max
+    update_images()
 
-    Returns:
-    np.ndarray: Изображение с отрисованными bounding boxes.
-    """
-    if colors is None:
-        colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Цвета по умолчанию: красный, зеленый, синий
 
-    for idx, cls_boxxes in enumerate(bboxes):
-        if cls_boxxes is None:
-            continue
+def prev_image_ct(event):
+    global current_index_ct, right_max
+    current_index_ct = (current_index_ct - 1) % right_max
+    update_images()
 
-        if len(cls_boxxes) == 0:
-            continue
 
-        for bbox in cls_boxxes:
-            if not bbox:
-                break
+def show_result():
+    global fig, ax_left, ax_right, left_images, right_images
+    fig, (ax_left, ax_right) = plt.subplots(1, 2)
+    ax_left.imshow(list(left_images(current_index_mrt))[0])
+    ax_right.imshow(list(right_images(current_index_ct))[0])
+    ax_left.axis("off")
+    ax_right.axis("off")
 
-            color = colors[idx % len(colors)]  # выбираем цвет
+    ax_prev = plt.axes([0.3, 0.05, 0.1, 0.075])
+    ax_prev_ct = plt.axes([0.6, 0.05, 0.1, 0.075])
 
-            x_min, y_min, x_max, y_max, *other = bbox
+    ax_next = plt.axes([0.3, 0.15, 0.1, 0.075])
+    ax_next_ct = plt.axes([0.6, 0.15, 0.1, 0.075])
 
-            # Отрисовываем bounding box
-            cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
+    btn_prev = Button(ax_prev, "Назад MRT")
+    btn_next = Button(ax_next, "Вперед MRT")
+    btn_prev.on_clicked(prev_image)
+    btn_next.on_clicked(next_image)
 
-            # Отображаем название класса, если оно задано
-            if class_names and idx < len(class_names):
-                cv2.putText(image, str(class_names[idx]), (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
-    return image
+    btn_prev_ct = Button(ax_prev_ct, "Назад CT")
+    btn_next_ct = Button(ax_next_ct, "Вперед CT")
+    btn_prev_ct.on_clicked(prev_image_ct)
+    btn_next_ct.on_clicked(next_image_ct)
+    plt.show()
 
-def processing(input_path, output_folder=NET_OUTPUT_PATH):
 
-    dataset = DicomCocoDataset_sm(data_dir=input_path)
-    outs = os.listdir(output_folder)
+def show_complexing_metrics(input_path, out_path):
+
+    outs = os.listdir(out_path)
     outs.sort()
-    for x, out in (pbar := tqdm(zip(dataset, outs))):
-        path = x["path"]
-        image = x["image"]
-        gt_mask = x["mask"]
-        assert out.endswith(".npy")
-        pr_mask = np.load(os.path.join(output_folder, out))
 
-        gt = image.copy()
-        gt_mask = gt_mask.transpose()
-        gt_boxes = mask_to_bbox(gt_mask)
-        gt = draw_bboxes(gt, gt_boxes, class_names = range(1))
-        
+    dataset_mrt = DicomCocoDataset_rtk(
+        data_dir=os.path.join(input_path, "mrt"), transform=transform
+    )
+    out_mrt = [x for x in outs if "_mrt" in x]
 
-        gt1 = overlay_mask_on_image(gt, gt_mask)
+    dataset_ct = DicomCocoDataset_rtk(
+        data_dir=os.path.join(input_path, "ct"), transform=transform
+    )
+    out_ct = [x for x in outs if "_ct" in x]
 
+    global left_images, right_images, left_max, right_max
+    left_max = len(out_mrt)
+    right_max = len(out_ct)
 
-        pr = image.copy()
-        pr_boxes = mask_to_bbox(pr_mask)
-        pr = draw_bboxes(pr, pr_boxes, class_names = range(1))
+    left_images = partial(data_gen, ds=dataset_mrt, folder=out_path, outs=out_mrt)
+    right_images = partial(data_gen, ds=dataset_ct, folder=out_path, outs=out_ct)
 
-        pr1 = overlay_mask_on_image(pr, pr_mask)
+    show_result()
 
 
-        f, ax = plt.subplots(1, 2)
-        ax[0].imshow(gt1, cmap="Greys_r")
-        ax[1].imshow(pr1, cmap="Greys_r")
-        plt.show()
-
-        # output_path = os.path.join(output_folder, basename + ".png")
-
-
+def data_gen(i, ds, folder, outs):
+    x = ds[i]
+    pr_mask = np.load(os.path.join(folder, outs[i]))
+    image = x["image"]
+    with_mask = overlay_mask_on_image(image, pr_mask)
+    yield with_mask
 
 
 def callback(arguments):
     """Callback function for arguments"""
-    return processing(arguments.input, arguments.output)
+
+    try:
+        show_complexing_metrics(arguments.input, arguments.output)
+    except KeyboardInterrupt:
+        print("You exited")
 
 
 def setup_parser(parser):
@@ -134,14 +119,12 @@ def setup_parser(parser):
     parser.add_argument(
         "-i",
         "--input",
-        default=DICOM_PATH,
         help="path to dataset to load, default path is %(default)s",
     )
 
     parser.add_argument(
         "-o",
         "--output",
-        default=NET_OUTPUT_PATH,
         help="path to dataset to save",
     )
 

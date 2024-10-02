@@ -1,16 +1,10 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from pathlib import Path
 import os
 
-from pkg_resources import require
 from skimage.metrics import peak_signal_noise_ratio, structural_similarity
-from sklearn.metrics.pairwise import cosine_similarity
-from tqdm import tqdm
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
-
-from innofw.core.datasets.coco import DicomCocoDataset_sm
 
 
 def overlay_mask_on_image(image, mask, alpha=0.5):
