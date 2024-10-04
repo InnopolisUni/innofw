@@ -5,4 +5,4 @@ in_channels: 1
 classes: 4
 encoder_name: 'efficientnet-b7'
 encoder_weights:
-activation:
+activation: sigmoid
