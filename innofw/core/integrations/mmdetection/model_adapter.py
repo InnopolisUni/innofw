@@ -1,6 +1,8 @@
 import os
 import logging
+import sys
 from pathlib import Path
+import subprocess
 from typing import Optional
 
 import torch
@@ -54,8 +56,8 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         self.log_dir = Path(log_dir)
         self.mmdet_path = setup_mmdetection()
 
-        self.data_path = os.path.join(self.mmdet_path, 'configs/_base_/datasets/custom.py')
-        self.train_path = os.path.join(self.mmdet_path, 'configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py')
+        self.data_path = os.path.join(self.mmdet_path, 'configs/_base_/datasets/newcustom.py')
+        self.train_path = os.path.join(self.mmdet_path, 'configs/centerpoint/centerpoint_baseline_custom_bs2.py')
 
         self.train_draft = ''
         self.data_draft = ''
@@ -95,34 +97,78 @@ class Mmdetection3DDataModel(BaseModelAdapter):
 
     def train(self, data, ckpt_path=None):
         data.setup()
-        self.update_configs(os.path.abspath(data.state['save_path']))
         logging.info('Training')
+        # self.update_configs(os.path.abspath(data.state['save_path']))
+
         devices = [] if self.device == 'cpu' else self.devices
-        os.system(
-            f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/train.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py --work-dir={self.log_dir}')
-        self.rollback_configs()
+
+
+
+        run_env = os.environ.copy()
+        run_env["NO_CLI"] = "True"
+        run_env["PYTHONPATH"] = "."
+        run_env["CUDA_VISIBLE_DEVICES"] = f"{devices}"
+
+        # os.system(f'cd {self.mmdet_path}')
+        cmd = [sys.executable, "tools/train.py", "configs/centerpoint/centerpoint_baseline_custom_bs2.py", f"--work-dir={self.log_dir}", f"--data_root={os.path.abspath(data.state['save_path'])}", f"--class_names={data.class_names}"]
+        try:
+            sp = subprocess.Popen(cmd, cwd=self.mmdet_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=run_env)
+            output = ""
+            while True:
+                # Read line from stdout, break if EOF reached, append line to output
+                line = sp.stdout.readline()
+                line = line.decode()
+                if line == "":
+                    break
+                print(line)
+                output += line
+        except Exception as e:
+            print(e)
+
+        # self.rollback_configs()
+
 
     def test(self, data, ckpt_path=None, flags=''):
-        data.setup()
+        # data.setup()
         self.update_configs(os.path.abspath(data.state['save_path']))
         devices = [] if self.device == 'cpu' else self.devices
         try:
             os.system(
-                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path} {flags}')
+                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" {sys.executable} tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path} {flags}')
         except:
             logging.info('Failed')
         self.rollback_configs()
 
     def predict(self, data, ckpt_path=None):
-        data.setup()
-        self.update_configs(os.path.abspath(data.state['save_path']))
+        # data.setup()
+        # self.update_configs(os.path.abspath(data.state['save_path']))
         devices = [] if self.device == 'cpu' else self.devices
+
+        run_env = os.environ.copy()
+        run_env["NO_CLI"] = "True"
+        run_env["PYTHONPATH"] = "."
+        run_env["CUDA_VISIBLE_DEVICES"] = f"{devices}"
+
+        # os.system(f'cd {self.mmdet_path}')
+        cmd = [sys.executable, "tools/infer2.py", "configs/centerpoint/centerpoint_baseline_custom_bs2.py",
+               ckpt_path, data.state["data_path"], self.log_dir, f"--data_root={os.path.abspath(data.state['save_path'])}", f"--class_names={data.class_names}"]
         try:
-            os.system(
-                f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" python tools/infer.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path} {data.state["save_path"]}/points {self.log_dir}')
+            sp = subprocess.Popen(cmd, cwd=self.mmdet_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                  env=run_env)
+            output = ""
+            while True:
+                # Read line from stdout, break if EOF reached, append line to output
+                line = sp.stdout.readline()
+                line = line.decode()
+                if line == "":
+                    break
+                print(line)
+                output += line
+            # os.system(
+            #     f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" {sys.executable} tools/infer2.py configs/centerpoint/centerpoint_baseline_custom_bs2.py {ckpt_path} {data.state["data_path"]} {self.log_dir}')
         except:
             logging.info('Failed')
-        self.rollback_configs()
+        # self.rollback_configs()
 
 
 def setup_mmdetection():
@@ -132,7 +178,7 @@ def setup_mmdetection():
     if 'MMDET_FOR_INNOFW' not in os.environ:
         logging.info("Cloning mmdetection-3d")
         os.system(
-            "cd .. && git clone https://github.com/BarzaH/mmdetection3d.git && cd mmdetection3d && git checkout innofw_mod")
+            "cd .. && git clone https://github.com/BarzaH/mmdetection3d.git && cd mmdetection3d && git checkout innofw_centerpoint")
         os.environ['MMDET_FOR_INNOFW'] = os.path.join(Path(os.getcwd()).parent, 'mmdetection3d')
     logging.info("mmdetection-3d path " + os.environ['MMDET_FOR_INNOFW'])
 
