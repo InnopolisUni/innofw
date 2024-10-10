@@ -1,5 +1,7 @@
 from omegaconf import DictConfig
 
+torch_mse = "torch.nn.MSELoss"
+
 jaccard_loss_w_target = DictConfig(
     {
         "name": "Segmentation",
@@ -66,12 +68,12 @@ vae_loss_w_target = DictConfig(
                 "mse": {
                     "weight": 1.0,
                     "object": {
-                        "_target_": "torch.nn.MSELoss"}
+                        "_target_": torch_mse}
                 },
                 "target_loss": {
                     "weight": 1.0,
                     "object": {
-                        "_target_": "torch.nn.MSELoss"
+                        "_target_": torch_mse
                     }
                 },
                 "kld": {
@@ -153,7 +155,7 @@ mse_loss_w_target = DictConfig(
                 "mse": {
                     "weight": 1,
                     "object": {
-                        "_target_": "torch.nn.MSELoss"
+                        "_target_": torch_mse
                     }
                 }
             }

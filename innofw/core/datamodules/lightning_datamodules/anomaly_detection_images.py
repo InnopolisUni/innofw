@@ -99,7 +99,6 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
                 cv2.imwrite(filename, pred)
                 mask_vis = np.zeros_like(img)
                 mask_vis[1, :, :] = pred / 255
-                mask_vis = mask_vis
                 img_with_mask = (img * 255 * 0.75 + mask_vis * 255 * 0.25).astype(np.uint8).transpose((1, 2, 0))
                 img_with_mask = cv2.cvtColor(img_with_mask, cv2.COLOR_BGR2RGB)
                 cv2.imwrite(str(filename).replace('out_', 'vis_'), img_with_mask)
