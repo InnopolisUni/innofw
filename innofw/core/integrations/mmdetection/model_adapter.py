@@ -116,6 +116,10 @@ class Mmdetection3DDataModel(BaseModelAdapter):
                f"--data_root={os.path.abspath(data.state['save_path'])}",
                f"--class_names={data.class_names}",
                f"--max_epochs={self.epochs}"]
+
+        if ckpt_path:
+            cmd.append(f"--resume={ckpt_path}")
+
         try:
             sp = subprocess.Popen(cmd, cwd=self.mmdet_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=run_env)
             output = ""
