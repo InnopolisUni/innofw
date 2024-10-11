@@ -110,7 +110,12 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         run_env["CUDA_VISIBLE_DEVICES"] = f"{devices}"
 
         # os.system(f'cd {self.mmdet_path}')
-        cmd = [sys.executable, "tools/train.py", "configs/centerpoint/centerpoint_baseline_custom_bs2.py", f"--work-dir={self.log_dir}", f"--data_root={os.path.abspath(data.state['save_path'])}", f"--class_names={data.class_names}"]
+        cmd = [sys.executable, "tools/train.py",
+               "configs/centerpoint/centerpoint_baseline_custom_bs2.py",
+               f"--work-dir={self.log_dir}",
+               f"--data_root={os.path.abspath(data.state['save_path'])}",
+               f"--class_names={data.class_names}",
+               f"--max_epochs={self.epochs}"]
         try:
             sp = subprocess.Popen(cmd, cwd=self.mmdet_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=run_env)
             output = ""
@@ -150,8 +155,14 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         run_env["CUDA_VISIBLE_DEVICES"] = f"{devices}"
 
         # os.system(f'cd {self.mmdet_path}')
-        cmd = [sys.executable, "tools/infer2.py", "configs/centerpoint/centerpoint_baseline_custom_bs2.py",
-               ckpt_path, data.state["data_path"], self.log_dir, f"--data_root={os.path.abspath(data.state['save_path'])}", f"--class_names={data.class_names}"]
+        cmd = [sys.executable,
+               "tools/infer2.py",
+               "configs/centerpoint/centerpoint_baseline_custom_bs2.py",
+               ckpt_path,
+               data.state["data_path"],
+               self.log_dir,
+               f"--data_root={os.path.abspath(data.state['save_path'])}",
+               f"--class_names={data.class_names}"]
         try:
             sp = subprocess.Popen(cmd, cwd=self.mmdet_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                   env=run_env)
@@ -164,8 +175,6 @@ class Mmdetection3DDataModel(BaseModelAdapter):
                     break
                 print(line)
                 output += line
-            # os.system(
-            #     f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" {sys.executable} tools/infer2.py configs/centerpoint/centerpoint_baseline_custom_bs2.py {ckpt_path} {data.state["data_path"]} {self.log_dir}')
         except:
             logging.info('Failed')
         # self.rollback_configs()
