@@ -11,15 +11,15 @@ _target_: innofw.core.integrations.mmdetection.datamodule.Mmdetection3DDataModul
 
 train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_detection_3d/train.zip
-  target: ./data/lep3d
+  target: ./data/lep3d/train
 
 test:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_detection_3d/test.zip
-  target: ./data/lep3d
+  target: ./data/lep3d/test
 
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_detection_3d/test.zip
-  target: ./data/lep3d
+  target: ./data/lep3d/infer
 
 num_workers: 8
 
