@@ -10,19 +10,16 @@ date_time: 10.06.2024
 _target_: innofw.core.integrations.mmdetection.datamodule.Mmdetection3DDataModuleAdapter
 
 train:
-  source: /home/qazybek/karim_tests/all_1612
-#  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/train.zip
-#  target: ./data/lep3d
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_detection_3d/train.zip
+  target: ./data/lep3d
 
 test:
-  source: /home/qazybek/karim_tests/all_1612
-#  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/test.zip
-#  target: ./data/lep3d
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_detection_3d/test.zip
+  target: ./data/lep3d
 
 infer:
-  source: /home/qazybek/karim_tests/all_1612
-#  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_3d_detection/test.zip
-#  target: ./data/lep3d
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/lep_detection_3d/test.zip
+  target: ./data/lep3d
 
 num_workers: 8
 

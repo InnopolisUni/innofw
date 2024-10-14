@@ -7,8 +7,10 @@ defaults:
 project: "lep_3d_det"
 task: "3d-detection"
 random_seed: 42
-epochs: 100
+epochs: 60
 batch_size: 2
 weights_freq: 1
 accelerator: gpu
 devices: 0
+
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/lep3d/epoch_55.pt
