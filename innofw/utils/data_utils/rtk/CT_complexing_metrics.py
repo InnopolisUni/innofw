@@ -76,7 +76,6 @@ def show_complexing_metrics(input_path, out_path):
 
     outs = os.listdir(out_path)
     outs.sort()
-
     dataset_mrt = DicomCocoDataset_rtk(
         data_dir=os.path.join(input_path, "mrt"), transform=transform
     )

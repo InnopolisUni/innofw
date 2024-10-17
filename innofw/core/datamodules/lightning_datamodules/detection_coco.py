@@ -353,7 +353,6 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
 
         """
 
-
         total_iter = 0
         for tensor_batch in preds:
             for i in range(tensor_batch.shape[0]):

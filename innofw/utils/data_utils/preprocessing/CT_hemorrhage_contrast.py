@@ -25,9 +25,10 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
     else:
         for x in (pbar := tqdm(dataset)):
             path = x["path"]
-            mask = x["mask"]
+
+            mask = x.get("mask", None)
             contrasted_image = x["image"]
-            raw_image = x["raw_image"]
+            raw_image = x.get("raw_image", None)
 
             basename = Path(path).stem
             os.makedirs(output_folder, exist_ok=True)
@@ -39,12 +40,26 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
                 pbar.set_description(f"wrong path {output_path}")
 
             output_path = os.path.join(output_folder, basename + "_mask.png")
-            if not cv2.imwrite(output_path, mask):
-                pbar.set_description(f"wrong path {output_path}")
+            try:
+                if cv2.imwrite(output_path, mask):
+                    pbar.set_description(f"could not write mask as {output_path}")
+                else:
+                    raise Exception
+            except:
+                pbar.set_description(f"could not write mask as {output_path}")
 
             output_path = os.path.join(output_folder, basename + "_image.png")
-            if not cv2.imwrite(output_path, contrasted_image):
-                pbar.set_description(f"wrong path {output_path}")
+            try:
+                if cv2.imwrite(output_path, contrasted_image):
+                    pbar.set_description(
+                        f"could not write contrasted image as {output_path}"
+                    )
+                else:
+                    raise Exception
+            except:
+                pbar.set_description(
+                    f"could not write contrasted image as {output_path}"
+                )
 
 
 def callback(arguments):

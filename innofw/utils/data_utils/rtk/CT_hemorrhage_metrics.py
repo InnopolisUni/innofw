@@ -96,11 +96,9 @@ def processing(input_path, output_folder, task="detection"):
     outs = [x for x in outs if x.endswith("npy")]
     outs.sort()
 
-
-
     for x, out in (pbar := tqdm(zip(dataset, outs))):
         image = x["image"]
-        gt_mask = x["mask"]
+        gt_mask = x.get("mask", np.zeros(image.shape[:2]))
         assert out.endswith(".npy")
         pr_mask = np.load(os.path.join(output_folder, out))
 
@@ -109,7 +107,8 @@ def processing(input_path, output_folder, task="detection"):
         if task == "segmentation":
             gt = overlay_mask_on_image(gt, gt_mask)
             pr = overlay_mask_on_image(pr, pr_mask)
-            metrics = { 'Intersection over union ': compute_iou(pr_mask, gt_mask) }
+            iou_str = 'Intersection over union'
+            metrics = { iou_str : compute_iou(pr_mask, gt_mask) }
         elif task == "detection":
             gt, gt_boxes = result_bbox(gt_mask, gt)
             pr, pr_boxes = result_bbox(pr_mask, pr)

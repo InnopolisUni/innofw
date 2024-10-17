@@ -8,5 +8,6 @@ then
 else
   python infer.py experiments=$experiments \
     "ckpt_path=$ckpt_path" \
-    "++datasets.infer.target='$data_path'"
+    "++datasets.infer.target='$data_path'" \
+    "++datasets.infer.source='$data_path'"
 fi

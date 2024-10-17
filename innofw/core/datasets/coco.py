@@ -251,32 +251,16 @@ class DicomCocoDataset_rtk(Dataset):
                     if pydicom.misc.is_dicom(dicom_path):
                         self.dicom_paths += [dicom_path]
         if not coco_path:
-            raise FileNotFoundError(
+            # raise FileNotFoundError(
+            print(
                 f"COCO аннотации не найдены в директории {data_dir}."
             )
+            self.coco_found = False
+        else:
+            self.coco_found = True
 
         if not self.dicom_paths:
             raise FileNotFoundError(f"Dicom не найдены в директории {data_dir}.")
-
-        # Загрузка COCO аннотаций
-        with open(coco_path, "r") as f:
-            self.coco = json.load(f)
-        self.categories = self.coco["categories"]
-        self.annotations = self.coco["annotations"]
-        self.num_classes = len(self.categories)
-
-        self.images = self.coco["images"]
-        self.image_id_to_annotations = {image["id"]: [] for image in self.images}
-        for ann in self.annotations:
-            self.image_id_to_annotations[ann["image_id"]].append(ann)
-
-        if len(self.images) != len(self.dicom_paths):
-            new_images = []
-            for img in self.images:
-                for dicom_path in self.dicom_paths:
-                    if dicom_path.endswith(img["file_name"]):
-                        new_images += [img]
-            self.images = new_images
 
         import re
 
@@ -285,10 +269,54 @@ class DicomCocoDataset_rtk(Dataset):
             out = "".join(out)
             return int(out)
 
-        self.images.sort(key=lambda x: extract_digits(x["file_name"]))
+        # Загрузка COCO аннотаций
+        if self.coco_found:
+            with open(coco_path, "r") as f:
+                self.coco = json.load(f)
+            self.categories = self.coco["categories"]
+            self.annotations = self.coco["annotations"]
+            self.num_classes = len(self.categories)
+
+            self.images = self.coco["images"]
+            self.image_id_to_annotations = {image["id"]: [] for image in self.images}
+            for ann in self.annotations:
+                self.image_id_to_annotations[ann["image_id"]].append(ann)
+
+            if len(self.images) != len(self.dicom_paths):
+                new_images = []
+                for img in self.images:
+                    for dicom_path in self.dicom_paths:
+                        if dicom_path.endswith(img["file_name"]):
+                            new_images += [img]
+                self.images = new_images
+
+
+            self.images.sort(key=lambda x: extract_digits(x["file_name"]))
+        else:
+            self.dicom_paths.sort()
 
     def __len__(self):
-        return len(self.images)
+        if self.coco_found:
+            return len(self.images)
+        else:
+            return len(self.dicom_paths)
+
+    def get_dicom(self, i):
+
+        dicom_path = self.dicom_paths[i]
+        dicom = pydicom.dcmread(dicom_path)
+        image = dicom_to_raster(dicom)
+
+        if self.transform:
+            transformed = self.transform(image=image)
+            image = transformed["image"]
+
+        if type(image) == torch.Tensor:
+            image = image.float()
+
+        out = {"image": image, "path": dicom_path}
+        return out
+
 
     def __getitem__(self, idx):
         """
@@ -305,11 +333,14 @@ class DicomCocoDataset_rtk(Dataset):
 
 
         """
+        if not self.coco_found:
+            return self.get_dicom(idx)
         image_info = self.images[idx]
         for dicom_path in self.dicom_paths:
             if dicom_path.endswith(image_info["file_name"]):
                 break
         else:
+            print(self.dicom_paths, image_info["file_name"])
             raise FileNotFoundError(f"Dicom {dicom_path} не найден.")
         dicom = pydicom.dcmread(dicom_path)
         image = dicom_to_raster(dicom)

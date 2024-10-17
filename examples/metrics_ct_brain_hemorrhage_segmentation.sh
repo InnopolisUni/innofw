@@ -1,5 +1,5 @@
 data_path=$1
-out_path=$2
+output=$2
 if [ -z "$data_path" ]; then
 	data_path="../innofw/data/rtk/infer/"
 	echo "Using default data path $data_path"
@@ -7,7 +7,7 @@ fi
 
 if [ -z "$output" ]; then
 	output="../innofw/logs/infer/segmentation/semantic-segmentation/SK_180822_qmciwj41_unet_brain_rtk/"
-	output+="$(ls $output | tail -n 1)"
+	output+="$(ls $output -tr| tail -n 1)"
 	echo "Using default output path $output"
 fi
 
