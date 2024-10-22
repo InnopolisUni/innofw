@@ -297,8 +297,9 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
             )
         if str(self.predict_source).endswith("mrt"):
             self.predict_source = self.predict_source.parent
-        assert "ct" in os.listdir(self.predict_source), f"No CT data in {self.predict_source}"
-        assert "mrt" in os.listdir(self.predict_source), f"No MRT data in {self.predict_source}"
+        cont = os.listdir(self.predict_source)
+        assert "ct" in cont, f"No CT data in {self.predict_source}"
+        assert "mrt" in cont, f"No MRT data in {self.predict_source}"
 
         self.predict_dataset = [
             self.dataset(

@@ -11,10 +11,13 @@ _target_: innofw.core.datamodules.pandas_datamodules.lung_description_decision_d
 target_col:
 
 train:
-  source: ./data/ainur/infer/labels.csv
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/rtk/complex_infer.zip
+  target: "./data/ainur/infer/labels.csv"
 test:
   source: ./data/ainur/infer/labels.csv
-infer:
+  target: "./data/ainur/infer/labels.csv"
+ibrain yamlnfer:
   source: ./data/ainur/infer/labels.csv
+  target: "./data/ainur/infer/labels.csv"
 
 
