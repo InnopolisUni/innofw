@@ -13,5 +13,5 @@ train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/stroke/train.zip
   target: ./data/stroke/train
 infer:
-  source: "./data/complex/infer"
-  target: "./data/complex/infer"
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/rtk/complex_infer.zip
+  target: "./data/complex/infer/"

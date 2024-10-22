@@ -8,16 +8,16 @@ import numpy as np
 
 
 def overlay_mask_on_image(image, mask, alpha=0.5):
-    """
-    Наложение маски на изображение с цветовой кодировкой для каждого класса без изменения оригинальных цветов изображения.
+    """Overlaying a mask on image
+
 
     Args:
-        image (np.array): Исходное изображение (HxWxC).
-        mask (np.array): Маска в формате (H, W, D), где D - количество классов.
-        alpha (float): Прозрачность маски.
+        image (np.array): input image (HxWxC).
+        mask (np.array): mask in (H, W, D) format, where D - class number.
+        alpha (float): transprency
 
     Returns:
-        np.array: Изображение с наложенной маской.
+        np.array: image
     """
     color = np.array([255, 0, 0])
 

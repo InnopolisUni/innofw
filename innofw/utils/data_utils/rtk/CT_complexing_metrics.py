@@ -6,7 +6,7 @@ from matplotlib.widgets import Button
 import matplotlib.pyplot as plt
 import numpy as np
 
-from innofw.core.datasets.coco import DicomCocoDataset_rtk
+from innofw.core.datasets.coco import DicomCocoDatasetRTK
 from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import (
     overlay_mask_on_image,
 )
@@ -76,12 +76,12 @@ def show_complexing_metrics(input_path, out_path):
 
     outs = os.listdir(out_path)
     outs.sort()
-    dataset_mrt = DicomCocoDataset_rtk(
+    dataset_mrt = DicomCocoDatasetRTK(
         data_dir=os.path.join(input_path, "mrt"), transform=transform
     )
     out_mrt = [x for x in outs if "_mrt" in x]
 
-    dataset_ct = DicomCocoDataset_rtk(
+    dataset_ct = DicomCocoDatasetRTK(
         data_dir=os.path.join(input_path, "ct"), transform=transform
     )
     out_ct = [x for x in outs if "_ct" in x]
@@ -131,7 +131,7 @@ def setup_parser(parser):
 def main():
     """Main module function"""
     parser = ArgumentParser(
-        prog="hemorrhage_contrast",
+        prog="complexing",
         description="A tool to contrast",
         formatter_class=ArgumentDefaultsHelpFormatter,
     )

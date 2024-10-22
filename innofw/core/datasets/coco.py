@@ -223,7 +223,7 @@ class WheatDataset(Dataset):
                 return np.zeros((0, 4))
 
 
-class DicomCocoDataset_rtk(Dataset):
+class DicomCocoDatasetRTK(Dataset):
     def __init__(self, *args, **kwargs):
         """
         Args:

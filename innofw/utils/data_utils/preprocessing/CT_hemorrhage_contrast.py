@@ -6,7 +6,7 @@ from tqdm import tqdm
 import cv2
 import numpy as np
 
-from innofw.core.datasets.coco import DicomCocoDataset_rtk
+from innofw.core.datasets.coco import DicomCocoDatasetRTK
 from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import transform
 
 
@@ -19,7 +19,7 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
         except TypeError:
             raise ValueError(f"Wrong path to save: {output_folder}")
 
-    dataset = DicomCocoDataset_rtk(data_dir=input_path, transform=transform)
+    dataset = DicomCocoDatasetRTK(data_dir=input_path, transform=transform)
     if len(dataset) == 0:
         raise Warning(f"empty dataset with the directory {input_path}")
     else:

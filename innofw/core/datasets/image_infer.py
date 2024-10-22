@@ -44,6 +44,7 @@ class ImageFolderInferDataset(Dataset):
         if self.gray:
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
+
         if self.transforms != None:
             image = self.transforms(image)
         else:

@@ -4,7 +4,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 import pandas as pd
 
 
-def processing(pred_path, gt_path):
+def calculate_lungs_metrics(pred_path, gt_path):
     y_pred = pd.read_csv(pred_path)
     y_pred = y_pred["y"]
     y_gt = pd.read_csv(gt_path)["decision"]
@@ -12,15 +12,12 @@ def processing(pred_path, gt_path):
 
     report = classification_report(y_gt, y_pred, zero_division=0)
 
-    classes = y_gt.unique()
-    # Матрица ошибок
+    classes = ["Патология", "Норма", "необходимо дообследование"]
     conf_matrix = confusion_matrix(y_pred=y_pred, y_true=y_gt, labels=classes)
 
-    # Вывод отчета о метриках
     print("Отчет по метрикам")
     print(report)
 
-    # Вывод матрицы ошибок
     print("\nМатрица ошибок:")
     inds = ["Истинно " + x.lower() for x in classes]
     cols = ["Предсказано " + x.lower() for x in classes]
@@ -30,7 +27,7 @@ def processing(pred_path, gt_path):
 def callback(arguments):
     """Callback function for arguments"""
     try:
-        processing(arguments.input, arguments.output)
+        calculate_lungs_metrics(arguments.input, arguments.output)
     except KeyboardInterrupt:
         print("You exited")
 

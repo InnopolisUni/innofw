@@ -17,7 +17,7 @@ from innofw.core.datamodules.lightning_datamodules.base import (
 from innofw.core.datasets.coco import CocoDataset
 from innofw.core.datasets.coco import DicomCocoDataset
 from innofw.core.datasets.coco import DicomCocoDatasetInfer
-from innofw.core.datasets.coco import DicomCocoDataset_rtk
+from innofw.core.datasets.coco import DicomCocoDatasetRTK
 from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_img
 from innofw.utils.data_utils.preprocessing.dicom_handler import img_to_dicom
 from innofw.utils.dm_utils.utils import find_file_by_ext
@@ -248,7 +248,7 @@ class CustomNormalize:
 
 class DicomCocoComplexingDataModule(BaseLightningDataModule):
     task = ["image-detection", "image-segmentation"]
-    dataset = DicomCocoDataset_rtk
+    dataset = DicomCocoDatasetRTK
 
     def __init__(
         self,
@@ -266,7 +266,6 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
         *args,
         **kwargs,
     ):
-
         super().__init__(
             train,
             test,
@@ -296,6 +295,11 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
                     ToTensorV2(transpose_mask=True),
                 ]
             )
+        if str(self.predict_source).endswith("mrt"):
+            self.predict_source = self.predict_source.parent
+        assert "ct" in os.listdir(self.predict_source), f"No CT data in {self.predict_source}"
+        assert "mrt" in os.listdir(self.predict_source), f"No MRT data in {self.predict_source}"
+
         self.predict_dataset = [
             self.dataset(
                 data_dir=os.path.join(str(self.predict_source), "ct"),
