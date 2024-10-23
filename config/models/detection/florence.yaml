@@ -1,0 +1,8 @@
+name: Florence
+description: model for detection lung deceases
+
+_target_: innofw.core.models.torch.architectures.detection.Florence
+tokenizer_save_path: "flor_files/epoch_136"
+device: "cpu"
+task_prompt: "<CAPTION_TO_PHRASE_GROUNDING>"
+text_input: "cardiomegaly"
