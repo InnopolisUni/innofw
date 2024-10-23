@@ -1,0 +1,1 @@
+from innofw.core.integrations.flor.florence_datamodule import FlorDataModuleAdapter

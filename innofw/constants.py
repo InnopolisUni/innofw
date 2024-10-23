@@ -21,6 +21,7 @@ class Frameworks(Enum):
     ultralytics = "ultralytics"
     mmdetection = "mmdetection"
     none = "none"
+    flor = "Flor"
 
 PathLike = TypeVar(
     "PathLike", str, Path

@@ -7,6 +7,7 @@ TASK = None
 
 def setup_wandb(cfg):
     """Function to enable Weights and Biases logger"""
+    return
     if "wandb" not in cfg:
         return
 
@@ -49,6 +50,7 @@ def setup_clear_ml(cfg):
 
 
 def setup_agent(task, cfg, experiment_name):
+    return
     if cfg["queue"]:
         if experiment_name:
             task.set_base_docker(
