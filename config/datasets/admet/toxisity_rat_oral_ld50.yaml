@@ -18,6 +18,6 @@ test:
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_oral_ld50/test.zip
   target: ./data/toxisity_rat_oral_ld50/test
-smiles_col: Smiles
-target_col: Standard Value
+smiles_col: smiles
+target_col: Toxicity Value
 val_size: 0.2
