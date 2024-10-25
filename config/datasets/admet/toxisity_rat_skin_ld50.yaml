@@ -9,13 +9,13 @@ date_time: 18.06.2019
 _target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
 
 train:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxicity_rat_skin_ld50/train.zip
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_skin_ld50/train.zip
   target: ./data/toxicity_rat_skin_ld50/train
 test:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxicity_rat_skin_ld50/test.zip
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_skin_ld50/test.zip
   target: ./data/toxicity_rat_skin_ld50/test
 infer:
-  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxicity_rat_skin_ld50/test.zip
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_skin_ld50/test.zip
   target: ./data/toxicity_rat_skin_ld50/test
 smiles_col: smiles
 target_col: Toxicity Value
