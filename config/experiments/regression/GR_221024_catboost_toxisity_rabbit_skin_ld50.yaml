@@ -1,10 +1,10 @@
 # @package _global_
 defaults:
   - override /models: regression/catboost_regression
-  - override /datasets: admet/toxisity_rabbit_skin_ld50
+  - override /datasets: admet/toxicity_rabbit_skin_ld50
   - override /callbacks: regression
 
-project: "toxisity_rabbit_skin_ld50"
+project: "toxicity_rabbit_skin_ld50"
 task: "qsar-regression"
 random_seed: 42
 # original_work_dir: ${hydra:runtime.cwd}
