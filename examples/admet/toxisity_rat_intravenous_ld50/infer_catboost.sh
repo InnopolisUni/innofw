@@ -1,0 +1,1 @@
+python infer.py experiments=regression/GR_221024_catboost_toxicity_rat_intravenous_ld50 ckpt_path=https://api.blackhole.ai.innopolis.university/pretrained/catboost_toxisity_rat_intravenous_ld50.pickle
