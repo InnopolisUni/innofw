@@ -99,13 +99,10 @@ class AnomalyDetectionImagesLightningModule(BaseLightningModule):
         return {"loss": loss}
 
     def predict_step(self, x, batch_idx, **kwargs):
-        return (x, self.compute_anomaly_mask(x))
-
-    def compute_anomaly_mask(self, x):
         x_rec = self.forward(x)  # (B, C, W, H)
         diff = ((x - x_rec) ** 2).sum(dim=1)  # sum across channels
-        mask = diff >= self.model.anomaly_threshold
-        return mask
+        mask = (diff >= self.model.anomaly_threshold).to(torch.uint8)
+        return x, mask
 
     def log_metrics(self, stage, metrics_res, *args, **kwargs):
         for key, value in metrics_res.items():

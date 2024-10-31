@@ -154,6 +154,7 @@ def run_pipeline(
         "weights_freq": cfg.get("weights_freq"),
         "logger": logger,
         "random_state": cfg.get("random_seed"),
+        "threshold": cfg.get("threshold")
     }
     inno_model = InnoModel(**model_params)
     result = None
