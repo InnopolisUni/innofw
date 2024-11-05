@@ -1,7 +1,7 @@
 task:
   - qsar-regression
 
-name: toxicity_rat_oral_ld50
+name: toxisity_rat_oral_ld50
 description: The dataset contains information on the lethal dose (LD50) values of various chemical substances, tested on rat through oral administration, indicating the dose required to kill 50% of a rat population under experimental conditions.
 
 markup_info: Информация о разметке
@@ -11,13 +11,13 @@ _target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
 
 train:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_oral_ld50/train.zip
-  target: ./data/toxicity_rat_oral_ld50/train
+  target: ./data/toxisity_rat_oral_ld50/train
 test:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_oral_ld50/test.zip
-  target: ./data/toxicity_rat_oral_ld50/test
+  target: ./data/toxisity_rat_oral_ld50/test
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_oral_ld50/test.zip
-  target: ./data/toxicity_rat_oral_ld50/test
+  target: ./data/toxisity_rat_oral_ld50/test
 smiles_col: smiles
 target_col: Toxicity Value
 val_size: 0.2
