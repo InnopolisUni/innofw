@@ -98,7 +98,6 @@ class Mmdetection3DDataModel(BaseModelAdapter):
     def train(self, data, ckpt_path=None):
         data.setup()
         logging.info('Training')
-        # self.update_configs(os.path.abspath(data.state['save_path']))
 
         devices = [] if self.device == 'cpu' else self.devices
 
@@ -134,23 +133,16 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         except Exception as e:
             print(e)
 
-        # self.rollback_configs()
-
 
     def test(self, data, ckpt_path=None, flags=''):
-        # data.setup()
-        self.update_configs(os.path.abspath(data.state['save_path']))
         devices = [] if self.device == 'cpu' else self.devices
         try:
             os.system(
                 f'cd {self.mmdet_path} && sudo -E env "PATH=$PATH" "PYTHONPATH=." "CUDA_VISIBLE_DEVICES={devices}" {sys.executable} tools/test.py configs/pointpillars/pointpillars_hv_secfpn_8xb6_custom.py {ckpt_path} {flags}')
         except:
             logging.info('Failed')
-        self.rollback_configs()
 
     def predict(self, data, ckpt_path=None):
-        # data.setup()
-        # self.update_configs(os.path.abspath(data.state['save_path']))
         devices = [] if self.device == 'cpu' else self.devices
 
         run_env = os.environ.copy()
@@ -158,7 +150,6 @@ class Mmdetection3DDataModel(BaseModelAdapter):
         run_env["PYTHONPATH"] = "."
         run_env["CUDA_VISIBLE_DEVICES"] = f"{devices}"
 
-        # os.system(f'cd {self.mmdet_path}')
         cmd = [sys.executable,
                "tools/infer2.py",
                "configs/centerpoint/centerpoint_baseline_custom_bs2.py",
@@ -181,7 +172,6 @@ class Mmdetection3DDataModel(BaseModelAdapter):
                 output += line
         except:
             logging.info('Failed')
-        # self.rollback_configs()
 
 
 def setup_mmdetection():

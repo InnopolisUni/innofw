@@ -12,10 +12,3 @@ batch_size: 2
 weights_freq: 1
 accelerator: gpu
 devices: 1
-
-wandb:
-  enable: True
-  project: ttpla
-  entity: "k-galliamov"
-  group: none
-  job_type: training

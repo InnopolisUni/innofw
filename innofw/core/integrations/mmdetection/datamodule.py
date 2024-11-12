@@ -82,7 +82,8 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
 
         self.val_size = val_size
         self.num_classes = num_classes
-        self.class_names = sorted([name[1] for name in kwargs["names"].items()])
+        self.class_names = sorted([name[1] for name in kwargs["names"].items()]) if "names" in kwargs.keys() \
+            else ['LEP110_anchor', 'power_lines', 'forest', 'vegetation','LEP110_prom']
         self.random_state = random_state
 
         self.train_set = None
@@ -365,8 +366,6 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
         self.prepare_data()
 
     def setup_infer(self, **kwargs):
-        # self.create_splits()
-        # self.prepare_data()
         pass
 
     def predict_dataloader(self):
