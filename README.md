@@ -26,6 +26,8 @@ This framework serves as a template for different projects members to start work
 3. pydantic
 4. sklearn
 5. torch
+6. yolo
+7. mmdetection
 
 
 # How It Works
@@ -43,25 +45,35 @@ InnoFW uses hydra to provide configuration structure that is suitable for the mo
 1. install python 3.8-3.9 to your system
 2. clone project
     ```git clone https://github.com/InnopolisUni/innofw.git```
-3. create virtual env
-    ```python -m venv venv```
-4. install packages
-    ```pip install -r requirements.txt```
+3. activate env via poetry ```poetry shell```
+4. create lock file ```poetry lock --no-update```
+5. install dependencies ```poetry install```
+6. train model ```python3 train.py experiments=demo_prom/example_image_detection_yolo.yaml```
+7. test model ```python3 test.py experiments=demo_prom/example_image_detection_yolo.yaml```
+8. infer model ```python3 infer.py experiments=demo_prom/example_image_detection_yolo.yaml```
 
+For full guide on installation follow this [quick start page](https://innofw.readthedocs.io/en/latest/quick-start)
 
-For full guide on installation using poetry or docker follow this [quick start page](https://innofw.readthedocs.io/en/latest/quick-start)
-
+# Dash User Interface
+1. activate env via poetry ```poetry shell```
+2. create lock file ```poetry lock --no-update```
+3. install dependencies ```poetry install```
+4. move to dui directory ```cd dui```
+5. run web app ```python3 app.py```
+6. open in browser 127.0.0.1:8050
 
 
 # Covered Tasks:
 - semantic segmentation
 - image classification
 - object detection
+- object detection 3d
 - tabular data regression
 - tabular data classification
 - tabular data clustering
 - one-shot learning
 - anomaly detection in time series
+- anomaly detection in images
 
 
 # Models List:
@@ -72,6 +84,7 @@ For full guide on installation using poetry or docker follow this [quick start p
 - lstm
 - one-shot learning
 - biobert
+- mmdetection3d
 
 
 <!-- inspirations:
