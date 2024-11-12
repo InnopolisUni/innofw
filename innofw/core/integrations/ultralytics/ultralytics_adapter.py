@@ -176,11 +176,15 @@ class UltralyticsAdapter(BaseModelAdapter):
 
     def predict(self, data: UltralyticsDataModuleAdapter, ckpt_path=None):
         data.setup()
+        try:
+            if ckpt_path:
+                ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
+                    ckpt_path, inplace=False, dst_path=None
+                )
+        except Exception as e:
+            print("Couldn't convert checkpoint to regular form using as it is")
+            print(e)
 
-        if ckpt_path:
-            ckpt_path = TorchCheckpointHandler().convert_to_regular_ckpt(
-                ckpt_path, inplace=False, dst_path=None
-            )
 
             self.model._load(str(ckpt_path))
 
