@@ -34,13 +34,10 @@ def test_smoke():
     assert dm.val_dataloader is not None
 
     dm.save_preds(preds=[0 for _ in range(10)], stage=Stages.train, dst_path='./tmp')
-    for i in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            break
-        except:
-            pass
-
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)
 
 
 @pytest.mark.parametrize("stage", [Stages.train, Stages.test])
@@ -56,15 +53,10 @@ def test_train_datamodule(stage):
 
     # initialize train and test datasets
     dm.setup(stage)
-    # assert sut.train_ds is not None
-    # assert sut.val_ds is not None
-
     # get dataloader by stage
     dl = dm.get_stage_dataloader(stage)
     assert dl is not None
-    for i in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            break
-        except:
-            pass
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)

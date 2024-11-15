@@ -147,21 +147,7 @@ def test_yolo_train():
     adapter = YOLOV5Adapter(YOLOv5Model("yolov5s"), './tmp', base_trainer_on_cpu_cfg)
     adapter.train(datamodule, ckpt_path=None)
 
-    for i in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            shutil.rmtree('./something')
-            break
-        except:
-            pass
-
-# def test_model_training + with metrics
-# def test_model_logging
-# def test_different_scheduler_selection
-# def test_wrong_scheduler_selection
-# def test_how_weight_initialization work on yolov5 model
-# def test_various_checkpointing options
-# def test_metrics_calculation
-# def test_different_batch_size
-# def test_epochs_specified
-# def test_callbacks
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)

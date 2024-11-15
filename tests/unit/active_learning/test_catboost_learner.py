@@ -52,75 +52,7 @@ def test_adapter():
     adapter._train(datamodule)
     adapter._test(datamodule)
 
-    for i in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            break
-        except:
-            pass
-
-# def test_base_learner_run():
-#     model = get_model(
-#         catboost_with_uncertainty_cfg_w_target, base_trainer_on_cpu_cfg
-#     )
-#     #GR_230822_ASdw31ga_catboost_industry_data
-#     # /workspace/innofw/config/experiments/regression/GR_230822_ASdw31ga_catboost_industry_data.yaml
-#     # /workspace/innofw/config/train.yaml
-
-#     model = InnoModel(model, log_dir="./logs/test/test1/")
-#     task = "table-regression"
-#     datamodule = get_datamodule(
-#         house_prices_datamodule_cfg_w_target, Frameworks.catboost, task=task
-#     )
-
-#     sut = CatBoostActiveLearner(
-#         model=model,
-#         datamodule=datamodule,
-#     )
-
-#     sut.run(ckpt_path='/workspace/innofw/tests/weights/catboost_industry_data/model.pickle')
-
-#     assert sut is not None
-
-# from innofw.utils.loggers import setup_clear_ml, setup_wandb
-# def test_base_learner_run_empty_pool():
-#     # if not config.get("experiment_name"):
-#     #     hydra_cfg = HydraConfig.get()
-#     #     experiment_name = OmegaConf.to_container(hydra_cfg.runtime.choices)[
-#     #         "experiments"
-#     #     ]
-#     #     config.experiment_name = experiment_name
-
-#     config = OmegaConf.load('/workspace/innofw/config/experiments/regression/GR_230822_ASdw31ga_catboost_industry_data.yaml')
-#     print(config)
-#     setup_clear_ml(config)
-#     setup_wandb(config)
-#     model = get_model(
-#         catboost_with_uncertainty_cfg_w_target, base_trainer_on_cpu_cfg
-#     )   
-
-
-#      # wrap the model
-#     model_params = {
-#         "model": model,
-#         "log_dir": "./logs/test/test1/",
-#     }
-#     model = InnoModel(**model_params)
-
-
-#     task = "table-regression"
-#     datamodule = get_datamodule(
-#         house_prices_datamodule_cfg_w_target, Frameworks.catboost, task=task
-#     )
-
-#     datamodule.pool_idxs = []
-#     a_learner = get_a_learner(config, model, datamodule)
-
-#     # sut = CatBoostActiveLearner(
-#     #     model=model,
-#     #     datamodule=datamodule,
-#     # )
-
-#     ret = a_learner.run(datamodule, ckpt_path='/workspace/innofw/tests/weights/catboost_industry_data/model.pickle')
-
-#     assert ret is None
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)

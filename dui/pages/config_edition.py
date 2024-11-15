@@ -97,7 +97,7 @@ def layout(config_name=None):
         env_key = "UI_TITLE"
         title = os.environ[env_key]
     except Exception as e:
-        print(f"No ui title, using default")
+        print(f"{e} - No ui title, using default")
         title = "Experiment Configurator"
 
     html_components = [dbc.Row([dbc.Col([html.H4(title, style={"height": 40})]),
