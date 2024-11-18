@@ -152,8 +152,7 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
 
         return points, centerize_vec
 
-    def get_ann_in_framework_format(self, item, sample_idx, pcd_np, pcd_sboxes, sly_ann,
-                                    annotations):
+    def get_ann_in_framework_format(self, item, sample_idx, pcd_np, pcd_sboxes, sly_ann, annotations):
         for slide_box_idx, sbox in enumerate(pcd_sboxes):
             ptc_info = {
                 'sample_idx': sample_idx,
@@ -196,10 +195,10 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                     continue
                 box_info = []  # x, y, z, dx, dy, dz, rot, [vel_x, vel_y]
                 pos = fig['geometry']['position']
-
-                if pos['x'] < sbox[0] or pos['x'] >= sbox[1] or \
+                pos_conditions = pos['x'] < sbox[0] or pos['x'] >= sbox[1] or \
                         pos['y'] < sbox[2] or pos['y'] >= sbox[3] or \
-                        pos['z'] < sbox[4] or pos['z'] >= sbox[5]:
+                        pos['z'] < sbox[4] or pos['z'] >= sbox[5]
+                if pos_conditions:
                     continue
                 pos_x = pos['x'] + trans_vec[0]
                 pos_y = pos['y'] + trans_vec[1]
@@ -308,14 +307,13 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
         for z in range(int(slides_z)):
             for y in range(int(slides_y)):
                 for x in range(int(slides_x)):
-                    sboxes.append([
-                        0 if x == 0 else ws[0] * x - overlap_x,
-                        ws[0] if x == 0 else ws[0] * (x + 1) - overlap_x,
-                        0 if y == 0 else ws[1] * y - overlap_y,
-                        ws[1] if y == 0 else ws[1] * (y + 1) - overlap_y,
-                        0 if z == 0 else ws[2] * z - overlap_z,
-                        ws[2] if z == 0 else ws[2] * (z + 1) - overlap_z,
-                    ])
+                    el1 = 0 if x == 0 else ws[0] * x - overlap_x
+                    el2 = ws[0] if x == 0 else ws[0] * (x + 1) - overlap_x
+                    el3 = 0 if y == 0 else ws[1] * y - overlap_y
+                    el4 = ws[1] if y == 0 else ws[1] * (y + 1) - overlap_y
+                    el5 = 0 if z == 0 else ws[2] * z - overlap_z
+                    el6 = ws[2] if z == 0 else ws[2] * (z + 1) - overlap_z
+                    sboxes.append([el1, el2, el3, el4, el5, el6])
         return sboxes, ws
 
     def prepare_data(self):
