@@ -1,5 +1,5 @@
 # standard libraries
-from typing import List, Optional, Generator, Tuple
+from typing import List, Optional, Generator, Tuple, Any
 import json
 import os
 import pathlib
@@ -12,33 +12,33 @@ from innofw.constants import Frameworks, Stages
 from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
 
 
-class FlorenceImageDataset(Dataset):
+class FlorenceDataset(Dataset):
     def __init__(self, data_path=None, transform=None):
+        data_path = str(data_path)
+        # when data is downloaded from S3 there is a bug
         if data_path.endswith("images"):
-            data_path = data_path[:-7]
+            data_path = data_path[:-7]  # care if this is deliberate
         self.data_path = data_path
         self.image_folder = os.path.join(data_path, "images")
         self.transform = transform
-        self.data, self.size = self.setup()
+        self.data, self.len = self.setup()
 
     def setup(self):
-        picture_formats = (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif")
-        files = sorted(os.listdir(self.image_folder))
-        data = [x for x in files if x.lower().endswith(picture_formats)]
-        return data, len(data)
+        raise NotImplementedError
 
-    def get_sample_name_text_input(self, item) -> Tuple[str, str]:
-        text_input = None
-        image_name = self.data[item]
-        return image_name, text_input
+    def get_sample_name_text_input(self, item) -> Tuple[Any, str]:
+        raise NotImplementedError
 
     def __getitem__(self, item):
         image_name, text_input = self.get_sample_name_text_input(item)
         image_path = os.path.join(self.image_folder, image_name)
         image = Image.open(image_path).convert("RGB")
         orig_size = (image.height, image.width)
-        tensor = self.transform(image)
-        tensor = tensor.unsqueeze(0)
+        if self.transform:
+            tensor = self.transform(image)
+            tensor = tensor.unsqueeze(0)
+        else:
+            tensor = None
         return {
             "image": image,
             "image_path": image_path,
@@ -49,16 +49,77 @@ class FlorenceImageDataset(Dataset):
         }
 
     def __len__(self):
-        return self.size
+        return self.len
 
 
-class FlorenceJSONLDataset(FlorenceImageDataset):
+class FlorenceImageDataset(FlorenceDataset):
+    """A dataset to represent image data for florence inference
+
+    In case we use only pictures to retrieve results
+
+    Expected folder structure:
+    ---------------------------
+    data_path/
+    ├── images/              # A folder containing image files
+    │   ├── image1.jpg       # Example image file
+    │   ├── image2.png       # Example image file
+    │   └── ...              # Additional image files
+
+    """
+
+    def setup(self) -> Tuple[Any, int]:
+        picture_formats = (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif")
+        files = sorted(os.listdir(self.image_folder))
+        data = [x for x in files if x.lower().endswith(picture_formats)]
+        return data, len(data)
+
+    def get_sample_name_text_input(self, item):
+        """since no text data text_input is None and should be provided via config"""
+        text_input = None
+        image_name = self.data[item]
+        return image_name, text_input
+
+
+class FlorenceJSONLDataset(FlorenceDataset):
+    """JSONL dataset for florence
+
+    Expected folder structure:
+    ---------------------------
+    data_path/
+    ├── annotations.jsonl    # A JSONL file containing annotations
+    ├── images/              # A folder containing image files
+    │   ├── image1.jpg       # Example image file
+    │   ├── image2.png       # Example image file
+    │   └── ...              # Additional image files
+
+    Notes:
+    ------
+    - The "annotations.jsonl" file should contain a valid JSONL format with one JSON object per line.
+    - The "images" folder should contain the image files referenced in the annotations.
+    """
+
     def setup(self):
+        """setup dataset for jsonl data
+
+        in order to work with List one may use read_data instead of generate_json
+
+        Returns:
+
+        """
         jsonl_path = os.path.join(self.data_path, "annotations.jsonl")
         return self.generate_json(jsonl_path), self.count_lines(jsonl_path)
 
-    def get_sample_name_text_input(self, item) -> Tuple[str, str]:
+    def get_sample_name_text_input(self, item):
+        """parse data from jsonl records
 
+        here .data can be both a generator or a List
+
+        Args:
+            item:
+
+        Returns:
+
+        """
         try:
             entry = self.data[item]
         except:
@@ -69,10 +130,10 @@ class FlorenceJSONLDataset(FlorenceImageDataset):
 
     @staticmethod
     def read_data(jsonl_path, num_lines=None) -> List:
-        """read data as List
+        """read jsonl data as List
 
         Args:
-            num_lines: in case we need to limit size
+            num_lines: in case we need to limit size of read lines
             jsonl_path:
 
         Returns:
@@ -88,6 +149,7 @@ class FlorenceJSONLDataset(FlorenceImageDataset):
 
     @staticmethod
     def count_lines(jsonl_path) -> int:
+        """Read number of lines in JSONL to get dataset size"""
         valid_json_lines = 0
         with open(jsonl_path, "r", encoding="utf-8") as file:
             for line in file:
@@ -102,6 +164,7 @@ class FlorenceJSONLDataset(FlorenceImageDataset):
 
     @staticmethod
     def generate_json(jsonl_path) -> Generator:
+        """Fast and easy way to produce samples via generator"""
         with open(jsonl_path, "r", encoding="utf-8") as file:
             for line in file:
                 line = line.strip()
@@ -109,30 +172,9 @@ class FlorenceJSONLDataset(FlorenceImageDataset):
                     yield json.loads(line)
 
 
-class FlorenceDataModuleAdapter(BaseLightningDataModule):
-    """
-
-    Attributes
-    ----------
-    task: List[str]
-        the task the datamodule is intended to be used for
-    framework: List[Union[str, Frameworks]]
-        the model framework the datamodule is designed to work with
-
-
-    Methods
-    -------
-    setup_train_test_val()
-        creates necessary .yaml files for the Ultralytics package.
-        splits training data into train and validation sets
-        allocates files in folders
-    setup_infer()
-        creates necessary .yaml files for the Ultralytics package.
-        allocates files in folders
-    """
+class FlorenceImageDataModuleAdapter(BaseLightningDataModule):
 
     dataset = FlorenceImageDataset
-    # dataset = FlorenceJSONLDataset
     task = ["image-detection"]
     framework = [Frameworks.florence]
 
@@ -144,7 +186,7 @@ class FlorenceDataModuleAdapter(BaseLightningDataModule):
         batch_size: int = 4,
         augmentations=None,
         stage=Stages.predict,
-        size_to=768,
+        size_to=None,
         *args,
         **kwargs,
     ):
@@ -153,6 +195,7 @@ class FlorenceDataModuleAdapter(BaseLightningDataModule):
             train - path to the folder with train images
             test - path to the folder with test images
             batch_size -
+            size_to - size images are to scale to
             num_workers
             image_size - size of the input image
             num_classes - number of classes
@@ -168,21 +211,6 @@ class FlorenceDataModuleAdapter(BaseLightningDataModule):
         self.size_to = size_to
 
     def setup_train_test_val(self, **kwargs):
-        """
-        Input folder structure is as follows:
-        images/
-            train/
-            validation/
-            test/
-
-        labels/
-            train/
-            validation/
-            test/
-
-
-        Method will divide train folder's contents into train and val folders
-        """
         pass
 
     def setup_infer(self):
@@ -212,3 +240,7 @@ class FlorenceDataModuleAdapter(BaseLightningDataModule):
 
     def test_dataloader(self):
         pass
+
+
+class FlorenceJSONLDataModuleAdapter(FlorenceImageDataModuleAdapter):
+    dataset = FlorenceJSONLDataset

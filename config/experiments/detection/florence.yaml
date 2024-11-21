@@ -7,4 +7,4 @@ project: "Florence"
 task: "image-detection"
 random_seed: 42
 batch_size: 16
-ckpt_path: "flor_files/epoch_136/florence2_epoch_136.onnx"
+ckpt_path: "https://api.blackhole.ai.innopolis.university/pretrained/med/florence2_epoch_136.onnx"

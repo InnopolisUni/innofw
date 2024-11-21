@@ -1,1 +1,1 @@
-from innofw.core.integrations.florence.model_adapter import FlorenceModel as Florence  # noqa
+from innofw.core.integrations.florence.florence_adapter import FlorenceModel as Florence  # noqa

@@ -1,11 +1,10 @@
 import logging
 
 from transformers import AutoTokenizer
-import onnxruntime as ort
 import numpy as np
 import torch
 import re
-from PIL import ImageDraw, ImageFont, Image
+from PIL import ImageDraw, ImageFont
 
 
 class BoxQuantizer(object):
@@ -744,7 +743,7 @@ tasks_answer_post_processing_type = {
 }
 
 
-def init_tokenizer(path):
+def init_tokenizer(path: str) -> AutoTokenizer:
     tokenizer = AutoTokenizer.from_pretrained(path)
     tokens_to_add = {
         "additional_special_tokens": tokenizer.additional_special_tokens
@@ -754,52 +753,6 @@ def init_tokenizer(path):
     }
     tokenizer.add_special_tokens(tokens_to_add)
     return tokenizer
-
-
-def generate_text(task_prompt, tensor, onnx_file, tokenizer, text_input=None, dev="cpu"):
-
-    if text_input is None:
-        prompt = task_prompt
-    else:
-        prompt = task_prompt + text_input
-
-    input_ids_np = tokenizer(prompt, return_tensors="pt")["input_ids"]
-    input_ids_np= input_ids_np.to(dev).cpu().numpy()
-    pixel_values_np = tensor.cpu().numpy()
-
-    # model export
-    ort_session = ort.InferenceSession(onnx_file)
-
-    # generated_tokens = [start_token_id]
-    generated_tokens = [0]
-    max_length = 60
-
-    for step in range(max_length):
-        decoder_input_ids = torch.tensor([generated_tokens], dtype=torch.long)
-        decoder_input_ids_np = decoder_input_ids.cpu().numpy()
-
-        outputs = ort_session.run(
-            None,
-            {
-                "input_ids": input_ids_np,
-                "pixel_values": pixel_values_np,
-                "decoder_input_ids": decoder_input_ids_np,
-            },
-        )
-        logits = outputs[0]
-        next_token_logits = logits[:, -1, :]
-        next_token_id = np.argmax(next_token_logits, axis=-1)[0]
-
-        generated_tokens.append(int(next_token_id))
-
-        if next_token_id == 1:
-            # actually should be == model.config.eos_token_id, but we don't have model
-            # just in case ask Imran
-            break
-
-    # Декодирование сгенерированных токенов
-    generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=False)
-    return generated_text
 
 
 def post_process_generation(text, task, image_size, tokenizer):
