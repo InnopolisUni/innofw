@@ -69,6 +69,7 @@ mmengine = "^0.10.4"
 numba = "^0.58.0"
 mmdet3d = "^1.4.0"
 mmdet = {git = "https://github.com/BarzaH/mmdetection"}
+onnxruntime = "1.9.0"
 
 [tool.poetry.dev-dependencies]
 mock = "^4.0.3"

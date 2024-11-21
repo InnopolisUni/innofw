@@ -2153,6 +2153,17 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "flatbuffers"
+version = "24.3.25"
+description = "The FlatBuffers serialization format for Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "flatbuffers-24.3.25-py2.py3-none-any.whl", hash = "sha256:8dbdec58f935f3765e4f7f3cf635ac3a77f83568138d6a2311f524ec96364812"},
+    {file = "flatbuffers-24.3.25.tar.gz", hash = "sha256:de2ec5b203f21441716617f38443e0a8ebf3d25bf0d9c0bb0ce68fa00ad546a4"},
+]
+
+[[package]]
 name = "flatten-dict"
 version = "0.4.2"
 description = "A flexible utility for flattening and unflattening dict-like objects in Python."
@@ -4810,6 +4821,40 @@ antlr4-python3-runtime = "==4.9.*"
 PyYAML = ">=5.1.0"
 
 [[package]]
+name = "onnxruntime"
+version = "1.9.0"
+description = "ONNX Runtime is a runtime accelerator for Machine Learning models"
+optional = false
+python-versions = "*"
+files = [
+    {file = "onnxruntime-1.9.0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:48f0fcf3c9aa6836584e64abe63fa7395c02066d3259bbdeb489b4d172e0127a"},
+    {file = "onnxruntime-1.9.0-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7f9d772a6330cb85e7723f84e357320a1603e3824a92aab4ef36fc3a41e64f16"},
+    {file = "onnxruntime-1.9.0-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3bdb861822a63404cca7b46dce86d48bbc21c906a4b4ed13969bc89763ac7f96"},
+    {file = "onnxruntime-1.9.0-cp36-cp36m-win32.whl", hash = "sha256:e3f8f7d5d4d66e3a4a2b731a000d3142a53a5403e8814e68bbd659514e815899"},
+    {file = "onnxruntime-1.9.0-cp36-cp36m-win_amd64.whl", hash = "sha256:cf3edbc54bfe99a119d73cd65398a2ec68ae3af2557ab7e645976314a8d11aa1"},
+    {file = "onnxruntime-1.9.0-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:c8ff9c914b2b1c3b022dedc199e3f971e340d8923a1ef42d66530508fa367bf6"},
+    {file = "onnxruntime-1.9.0-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9d03ff4a2717c4149acc7c649fd66a67e81ec44c9e6e2a00df1d6e9ca843f1b7"},
+    {file = "onnxruntime-1.9.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a8a2315e2244ac371742f6e30da5367c680c3e84c31e291a35f8ddfab09c3c82"},
+    {file = "onnxruntime-1.9.0-cp37-cp37m-win32.whl", hash = "sha256:fa927b1825f2851c0c8f3948515a56d76cb0686da9acd1d6f8fafe552c8d8fec"},
+    {file = "onnxruntime-1.9.0-cp37-cp37m-win_amd64.whl", hash = "sha256:9ccaf6a0365f2b86efe21681416b8cfe97f084a7d53bd1cf2bf889a0aef2b0d3"},
+    {file = "onnxruntime-1.9.0-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:d20ce3448babe89a77cc9d357730767deb3617e36439bddcd006f28abc72b416"},
+    {file = "onnxruntime-1.9.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3fd1d6647245aa38e1099cfd355d84e807de5350d5216e84ceefd91c64ce243d"},
+    {file = "onnxruntime-1.9.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5f00620fc0f51bc4d90ae6d96ceb4b6538e3bd1e328178104118ac672f37c40d"},
+    {file = "onnxruntime-1.9.0-cp38-cp38-win32.whl", hash = "sha256:e1c1fe3f7d960eeffc02a5f196d85529254eefd59cbeecd8abee0a9467b5c2d8"},
+    {file = "onnxruntime-1.9.0-cp38-cp38-win_amd64.whl", hash = "sha256:9002214af1b2317ab3a63a2f045f7d1363c207e661d475a877aa6499ca09d606"},
+    {file = "onnxruntime-1.9.0-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:7339cef9b918b88f1fec8109cfa0a8416f119c5968d00300a9186847d86e35de"},
+    {file = "onnxruntime-1.9.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cdec8538eb59e63a376d0677f7ec043ceb597d52ee88f1f7e250928893a0de7f"},
+    {file = "onnxruntime-1.9.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ab62b29429e0e62c11478b2a8a3af2646531fba7800736e8b201d8baa50b43a8"},
+    {file = "onnxruntime-1.9.0-cp39-cp39-win32.whl", hash = "sha256:4aee9a893f93637341fd0e6b56fa3ab1c430d718d08d79a358603297a1575ad9"},
+    {file = "onnxruntime-1.9.0-cp39-cp39-win_amd64.whl", hash = "sha256:bdf1327932227383b04093a51266474b2703b3fcf9c0f6f11c652d9652b76a5c"},
+]
+
+[package.dependencies]
+flatbuffers = "*"
+numpy = ">=1.16.6"
+protobuf = "*"
+
+[[package]]
 name = "onvif-zeep"
 version = "0.2.12"
 description = "Python Client for ONVIF Camera"
@@ -5492,6 +5537,7 @@ description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs 
 optional = false
 python-versions = ">=3.8"
 files = [
+    {file = "pyasn1-0.6.1-py3-none-any.whl", hash = "sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629"},
     {file = "pyasn1-0.6.1.tar.gz", hash = "sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034"},
 ]
 
@@ -5502,6 +5548,7 @@ description = "A collection of ASN.1-based protocols modules"
 optional = false
 python-versions = ">=3.8"
 files = [
+    {file = "pyasn1_modules-0.4.1-py3-none-any.whl", hash = "sha256:49bfa96b45a292b711e986f222502c1c9a5e1f4e568fc30e2574a6c7d07838fd"},
     {file = "pyasn1_modules-0.4.1.tar.gz", hash = "sha256:c28e2dbf9c06ad61c71a075c7e0f9fd0f1b0bb2d2ad4377f240d33ac2ab60a7c"},
 ]
 
@@ -9190,4 +9237,4 @@ dvc = ["dvc", "dvc-s3"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.10"
-content-hash = "6b5d718488fce098cd00fecda0d6916621a8777dc034109de42d27ccadddd98a"
+content-hash = "5d6e9af2bb9f557e1970dab456aa6e45ff31828cddc3ff98ddc31e06cc1ba896"
