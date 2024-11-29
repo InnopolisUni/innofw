@@ -1,8 +1,8 @@
 task:
   - image-detection
 
-#_target_: innofw.core.datamodules.lightning_datamodules.florence.FlorenceImageDataModuleAdapter
-_target_: innofw.core.datamodules.lightning_datamodules.florence.FlorenceJSONLDataModuleAdapter # for jsonl data
+_target_: innofw.core.datamodules.lightning_datamodules.florence.FlorenceImageDataModuleAdapter
+#_target_: innofw.core.datamodules.lightning_datamodules.florence.FlorenceJSONLDataModuleAdapter # for jsonl data
 
 name: florence
 description: Набор данных

@@ -11,17 +11,24 @@ from torchvision import transforms
 from innofw.constants import Frameworks, Stages
 from innofw.core.datamodules.lightning_datamodules.base import BaseLightningDataModule
 
+IMAGES_FOLDER = "images"
+
 
 class FlorenceDataset(Dataset):
     def __init__(self, data_path=None, transform=None):
         data_path = str(data_path)
         # when data is downloaded from S3 there is a bug
-        if data_path.endswith("images"):
+        if data_path.endswith(IMAGES_FOLDER):
             data_path = data_path[:-7]  # care if this is deliberate
-        self.data_path = data_path
-        self.image_folder = os.path.join(data_path, "images")
+        folders = self.get_folders(data_path)
+        self.data_path, self.image_folder = folders
+
         self.transform = transform
         self.data, self.len = self.setup()
+
+    @staticmethod
+    def get_folders(data_path) -> Tuple[str, str]:
+        raise NotImplementedError
 
     def setup(self):
         raise NotImplementedError
@@ -56,21 +63,16 @@ class FlorenceImageDataset(FlorenceDataset):
     """A dataset to represent image data for florence inference
 
     In case we use only pictures to retrieve results
-
-    Expected folder structure:
-    ---------------------------
-    data_path/
-    ├── images/              # A folder containing image files
-    │   ├── image1.jpg       # Example image file
-    │   ├── image2.png       # Example image file
-    │   └── ...              # Additional image files
-
     """
 
     def setup(self) -> Tuple[Any, int]:
         picture_formats = (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif")
-        files = sorted(os.listdir(self.image_folder))
-        data = [x for x in files if x.lower().endswith(picture_formats)]
+        if os.path.isdir(self.data_path):
+            files = sorted(os.listdir(self.image_folder))
+            data = [x for x in files if x.lower().endswith(picture_formats)]
+        else:
+            self.image_folder, data = os.path.split(self.data_path)
+            data = [data]
         return data, len(data)
 
     def get_sample_name_text_input(self, item):
@@ -78,6 +80,16 @@ class FlorenceImageDataset(FlorenceDataset):
         text_input = None
         image_name = self.data[item]
         return image_name, text_input
+
+    @staticmethod
+    def get_folders(data_path) -> Tuple[str, str]:
+        if not os.path.isdir(data_path):
+            return data_path, data_path
+        if IMAGES_FOLDER in os.listdir(data_path):
+            image_folder = os.path.join(data_path, IMAGES_FOLDER)
+        else:
+            image_folder = data_path
+        return data_path, image_folder
 
 
 class FlorenceJSONLDataset(FlorenceDataset):
@@ -113,6 +125,7 @@ class FlorenceJSONLDataset(FlorenceDataset):
         """parse data from jsonl records
 
         here .data can be both a generator or a List
+        if Typerror is wrong error - fix it
 
         Args:
             item:
@@ -122,7 +135,7 @@ class FlorenceJSONLDataset(FlorenceDataset):
         """
         try:
             entry = self.data[item]
-        except:
+        except TypeError:
             entry = next(self.data)
         text_input = entry["prefix"].split("CAPTION_TO_PHRASE_GROUNDING ")[1]
         image_name = entry["image"]
@@ -170,6 +183,11 @@ class FlorenceJSONLDataset(FlorenceDataset):
                 line = line.strip()
                 if line:
                     yield json.loads(line)
+
+    @staticmethod
+    def get_folders(data_path) -> Tuple[str, str]:
+        image_folder = os.path.join(data_path, IMAGES_FOLDER)
+        return data_path, image_folder
 
 
 class FlorenceImageDataModuleAdapter(BaseLightningDataModule):

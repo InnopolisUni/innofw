@@ -1,9 +1,8 @@
 import logging
+import re
 
 from transformers import AutoTokenizer
-import numpy as np
 import torch
-import re
 from PIL import ImageDraw, ImageFont
 
 
@@ -283,89 +282,17 @@ class Florence2PostProcesser(object):
         #    Equivalent to bart_tokenizer.decode(input_ids, skip_special_tokens=False, clean_up_tokenization_spaces=False, spaces_between_special_tokens=False)
         return text, spans
 
-    def parse_od_from_text_and_spans(
-        self, text, pattern, image_size, phrase_centric=False
-    ):
-        parsed = list(re.finditer(pattern, text))
-
-        instances = []
-        for i in range(len(parsed)):
-            # Prepare instance.
-            instance = {}
-
-            if phrase_centric:
-                bbox_bins = [int(parsed[i].group(j)) for j in range(2, 6)]
-            else:
-                bbox_bins = [int(parsed[i].group(j)) for j in range(1, 5)]
-            instance["bbox"] = self.box_quantizer.dequantize(
-                boxes=torch.tensor(bbox_bins), size=image_size
-            ).tolist()
-
-            if phrase_centric:
-                instance["cat_name"] = parsed[i].group(1).lower().strip()
-            else:
-                instance["cat_name"] = parsed[i].group(5).lower().strip()
-            instances.append(instance)
-
-        return instances
-
-    def parse_ocr_from_text_and_spans(
-        self,
-        text,
-        pattern,
-        image_size,
-        area_threshold=-1.0,
-    ):
-        bboxes = []
-        labels = []
-        text = text.replace("<s>", "")
-        # ocr with regions
-        parsed = re.findall(pattern, text)
-        instances = []
-        image_width, image_height = image_size
-
-        for ocr_line in parsed:
-            ocr_content = ocr_line[0]
-            quad_box = ocr_line[1:]
-            quad_box = [int(i) for i in quad_box]
-            quad_box = (
-                self.coordinates_quantizer.dequantize(
-                    torch.tensor(np.array(quad_box).reshape(-1, 2)), size=image_size
-                )
-                .reshape(-1)
-                .tolist()
-            )
-
-            if area_threshold > 0:
-                x_coords = [i for i in quad_box[0::2]]
-                y_coords = [i for i in quad_box[1::2]]
-
-                # apply the Shoelace formula
-                area = 0.5 * abs(
-                    sum(
-                        x_coords[i] * y_coords[i + 1] - x_coords[i + 1] * y_coords[i]
-                        for i in range(4 - 1)
-                    )
-                )
-
-                if area < (image_width * image_height) * area_threshold:
-                    continue
-
-            bboxes.append(quad_box)
-            labels.append(ocr_content)
-            instances.append(
-                {
-                    "quad_box": quad_box,
-                    "text": ocr_content,
-                }
-            )
-        return instances
-
-    def parse_phrase_grounding_from_text_and_spans(self, text, pattern, image_size):
+    def parse_phrase_grounding_from_text_and_spans(self, text, image_size):
+        """
         # ignore <s> </s> and <pad>
-        cur_span = 0
-        if text.startswith("<s>"):
-            cur_span += 3
+
+        Args:
+            text:
+            image_size:
+
+        Returns:
+
+        """
 
         text = text.replace("<s>", "")
         text = text.replace("</s>", "")
@@ -384,7 +311,6 @@ class Florence2PostProcesser(object):
             phrase_text_strip = pharse_text.replace("<obj>", "", 1)
 
             if phrase_text_strip == "":
-                cur_span += len(pharse_text)
                 continue
 
             # Prepare instance.
@@ -393,13 +319,11 @@ class Florence2PostProcesser(object):
             # parse phrase, get string
             phrase = re.search(pattern, phrase_text_strip)
             if phrase is None:
-                cur_span += len(pharse_text)
                 continue
 
             # parse bboxes by box_pattern
             bboxes_parsed = list(re.finditer(box_pattern, pharse_text))
             if len(bboxes_parsed) == 0:
-                cur_span += len(pharse_text)
                 continue
 
             phrase = phrase.group()
@@ -407,7 +331,6 @@ class Florence2PostProcesser(object):
             phrase = phrase.strip()
 
             if phrase in self.black_list_of_phrase_grounding:
-                cur_span += len(pharse_text)
                 continue
 
             # a list of list
@@ -426,200 +349,6 @@ class Florence2PostProcesser(object):
             instances.append(instance)
 
         return instances
-
-    def parse_description_with_bboxes_from_text_and_spans(
-        self, text, pattern, image_size, allow_empty_phrase=False
-    ):
-        # temporary parse solution, split by '.'
-        # ignore <s> </s> and <pad>
-
-        text = text.replace("<s>", "")
-        text = text.replace("</s>", "")
-        text = text.replace("<pad>", "")
-
-        if allow_empty_phrase:
-            pattern = rf"(?:(?:<loc_\d+>){{4,}})"
-        else:
-            pattern = r"([^<]+(?:<loc_\d+>){4,})"
-        phrases = re.findall(pattern, text)
-
-        # pattern should be text pattern and od pattern
-        pattern = r"^\s*(.*?)(?=<od>|</od>|<box>|</box>|<bbox>|</bbox>|<loc_)"
-        box_pattern = r"<loc_(\d+)><loc_(\d+)><loc_(\d+)><loc_(\d+)>"
-
-        instances = []
-        for pharse_text in phrases:
-            phrase_text_strip = pharse_text.replace("<ground>", "", 1)
-            phrase_text_strip = pharse_text.replace("<obj>", "", 1)
-
-            if phrase_text_strip == "" and not allow_empty_phrase:
-                continue
-
-            # parse phrase, get string
-            phrase = re.search(pattern, phrase_text_strip)
-            if phrase is None:
-                continue
-
-            phrase = phrase.group()
-            # remove leading and trailing spaces
-            phrase = phrase.strip()
-
-            # parse bboxes by box_pattern
-            bboxes_parsed = list(re.finditer(box_pattern, pharse_text))
-            if len(bboxes_parsed) == 0:
-                continue
-
-            # a list of list
-            bbox_bins = [
-                [int(_bboxes_parsed.group(j)) for j in range(1, 5)]
-                for _bboxes_parsed in bboxes_parsed
-            ]
-
-            bboxes = self.box_quantizer.dequantize(
-                boxes=torch.tensor(bbox_bins), size=image_size
-            ).tolist()
-
-            phrase = phrase.encode("ascii", errors="ignore").decode("ascii")
-            for _bboxes in bboxes:
-                # Prepare instance.
-                instance = {}
-                instance["bbox"] = _bboxes
-                # exclude non-ascii characters
-                instance["cat_name"] = phrase
-                instances.append(instance)
-
-        return instances
-
-    def parse_description_with_polygons_from_text_and_spans(
-        self,
-        text,
-        pattern,
-        image_size,
-        allow_empty_phrase=False,
-        polygon_sep_token="<sep>",
-        polygon_start_token="<poly>",
-        polygon_end_token="</poly>",
-        with_box_at_start=False,
-    ):
-
-        # ref_seg format: '<expression><x1><y1><x2><y2><><><sep><><><><>'
-        # ignore <s> </s> and <pad>
-
-        text = text.replace("<s>", "")
-        text = text.replace("</s>", "")
-        text = text.replace("<pad>", "")
-
-        if allow_empty_phrase:
-            pattern = rf"(?:(?:<loc_\d+>|{re.escape(polygon_sep_token)}|{re.escape(polygon_start_token)}|{re.escape(polygon_end_token)}){{4,}})"
-        else:
-            # [^<]+: This part matches one or more characters that are not the < symbol.
-            # The ^ inside the square brackets [] is a negation, meaning it matches anything except <.
-            #
-            pattern = rf"([^<]+(?:<loc_\d+>|{re.escape(polygon_sep_token)}|{re.escape(polygon_start_token)}|{re.escape(polygon_end_token)}){{4,}})"
-        phrases = re.findall(pattern, text)
-
-        phrase_string_pattern = (
-            r"^\s*(.*?)(?=<od>|</od>|<box>|</box>|<bbox>|</bbox>|<loc_|<poly>)"
-        )
-        box_pattern = rf"((?:<loc_\d+>)+)(?:{re.escape(polygon_sep_token)}|$)"
-
-        # one polygons instance is separated by polygon_start_token and polygon_end_token
-        polygons_instance_pattern = (
-            rf"{re.escape(polygon_start_token)}(.*?){re.escape(polygon_end_token)}"
-        )
-
-        instances = []
-        for phrase_text in phrases:
-
-            # exclude loc_\d+>
-            # need to get span if want to include category score
-            phrase_text_strip = re.sub(r"^loc_\d+>", "", phrase_text, count=1)
-
-            # phrase = phrase.replace('<poly>', '')
-            # phrase = phrase.replace('poly>', '')
-
-            if phrase_text_strip == "" and not allow_empty_phrase:
-                continue
-
-            # parse phrase, get string
-            phrase = re.search(phrase_string_pattern, phrase_text_strip)
-            if phrase is None:
-                continue
-            phrase = phrase.group()
-            # remove leading and trailing spaces
-            phrase = phrase.strip()
-
-            # parse bboxes by box_pattern
-
-            # split by polygon_start_token and polygon_end_token first using polygons_instance_pattern
-            if polygon_start_token in phrase_text and polygon_end_token in phrase_text:
-                polygons_instances_parsed = list(
-                    re.finditer(polygons_instance_pattern, phrase_text)
-                )
-            else:
-                polygons_instances_parsed = [phrase_text]
-
-            for _polygons_instances_parsed in polygons_instances_parsed:
-                # Prepare instance.
-                instance = {}
-
-                # polygons_parsed= list(re.finditer(box_pattern, phrase_text))
-                if isinstance(_polygons_instances_parsed, str):
-                    polygons_parsed = list(
-                        re.finditer(box_pattern, _polygons_instances_parsed)
-                    )
-                else:
-                    polygons_parsed = list(
-                        re.finditer(box_pattern, _polygons_instances_parsed.group(1))
-                    )
-                if len(polygons_parsed) == 0:
-                    continue
-
-                # a list of list (polygon)
-                bbox = []
-                polygons = []
-                for _polygon_parsed in polygons_parsed:
-                    # group 1: whole <loc_\d+>...</loc_\d+>
-                    _polygon = _polygon_parsed.group(1)
-                    # parse into list of int
-                    _polygon = [
-                        int(_loc_parsed.group(1))
-                        for _loc_parsed in re.finditer(r"<loc_(\d+)>", _polygon)
-                    ]
-                    if with_box_at_start and len(bbox) == 0:
-                        if len(_polygon) > 4:
-                            # no valid bbox prediction
-                            bbox = _polygon[:4]
-                            _polygon = _polygon[4:]
-                        else:
-                            bbox = [0, 0, 0, 0]
-                    # abandon last element if is not paired
-                    if len(_polygon) % 2 == 1:
-                        _polygon = _polygon[:-1]
-
-                    # reshape into (n, 2)
-                    _polygon = (
-                        self.coordinates_quantizer.dequantize(
-                            torch.tensor(np.array(_polygon).reshape(-1, 2)),
-                            size=image_size,
-                        )
-                        .reshape(-1)
-                        .tolist()
-                    )
-                    # reshape back
-                    polygons.append(_polygon)
-
-                instance["cat_name"] = phrase
-                instance["polygons"] = polygons
-                if len(bbox) != 0:
-                    instance["bbox"] = self.box_quantizer.dequantize(
-                        boxes=torch.tensor([bbox]), size=image_size
-                    ).tolist()[0]
-
-                instances.append(instance)
-
-        return instances
-
     def __call__(
         self,
         text=None,
@@ -627,6 +356,7 @@ class Florence2PostProcesser(object):
         parse_tasks=None,
     ):
         """
+        see official github to see all tasks
         Args:
             text: model outputs
             image_size: (width, height)
@@ -650,74 +380,13 @@ class Florence2PostProcesser(object):
             if parse_tasks is not None and task not in parse_tasks:
                 continue
 
-            pattern = self.parse_tasks_configs[task].get("PATTERN", None)
-
-            if task == "ocr":
-                instances = self.parse_ocr_from_text_and_spans(
-                    text,
-                    pattern=pattern,
-                    image_size=image_size,
-                    area_threshold=self.parse_tasks_configs[task].get(
-                        "AREA_THRESHOLD", 0.01
-                    ),
-                )
-                parsed_dict["ocr"] = instances
-            elif task == "phrase_grounding":
+            if task == "phrase_grounding":
                 instances = self.parse_phrase_grounding_from_text_and_spans(
                     text,
-                    pattern=pattern,
                     image_size=image_size,
                 )
                 parsed_dict["phrase_grounding"] = instances
-            elif task == "pure_text":
-                parsed_dict["pure_text"] = text
-            elif task == "description_with_bboxes":
-                instances = self.parse_description_with_bboxes_from_text_and_spans(
-                    text,
-                    pattern=pattern,
-                    image_size=image_size,
-                )
-                parsed_dict["description_with_bboxes"] = instances
-            elif task == "description_with_polygons":
-                instances = self.parse_description_with_polygons_from_text_and_spans(
-                    text,
-                    pattern=pattern,
-                    image_size=image_size,
-                )
-                parsed_dict["description_with_polygons"] = instances
-            elif task == "polygons":
-                instances = self.parse_description_with_polygons_from_text_and_spans(
-                    text,
-                    pattern=pattern,
-                    image_size=image_size,
-                    allow_empty_phrase=True,
-                )
-                parsed_dict["polygons"] = instances
-            elif task == "bboxes":
-                instances = self.parse_description_with_bboxes_from_text_and_spans(
-                    text,
-                    pattern=pattern,
-                    image_size=image_size,
-                    allow_empty_phrase=True,
-                )
-                parsed_dict["bboxes"] = instances
-            elif task == "description_with_bboxes_or_polygons":
-                if "<poly>" in text:
-                    # only support either polygons or bboxes, not both at the same time
-                    instances = (
-                        self.parse_description_with_polygons_from_text_and_spans(
-                            text,
-                            pattern=pattern,
-                            image_size=image_size,
-                        )
-                    )
-                else:
-                    instances = self.parse_description_with_bboxes_from_text_and_spans(
-                        text,
-                        pattern=pattern,
-                        image_size=image_size,
-                    )
-                parsed_dict["description_with_bboxes_or_polygons"] = instances
+
             else:
                 raise ValueError("task {} is not supported".format(task))
 

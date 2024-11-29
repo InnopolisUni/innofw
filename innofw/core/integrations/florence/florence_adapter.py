@@ -55,10 +55,21 @@ class FlorenceModel(BaseIntegrationModel):
         return generated_text
 
     def get_generated_tokens(self, input_ids_np, pixel_values_np):
-        # generated_tokens = [start_token_id]
+        """just in case ask Imran
+        generated_tokens = [start_token_id], but we do not HF model to get it implicitly
+
+        comparison is to be next_token_id == model.config.eos_token_id, but we don't have model
+
+        Args:
+            input_ids_np:
+            pixel_values_np:
+
+        Returns:
+
+        """
         generated_tokens = [0]
         max_length = 60
-        for step in range(max_length):
+        for _ in range(max_length):
             decoder_input_ids = torch.tensor([generated_tokens], dtype=torch.long)
             decoder_input_ids_np = decoder_input_ids.cpu().numpy()
 
@@ -69,8 +80,6 @@ class FlorenceModel(BaseIntegrationModel):
             generated_tokens.append(int(next_token_id))
 
             if next_token_id == 1:
-                # actually should be == model.config.eos_token_id, but we don't have model
-                # just in case ask Imran
                 break
         return generated_tokens
 
@@ -135,7 +144,7 @@ class FlorenceModelAdapter(BaseModelAdapter):
     def predict(self, datamodule: FlorenceImageDataModuleAdapter, ckpt_path=None):
         datamodule.setup()
         if ckpt_path is not None:
-            self.model.load_weights(ckpt_path)
+            self.model.load_weights(str(ckpt_path))
         ds = datamodule.predict_dataloader()
         pbar = tqdm(ds, total=len(ds))
         for entry in pbar:
