@@ -107,7 +107,7 @@ def run_pipeline(
             batch_size=cfg.get("batch_size"),
         )
         print("using concatenated datamodule")
-    except:
+    except Exception as e:
         datamodule = get_datamodule(
             cfg.datasets,
             framework,
@@ -117,7 +117,7 @@ def run_pipeline(
             batch_size=cfg.get("batch_size"),
             random_state=cfg.get("random_seed"),
         )
-        print("using standard datamodule")
+        print(f"{e} - using standard datamodule")
 
     if predict:
         datamodule.setup_infer()
@@ -154,6 +154,7 @@ def run_pipeline(
         "weights_freq": cfg.get("weights_freq"),
         "logger": logger,
         "random_state": cfg.get("random_seed"),
+        "threshold": cfg.get("threshold")
     }
     inno_model = InnoModel(**model_params)
     result = None
@@ -193,8 +194,8 @@ def run_pipeline(
         LOGGER.info("val sample stats")
         LOGGER.info(lo(next(iter(datamodule.val_dataloader))[SegDataKeys.image]))
         LOGGER.info(lo(next(iter(datamodule.val_dataloader))[SegDataKeys.label]))
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
     ckpt_path = get_ckpt_path(cfg)
     logging.info(f"Using checkpoint: {ckpt_path}")

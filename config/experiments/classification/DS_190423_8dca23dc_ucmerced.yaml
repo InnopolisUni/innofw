@@ -27,11 +27,3 @@ weights_freq: 1
 batch_size: 256
 epochs: 30
 accelerator: gpu
-
-# wandb:
-#  enable: False
-#  entity: sadjava
-#  project: ucmerced
-#  group: 200423_just_testing_wandb
-#  job_type: training
-

@@ -116,13 +116,22 @@ class TorchAdapter(BaseModelAdapter):
 
             if not value:
                 objects[key] = get_default(key, framework, task)
-
-        self.pl_module = objects["lightning_module"](
-            model,
-            objects["losses"],
-            objects["optimizers_cfg"],
-            objects["schedulers_cfg"],
-        )
+        if "threshold" in kwargs.keys() and kwargs["threshold"] is not None:
+            threshold = kwargs["threshold"]
+            self.pl_module = objects["lightning_module"](
+                model,
+                objects["losses"],
+                objects["optimizers_cfg"],
+                objects["schedulers_cfg"],
+                threshold=threshold
+            )
+        else:
+            self.pl_module = objects["lightning_module"](
+                model,
+                objects["losses"],
+                objects["optimizers_cfg"],
+                objects["schedulers_cfg"],
+            )
         try:
             self.pl_module.setup_metrics(self.metrics)
         except AttributeError:

@@ -65,14 +65,25 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
         super().__init__(train=train, test=test, infer=infer, stage=stage, *args, **kwargs)
         self.train_source, self.test_source, self.infer_source = None, None, None
         if self.train:
-            self.train_source = Path(self.train)
+            if "target" in train.keys():
+                self.train_source = Path(self.train).parent
+            else:
+                self.train_source = Path(train["source"]).absolute()
         if self.test:
-            self.test_source = Path(self.test)
+            if "target" in test.keys():
+                self.test_source = Path(self.test).parent
+            else:
+                self.test_source = Path(test["source"]).parent
         if self.infer:
-            self.infer_source = Path(self.infer)
+            if "target" in infer.keys():
+                self.infer_source = Path(self.infer).parent
+            else:
+                self.infer_source = Path(infer["source"]).absolute()
 
         self.val_size = val_size
         self.num_classes = num_classes
+        self.class_names = sorted([name[1] for name in kwargs["names"].items()]) if "names" in kwargs.keys() \
+            else ['LEP110_anchor', 'power_lines', 'forest', 'vegetation','LEP110_prom']
         self.random_state = random_state
 
         self.train_set = None
@@ -84,10 +95,9 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
             'center_coords': [True, True, True],  # x, y, z
             'window_size': [100., 100., 20.],
             'train_data_mode': 'full',
-            'selectedClasses': ['LEP110_anchor', 'power_lines', 'forest', 'vegetation',
-                                'LEP110_prom'],
+            'selectedClasses': self.class_names,
         }
-        self.state['data_path'] = self.state['data_path'].parent
+        # self.state['data_path'] = self.state['data_path'].parent
         self.state['save_path'] = osp.join(self.state['data_path'].parent, 'processed_data')
 
     def get_train_val_sets(self):
@@ -142,8 +152,7 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
 
         return points, centerize_vec
 
-    def get_ann_in_framework_format(self, item, sample_idx, pcd_np, pcd_sboxes, sly_ann,
-                                    annotations):
+    def get_ann_in_framework_format(self, item, sample_idx, pcd_np, pcd_sboxes, sly_ann, annotations):
         for slide_box_idx, sbox in enumerate(pcd_sboxes):
             ptc_info = {
                 'sample_idx': sample_idx,
@@ -186,10 +195,10 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                     continue
                 box_info = []  # x, y, z, dx, dy, dz, rot, [vel_x, vel_y]
                 pos = fig['geometry']['position']
-
-                if pos['x'] < sbox[0] or pos['x'] >= sbox[1] or \
+                pos_conditions = pos['x'] < sbox[0] or pos['x'] >= sbox[1] or \
                         pos['y'] < sbox[2] or pos['y'] >= sbox[3] or \
-                        pos['z'] < sbox[4] or pos['z'] >= sbox[5]:
+                        pos['z'] < sbox[4] or pos['z'] >= sbox[5]
+                if pos_conditions:
                     continue
                 pos_x = pos['x'] + trans_vec[0]
                 pos_y = pos['y'] + trans_vec[1]
@@ -208,13 +217,16 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
                     self.state["selectedClasses"].index(objects2class[fig['objectKey']]))
             ptc_info['instances']['gt_bboxes_3d'] = np.array(ptc_info['instances']['gt_bboxes_3d'],
                                                              dtype=np.float32)
-            ptc_info['instances']['gt_bboxes_3d'][:, :3] = (ptc_info['instances']['gt_bboxes_3d'][:, :3] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
-            ptc_info['instances']['gt_bboxes_3d'][:, 3:6] = (ptc_info['instances']['gt_bboxes_3d'][:, 3:6] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
+            try:
+                ptc_info['instances']['gt_bboxes_3d'][:, :3] = (ptc_info['instances']['gt_bboxes_3d'][:, :3] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
+                ptc_info['instances']['gt_bboxes_3d'][:, 3:6] = (ptc_info['instances']['gt_bboxes_3d'][:, 3:6] - pcd_mins) / (pcd_maxes - pcd_mins) * (target_maxes - target_mins) + target_mins
 
 
-            ptc_info['instances']['gt_labels_3d'] = np.array(ptc_info['instances']['gt_labels_3d'],
-                                                             dtype=np.int32)
-            annotations.append(ptc_info)
+                ptc_info['instances']['gt_labels_3d'] = np.array(ptc_info['instances']['gt_labels_3d'],
+                                                                 dtype=np.int32)
+                annotations.append(ptc_info)
+            except Exception as e:
+                print(e)
         return annotations
 
     def save_set_to_annotation(self, save_path, items, slide_boxes, subset):
@@ -295,14 +307,13 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
         for z in range(int(slides_z)):
             for y in range(int(slides_y)):
                 for x in range(int(slides_x)):
-                    sboxes.append([
-                        0 if x == 0 else ws[0] * x - overlap_x,
-                        ws[0] if x == 0 else ws[0] * (x + 1) - overlap_x,
-                        0 if y == 0 else ws[1] * y - overlap_y,
-                        ws[1] if y == 0 else ws[1] * (y + 1) - overlap_y,
-                        0 if z == 0 else ws[2] * z - overlap_z,
-                        ws[2] if z == 0 else ws[2] * (z + 1) - overlap_z,
-                    ])
+                    el1 = 0 if x == 0 else ws[0] * x - overlap_x
+                    el2 = ws[0] if x == 0 else ws[0] * (x + 1) - overlap_x
+                    el3 = 0 if y == 0 else ws[1] * y - overlap_y
+                    el4 = ws[1] if y == 0 else ws[1] * (y + 1) - overlap_y
+                    el5 = 0 if z == 0 else ws[2] * z - overlap_z
+                    el6 = ws[2] if z == 0 else ws[2] * (z + 1) - overlap_z
+                    sboxes.append([el1, el2, el3, el4, el5, el6])
         return sboxes, ws
 
     def prepare_data(self):
@@ -353,8 +364,7 @@ class Mmdetection3DDataModuleAdapter(BaseDataModule, ABC):
         self.prepare_data()
 
     def setup_infer(self, **kwargs):
-        self.create_splits()
-        self.prepare_data()
+        pass
 
     def predict_dataloader(self):
         pass

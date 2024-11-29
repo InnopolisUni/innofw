@@ -11,11 +11,4 @@ project: coco_pose_recognition
 random_seed: 0
 task: image-detection
 weights_freq: 1
-
-
-wandb:
-  enable: True
-  project: coco_pose_recognition
-  entity: "k-galliamov"
-  group: none
-  job_type: training
+ckpt_path: https://api.blackhole.ai.innopolis.university/pretrained/pose_det/pose90.pt
