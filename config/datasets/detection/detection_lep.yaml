@@ -1,0 +1,55 @@
+task:
+  - image-detection
+
+name: lep
+description: Набор данных содержит видео облетов c дронов над территорией линии электропередач
+
+markup_info: Набор данных содержит разметку bounding box, под формат детекции столбов ЛЭП.
+date_time: 18.07.2022
+
+_target_: innofw.core.integrations.ultralytics.datamodule.UltralyticsDataModuleAdapter
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/train.zip
+  target: /tmp/data/lep/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
+  target: /tmp/data/lep/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/testing/lep/test.zip
+  target: /tmp/data/lep/infer
+
+num_workers: 8
+
+val_size: 0.2
+channels_num: 3
+image_size: 600
+num_classes: 4
+names:
+  - lep_1
+  - lep_2
+  - lep_3
+  - lep_4
+
+#  Dataset structure is as follows:
+#  images/
+#    train/
+#      *.PNG
+#    test/
+#      *.PNG
+
+#  labels/
+#    train/
+#      *.txt
+#    test/
+#      *.txt
+
+#  Note that each archive consist only corresponding folders:
+#  train.zip/
+#    images/
+#      train/
+#        *.PNG
+#    labels/
+#      train/
+#        *.txt
+#  Similar for test.zip and infer.zip

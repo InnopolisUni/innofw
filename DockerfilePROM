@@ -13,11 +13,13 @@ RUN rm -r /code/config/experiments/*
 COPY ./config/experiments/demo_prom /code/config/experiments/
 WORKDIR /code
 
-RUN /bin/bash -c '/root/.local/bin/poetry config virtualenvs.create false \
-    && /root/.local/bin/poetry lock --no-update  && /root/.local/bin/poetry install --no-interaction --no-ansi --no-cache'
+RUN python3.8 -m pip install poetry \
+   && python3.8 -m poetry config virtualenvs.create false \
+    && python3.8 -m poetry lock --no-update \
+    && python3.8 -m poetry install --all-extras
 
 WORKDIR /code/dui
 
 ENV UI_TITLE="Фреймворк для Промышленности"
 ENV WANDB_DISABLED="true"
-ENTRYPOINT PYTHONUNBUFFERED=1 python3 app.py
+ENTRYPOINT  PYTHONUNBUFFERED=1 python3.8 app.py

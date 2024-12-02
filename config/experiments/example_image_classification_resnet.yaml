@@ -7,7 +7,6 @@ defaults:
   - override /augmentations_test: none
   - override /losses: log_loss.yaml
   - override /optimizers: adam
-  - override /schedulers:
 
 project: "mnist_classification"
 task: "image-classification"

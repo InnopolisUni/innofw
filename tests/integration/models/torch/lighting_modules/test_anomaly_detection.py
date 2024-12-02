@@ -49,9 +49,7 @@ def test_anomaly_detection():
     module.validation_step(next(iter(datamodule.train_dataloader())), 0)
     module.predict_step(next(iter(datamodule.train_dataloader())), 0)
 
-    for i in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            break
-        except:
-            pass
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)

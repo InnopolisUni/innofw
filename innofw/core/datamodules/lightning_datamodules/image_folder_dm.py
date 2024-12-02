@@ -84,7 +84,7 @@ class ImageLightningDataModule(BaseLightningDataModule):
         # divide into train, val, test
         n = len(train_dataset)
         train_size = int(n * (1 - self.val_size))
-
+        random_train_dataset, random_val_dataset = random_split(train_dataset, [train_size, n - train_size])
 
         # stratify
         if self.stratify:
@@ -98,11 +98,12 @@ class ImageLightningDataModule(BaseLightningDataModule):
             strat_val = Counter(second_set_labels).values()
             coefsstrat_val = [i/len(second_set_labels) for i in strat_val]
 
-            random_train = Counter([self.train_dataset.dataset.targets[i] for i in self.train_dataset.indices]).values()
-            coefsrandom_train = [i/len(self.train_dataset.indices) for i in random_train]
 
-            random_val = Counter([self.val_dataset.dataset.targets[i] for i in self.val_dataset.indices]).values()
-            coefsrandom_val = [i/len(self.val_dataset.indices) for i in random_val]
+            random_train = Counter([random_train_dataset.dataset.targets[i] for i in random_train_dataset.indices]).values()
+            coefsrandom_train = [i/len(random_train_dataset.indices) for i in random_train]
+
+            random_val = Counter([random_val_dataset.dataset.targets[i] for i in random_val_dataset.indices]).values()
+            coefsrandom_val = [i/len(random_val_dataset.indices) for i in random_val]
 
             all_train = Counter(train_dataset.targets).values()
             coefsall_train = [i/len(train_dataset.targets) for i in all_train]
@@ -117,9 +118,9 @@ class ImageLightningDataModule(BaseLightningDataModule):
             random train split - {coefsrandom_train}\n 
             random val split - {coefsrandom_val}\n ''')
         else:
-            self.train_dataset, self.val_dataset = random_split(
-                train_dataset, [train_size, n - train_size])
+            self.train_dataset, self.val_dataset = random_train_dataset, random_val_dataset
         # Set validatoin augmentations for val
+        setattr(self.train_dataset.dataset, "transform", train_aug)
         setattr(self.val_dataset.dataset, "transform", val_aug)
 
     def save_preds(self, preds, stage: Stages, dst_path: pathlib.Path):

@@ -1,4 +1,4 @@
-__all__ = ["SegmentationLM"]
+__all__ = ["SemanticSegmentationLightningModule", "MulticlassSemanticSegmentationLightningModule"]
 
 # standard libraries
 from typing import Any, Optional
@@ -177,7 +177,7 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
     def model_load_checkpoint(self, path):
         self.model.load_state_dict(torch.load(path)["state_dict"])
 
-    def predict_step(self, batch: Any, batch_indx: int) -> torch.Tensor:
+    def predict_step(self, batch: Any, batch_indx: int, **kwargs) -> torch.Tensor:
         """Predict and output binary predictions"""
         if isinstance(batch, dict):
             input_tensor = batch[SegDataKeys.image]

@@ -12,7 +12,7 @@ try:
     env_key = "UI_TITLE"
     title = os.environ[env_key]
 except Exception as e:
-    print(f"No ui title, using default")
+    print(f"{e} - No ui title, using default")
     title = "Experiment Configurator"
 
 layout = dbc.Container([

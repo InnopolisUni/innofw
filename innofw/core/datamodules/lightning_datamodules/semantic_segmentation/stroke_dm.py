@@ -278,9 +278,6 @@ class DicomDirSegmentationLightningDataModule(
             img = dicom_to_img(dicoms[i])
             if len(img.shape)>2:
                 img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            # else:
-            #     img = np.expand_dims(img, axis=0)
-            #     mask = np.expand_dims(mask, axis=0)
             img[mask != 0] = 255
             img_to_dicom(img, dicoms[i], os.path.join(dst_path, sc_names[i]))
         logging.info(f"Saved results to: {dst_path}")
@@ -289,7 +286,8 @@ class DicomDirSegmentationLightningDataModule(
         try:
             if isinstance(self.predict_dataset, self.dataset):
                 return self.predict_dataset
-        except:
+        except Exception as e:
+            print(e)
             self.dicoms = str(self.predict_source)
             png_path = os.path.join(self.dicoms, "png")
             if not os.path.exists(png_path):

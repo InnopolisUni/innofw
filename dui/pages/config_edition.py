@@ -97,7 +97,7 @@ def layout(config_name=None):
         env_key = "UI_TITLE"
         title = os.environ[env_key]
     except Exception as e:
-        print(f"No ui title, using default")
+        print(f"{e} - No ui title, using default")
         title = "Experiment Configurator"
 
     html_components = [dbc.Row([dbc.Col([html.H4(title, style={"height": 40})]),
@@ -255,13 +255,16 @@ def on_strain_btn_button_click(set_progress, n, config_name):
                                 out_err = subprocess_errin.read()
 
                                 if out_err:
-                                    err_output.append(html.P(out_err))
+                                    out_err = out_err.split("\n")
+                                    for e in out_err:
+                                        err_output.append(html.P(e))
 
                                 if not out_text and process.poll() is None:
                                     time.sleep(0.5)
                                     continue
-
-                                text_output.append(html.P(out_text))
+                                out_text = out_text.split("\n")
+                                for t in out_text:
+                                    text_output.append(html.P(t))
 
                                 out = dbc.Row(id="process_output", children=[dbc.Col(text_output), dbc.Col(err_output)])
                                 set_progress(out)

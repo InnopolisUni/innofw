@@ -33,9 +33,7 @@ def test_integration():
     model.test(datamodule, ckpt_path=ckpt_path)
     model.predict(datamodule, ckpt_path=ckpt_path)
 
-    for i in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            break
-        except:
-            pass
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)

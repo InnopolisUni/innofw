@@ -1,0 +1,22 @@
+task:
+  - qsar-regression
+
+name: toxisity_rat_skin_ld50
+description: The dataset provides information on the lethal dose (LD50) values for various chemical substances applied to rat skin, indicating the dose required to cause death in 50% of the rat population under experimental conditions.
+markup_info: Информация о разметке
+date_time: 18.06.2019
+
+_target_: innofw.core.datamodules.pandas_datamodules.QsarDataModule
+
+train:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_skin_ld50/train.zip
+  target: ./data/toxisity_rat_skin_ld50/train
+test:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_skin_ld50/test.zip
+  target: ./data/toxisity_rat_skin_ld50/test
+infer:
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/toxisity_rat_skin_ld50/test.zip
+  target: ./data/toxisity_rat_skin_ld50/test
+smiles_col: smiles
+target_col: Toxicity Value
+val_size: 0.2
