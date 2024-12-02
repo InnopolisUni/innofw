@@ -186,7 +186,7 @@ class UltralyticsAdapter(BaseModelAdapter):
             print(e)
 
 
-            self.model._load(str(ckpt_path))
+        self.model._load(str(ckpt_path))
 
         params = dict(
             conf=0.25,
