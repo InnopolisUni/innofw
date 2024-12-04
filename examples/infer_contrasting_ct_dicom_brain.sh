@@ -6,4 +6,4 @@ if [ -z "$data_path" ]; then
 	echo "Using default data path $data_path"
 fi
 
-python innofw/utils/data_utils/preprocessing/CT_hemorrhage_contrast.py  --input "$data_path" --output "$out_path"
+python innofw/utils/data_utils/preprocessing/CT_hemorrhage_contrast_rtk.py  --input "$data_path" --output "$out_path"
