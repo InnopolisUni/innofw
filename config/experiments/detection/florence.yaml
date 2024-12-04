@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /models: detection/florence
+  - override /datasets: detection/florence
+
+project: "Florence"
+task: "image-detection"
+random_seed: 42
+batch_size: 16
+ckpt_path: "https://api.blackhole.ai.innopolis.university/pretrained/med/florence2_epoch_136.onnx"

@@ -1,4 +1,5 @@
 # standard libraries
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -9,6 +10,8 @@ from pydantic import FilePath
 from pydantic import validate_arguments
 from tqdm import tqdm
 from urlpath import URL
+import urllib3
+from datetime import timedelta
 
 from innofw.constants import S3Credentials
 from innofw.utils import get_abs_path
@@ -87,9 +90,22 @@ class MinioInterface:
     ):
         url = URL(url).netloc
         # credentials = get_s3_credentials() if credentials is None else credentials
+        http_client = None
+
+        if "INSTALL_IGNORE_SSL" in os.environ and bool(os.environ["INSTALL_IGNORE_SSL"]) == True:
+            timeout = timedelta(minutes=5).seconds
+            http_client = urllib3.PoolManager(
+                timeout=urllib3.util.Timeout(connect=timeout, read=timeout),
+                maxsize=10,
+                cert_reqs='CERT_NONE',
+                assert_hostname=False,
+                retries=urllib3.Retry(
+                    total=5,
+                    backoff_factor=0.2,
+                    status_forcelist=[500, 502, 503, 504]))
 
         if credentials is None:
-            client = Minio(url, access_key=None, secret_key=None)
+            client = Minio(url, access_key=None, secret_key=None, http_client=http_client)
         else:
             client = Minio(
                 url,
@@ -99,6 +115,7 @@ class MinioInterface:
                 secret_key=credentials.SECRET_KEY
                 if credentials.SECRET_KEY is None
                 else credentials.SECRET_KEY.get_secret_value(),
+                http_client=http_client
             )
         return client
 

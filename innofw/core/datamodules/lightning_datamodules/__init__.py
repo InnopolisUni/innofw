@@ -3,3 +3,4 @@ from .qsar_dm import QsarSelfiesDataModule
 from .semantic_segmentation.hdf5 import HDF5LightningDataModule
 from .drugprot import DrugprotDataModule
 from .anomaly_detection_images import ImageAnomaliesLightningDataModule
+from .florence import FlorenceJSONLDataModuleAdapter, FlorenceImageDataModuleAdapter

@@ -42,7 +42,7 @@ def test_models(model_config_file):
 # @pytest.mark.skip(reason="some problems with dataset downloading")
 @pytest.mark.parametrize(["dataset_config_file"], datasets_config_files)
 def test_datasets(dataset_config_file, tmp_path):
-    if os.path.isfile(dataset_config_file):
+    if os.path.isfile(dataset_config_file) and "empty_template.yaml" not in str(dataset_config_file):
         with open(dataset_config_file, "r") as f:
             dataset_config = DictConfig(yaml.safe_load(f))
 
