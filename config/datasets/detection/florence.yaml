@@ -12,10 +12,12 @@ num_workers: 8
 size_to: 768
 
 train:
-  target: ./data/florence/train/
+  source: "https://api.blackhole.ai.innopolis.university/public-datasets/florence/train.zip"
+  target: "./data/florence/train/"
 
 test:
-  target: ./data/florence/test/
+  source: "https://api.blackhole.ai.innopolis.university/public-datasets/florence/test.zip"
+  target: "./data/florence/test/"
 
 infer:
   source: "https://api.blackhole.ai.innopolis.university/public-datasets/florence/infer.zip"
