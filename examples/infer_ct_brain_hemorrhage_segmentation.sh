@@ -1,5 +1,5 @@
 data_path=$1
-experiments="semantic-segmentation/SK_180822_qmciwj41_unet_brain_rtk"
+experiments="semantic-segmentation/AK_081224_gwVOeQ_unet_brain_rtk"
 ckpt_path="https://api.blackhole.ai.innopolis.university/pretrained/segmentation_rtk_brain.pt"
 
 if [ -z "$data_path" ]

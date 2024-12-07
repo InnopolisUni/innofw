@@ -46,18 +46,12 @@ def setup_parser(parser):
         help="path to dataset to save",
     )
 
-    parser.add_argument(
-        "-t",
-        "--task",
-        help="segmentation or detection",
-    )
-
 
 def main():
     """Main module function"""
     parser = ArgumentParser(
-        prog="hemorrhage_contrast",
-        description="A tool to contrast",
+        prog="innofw",
+        description="A tool to determine lung decision from a description",
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
     setup_parser(parser)

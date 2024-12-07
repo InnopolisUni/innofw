@@ -39,9 +39,7 @@ class DicomCocoDatasetRTK(Dataset):
                         self.dicom_paths += [dicom_path]
         if not coco_path:
             # raise FileNotFoundError(
-            print(
-                f"COCO аннотации не найдены в директории {data_dir}."
-            )
+            print(f"COCO аннотации не найдены в директории {data_dir}.")
             self.coco_found = False
         else:
             self.coco_found = True
@@ -77,7 +75,6 @@ class DicomCocoDatasetRTK(Dataset):
                             new_images += [img]
                 self.images = new_images
 
-
             self.images.sort(key=lambda x: extract_digits(x["file_name"]))
         else:
             self.dicom_paths.sort()
@@ -103,7 +100,6 @@ class DicomCocoDatasetRTK(Dataset):
 
         out = {"image": image, "path": dicom_path}
         return out
-
 
     def __getitem__(self, idx):
         """
