@@ -1,4 +1,4 @@
-_target_: innofw.core.datamodules.lightning_datamodules.detection_coco.DicomCocoComplexingDataModule
+_target_: innofw.core.datamodules.lightning_datamodules.coco_rtk.DicomCocoComplexingDataModule
 date_time: 30.09.2022
 description: stroke segmentation dataset
 markup_info: segmentation masks

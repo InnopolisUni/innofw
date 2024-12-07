@@ -6,7 +6,7 @@ from matplotlib.widgets import Button
 import matplotlib.pyplot as plt
 import numpy as np
 
-from innofw.core.datasets.coco import DicomCocoDatasetRTK
+from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
 from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import (
     overlay_mask_on_image,
 )

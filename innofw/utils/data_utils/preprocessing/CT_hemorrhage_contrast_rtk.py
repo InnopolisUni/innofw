@@ -6,7 +6,7 @@ from tqdm import tqdm
 import cv2
 import numpy as np
 
-from innofw.core.datasets.coco import DicomCocoDatasetRTK
+from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
 from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import transform
 
 

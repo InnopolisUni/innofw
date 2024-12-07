@@ -1,8 +1,5 @@
-from innofw.core.datamodules.lightning_datamodules.detection_coco import (
-    DicomCocoComplexingDataModule,
-    DicomCocoDataModuleRTK,
-)
-from innofw.core.datasets.coco import DicomCocoDatasetRTK
+from innofw.core.datamodules.lightning_datamodules.coco_rtk import DicomCocoComplexingDataModule, DicomCocoDataModuleRTK
+from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
 
 
 def test_DicomCocoDataset_rtk():
