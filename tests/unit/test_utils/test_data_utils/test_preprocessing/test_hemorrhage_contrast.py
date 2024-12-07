@@ -3,10 +3,10 @@ import os
 import numpy as np
 from pydicom import dcmread
 
-from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import (resize,
-                                                                          normalize_minmax,
+from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast import (resize, 
+                                                                          normalize_minmax, 
                                                                           get_metadata_from_dicom,
-                                                                          get_first_of_dicom_field_as_int,
+                                                                          get_first_of_dicom_field_as_int, 
                                                                           prepare_image,
                                                                           window_image
 )
@@ -96,4 +96,4 @@ def test_window_image():
 
 
 
-
+    
