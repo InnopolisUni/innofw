@@ -22,4 +22,4 @@ test:
 
 infer:
   source: https://api.blackhole.ai.innopolis.university/public-datasets/anomaly_detection_mvtec/test.zip
-  target: ./data/MVTEC/test
+  target: ./data/MVTEC/infer

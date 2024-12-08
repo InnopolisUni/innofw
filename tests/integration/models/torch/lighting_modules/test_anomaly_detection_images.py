@@ -52,9 +52,7 @@ def test_anomaly_detection():
     datamodule.setup_infer()
     module.predict_step(next(iter(datamodule.predict_dataloader())), 0)
 
-    for _ in range(3):
-        try:
-            shutil.rmtree('./tmp')
-            break
-        except:
-            pass
+    try:
+        shutil.rmtree('./tmp')
+    except Exception as e:
+        print(e)

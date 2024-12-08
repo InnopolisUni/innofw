@@ -1,0 +1,3 @@
+_target_: ultralytics.YOLO
+description: yolov5 by ultralytics
+name: yolov5

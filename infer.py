@@ -35,7 +35,7 @@ def main(config):
         ]
         config.experiment_name = experiment_name
     setup_clear_ml(config)
-    setup_wandb(config)
+    # setup_wandb(config)
     return run_pipeline(config, predict=True, test=False, train=False)
 
 

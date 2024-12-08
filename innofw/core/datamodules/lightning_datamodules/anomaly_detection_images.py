@@ -1,7 +1,7 @@
 import os
 import logging
 import pathlib
-
+from pathlib import Path
 import pandas as pd
 import torch
 import cv2
@@ -82,6 +82,8 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
         return test_dataloader
 
     def setup_infer(self):
+        if str(self.predict_source).endswith("labels"):
+            self.predict_source = Path(str(self.predict_source)[:-6]+"images")
         self.predict_dataset = AnomaliesDataset(self.predict_source, self.get_aug(self.aug, 'test'))
 
     def save_preds(self, out_batches, stage: Stages, dst_path: pathlib.Path):
