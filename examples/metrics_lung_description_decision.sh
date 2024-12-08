@@ -14,4 +14,4 @@ output="./data/ainur/infer/msk.csv"
 #	echo "Using default output path $output"
 #fi
 
-python innofw/utils/data_utils/rtk/lungs_description_metrics.py -i "$data_path" -o "$output" -t "segmentation"
+python innofw/utils/data_utils/rtk/lungs_description_metrics.py -i "$data_path" -o "$output"

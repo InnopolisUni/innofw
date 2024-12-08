@@ -72,6 +72,10 @@ class SklearnAdapter(BaseModelAdapter):
     def _train(self, datamodule, **kwargs):
         data = datamodule.train_dataloader()
         x, y = data["x"], data["y"]
+        try:
+            self.model.steps = list(  self.model.steps)
+        except:
+            pass
         self.model.fit(X=x, y=y)
         self.test(datamodule)
 
