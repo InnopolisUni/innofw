@@ -4,10 +4,26 @@ from sklearn.metrics import classification_report, confusion_matrix
 import pandas as pd
 
 
-def calculate_lungs_metrics(pred_path, gt_path):
+def calculate_lungs_metrics(gt_path, pred_path):
+
+    y_col = "decision"
+
     y_pred = pd.read_csv(pred_path)
-    y_pred = y_pred["y"]
-    y_gt = pd.read_csv(gt_path)["decision"]
+    if y_col in y_pred:
+        y_pred = y_pred[y_col]
+    elif "y" in y_pred:
+        y_pred = y_pred["y"]
+    else:
+        raise ValueError("not proper csv")
+
+    y_gt = pd.read_csv(gt_path)
+    if y_col in y_gt:
+        y_gt = y_gt[y_col]
+    elif "y" in y_gt:
+        y_gt = y_gt["y"]
+    else:
+        raise ValueError("not proper csv")
+
     y_gt = y_gt.str.strip()
 
     report = classification_report(y_gt, y_pred, zero_division=0)
@@ -22,6 +38,7 @@ def calculate_lungs_metrics(pred_path, gt_path):
     inds = ["Истинно " + x.lower() for x in classes]
     cols = ["Предсказано " + x.lower() for x in classes]
     print(pd.DataFrame(conf_matrix, index=inds, columns=cols))
+    return True
 
 
 def callback(arguments):
