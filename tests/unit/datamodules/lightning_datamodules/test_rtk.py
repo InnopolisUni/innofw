@@ -9,18 +9,13 @@ from innofw.core.datamodules.pandas_datamodules.lung_description_decision_datamo
     LungDescriptionDecisionPandasDataModule,
 )
 
-
-def test_DicomCocoDataset_rtk():
-    path = "./data/rtk/infer"
-    ds = DicomCocoDatasetRTK(data_dir=path)
-    for batch in ds:
-        break
-    for k in ["image", "mask", "path"]:
-        assert k in batch
+rtk_complex = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/complex_infer.zip"
+rtk_segm = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/infer.zip"
+lungs = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/labels.zip"
 
 
 def test_DicomCocoComplexingDataModule():
-    path = {"source": "./data/complex/infer", "target": "./data/complex/infer"}
+    path = {"source": rtk_complex, "target": "./data/complex/infer"}
     dm = DicomCocoComplexingDataModule(infer=path)
     dm.setup_infer()
     ds = dm.predict_dataloader()
@@ -41,12 +36,17 @@ def test_DicomCocoDataModuleRTK():
         assert k in batch
 
 
-def test_datamodule_description():
-    path = {
-        "source": "./data/lung_description/infer",
-        "target": "./data/lung_description/infer",
-    }
+def test_DicomCocoDataset_rtk():
+    path = "./data/rtk/infer"
+    ds = DicomCocoDatasetRTK(data_dir=path)
+    for batch in ds:
+        break
+    for k in ["image", "mask", "path"]:
+        assert k in batch
 
+
+def test_datamodule_description():
+    path = {"source": lungs, "target": "./data/lung_description/infer"}
     dm = LungDescriptionDecisionPandasDataModule(infer=path)
     dm.setup_infer()
     ds = dm.predict_dataloader()
