@@ -3,7 +3,7 @@ FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
 RUN export PYTHONPATH=. && export PATH=$PATH
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install ffmpeg libsm6 libxext6 curl iotop -y \
+    && apt-get install ffmpeg libsm6 libxext6 curl iotop git -y \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN pip3 install --upgrade pip pyopenssl cryptography
 RUN /bin/bash -c 'curl -sSL https://install.python-poetry.org | python - --version 1.6.1'

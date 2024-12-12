@@ -117,7 +117,8 @@ def run_pipeline(
             batch_size=cfg.get("batch_size"),
             random_state=cfg.get("random_seed"),
         )
-        print(f"{e} - using standard datamodule")
+        if "Key '_dataset_dict' is not in struct" not in str(e):
+            print(f"{e} - using standard datamodule")
 
     if predict:
         datamodule.setup_infer()

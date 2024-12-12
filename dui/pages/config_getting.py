@@ -23,15 +23,22 @@ def get_config():
     request_body += ".yaml" if not request_body.endswith(".yaml") else ""
     exp_path = configs_path / request_body
     data = ""
-    if exp_path.exists():
-        with open(exp_path, "r") as yamlfile:
-            try:
-                data = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
-                if data:
-                    data = simplify_dict(data)
-            except yaml.YAMLError as exc:
-                print("ERROR:", exc)
+    if exp_path.exists():
+        pass
+    elif not exp_path.exists() and "datasets" in request_body:
+        exp_path = configs_path / "datasets" / "empty_template.yaml"
+
+    with open(exp_path, "r") as yamlfile:
+        try:
+            data = yaml.load(yamlfile, Loader=yaml.FullLoader)
+
+            if data:
+                data = simplify_dict(data)
+        except yaml.YAMLError as exc:
+            print("ERROR:", exc)
+
+
     return json.dumps({'success': True, 'configuration_parameters': data}), 200, {'ContentType':'application/json'}
 
 
