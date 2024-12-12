@@ -65,7 +65,7 @@ def test_compute_iou():
     assert compute_iou(mask1, mask2) == pytest.approx(expected_iou)
 
     mask_same = np.array([[1, 1], [1, 1]])
-    assert compute_iou(mask_same, mask_same) == 1.0
+    assert compute_iou(mask_same, mask_same) == pytest.approx(1.0)
 
     mask_no_intersection = np.array([[0, 0], [0, 0]])
     assert compute_iou(mask_no_intersection, mask_same) == 0
@@ -79,11 +79,11 @@ def test_calculate_iou_bbox():
     assert calculate_iou_bbox(box1, box2) == pytest.approx(expected_iou)
 
     # Тест, когда bounding boxes полностью совпадают
-    assert calculate_iou_bbox(box1, box1) == 1.0
+    assert calculate_iou_bbox(box1, box1) == pytest.approx(1.0)
 
     # Тест, когда нет пересечения
     box_no_intersection = [3, 3, 5, 5]
-    assert calculate_iou_bbox(box1, box_no_intersection) == 0
+    assert calculate_iou_bbox(box1, box_no_intersection) == pytest.approx(0)
 
 
 def test_compute_metrics():
@@ -93,8 +93,8 @@ def test_compute_metrics():
     pr_boxes_same = [[0, 0, 2, 2], [2, 2, 4, 4]]
     metrics = compute_metrics(gt_boxes, pr_boxes_same, iou_threshold=0.5)
 
-    assert metrics["precision"] == 1.0
-    assert metrics["recall"] == 1.0
+    assert metrics["precision"] == pytest.approx(1.0)
+    assert metrics["recall"] == pytest.approx(1.0)
     assert metrics["mean_iou"] == pytest.approx(1.0)
 
     pr_boxes_empty = []
