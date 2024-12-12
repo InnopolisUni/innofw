@@ -13,6 +13,7 @@ let tooltipDict = {
     "devices": "Номера видеокарт, которые можно использовать",
     "device": "Номера видеокарт, которые можно использовать(YOLO)",
     "learning_rate": "Скорость обучения модели",
+    "stop_param": "Количество эпох, для которых допустимо отсутсвие прогресса, при превышении происходит остановка обучения",
 
     "models": "Расширение или изменение параметров модели",
     "datasets": "Расширение или изменение параметров наборов данных",
@@ -36,6 +37,7 @@ let tooltipDict = {
     "override /initializations": "Переопределение вложенного конфигурационного файла параметров инициализации весов моделей",
     "override /metrics": "Переопределение вложенного конфигурационного файла параметров метрик",
     "override /wandb": "Переопределение вложенного конфигурационного файла параметров интерфейса для оценки эксперимента Weights and biases",
+    "override /clear_ml": "Переопределение вложенного конфигурационного файла параметров интерфейса для оценки эксперимента ClearML, варианты: disabled, enabled, test_queue",
     "override /trainers": "",
 
 };
@@ -233,8 +235,11 @@ function addParameterRow(button){
             if (button.parentNode.parentNode.className === "child row"){
                 button.parentNode.parentNode.className = "parent row"
                 let valuefield_col = button.parentNode.parentNode.getElementsByClassName("valuefield_col")[0];
-                valuefield_col.remove();
-
+                try{
+		    valuefield_col.remove();
+		   } catch (error) {
+			   console.log(error);
+		   }
                 let uniterRow = document.createElement("div");
                 uniterRow.className="uniter row";
                 uniterRow.appendChild(button.parentNode.parentNode.cloneNode(true));
@@ -504,7 +509,7 @@ function createModalContentFromConfigDict(config, level = 0){
             uniter.className="uniter row"
             let parent = document.createElement("div");
             parent.className="parent row";
-            parent.style.marginLeft = 30*level +'px' // convert p to number and add 10
+            parent.style.marginLeft = 100*level +'px' // convert p to number and add 10
 
             let createButtonDiv = buildCreationButton();
 
@@ -531,7 +536,7 @@ function createModalContentFromConfigDict(config, level = 0){
         {
             let row = document.createElement("div");
             row.className="child row"
-            row.style.marginLeft = 30*level +'px' // convert p to number and add 10
+            row.style.marginLeft = 100*level +'px' // convert p to number and add 10
 
 
             let createButtonDiv = buildCreationButton();
