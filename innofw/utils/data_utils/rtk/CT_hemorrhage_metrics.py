@@ -2,11 +2,15 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from pathlib import Path
 import os
 
+from matplotlib.patches import Patch
+from torchmetrics.functional import jaccard_index as iou
+from torchvision.ops.boxes import box_iou
 from tqdm import tqdm
 import albumentations as A
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
 from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import (
@@ -14,37 +18,7 @@ from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import
 )
 
 
-transform = A.Compose(
-    [
-        A.Resize(256, 256),  # Изменение размера для изображения и маски
-    ]
-)
-
-
-def compute_iou(mask1, mask2):
-    intersection = np.sum((mask1 == 1) & (mask2 == 1))
-
-    union = np.sum((mask1 == 1) | (mask2 == 1))
-
-    iou = intersection / union if union > 0 else 0
-    return iou
-
-
-def calculate_iou_bbox(box1, box2):
-    x1_inter = max(box1[0], box2[0])
-    y1_inter = max(box1[1], box2[1])
-    x2_inter = min(box1[2], box2[2])
-    y2_inter = min(box1[3], box2[3])
-
-    inter_area = max(0, x2_inter - x1_inter) * max(0, y2_inter - y1_inter)
-
-    box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
-    box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
-
-    union_area = box1_area + box2_area - inter_area
-
-    iou = inter_area / union_area if union_area > 0 else 0
-    return iou
+transform = A.Compose([A.Resize(256, 256)])
 
 
 def compute_metrics(gt_boxes, pr_boxes, iou_threshold=0.5):
@@ -57,7 +31,11 @@ def compute_metrics(gt_boxes, pr_boxes, iou_threshold=0.5):
         best_gt_idx = -1
 
         for idx, gt_box in enumerate(gt_boxes):
-            iou = calculate_iou_bbox(pr_box, gt_box)
+
+            pr = torch.Tensor(pr_box).unsqueeze(0)
+            gt = torch.Tensor(gt_box).unsqueeze(0)
+            iou = box_iou(pr, gt)
+            iou = iou.cpu().numpy()[0][0]
             if iou > best_iou:
                 best_iou = iou
                 best_gt_idx = idx
@@ -103,7 +81,14 @@ def processing(input_path, output_folder, task="detection"):
             gt = overlay_mask_on_image(gt, gt_mask)
             pr = overlay_mask_on_image(pr, pr_mask)
             iou_str = "Intersection over union"
-            metrics = {iou_str: compute_iou(pr_mask, gt_mask)}
+
+            pr_t = torch.tensor(pr_mask)[:, :, 0]
+            gt_t = torch.tensor(gt_mask)[:, :, 0]
+            iou_score = iou(
+                pr_t, gt_t, num_classes=2, ignore_index=0, task="multiclass"
+            )
+            iou_score = iou_score.cpu().numpy()
+            metrics = {iou_str: iou_score}
         elif task == "detection":
             gt, gt_boxes = result_bbox(gt_mask, gt)
             pr, pr_boxes = result_bbox(pr_mask, pr)
@@ -117,8 +102,7 @@ def processing(input_path, output_folder, task="detection"):
         ax[1].imshow(pr)
         ax[1].title.set_text("Predicted")
 
-        plt.suptitle("\n".join([f"{k}:{np.round(v, 2)}" for k, v in metrics.items()]))
-        from matplotlib.patches import Patch
+        plt.suptitle("\n".join([f"{k}:{v:.2f}" for k, v in metrics.items()]))
 
         patch = Patch(facecolor="red", edgecolor="r", label="pathology")
         f.legend(handles=[patch], loc="lower center")
