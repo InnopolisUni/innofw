@@ -17,12 +17,11 @@ rtk_segm = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/in
 lungs = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/labels.zip"
 
 
-
 def test_DicomCocoComplexingDataModule():
-    target_dir =  "./data/complex/infer"
+    target_dir = "./data/complex/infer"
     if os.path.exists(target_dir):
         shutil.rmtree(target_dir)
-    path = {"source": rtk_complex, "target":target_dir}
+    path = {"source": rtk_complex, "target": target_dir}
     dm = DicomCocoComplexingDataModule(infer=path)
     dm.setup_infer()
     ds = dm.predict_dataloader()
@@ -33,7 +32,7 @@ def test_DicomCocoComplexingDataModule():
 
 
 def test_DicomCocoDataModuleRTK():
-    target_dir =  "./data/rtk/infer"
+    target_dir = "./data/rtk/infer"
     if os.path.exists(target_dir):
         shutil.rmtree(target_dir)
 
@@ -57,6 +56,7 @@ def test_DicomCocoDataset_rtk():
         break
     for k in ["image", "mask", "path"]:
         assert k in batch
+
 
 def test_datamodule_description():
     target_dir = "./data/lung_description/infer"
