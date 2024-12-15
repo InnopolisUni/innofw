@@ -98,7 +98,7 @@ class ImageAnomaliesLightningDataModule(BaseLightningDataModule):
                     pred = pred.astype(np.uint8)
                 filename = out_file_path / f"out_{n}.png"
                 n += 1
-                cv2.imwrite(filename, pred)
+                cv2.imwrite(str(filename), pred)
                 mask_vis = np.zeros_like(img)
                 mask_vis[1, :, :] = pred / 255
                 img_with_mask = (img * 255 * 0.75 + mask_vis * 255 * 0.25).astype(np.uint8).transpose((1, 2, 0))
