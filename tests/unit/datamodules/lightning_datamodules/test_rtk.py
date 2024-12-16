@@ -31,31 +31,31 @@ def test_DicomCocoComplexingDataModule():
         assert k in batch
 
 
-# def test_DicomCocoDataModuleRTK():
-#     target_dir = "./data/rtk/infer"
-#     if os.path.exists(target_dir):
-#         shutil.rmtree(target_dir)
-#
-#     path = {"source": rtk_segm, "target": target_dir}
-#     dm = DicomCocoDataModuleRTK(infer=path)
-#     dm.setup_infer()
-#     ds = dm.predict_dataloader()
-#     for batch in ds:
-#         break
-#     # for k in ["image", "path"]:
-#     #     assert k in batch
-#     #
-#
-# def test_DicomCocoDataset_rtk():
-#     """
-#     import this test to run after previous
-#     """
-#     path = "./data/rtk/infer"
-#     ds = DicomCocoDatasetRTK(data_dir=path)
-#     for batch in ds:
-#         break
-#     for k in ["image", "mask", "path"]:
-#         assert k in batch
+def test_DicomCocoDataModuleRTK():
+    target_dir = "./data/rtk/infer"
+    if os.path.exists(target_dir):
+        shutil.rmtree(target_dir)
+
+    path = {"source": rtk_segm, "target": target_dir}
+    dm = DicomCocoDataModuleRTK(infer=path)
+    dm.setup_infer()
+    ds = dm.predict_dataloader()
+    for batch in ds:
+        break
+    for k in ["image", "path"]:
+        assert k in batch
+
+
+def test_DicomCocoDataset_rtk():
+    """
+    import this test to run after previous
+    """
+    path = "./data/rtk/infer"
+    ds = DicomCocoDatasetRTK(data_dir=path)
+    for batch in ds:
+        break
+    for k in ["image", "mask", "path"]:
+        assert k in batch
 #
 
 def test_datamodule_description():
