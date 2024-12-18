@@ -1,3 +1,9 @@
+from pckg_util import install_and_import
+
+install_and_import("pylibjpeg", "2.0.0", packageimportname="pylibjpeg")
+install_and_import("python-gdcm", "3.0.24.1", packageimportname="gdcm")
+from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_raster
+
 from pathlib import Path
 import json
 import os
@@ -7,8 +13,6 @@ import numpy as np
 import pydicom
 import torch
 from torch.utils.data import Dataset
-
-from innofw.utils.data_utils.preprocessing.dicom_handler import dicom_to_raster
 
 
 class DicomCocoDatasetRTK(Dataset):

@@ -1,3 +1,8 @@
+from pckg_util import install_and_import
+
+install_and_import("pylibjpeg", "2.0.0", packageimportname="pylibjpeg")
+install_and_import("python-gdcm", "3.0.24.1", packageimportname="gdcm")
+
 import datetime
 import os.path
 
@@ -12,6 +17,7 @@ from pydicom.pixel_data_handlers import apply_voi_lut
 from pydicom.uid import generate_uid
 import pydicom
 from innofw.utils import get_project_root
+
 
 
 def img_to_dicom(

@@ -56,7 +56,10 @@ def test_DicomCocoDataset_rtk():
         break
     for k in ["image", "mask", "path"]:
         assert k in batch
+
+
 #
+
 
 def test_datamodule_description():
     target_dir = "./data/lung_description/infer"
