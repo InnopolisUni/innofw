@@ -1,12 +1,16 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from pathlib import Path
+from urllib.parse import urlparse
 import os
 
 from tqdm import tqdm
 import cv2
 import numpy as np
 
-from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
+
+from innofw.core.datamodules.lightning_datamodules.coco_rtk import (
+    DicomCocoDataModuleRTK,
+)
 from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import transform
 
 
@@ -18,14 +22,22 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
             output_folder = str(output_folder)
         except TypeError:
             raise ValueError(f"Wrong path to save: {output_folder}")
+    if urlparse(input_path):
+        default_path = "innofw/data/rtk/infer/"
+        path = {"source": input_path, "target": default_path}
+    else:
+        path = {"source": input_path, "target": input_path}
+    dm = DicomCocoDataModuleRTK(infer=path, transform=transform)
+    dm.setup_infer()
+    dataloader = dm.predict_dataloader()
+    dataset = dataloader.dataset
+    dataset.transform = transform
 
-    dataset = DicomCocoDatasetRTK(data_dir=input_path, transform=transform)
     if len(dataset) == 0:
         raise Warning(f"empty dataset with the directory {input_path}")
     else:
         for x in (pbar := tqdm(dataset)):
             path = x["path"]
-
             mask = x.get("mask", None)
             contrasted_image = x["image"]
             raw_image = x.get("raw_image", None)
@@ -34,32 +46,13 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
             os.makedirs(output_folder, exist_ok=True)
 
             output_path = os.path.join(output_folder, basename + "_raw.npy")
-            try:
-                np.save(output_path, raw_image)
-            except:
-                pbar.set_description(f"wrong path {output_path}")
+            np.save(output_path, raw_image)
 
             output_path = os.path.join(output_folder, basename + "_mask.png")
-            try:
-                if cv2.imwrite(output_path, mask):
-                    pbar.set_description(f"could not write mask as {output_path}")
-                else:
-                    raise Exception
-            except:
-                pbar.set_description(f"could not write mask as {output_path}")
+            cv2.imwrite(output_path, mask)
 
             output_path = os.path.join(output_folder, basename + "_image.png")
-            try:
-                if cv2.imwrite(output_path, contrasted_image):
-                    pbar.set_description(
-                        f"could not write contrasted image as {output_path}"
-                    )
-                else:
-                    raise Exception
-            except:
-                pbar.set_description(
-                    f"could not write contrasted image as {output_path}"
-                )
+            cv2.imwrite(output_path, contrasted_image)
 
 
 def callback(arguments):

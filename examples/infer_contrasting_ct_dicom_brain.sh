@@ -2,7 +2,7 @@ data_path=$1
 out_path=$2
 
 if [ -z "$data_path" ]; then
-	data_path="../innofw/data/rtk/infer/"
+	data_path="https://api.blackhole.ai.innopolis.university/public-datasets/rtk/infer.zip"
 	echo "Using default data path $data_path"
 fi
 

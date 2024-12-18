@@ -83,7 +83,6 @@ class DicomCocoDatasetRTK(Dataset):
                         if dicom_path.endswith(img["file_name"]):
                             new_images += [img]
                 self.images = new_images
-
             self.images.sort(key=lambda x: extract_digits(x["file_name"]))
         else:
             self.dicom_paths.sort()
@@ -95,6 +94,11 @@ class DicomCocoDatasetRTK(Dataset):
             return len(self.dicom_paths)
 
     def get_dicom(self, i):
+        """no annotation data
+
+        :param i:
+        :return:
+        """
 
         dicom_path = self.dicom_paths[i]
         dicom = pydicom.dcmread(dicom_path)
@@ -171,9 +175,7 @@ class DicomCocoDatasetRTK(Dataset):
         )
         for ann in anns:
             segmentation = ann["segmentation"]
-            category_id = (
-                ann["category_id"] - 1
-            )  # Приведение category_id к индексу слоя
+            category_id = ann["category_id"] - 1
             if isinstance(segmentation, list):  # полигональная аннотация
                 for polygon in segmentation:
                     poly_mask = self._polygon_to_mask(

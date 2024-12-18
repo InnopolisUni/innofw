@@ -18,6 +18,15 @@ class CustomNormalize:
         return image
 
 
+DEFAULT_TRANSFORM = albu.Compose(
+    [
+        albu.Resize(256, 256),
+        albu.Lambda(image=CustomNormalize()),
+        ToTensorV2(transpose_mask=True),
+    ]
+)
+
+
 class DicomCocoComplexingDataModule(BaseLightningDataModule):
     task = ["image-detection", "image-segmentation"]
     dataset = DicomCocoDatasetRTK
@@ -59,14 +68,7 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
         if self.aug:
             transform = Augmentation(self.aug["test"])
         else:
-
-            transform = albu.Compose(
-                [
-                    albu.Resize(256, 256),
-                    albu.Lambda(image=CustomNormalize()),
-                    ToTensorV2(transpose_mask=True),
-                ]
-            )
+            transform = DEFAULT_TRANSFORM
         if str(self.predict_source).split("/")[-1] in ["mrt", "ct"]:
             self.predict_source = self.predict_source.parent
         cont = os.listdir(self.predict_source)
@@ -152,14 +154,7 @@ class DicomCocoDataModuleRTK(DicomCocoComplexingDataModule):
         if self.aug:
             transform = Augmentation(self.aug["test"])
         else:
-
-            transform = albu.Compose(
-                [
-                    albu.Resize(256, 256),
-                    albu.Lambda(image=CustomNormalize()),
-                    ToTensorV2(transpose_mask=True),
-                ]
-            )
+            transform = DEFAULT_TRANSFORM
         self.predict_dataset = self.dataset(
             data_dir=str(self.predict_source), transform=transform
         )
