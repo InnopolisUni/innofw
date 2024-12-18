@@ -1,3 +1,4 @@
+from pathlib import Path
 import json
 import os
 
@@ -19,10 +20,15 @@ class DicomCocoDatasetRTK(Dataset):
         """
         data_dir = kwargs["data_dir"]
         data_dir = os.path.abspath(data_dir)
+
         assert os.path.isdir(data_dir), f"Invalid path {data_dir}"
+
+        if data_dir.split("/")[-1] in ["annotations", "images"]:
+            data_dir = Path(data_dir).parent
+
         self.transform = kwargs.get("transform", None)
 
-        # Поиск COCO аннотаций в директории
+        # searching COCO annotation
         self.dicom_paths = []
 
         coco_path = None
@@ -38,7 +44,6 @@ class DicomCocoDatasetRTK(Dataset):
                     if pydicom.misc.is_dicom(dicom_path):
                         self.dicom_paths += [dicom_path]
         if not coco_path:
-            # raise FileNotFoundError(
             print(f"COCO аннотации не найдены в директории {data_dir}.")
             self.coco_found = False
         else:
@@ -54,7 +59,7 @@ class DicomCocoDatasetRTK(Dataset):
             out = "".join(out)
             return int(out)
 
-        # Загрузка COCO аннотаций
+        # COCO annotation load
         if self.coco_found:
             with open(coco_path, "r") as f:
                 self.coco = json.load(f)

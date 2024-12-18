@@ -67,7 +67,7 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
                     ToTensorV2(transpose_mask=True),
                 ]
             )
-        if str(self.predict_source).endswith("mrt"):
+        if str(self.predict_source).split("/")[-1] in ["mrt", "ct"]:
             self.predict_source = self.predict_source.parent
         cont = os.listdir(self.predict_source)
         assert "ct" in cont, f"No CT data in {self.predict_source}"
@@ -75,11 +75,11 @@ class DicomCocoComplexingDataModule(BaseLightningDataModule):
 
         self.predict_dataset = [
             self.dataset(
-                data_dir=os.path.join(str(self.predict_source), "ct"),
+                data_dir=os.path.join(self.predict_source, "ct"),
                 transform=transform,
             ),
             self.dataset(
-                data_dir=os.path.join(str(self.predict_source), "mrt"),
+                data_dir=os.path.join(self.predict_source, "mrt"),
                 transform=transform,
             ),
         ]
