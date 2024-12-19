@@ -6,7 +6,7 @@ if [ -z "$data_path" ]; then
 fi
 
 if [ -z "$output" ]; then
-	output="../innofw/logs/infer/segmentation/semantic-segmentation/SK_180822_qmciwj41_unet_brain_rtk/"
+	output="../innofw/logs/infer/segmentation/semantic-segmentation/AK_081224_gwVOeQ_unet_brain_rtk/"
 	output+="$(ls $output -tr| tail -n 1)"
 	echo "Using default output path $output"
 fi

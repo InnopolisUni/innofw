@@ -71,6 +71,7 @@ def hemorrhage_contrast_metrics(input_path: str):
         metrics = calculate_metrics(raw_image, image)
         plt.suptitle("\n".join([f"{k}:{np.round(v, 2)}" for k, v in metrics.items()]))
         plt.show()
+        plt.close("all")
 
 
 def callback(arguments):

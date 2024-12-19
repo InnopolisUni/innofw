@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import os
 import shutil
 
@@ -14,8 +15,10 @@ from innofw.core.datamodules.pandas_datamodules.lung_description_decision_datamo
 )
 from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
 from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_rtk import (
-    hemorrhage_contrast,
+    hemorrhage_contrast, transform as resize_transform
 )
+from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import process_metrics
+from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import hemorrhage_contrast_metrics
 
 rtk_complex = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/complex_infer.zip"
 rtk_segm = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/infer.zip"
@@ -47,7 +50,7 @@ def test_DicomCocoDataModuleRTK(transform):
         shutil.rmtree(target_dir)
 
     path = {"source": rtk_segm, "target": target_dir}
-    dm = DicomCocoDataModuleRTK(infer=path, transform=transform)
+    dm = DicomCocoDataModuleRTK(infer=path, transform=resize_transform)
     dm.setup_infer()
     ds = dm.predict_dataloader()
     for batch in ds:
@@ -97,7 +100,8 @@ def test_datamodule_description():
         assert key in ds
 
 
-def test_hemor_contrast(tmp_path_factory):
+@patch("matplotlib.pyplot.show")
+def test_hemor_contrast(mock_show, tmp_path_factory):
     target_dir = "./data/rtk/infer"
     if os.path.exists(target_dir):
         shutil.rmtree(target_dir)
@@ -108,3 +112,29 @@ def test_hemor_contrast(tmp_path_factory):
     assert len(content) % 3 == 0
     assert np.any([x.endswith("npy") for x in content])
     assert np.any([x.endswith("png") for x in content])
+
+    hemorrhage_contrast_metrics(out_)
+    assert mock_show.call_count > 0
+
+
+@pytest.mark.parametrize("task", ["segmentation", "detection"])
+@patch("matplotlib.pyplot.show")
+def test_segm_detection_pipeline_metrics(mock_show, tmp_path_factory, task):
+
+    # just to imitate data loading
+    target_dir = tmp_path_factory.mktemp("target_dir")
+    path = {"source": rtk_segm, "target": target_dir}
+    dm = DicomCocoDataModuleRTK(infer=path, transform=resize_transform)
+    dm.setup_infer()
+    ds = dm.predict_dataloader()
+    ds.transform = resize_transform
+
+    samples_number = len(ds)
+
+    out_dir = tmp_path_factory.mktemp("out")
+    for i in range(samples_number):
+        random_numpy = np.random.randint(0, 1, [256,256,1])
+        np.save(os.path.join(out_dir, f"{i}.npy"), random_numpy)
+
+    process_metrics(input_path=target_dir, output_folder=out_dir)
+    assert mock_show.call_count > 0

@@ -23,7 +23,7 @@ def hemorrhage_contrast(input_path: str, output_folder: str = None):
         except TypeError:
             raise ValueError(f"Wrong path to save: {output_folder}")
     if urlparse(input_path):
-        default_path = "innofw/data/rtk/infer/"
+        default_path = "./data/rtk/infer/"
         path = {"source": input_path, "target": default_path}
     else:
         path = {"source": input_path, "target": input_path}

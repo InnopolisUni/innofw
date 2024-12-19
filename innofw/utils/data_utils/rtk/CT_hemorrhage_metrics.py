@@ -62,7 +62,7 @@ def compute_metrics(gt_boxes, pr_boxes, iou_threshold=0.5):
     return metrics
 
 
-def processing(input_path, output_folder, task="detection"):
+def process_metrics(input_path, output_folder, task="detection"):
 
     dataset = DicomCocoDatasetRTK(data_dir=input_path, transform=transform)
     outs = os.listdir(output_folder)
@@ -107,6 +107,7 @@ def processing(input_path, output_folder, task="detection"):
         patch = Patch(facecolor="red", edgecolor="r", label="pathology")
         f.legend(handles=[patch], loc="lower center")
         plt.show()
+        plt.close("all")
 
 
 def result_bbox(masks, image):
@@ -168,15 +169,12 @@ def draw_bboxes(image, bboxes):
     Returns:
     np.ndarray: Изображение с отрисованными bounding boxes.
     """
-
     color = [255, 0, 0]
 
     for bbox in bboxes:
         if not bbox:
             break
-
         x_min, y_min, x_max, y_max = bbox
-
         cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
 
     return image
@@ -185,7 +183,7 @@ def draw_bboxes(image, bboxes):
 def callback(arguments):
     """Callback function for arguments"""
     try:
-        processing(arguments.input, arguments.output, arguments.task)
+        process_metrics(arguments.input, arguments.output, arguments.task)
     except KeyboardInterrupt:
         print("You exited")
 
