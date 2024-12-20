@@ -206,9 +206,6 @@ def test_datamodule_description():
 
 @patch("matplotlib.pyplot.show")
 def test_hemor_contrast(mock_show, rtk_data, tmp_path_factory):
-    # target_dir = "./data/rtk/infer"
-    # if os.path.exists(target_dir):
-    #     shutil.rmtree(target_dir)
     out_ = str(tmp_path_factory.mktemp("out"))
     hemorrhage_contrast(input_path=str(rtk_data), output_folder=out_)
     content = os.listdir(out_)
@@ -226,7 +223,6 @@ def test_hemor_contrast(mock_show, rtk_data, tmp_path_factory):
 def test_segm_detection_pipeline_metrics(
     mock_show, tmp_path_factory, task, rtk_data, rtk_downloader
 ):
-
     path = {"source": rtk_segm, "target": rtk_data}
     dm = DicomCocoDataModuleRTK(infer=path, transform=resize_transform)
     dm.setup_infer()
@@ -234,12 +230,10 @@ def test_segm_detection_pipeline_metrics(
     ds.transform = resize_transform
 
     samples_number = len(ds)
-
     out_dir = tmp_path_factory.mktemp("out")
     for i in range(samples_number):
         random_numpy = np.random.randint(0, 1, [256, 256, 1])
         np.save(os.path.join(out_dir, f"{i}.npy"), random_numpy)
-
     process_metrics(input_path=rtk_data, output_folder=out_dir)
     assert mock_show.call_count > 0
     assert rtk_downloader.call_count > 0
