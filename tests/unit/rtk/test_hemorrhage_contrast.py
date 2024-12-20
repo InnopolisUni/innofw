@@ -21,13 +21,14 @@ def test_setup_parser():
 
 
 def test_default_output_path():
-    # Mock get_log_dir to return a predictable value
     with patch("innofw.utils.getters.get_log_dir", return_value="mock_log_dir"):
         output_path = default_output_path()
         assert output_path == "mock_log_dir"
 
 
-@patch("innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_rtk.hemorrhage_contrast")
+@patch(
+    "innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_rtk.hemorrhage_contrast"
+)
 def test_callback_success(mock_contrast):
     arguments = argparse.Namespace(input="input.txt", output="output.txt")
     callback(arguments)
