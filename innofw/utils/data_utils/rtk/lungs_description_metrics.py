@@ -68,7 +68,7 @@ def main():
     """Main module function"""
     parser = ArgumentParser(
         prog="innofw",
-        description="A tool to determine lung decision from a description",
+        description="Tool to calc lung decision metrcis",
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
     setup_parser(parser)

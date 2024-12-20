@@ -15,10 +15,13 @@ from innofw.core.datamodules.pandas_datamodules.lung_description_decision_datamo
 )
 from innofw.core.datasets.coco_rtk import DicomCocoDatasetRTK
 from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_rtk import (
-    hemorrhage_contrast, transform as resize_transform
+    hemorrhage_contrast,
+    transform as resize_transform,
+)
+from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import (
+    hemorrhage_contrast_metrics,
 )
 from innofw.utils.data_utils.rtk.CT_hemorrhage_metrics import process_metrics
-from innofw.utils.data_utils.preprocessing.CT_hemorrhage_contrast_metrics import hemorrhage_contrast_metrics
 
 rtk_complex = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/complex_infer.zip"
 rtk_segm = "https://api.blackhole.ai.innopolis.university/public-datasets/rtk/infer.zip"
@@ -133,7 +136,7 @@ def test_segm_detection_pipeline_metrics(mock_show, tmp_path_factory, task):
 
     out_dir = tmp_path_factory.mktemp("out")
     for i in range(samples_number):
-        random_numpy = np.random.randint(0, 1, [256,256,1])
+        random_numpy = np.random.randint(0, 1, [256, 256, 1])
         np.save(os.path.join(out_dir, f"{i}.npy"), random_numpy)
 
     process_metrics(input_path=target_dir, output_folder=out_dir)
