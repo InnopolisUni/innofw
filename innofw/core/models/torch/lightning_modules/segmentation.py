@@ -180,7 +180,13 @@ class SemanticSegmentationLightningModule(BaseLightningModule):
     def predict_step(self, batch: Any, batch_indx: int, **kwargs) -> torch.Tensor:
         """Predict and output binary predictions"""
         if isinstance(batch, dict):
-            input_tensor = batch[SegDataKeys.image]
+            try:
+                input_tensor = batch[SegDataKeys.image]
+            except:
+                try:
+                    input_tensor = batch[SegDataKeys.image.value]
+                except:
+                    raise AttributeError
         else:
             input_tensor = batch
 

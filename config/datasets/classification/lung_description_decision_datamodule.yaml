@@ -8,13 +8,15 @@ markup_info: Набор данных содержит описание легк�
 date_time: 13.09.2023
 
 _target_: innofw.core.datamodules.pandas_datamodules.lung_description_decision_datamodule.LungDescriptionDecisionPandasDataModule
-target_col: decision
+target_col: "decision"
 
 train:
-  source: ./data/ainur/infer/labels.csv
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/rtk/labels.zip
+  target: ./data/lung_description/train
 test:
-  source: ./data/ainur/infer/labels.csv
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/rtk/labels.zip
+  target: ./data/lung_description/test
 infer:
-  source: ./data/ainur/infer/labels.csv
-
+  source: https://api.blackhole.ai.innopolis.university/public-datasets/rtk/labels.zip
+  target: ./data/lung_description/infer
 
